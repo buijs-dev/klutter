@@ -1,6 +1,30 @@
-dependencyResolutionManagement {
+plugins {
+    kotlin("multiplatform") version "1.6.0"
+    id("maven-publish")
+}
 
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+group = "dev.buijs.klutter"
+version = "0.0.21"
+
+kotlin {
+   jvm()
+
+    sourceSets {
+        val commonMain by getting
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+
+        val jvmMain by getting
+        val jvmTest by getting
+    }
+}
+
+publishing {
+    val file = File("${projectDir.absolutePath}/dev.properties").normalize()
 
     if(!file.exists()) {
         throw GradleException("missing dev.properties file in ${file.absolutePath}")
@@ -25,9 +49,6 @@ dependencyResolutionManagement {
         ?:throw GradleException("missing repsy.url in dev.properties")
 
     repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
         maven {
             url = uri(repsyUrl)
             credentials {
@@ -36,10 +57,19 @@ dependencyResolutionManagement {
             }
         }
     }
+
+    publishing {
+        publications.withType<MavenPublication> {
+            artifactId = "annotations"
+        }
+
+    }
 }
 
-rootProject.name = "klutter"
-include("klutter-core")
-include("klutter-core:lib")
-include("klutter-plugins")
-include("klutter-annotations")
+tasks.register("buildAndPublish") {
+    doLast {
+        project.exec {
+            commandLine("bash", "./publish.sh")
+        }
+    }
+}

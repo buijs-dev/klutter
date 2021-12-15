@@ -26,3 +26,8 @@ hs_err_pid*
 /local.properties
 /gradlew.bat
 /gradlew
+/gradle.properties
+/dev.properties
+/klutter-plugins/dev.properties
+/klutter-core/local.properties
+/klutter-core/dev.properties

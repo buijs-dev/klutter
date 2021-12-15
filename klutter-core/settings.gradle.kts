@@ -38,8 +38,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "klutter"
-include("klutter-core")
-include("klutter-core:lib")
-include("klutter-plugins")
-include("klutter-annotations")
+rootProject.name = "klutter-core"
+include("lib")

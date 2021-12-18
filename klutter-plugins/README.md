@@ -5,8 +5,8 @@ The KlutterAdapterPlugin generates the MethodChannel code used by the Flutter fr
 ## Usage
 
 #### Configure plugin
-Apply the plugin in the root build.gradle.kts file and specify the required configuration. 
-Sources: List of String containing the package(s) which contain the methods to be called by the adapter. 
+Apply the plugin in the root build.gradle.kts file and specify the required configuration.
+Sources: List of String containing the package(s) which contain the methods to be called by the adapter.
 Only methods annoted with the KlutterAdaptee annotation are scanned.
 Flutter: File instance pointing to the flutter/lib folder which contains the main.dart file.
 Android: File instance pointing to the flutter/android/app folder.
@@ -36,9 +36,9 @@ dependencies {
 In your flutter/android/app folder change your MainActivity to not extend the FlutterActivity but KlutterActivity.
 The KlutterActivity will handle all MethodChannel calls by delegating the request to the GeneratedAdapter code.
 
-#### Annotate methods 
+#### Annotate methods
 The plugin will scan for methods annotated with KlutterAdaptee. For each annotated method, a code block will be added to the
-GeneratedAdapter code. 
+GeneratedAdapter code.
 
 For example this method:
 

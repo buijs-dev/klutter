@@ -1,7 +1,7 @@
 package dev.buijs.klutter.plugins
 
-import dev.buijs.klutter.plugins.adapter.gradle.KlutterAdapterPlugin
-import dev.buijs.klutter.plugins.adapter.gradle.klutteradapter
+import dev.buijs.klutter.gradle.KlutterAdapterPlugin
+import dev.buijs.klutter.gradle.klutteradapter
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
@@ -19,7 +19,7 @@ class KlutterAdapterPluginTest : WordSpec({
     "Using the KlutterAdapterPlugin ID" should {
         "Apply the Plugin" {
             val project = ProjectBuilder.builder().build()
-            project.pluginManager.apply("dev.buijs.klutter.plugins.adapter.gradle")
+            project.pluginManager.apply("dev.buijs.klutter.gradle")
             project.plugins.getPlugin(KlutterAdapterPlugin::class.java) shouldNotBe null
         }
     }

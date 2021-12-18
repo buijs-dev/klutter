@@ -23,12 +23,41 @@ class KlutterAdapterPluginGradleTest : WordSpec({
             val androidAppDir = Path.of("").resolve("android/app").toAbsolutePath().toFile()
             androidAppDir.mkdirs()
 
+            val flutterDir = Path.of("").resolve("flutter/lib").toAbsolutePath().toFile()
+            flutterDir.mkdirs()
+            val mainDartFile = flutterDir.resolve("main.dart").absoluteFile
+            mainDartFile.createNewFile()
+            mainDartFile.writeText("""
+                import 'package:flutter/material.dart';
+
+                void main() {
+                  runApp(const MyApp());
+                }
+
+                class MyApp extends StatelessWidget {
+                  const MyApp({Key? key}) : super(key: key);
+
+                  @override
+                  Widget build(BuildContext context) {
+                    return MaterialApp(
+                      debugShowCheckedModeBanner: false,
+                      title: 'Klutter Example',
+                      theme: ThemeData(
+                        primarySwatch: Colors.blue,
+                      ),
+                      home: const MyHomePage(title: 'Klutter'),
+                    );
+                  }
+                }
+
+            """.trimIndent())
+
             val sourcesDir = androidAppDir.resolve("FakeClass.kt").absoluteFile
             sourcesDir.createNewFile()
             sourcesDir.writeText("""
                 package foo.bar.baz
 
-                import dev.buijs.klutter.plugins.adapter.Annotations
+                import dev.buijs.klutter.annotations.Annotations
 
                 class FakeClass {
                     @KlutterAdaptee(name = "DartMaul")
@@ -79,12 +108,12 @@ class KlutterAdapterPluginGradleTest : WordSpec({
 
             buildScript.writeText("""
                 plugins {
-                    id("dev.buijs.klutter.plugins.adapter.gradle")
+                    id("dev.buijs.klutter.gradle")
                 }
 
-                klutteradapter {
+                klutter {
                     sources = listOf(File("$sourcesDir"))
-                    flutter = File("root/flutterproj/lib")
+                    flutter = File("${flutterDir.absolutePath}")
                     android = File("${androidAppDir.absolutePath}")
                     ios = File("root/flutterproj/ios")
                 }
@@ -104,9 +133,10 @@ class KlutterAdapterPluginGradleTest : WordSpec({
             generatedFile.readText().filter { !it.isWhitespace() } shouldBe """
                 package dev.buijs.klutter.adapter
 
-                 import io.flutter.plugin.common.MethodChannel
-                 import io.flutter.plugin.common.MethodChannel.Result
-                 import io.flutter.plugin.common.MethodCall
+                import foo.bar.baz.FakeClass
+                import io.flutter.plugin.common.MethodChannel
+                import io.flutter.plugin.common.MethodChannel.Result
+                import io.flutter.plugin.common.MethodCall
 
                  /**
                   * Generated code By Gillian Buijs
@@ -118,11 +148,11 @@ class KlutterAdapterPluginGradleTest : WordSpec({
 
                    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
                         if (call.method == "DartMaul") {
-                            result.success(foo())
+                            result.success(FakeClass().foo())
                         } else if (call.method == "BabyYoda") {
-                            result.success(fooBar())
+                            result.success(FakeClass().fooBar())
                         } else  if (call.method == "BabyYoda") {
-                            result.success(zeta())
+                            result.success(FakeClass().zeta())
                         } else result.notImplemented()
                    }
                  }
@@ -141,16 +171,17 @@ class KlutterAdapterPluginGradleTest : WordSpec({
                 class MainActivity: FlutterActivity() {
 
                     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-                        GeneratedPluginRegistrant.registerWith(flutterEngine)
                          MethodChannel(flutterEngine.dartExecutor,"KLUTTER")
                             .setMethodCallHandler{ call, result ->
                                 GeneratedKlutterAdapter().handleMethodCalls(call, result)
                          }
+                         GeneratedPluginRegistrant.registerWith(flutterEngine)
                     }
                 }
             """.filter { !it.isWhitespace() }
 
             //cleanup
+            flutterDir.deleteRecursively()
             androidAppDir.deleteRecursively()
             Path.of("").resolve("android").toFile().delete()
 

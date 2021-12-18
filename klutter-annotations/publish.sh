@@ -13,8 +13,8 @@ echo " ____________
 
 echo "\0/ Klutter: step: build annotations modules"
 echo "------------------"
-./gradlew clean
-./gradlew build
+./gradlew clean -p "lib"
+./gradlew build -p "lib"
 
 echo "\0/ Klutter: step: publish annotations modules"
 echo "------------------"

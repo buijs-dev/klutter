@@ -3,7 +3,7 @@
 set -e
 
 echo " ____________
-< Publishing Klutter Core modules to Repsy >
+< Publishing Klutter Annotations modules to Repsy >
  ------------
         \   ^__^
          \  (oo)\_______
@@ -11,11 +11,11 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-echo "\0/ Klutter: step: build core modules"
+echo "\0/ Klutter: step: build annotations modules"
 echo "------------------"
 ./gradlew clean
 ./gradlew build
 
-echo "\0/ Klutter: step: publish core modules"
+echo "\0/ Klutter: step: publish annotations modules"
 echo "------------------"
 ./gradlew publish

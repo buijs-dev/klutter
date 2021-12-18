@@ -1,40 +1,58 @@
 plugins {
+    kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("maven-publish")
-    id("java-library")
-    kotlin("jvm")
+    id("com.android.library")
 }
 
-buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
+group = "dev.buijs.klutter"
+version = "0.1.27"
+
+kotlin {
+
+    jvm()
+    android()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        summary = "Klutter module for annotations"
+        homepage = "https://buijs.dev"
+        ios.deploymentTarget = "13"
+        framework {
+            baseName = "Annotations"
+        }
     }
-}
 
-sourceSets {
-    main {
-        java {
-            srcDirs("${projectDir.absolutePath}/src/main/kotlin")
+    sourceSets {
+        val commonMain by getting
+        val commonTest by getting
+        val jvmMain by getting
+        val androidMain by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
         }
     }
 }
 
-dependencies {
-    implementation("dev.buijs.klutter:annotations-jvm:0.1.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")
-
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
-    testImplementation("org.mockito:mockito-core:4.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+android {
+    compileSdk = 31
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+    defaultConfig {
+        minSdk = 21
+        targetSdk = 31
+    }
 }
 
 publishing {
+
     val file = File("${rootDir.absolutePath}/dev.properties").normalize()
 
     if(!file.exists()) {
@@ -69,18 +87,12 @@ publishing {
         }
     }
 
-    publications {
-        create<MavenPublication>("maven") {
-
-            groupId = "dev.buijs.klutter"
-            artifactId = "core"
-            version = "0.1.27"
-
-            artifact("$projectDir/build/libs/klutter-core.jar")
-
+    publishing {
+        publications.withType<MavenPublication> {
+            artifactId = "annotations"
         }
-    }
 
+    }
 }
 
 tasks.register("buildAndPublish") {
@@ -89,7 +101,4 @@ tasks.register("buildAndPublish") {
             commandLine("bash", "./publish.sh")
         }
     }
-}
-tasks.named<Test>("test") {
-    useJUnitPlatform()
 }

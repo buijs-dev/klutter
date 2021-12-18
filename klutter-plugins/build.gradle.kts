@@ -110,7 +110,7 @@ publishing {
 }
 
 dependencies {
-    implementation("dev.buijs.klutter:annotations-jvm:0.1.1")
+    implementation("dev.buijs.klutter:annotations-jvm:0.1.27")
     implementation("dev.buijs.klutter:core:0.1.27")
     implementation(kotlin("stdlib", "1.6.0"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")

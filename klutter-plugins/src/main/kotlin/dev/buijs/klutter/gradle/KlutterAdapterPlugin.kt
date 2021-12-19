@@ -35,5 +35,6 @@ open class KlutterAdapterExtension(project: Project) {
     var android: File? = null
     var ios: File? = null
     var flutter: File? = null
+    var podspec: File? = null
 
 }

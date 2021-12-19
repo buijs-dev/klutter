@@ -74,7 +74,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.1.27"
+            version = "0.1.29"
 
             artifact("$projectDir/build/libs/klutter-core.jar")
 

@@ -54,11 +54,14 @@ open class KlutterAdapterTask
 
         val ios = ext.ios
 
+        val podspec = ext.podspec ?: throw KlutterCodeGenerationException("Missing path to podspec file in the KMP project")
+
         val logs = KlutterAdapterCodeGenerator(
             context = context,
             sources = sources,
             android = android,
             flutter = flutter,
+            podspec = podspec
         ).generate()
 
         val output = styledTextOutputFactory.create(javaClass.name)

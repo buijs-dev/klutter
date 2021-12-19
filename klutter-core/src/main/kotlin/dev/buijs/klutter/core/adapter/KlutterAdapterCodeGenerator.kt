@@ -21,7 +21,8 @@ class KlutterAdapterCodeGenerator(
     val context: Project,
     val sources: List<File>,
     val android: File,
-    val flutter: File) {
+    val flutter: File,
+    val podspec: File) {
 
     private var logger = KlutterLogging()
 
@@ -57,6 +58,8 @@ class KlutterAdapterCodeGenerator(
         val mainDartFile = findMainDartFile(flutter)
         val adapterBody = KlutterFlutterAdapterPrinter().print(methods.flatten())
         KlutterFlutterAdapterWriter().write(mainDartFile.parentFile, adapterBody)
+
+        KlutterIosAdapterWriter().write(podspec)
 
         return logger
     }

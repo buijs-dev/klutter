@@ -3,7 +3,7 @@
 set -e
 
 echo " ____________
-< Publishing Klutter Annotations modules to Repsy >
+< Publishing Klutter Annotations modules >
  ------------
         \   ^__^
          \  (oo)\_______

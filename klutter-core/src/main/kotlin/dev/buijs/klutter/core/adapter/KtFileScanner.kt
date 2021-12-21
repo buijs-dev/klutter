@@ -3,7 +3,7 @@ package dev.buijs.klutter.core.adapter
 import dev.buijs.klutter.core.KotlinFileScanningException
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

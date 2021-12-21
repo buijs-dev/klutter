@@ -1,12 +1,12 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("native.cocoapods")
+//    kotlin("native.cocoapods")
     id("maven-publish")
     id("com.android.library")
 }
 
 group = "dev.buijs.klutter"
-version = "0.1.29"
+version = "0.2.12"
 
 kotlin {
 
@@ -16,29 +16,29 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-    cocoapods {
-        summary = "Klutter module for annotations"
-        homepage = "https://buijs.dev"
-        ios.deploymentTarget = "13"
-        framework {
-            baseName = "Annotations"
-        }
-    }
+//    cocoapods {
+//        summary = "Klutter module for annotations"
+//        homepage = "https://buijs.dev"
+//        ios.deploymentTarget = "13"
+//        framework {
+//            baseName = "Annotations"
+//        }
+//    }
 
     sourceSets {
         val commonMain by getting
         val commonTest by getting
         val jvmMain by getting
         val androidMain by getting
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-        }
+//        val iosX64Main by getting
+//        val iosArm64Main by getting
+//        val iosSimulatorArm64Main by getting
+//        val iosMain by creating {
+//            dependsOn(commonMain)
+//            iosX64Main.dependsOn(this)
+//            iosArm64Main.dependsOn(this)
+//            iosSimulatorArm64Main.dependsOn(this)
+//        }
     }
 }
 
@@ -89,10 +89,10 @@ publishing {
 
     publishing {
         publications.withType<MavenPublication> {
-            artifactId = "annotations"
+            artifactId = "annotations-kmp"
         }
-
     }
+
 }
 
 tasks.register("buildAndPublish") {

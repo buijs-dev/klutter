@@ -95,7 +95,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-jvm"
-            version = "0.1.29"
+            version = "0.2.12"
 
             artifact("$projectDir/build/libs/klutter-annotations-jvm.jar")
 
@@ -110,17 +110,6 @@ tasks.register("buildAndPublish") {
             commandLine("bash", "./publish.sh")
         }
     }
-}
-
-tasks.clean {
-    finalizedBy("copyJavaSources")
-}
-
-/** Copies files from "commonMain" to "main" directory to make it accessible for java sub projects */
-tasks.register<Copy>("copyJavaSources") {
-    from(layout.projectDirectory.dir("../klutter-annotations/src/commonMain"))
-    include("**/*.*")
-    into(layout.projectDirectory.dir("src/main"))
 }
 
 java {

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import javax.inject.Inject
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */
@@ -38,7 +38,7 @@ open class KlutterAdapterTask
     }
 
     @TaskAction
-    fun generate() {
+    fun generateAdapter() {
         val ext = project.klutteradapter()
         val sources = ext.sources?: throw KlutterCodeGenerationException("Missing path to android/app folder in the flutter root project")
 

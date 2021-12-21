@@ -8,7 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  *
@@ -25,6 +25,7 @@ class KlutterAdapterPluginGradleTest : WordSpec({
 
             val flutterDir = Path.of("").resolve("flutter/lib").toAbsolutePath().toFile()
             flutterDir.mkdirs()
+
             val mainDartFile = flutterDir.resolve("main.dart").absoluteFile
             mainDartFile.createNewFile()
             mainDartFile.writeText("""
@@ -174,7 +175,7 @@ class KlutterAdapterPluginGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("generate")
+                .withArguments("generateAdapter")
                 .build()
 
             val generatedFile = androidAppDir.resolve(

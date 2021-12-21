@@ -1,7 +1,7 @@
-package dev.buijs.klutter.annotations
+package dev.buijs.klutter.annotations.jvm
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

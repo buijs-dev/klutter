@@ -5,6 +5,10 @@ plugins {
 }
 
 buildscript {
+//    apply(".klutter/klutter.gradle.kts")
+
+//    val kotlinVersion: String by project.extra
+
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
     }
@@ -19,7 +23,6 @@ sourceSets {
 }
 
 dependencies {
-    implementation("dev.buijs.klutter:annotations-jvm:0.1.1")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")
 
@@ -74,7 +77,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.1.29"
+            version = "0.2.12"
 
             artifact("$projectDir/build/libs/klutter-core.jar")
 

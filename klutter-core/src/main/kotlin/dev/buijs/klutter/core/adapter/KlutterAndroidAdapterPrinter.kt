@@ -1,7 +1,7 @@
 package dev.buijs.klutter.core.adapter
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

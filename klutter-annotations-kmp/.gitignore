@@ -9,4 +9,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+dev.properties
 /lib/dev.properties

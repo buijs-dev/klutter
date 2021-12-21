@@ -2,7 +2,7 @@
 #stop script on failure
 set -e
 
-cd "klutter-annotations"
+cd "klutter-annotations-kmp"
 /bin/bash publish.sh
 cd ".."
 

@@ -5,7 +5,7 @@ import io.kotlintest.specs.WordSpec
 
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

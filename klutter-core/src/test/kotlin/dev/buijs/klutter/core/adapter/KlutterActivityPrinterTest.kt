@@ -7,7 +7,7 @@ import org.mockito.kotlin.mock
 import java.nio.file.Files
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  *

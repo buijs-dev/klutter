@@ -4,7 +4,7 @@ import dev.buijs.klutter.core.KlutterCodeGenerationException
 
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

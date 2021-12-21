@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

@@ -31,7 +31,6 @@ hs_err_pid*
 /klutter-plugins/dev.properties
 /klutter-core/local.properties
 /klutter-core/dev.properties
-/klutter-annotations/src/main/
 /klutter-plugins/publish.sh
 /klutter-plugins/local.properties
 /klutter-annotations/lib/lib.podspec

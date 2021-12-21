@@ -6,7 +6,7 @@ import java.nio.file.Path
 
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  *

@@ -2,7 +2,7 @@ package dev.buijs.klutter.core.log
 
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  */

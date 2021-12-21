@@ -9,7 +9,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import java.io.File
 
 /**
- * By Gillian Buijs
+ * @author Gillian Buijs
  *
  * Contact me: https://buijs.dev
  *

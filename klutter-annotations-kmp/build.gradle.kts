@@ -84,3 +84,11 @@ allprojects {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+tasks.register("buildAndPublish") {
+    doLast {
+        project.exec {
+            commandLine("bash", "./publish.sh")
+        }
+    }
+}

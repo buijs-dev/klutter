@@ -13,9 +13,9 @@ echo " ____________
 
 echo "\0/ Klutter: step: build core modules"
 echo "------------------"
-./gradlew clean
-./gradlew build
+./gradlew clean -p "core"
+./gradlew build -p "core"
 
 echo "\0/ Klutter: step: publish core modules"
 echo "------------------"
-./gradlew publish
+./gradlew publish -p "core"

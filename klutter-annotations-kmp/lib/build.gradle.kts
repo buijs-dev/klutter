@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter"
-version = "0.2.12"
+version = "0.2.24"
 
 kotlin {
 
@@ -87,18 +87,8 @@ publishing {
         }
     }
 
-    publishing {
-        publications.withType<MavenPublication> {
-            artifactId = "annotations-kmp"
-        }
+    publications.withType<MavenPublication> {
+        artifactId = "annotations-kmp"
     }
 
-}
-
-tasks.register("buildAndPublish") {
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish.sh")
-        }
-    }
 }

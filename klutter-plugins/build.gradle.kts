@@ -1,13 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-group = "dev.buijs.klutter"
-version = "0.2.12-pre-alpha"
-
 plugins {
-    id("java-gradle-plugin")
-    id("maven-publish")
-    id("com.gradle.plugin-publish") version "0.16.0"
-    kotlin("jvm")
+    kotlin("jvm") version "1.6.0"
 }
 
 buildscript {
@@ -35,10 +27,9 @@ buildscript {
     val endpoint = properties["private.repo.url"]
         ?:throw GradleException("missing private.repo.url in dev.properties")
 
-
     repositories {
-        gradlePluginPortal()
         google()
+        gradlePluginPortal()
         mavenCentral()
         maven {
             url = uri(endpoint)
@@ -51,28 +42,11 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
-        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("com.android.tools.build:gradle:4.2.2")
     }
 }
 
-pluginBundle {
-    website = "https://buijs.dev/klutter/"
-    vcsUrl = "https://github.com/buijs-dev/klutter"
-    tags = listOf("flutter", "kotlin", "multiplatform", "klutter")
-}
-
-gradlePlugin {
-    plugins {
-        create("klutterPlugin") {
-            id = "dev.buijs.klutter.gradle"
-            displayName = "Klutter plugin to generate boilerplate for connecting Flutter and Kotlin Multiplatform"
-            description = "The klutterPlugin generates the MethodChannel code used by the Flutter frontend to communicate with Kotlin Multiplatform backend."
-            implementationClass = "dev.buijs.klutter.gradle.KlutterAdapterPlugin"
-        }
-    }
-}
-
-publishing {
+allprojects {
     val file = File("${rootDir.absolutePath}/dev.properties").normalize()
 
     if(!file.exists()) {
@@ -98,6 +72,9 @@ publishing {
         ?:throw GradleException("missing private.repo.url in dev.properties")
 
     repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
         maven {
             url = uri(endpoint)
             credentials {
@@ -106,30 +83,6 @@ publishing {
             }
         }
     }
-
-}
-
-dependencies {
-    implementation("dev.buijs.klutter:annotations-jvm:0.2.11")
-    implementation("dev.buijs.klutter:core:0.2.12")
-    implementation(kotlin("stdlib", "1.6.0"))
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")
-
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation(gradleTestKit())
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
-}
-
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 tasks.register("buildAndPublish") {

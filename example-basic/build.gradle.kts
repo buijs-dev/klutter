@@ -39,8 +39,8 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
-        classpath("com.android.tools.build:gradle:4.2.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+        classpath("com.android.tools.build:gradle:7.0.2")
         classpath("com.github.ben-manes:gradle-versions-plugin:0.39.0")
         classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:0.2.43-pre-alpha")
     }

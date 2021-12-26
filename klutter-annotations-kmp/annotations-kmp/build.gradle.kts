@@ -1,44 +1,65 @@
 plugins {
     kotlin("multiplatform")
-//    kotlin("native.cocoapods")
+    kotlin("native.cocoapods")
     id("maven-publish")
     id("com.android.library")
 }
 
 group = "dev.buijs.klutter"
-version = "0.2.24"
+version = "0.2.46"
 
 kotlin {
 
+    android {
+        publishLibraryVariants("release", "debug")
+    }
+
     jvm()
-    android()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
-//    cocoapods {
-//        summary = "Klutter module for annotations"
-//        homepage = "https://buijs.dev"
-//        ios.deploymentTarget = "13"
-//        framework {
-//            baseName = "Annotations"
+//    val publicationsFromMainHost =
+//        listOf(android(), iosX64(), iosArm64(), iosSimulatorArm64())
+//            .map { it.name } + "kotlinMultiplatform"
+//
+//    publishing {
+//        publications {
+//            matching { it.name in publicationsFromMainHost }.all {
+//                val targetPublication = this@all
+//                tasks.withType<AbstractPublishToMaven>()
+//                    .matching { it.publication == targetPublication }
+//                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+//            }
 //        }
 //    }
+
+    cocoapods {
+        summary = "Klutter module for annotations"
+        homepage = "https://buijs.dev"
+        ios.deploymentTarget = "13"
+        framework {
+            baseName = "Annotations"
+        }
+    }
 
     sourceSets {
         val commonMain by getting
         val commonTest by getting
+
         val jvmMain by getting
+        val jvmTest by getting
+
         val androidMain by getting
-//        val iosX64Main by getting
-//        val iosArm64Main by getting
-//        val iosSimulatorArm64Main by getting
-//        val iosMain by creating {
-//            dependsOn(commonMain)
-//            iosX64Main.dependsOn(this)
-//            iosArm64Main.dependsOn(this)
-//            iosSimulatorArm64Main.dependsOn(this)
-//        }
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+        val iosMain by creating {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
     }
 }
 

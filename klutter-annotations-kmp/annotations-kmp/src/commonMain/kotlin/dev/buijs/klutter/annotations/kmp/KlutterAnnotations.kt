@@ -5,6 +5,6 @@ package dev.buijs.klutter.annotations.kmp
  *
  * Contact me: https://buijs.dev
  */
-annotation class KlutterAdaptee(val name: String)
+expect annotation class KlutterAdaptee(val name: String)
 
-annotation class KlutterAdapter()
+expect annotation class KlutterAdapter()

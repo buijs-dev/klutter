@@ -42,11 +42,10 @@ hs_err_pid*
 /example-basic/local.properties
 /example-basic/gradlew
 /example-basic/gradlew.bat
-/klutter-annotations-kmp2/dev.properties
-/klutter-annotations-kmp2/local.properties
 /klutter-plugins/plugins/dev.properties
 /klutter-plugins/plugins/local.properties
 /example-basic/dev.properties
 /klutter-annotations-jvm/
 /klutter-core/core/dev.properties
 /example-basic/klutter/.klutter/pigeon.dart
+/klutter-annotations-kmp/annotations-kmp/annotations_kmp.podspec

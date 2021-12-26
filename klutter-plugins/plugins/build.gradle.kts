@@ -67,8 +67,8 @@ publishing {
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.2.32")
     implementation("dev.buijs.klutter:core:0.2.41")
-    implementation(kotlin("stdlib", "1.6.0"))
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")
+    implementation(kotlin("stdlib", "1.6.10"))
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")

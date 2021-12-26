@@ -44,11 +44,12 @@ open class KlutterGeneratePigeonsTask @Inject constructor(
 
             val dart = flutter.resolve("lib/generated")
             if(!dart.exists()) dart.mkdirs()
+
             //                --objc_header_out ios/Runner/pigeon.h \
             //                --objc_source_out ios/Runner/pigeon.m \
             val pigeonlogging = """flutter pub run pigeon \
                 --input $flutter/klutter/.klutter/pigeon.dart \
-                --dart_out $dart/adapter.dart \
+                --dart_out ${dart}/adapter.dart \
                 --java_out $flutter/android/app/src/main/java/dev/buijs/klutter/generated/Adapter.java \
                 --java_package "dev.buijs.klutter.generated.adapter"""".runCommand(flutter)
 

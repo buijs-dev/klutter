@@ -73,10 +73,10 @@ class KlutterPropertiesProducerGradleTest : WordSpec({
                   - version: 1.0.2
 
                 kotlin:
-                  - version: 1.6.0
+                  - version: 1.6.10
 
                 gradle:
-                  - version: 4.2.2
+                  - version: 7.0.2
 
                 junit:
                   - version: 4.3.12
@@ -112,14 +112,14 @@ class KlutterPropertiesProducerGradleTest : WordSpec({
 
             generatedConfigFile.exists()
             generatedConfigFile.readText().filter { !it.isWhitespace() } shouldBe """
-               project.extra["kotlin.version"] = "1.6.0"
+               project.extra["kotlin.version"] = "1.6.10"
                project.extra["android.sdk.compile"] = "31"
                project.extra["android.sdk.minimum"] = "21"
                project.extra["android.sdk.target"] = "31"
                project.extra["app.version.name"] = "1.0.1"
                project.extra["app.id"] = "dev.buijs.klutter.example"
                project.extra["app.version.code"] = "2"
-               project.extra["gradle.version"] = "4.2.2"
+               project.extra["gradle.version"] = "7.0.2"
                project.extra["okhttp.version"] = "4.10.0-RC1"
                project.extra["ios.version"] = "13.0"
                project.extra["appcompat.version"] = "1.0.2"

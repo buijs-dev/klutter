@@ -17,7 +17,7 @@ class KlutterGeneratePigeonTaskGradleTest : WordSpec({
 
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {
-            val projectDir = Path.of("blablabla")//Files.createTempDirectory("")
+            val projectDir = Files.createTempDirectory("")
             val klutterDir = projectDir.resolve("klutter").toAbsolutePath().toFile()
             klutterDir.mkdirs()
             val androidDir = projectDir.resolve("android/app").toAbsolutePath().toFile()
@@ -87,6 +87,9 @@ class KlutterGeneratePigeonTaskGradleTest : WordSpec({
 
             val adapterFile = flutterDir.resolve("lib/generated/adapter.dart").absoluteFile
             adapterFile.exists()
+
+            adapterFile.readText().filter { !it.isWhitespace() } shouldBe """
+                not this """
 
             val pigeonFile = klutterDir.resolve(".klutter/pigeon.dart").absoluteFile
             pigeonFile.exists()

@@ -20,7 +20,7 @@ sourceSets {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.0")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")

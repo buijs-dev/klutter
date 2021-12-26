@@ -43,10 +43,10 @@ class KlutterYamlConverterTest: WordSpec({
                   - version: 1.0.2
 
                 kotlin:
-                  - version: 1.6.0
+                  - version: 1.6.10
 
                 gradle:
-                  - version: 4.2.2
+                  - version: 7.0.2
 
                 junit:
                   - version: 4.3.12
@@ -66,7 +66,7 @@ class KlutterYamlConverterTest: WordSpec({
             /**
              * And the klutter.properties contains all the properties
              */
-            actual["gradle.version"] shouldBe "4.2.2"
+            actual["gradle.version"] shouldBe "7.0.2"
             actual["app.version.name"] shouldBe "1.0.1"
             actual["flutter.sdk.version"] shouldBe "2.5.3"
 

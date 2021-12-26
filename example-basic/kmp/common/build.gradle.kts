@@ -1,7 +1,7 @@
 plugins {
+    id("com.android.library")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
-    id("com.android.library")
 }
 
 group = "dev.buijs.klutter.example.basic"
@@ -11,7 +11,7 @@ kotlin {
     android()
     iosX64()
     iosArm64()
-    //iosSimulatorArm64() sure all ios dependencies support this target
+    iosSimulatorArm64()
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -25,7 +25,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("dev.buijs.klutter:annotations-kmp:0.2.24")
+                implementation("dev.buijs.klutter:annotations-kmp:0.2.46")
             }
         }
         val commonTest by getting {
@@ -34,7 +34,11 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val androidMain by getting
+        val androidMain by getting {
+//            dependencies {
+//                implementation("dev.buijs.klutter:annotations-kmp:0.2.46")
+//            }
+        }
         val androidTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

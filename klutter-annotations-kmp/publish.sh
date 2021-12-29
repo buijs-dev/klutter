@@ -13,8 +13,8 @@ echo " ____________
 
 echo "\0/ Klutter: step: build annotations modules"
 echo "------------------"
-./gradlew clean -p "annotations-kmp"
-./gradlew build -p "annotations-kmp"
+./gradlew clean
+./gradlew build
 
 echo "\0/ Klutter: step: publish annotations modules"
 echo "------------------"

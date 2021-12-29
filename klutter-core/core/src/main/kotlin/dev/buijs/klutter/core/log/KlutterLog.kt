@@ -6,7 +6,7 @@ package dev.buijs.klutter.core.log
  *
  * Contact me: https://buijs.dev
  */
-open class KlutterLogging {
+open class KlutterLogger {
 
     private val _messages = mutableListOf<KlutterLogMessage>()
 
@@ -27,6 +27,11 @@ open class KlutterLogging {
     }
 
     fun messages() = _messages
+
+    fun merge(logger: KlutterLogger): KlutterLogger {
+        _messages.addAll(logger.messages())
+        return this
+    }
 
     fun messages(debug: Boolean) = if(debug) _messages
     else _messages.filter { it.level != KlutterLogLevel.INFORMATIVE }

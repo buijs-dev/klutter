@@ -49,3 +49,5 @@ hs_err_pid*
 /klutter-core/core/dev.properties
 /example-basic/klutter/.klutter/pigeon.dart
 /klutter-annotations-kmp/annotations-kmp/annotations_kmp.podspec
+/example-basic/.klutter/
+/example-basic/kmp/.klutter/

@@ -9,23 +9,16 @@ import java.nio.file.Path
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
- *
+ * @contact https://buijs.dev
  */
 class KlutterGeneratePigeonTaskGradleTest : WordSpec({
 
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {
-            val projectDir = Files.createTempDirectory("")
-            val klutterDir = projectDir.resolve("klutter").toAbsolutePath().toFile()
-            klutterDir.mkdirs()
-            val androidDir = projectDir.resolve("android/app").toAbsolutePath().toFile()
-            androidDir.mkdirs()
-            val buildScript = klutterDir.resolve("build.gradle.kts")
-            klutterDir.resolve("settings.gradle.kts").createNewFile()
-            val flutterDir = projectDir.toAbsolutePath().toFile()
-            flutterDir.mkdirs()
+            val project = KlutterTestProject()
+            val buildScript = project.buildGradle
+            val flutterDir = project.flutterDir
+            val klutterDir = project.klutterDir
 
             buildScript.writeText("""
                 plugins {
@@ -33,7 +26,6 @@ class KlutterGeneratePigeonTaskGradleTest : WordSpec({
                 }
 
                 klutter {
-                    android = File("$androidDir")
                     flutter = File("${flutterDir.absolutePath}")
                     services {
 
@@ -80,16 +72,10 @@ class KlutterGeneratePigeonTaskGradleTest : WordSpec({
             """.trimIndent())
 
             GradleRunner.create()
-                .withProjectDir(klutterDir)
+                .withProjectDir(project.projectDir.toFile())
                 .withPluginClasspath()
                 .withArguments("generateApi")
                 .build()
-
-            val adapterFile = flutterDir.resolve("lib/generated/adapter.dart").absoluteFile
-            adapterFile.exists()
-
-            adapterFile.readText().filter { !it.isWhitespace() } shouldBe """
-                not this """
 
             val pigeonFile = klutterDir.resolve(".klutter/pigeon.dart").absoluteFile
             pigeonFile.exists()
@@ -123,9 +109,6 @@ class KlutterGeneratePigeonTaskGradleTest : WordSpec({
                   error,
                 }
             """.filter { !it.isWhitespace() }
-
-            //cleanup
-            flutterDir.deleteRecursively()
 
         }
     }

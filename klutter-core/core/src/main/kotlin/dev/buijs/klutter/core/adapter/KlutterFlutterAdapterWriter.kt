@@ -15,11 +15,8 @@ internal class KlutterFlutterAdapterWriter {
 
     fun write(path: File, classBody: String) {
         if(!path.exists()){
-            throw KlutterCodeGenerationException("""
-                The given path to the flutter root folder does not exist.
-                Make sure the given path is an absolute path pointing to the
-                flutter root project.
-            """.trimIndent())
+            throw KlutterCodeGenerationException(" The given path to the flutter root folder does not exist.\r\n"+
+                "Make sure the given path is an absolute path pointing to the flutter root project.")
         }
 
         val classFile = path.resolve( "GeneratedKlutterAdapter.dart")

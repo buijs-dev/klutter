@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import dev.buijs.klutter.core.KlutterCodeGenerationException
-import dev.buijs.klutter.core.log.KlutterLogging
+import dev.buijs.klutter.core.log.KlutterLogger
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -14,8 +14,7 @@ import java.io.File
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 class KlutterAdapterCodeGenerator(
     val context: Project,
@@ -24,9 +23,9 @@ class KlutterAdapterCodeGenerator(
     val flutter: File,
     val podspec: File) {
 
-    private var logger = KlutterLogging()
+    private var logger = KlutterLogger()
 
-    fun generate(): KlutterLogging {
+    fun generate(): KlutterLogger {
 
         val scannedSources = scanSources(sources)
             .filter { it.content.contains("@KlutterAdaptee") }

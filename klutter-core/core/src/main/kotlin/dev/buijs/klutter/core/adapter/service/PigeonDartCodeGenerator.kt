@@ -1,7 +1,7 @@
 package dev.buijs.klutter.core.adapter.service
 
 import dev.buijs.klutter.core.KlutterCodeGenerationException
-import dev.buijs.klutter.core.log.KlutterLogging
+import dev.buijs.klutter.core.log.KlutterLogger
 import java.io.File
 
 /**
@@ -14,9 +14,9 @@ class PigeonDartCodeGenerator(
     private val serviceDTO: KlutterServiceDTO
 ) {
 
-    private var logger = KlutterLogging()
+    private var logger = KlutterLogger()
 
-    fun generate(): KlutterLogging {
+    fun generate(): KlutterLogger {
         if(!flutter.exists()){
             throw KlutterCodeGenerationException("Flutter directory does not exist: ${flutter.absolutePath}")
         }

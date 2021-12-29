@@ -1,7 +1,7 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.gradle.utils
 
 import dev.buijs.klutter.core.log.KlutterLogLevel
-import dev.buijs.klutter.core.log.KlutterLogging
+import dev.buijs.klutter.core.log.KlutterLogger
 import org.gradle.internal.logging.text.StyledTextOutput
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 
@@ -11,7 +11,7 @@ import org.gradle.internal.logging.text.StyledTextOutput.Style
  * Contact me: https://buijs.dev
  */
 class GradleLoggingWrapper(
-    private val logging: KlutterLogging,
+    private val logging: KlutterLogger,
     private val ouput: StyledTextOutput)
 {
 

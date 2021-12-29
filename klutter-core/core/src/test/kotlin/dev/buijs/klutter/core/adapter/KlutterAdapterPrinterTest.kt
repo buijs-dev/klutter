@@ -6,11 +6,9 @@ import io.kotlintest.specs.WordSpec
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @author https://buijs.dev
  */
 class KlutterAdapterPrinterTest: WordSpec({
-
 
     "Using the KlutterAdapterPrinter" should {
         "Create the body GeneratedAdapter body with a branch for each KlutterAdaptee annotation" {

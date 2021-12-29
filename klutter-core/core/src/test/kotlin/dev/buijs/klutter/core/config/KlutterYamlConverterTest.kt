@@ -1,6 +1,9 @@
 package dev.buijs.klutter.core.config
 
+import dev.buijs.klutter.core.config.yaml.KlutterYamlPropertyType
+import dev.buijs.klutter.core.config.yaml.KlutterYamlReader
 import io.kotlintest.shouldBe
+import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files
 
@@ -12,7 +15,7 @@ import java.nio.file.Files
 class KlutterYamlConverterTest: WordSpec({
 
     "Using the KlutterYamlConverter" should {
-        "Create read the klutter.yaml and create a klutter.properties file" {
+        "Create read the klutter.yaml and create a List of KlutterYamlProperties" {
 
             val projectDir = Files.createTempDirectory("")
             val yaml = projectDir.resolve("klutter.yaml").toFile()
@@ -22,9 +25,9 @@ class KlutterYamlConverterTest: WordSpec({
                 """
                 app:
                   - version:
-                      - code: 2
-                      - name: 1.0.1
-                  - id: dev.buijs.klutter.example
+                    - code: 2
+                    - name: 1.0.1
+                  - id: "dev.buijs.klutter.example"
 
                 android:
                   - sdk:
@@ -46,13 +49,21 @@ class KlutterYamlConverterTest: WordSpec({
                   - version: 1.6.10
 
                 gradle:
-                  - version: 7.0.2
+                  - version: "7.0.2"
 
                 junit:
-                  - version: 4.3.12
+                  - version: "4.3.12"
 
                 okhttp:
                   - version: 4.10.0-RC1
+                  
+                foo:
+                  - bar:
+                    - baz:
+                      - alfa:
+                        - beta:
+                          - zeta:
+                            - youdoneyetbruh: "yes"
 
             """.trimIndent()
             )
@@ -66,9 +77,22 @@ class KlutterYamlConverterTest: WordSpec({
             /**
              * And the klutter.properties contains all the properties
              */
-            actual["gradle.version"] shouldBe "7.0.2"
-            actual["app.version.name"] shouldBe "1.0.1"
-            actual["flutter.sdk.version"] shouldBe "2.5.3"
+            val gradle = actual.find { it.key == "gradle.version" }
+            gradle shouldNotBe null
+            gradle?.value shouldBe "7.0.2"
+            gradle?.type  shouldBe KlutterYamlPropertyType.String
+
+            val androidSdkTarget = actual.find { it.key == "android.sdk.target" }
+            androidSdkTarget shouldNotBe null
+            androidSdkTarget?.value shouldBe "31"
+            androidSdkTarget?.type  shouldBe KlutterYamlPropertyType.Int
+
+            val appId = actual.find { it.key == "app.id" }
+            appId shouldNotBe null
+            appId?.value shouldBe "dev.buijs.klutter.example"
+            appId?.type  shouldBe KlutterYamlPropertyType.String
+
+            actual.find { it.key == "foo.bar.baz.alfa.beta.zeta.youdoneyetbruh" } shouldNotBe null
 
         }
     }

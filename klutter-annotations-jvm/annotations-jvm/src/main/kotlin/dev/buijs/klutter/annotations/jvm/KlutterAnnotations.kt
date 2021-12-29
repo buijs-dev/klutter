@@ -2,8 +2,7 @@ package dev.buijs.klutter.annotations.jvm
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 
 @Retention(AnnotationRetention.SOURCE)

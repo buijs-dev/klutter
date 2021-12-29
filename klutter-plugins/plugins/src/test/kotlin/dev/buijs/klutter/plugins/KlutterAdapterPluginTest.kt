@@ -32,16 +32,12 @@ class KlutterAdapterPluginTest : WordSpec({
 
             //when
             project.adapter().sources = listOf(File("."))
-            project.adapter().android = File("flutter/android/app")
-            project.adapter().flutter = File("flutter/lib")
-            project.adapter().ios = File("flutter/ios")
+            project.adapter().flutter = File("flutter")
 
             //then
             project.adapter().sources.isNotEmpty()
             project.adapter().sources shouldBe  listOf(File("."))
-            project.adapter().android shouldBe  File("flutter/android/app")
-            project.adapter().flutter shouldBe File("flutter/lib")
-            project.adapter().ios shouldBe File("flutter/ios")
+            project.adapter().flutter shouldBe File("flutter")
 
         }
     }

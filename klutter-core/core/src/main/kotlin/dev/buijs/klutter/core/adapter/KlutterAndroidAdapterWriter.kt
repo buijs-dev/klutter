@@ -7,8 +7,7 @@ import java.nio.file.Path
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  *
  * Takes the printed body and writes it to a file.
  */
@@ -16,11 +15,8 @@ internal class KlutterAndroidAdapterWriter {
 
     fun write(path: File, classBody: String) {
         if(!path.exists()){
-            throw KlutterCodeGenerationException("""
-                The given path to the android/app folder does not exist.
-                Make sure the given path is an absolute path pointing to the
-                android/app folder in the flutter root project.
-            """.trimIndent())
+            throw KlutterCodeGenerationException("The given path to the android/app folder does not exist.\r\n"+
+                "Make sure the given path is an absolute path pointing to the android/app folder in the flutter root project.")
         }
 
         val androidClassPath = path.resolve(

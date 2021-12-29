@@ -2,8 +2,7 @@ package dev.buijs.klutter.annotations.kmp
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 expect annotation class KlutterAdaptee(val name: String)
 

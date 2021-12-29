@@ -1,12 +1,12 @@
 plugins {
+    id("com.android.library")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("maven-publish")
-    id("com.android.library")
 }
 
 group = "dev.buijs.klutter"
-version = "0.2.46"
+version = "0.2.49"
 
 kotlin {
 
@@ -19,21 +19,6 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
-//    val publicationsFromMainHost =
-//        listOf(android(), iosX64(), iosArm64(), iosSimulatorArm64())
-//            .map { it.name } + "kotlinMultiplatform"
-//
-//    publishing {
-//        publications {
-//            matching { it.name in publicationsFromMainHost }.all {
-//                val targetPublication = this@all
-//                tasks.withType<AbstractPublishToMaven>()
-//                    .matching { it.publication == targetPublication }
-//                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
-//            }
-//        }
-//    }
-
     cocoapods {
         summary = "Klutter module for annotations"
         homepage = "https://buijs.dev"
@@ -44,11 +29,31 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
+            }
+        }
 
-        val jvmMain by getting
-        val jvmTest by getting
+        val commonTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-common")
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+            }
+        }
+
+        val jvmTest by getting  {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit")
+            }
+        }
 
         val androidMain by getting
         val iosX64Main by getting
@@ -60,6 +65,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
         }
+
     }
 }
 
@@ -106,10 +112,6 @@ publishing {
                 password = pass
             }
         }
-    }
-
-    publications.withType<MavenPublication> {
-        artifactId = "annotations-kmp"
     }
 
 }

@@ -4,8 +4,7 @@ import java.io.File
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 internal class KlutterIosAdapterWriter {
 

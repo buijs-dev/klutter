@@ -2,8 +2,7 @@ package dev.buijs.klutter.core.adapter
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 internal class KlutterAndroidAdapterPrinter {
 

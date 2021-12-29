@@ -5,8 +5,7 @@ import dev.buijs.klutter.core.KlutterCodeGenerationException
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 private const val generatedAdapterImportLine = "import dev.buijs.klutter.adapter.GeneratedKlutterAdapter"
 private const val methodChannelImportLine = "import io.flutter.plugin.common.MethodChannel"

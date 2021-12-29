@@ -4,7 +4,6 @@ package dev.buijs.klutter.plugins
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import org.gradle.testkit.runner.GradleRunner
-import java.nio.file.Files
 import java.nio.file.Path
 
 /**
@@ -17,18 +16,8 @@ class KlutterAdapterPluginGradleTest : WordSpec({
 
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {
-            val projectDir = Files.createTempDirectory("")
-            val buildScript = projectDir.resolve("build.gradle.kts").toFile()
-
-            val androidAppDir = Path.of("").resolve("android/app").toAbsolutePath().toFile()
-            androidAppDir.mkdirs()
-
-            val flutterDir = Path.of("").resolve("flutter/lib").toAbsolutePath().toFile()
-            flutterDir.mkdirs()
-
-            val mainDartFile = flutterDir.resolve("main.dart").absoluteFile
-            mainDartFile.createNewFile()
-            mainDartFile.writeText("""
+            val project = KlutterTestProject()
+            project.flutterMainFile.writeText("""
                 import 'package:flutter/material.dart';
 
                 void main() {
@@ -53,7 +42,7 @@ class KlutterAdapterPluginGradleTest : WordSpec({
 
             """.trimIndent())
 
-            val sourcesDir = androidAppDir.resolve("FakeClass.kt").absoluteFile
+            val sourcesDir = project.androidAppDir.resolve("FakeClass.kt").absoluteFile
             sourcesDir.createNewFile()
             sourcesDir.writeText("""
                 package foo.bar.baz
@@ -82,9 +71,8 @@ class KlutterAdapterPluginGradleTest : WordSpec({
                 }
             """.trimIndent())
 
-            val mainActivityDir = androidAppDir.resolve(
-                Path.of("src", "main", "java", "foo",
-                    "bar", "baz", "appz").toFile())
+            val mainActivityDir = project.androidAppDir.resolve(
+                Path.of("src", "main", "java", "foo", "bar", "baz", "appz").toFile())
 
             mainActivityDir.mkdirs()
             val mainActivity = mainActivityDir.resolve("MainActivity.kt")
@@ -106,7 +94,7 @@ class KlutterAdapterPluginGradleTest : WordSpec({
                 }
             """.trimIndent())
 
-            val podspec = projectDir.toFile().resolve("somepod.spec").absoluteFile
+            val podspec = project.flutterDir.resolve("somepod.spec").absoluteFile
             podspec.createNewFile()
             podspec.writeText("""
                 Pod::Spec.new do |spec|
@@ -157,28 +145,26 @@ class KlutterAdapterPluginGradleTest : WordSpec({
             """.trimIndent())
 
 
-            buildScript.writeText("""
+            project.buildGradle.writeText("""
                 plugins {
                     id("dev.buijs.klutter.gradle")
                 }
 
                 klutter {
                     sources = listOf(File("$sourcesDir"))
-                    flutter = File("${flutterDir.absolutePath}")
-                    android = File("${androidAppDir.absolutePath}")
-                    ios = File("")
+                    flutter = File("${project.flutterDir.absolutePath}")
                     podspec = File("${podspec.absolutePath}")
                 }
 
             """.trimIndent())
 
             GradleRunner.create()
-                .withProjectDir(projectDir.toFile())
+                .withProjectDir(project.projectDir.toFile())
                 .withPluginClasspath()
                 .withArguments("generateAdapter")
                 .build()
 
-            val generatedFile = androidAppDir.resolve(
+            val generatedFile = project.androidAppDir.resolve(
                 Path.of("src", "main", "java", "dev", "buijs", "klutter", "adapter", "GeneratedKlutterAdapter.kt").toFile())
 
             generatedFile.exists()
@@ -231,12 +217,6 @@ class KlutterAdapterPluginGradleTest : WordSpec({
                     }
                 }
             """.filter { !it.isWhitespace() }
-
-            //cleanup
-            flutterDir.deleteRecursively()
-            androidAppDir.deleteRecursively()
-            Path.of("").resolve("android").toFile().delete()
-            Path.of("").resolve("flutter").toFile().delete()
 
         }
     }

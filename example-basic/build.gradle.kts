@@ -1,6 +1,11 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 buildscript {
+    apply(from = "klutter/.klutter/config.gradle.kts")
+
+    val kotlinVersion: String by project.extra
+    val gradleVersion: String by project.extra
+
     val file = File("${rootDir.absolutePath}/dev.properties").normalize()
 
     if(!file.exists()) {
@@ -25,6 +30,7 @@ buildscript {
     val endpoint = properties["private.repo.url"]
         ?:throw GradleException("missing private.repo.url in dev.properties")
 
+
     repositories {
         google()
         gradlePluginPortal()
@@ -39,17 +45,17 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.0.2")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("com.android.tools.build:gradle:$gradleVersion")
         classpath("com.github.ben-manes:gradle-versions-plugin:0.39.0")
-        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:0.2.43-pre-alpha")
+        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:0.3.9-pre-alpha")
     }
 
 }
 
 apply(plugin = "com.github.ben-manes.versions")
 
-tasks.register("clean", Delete::class) {
+tasks.register<Delete>("clean") {
     delete(rootProject.buildDir)
     dependsOn(tasks.withType<DependencyUpdatesTask>())
 }
@@ -57,7 +63,7 @@ tasks.register("clean", Delete::class) {
 tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
     checkForGradleUpdate = true
     outputFormatter = "json"
-    outputDir = ".klutter/dependencyUpdates"
+    outputDir = "klutter/.klutter/dependencyUpdates"
     reportfileName = "report"
 }
 

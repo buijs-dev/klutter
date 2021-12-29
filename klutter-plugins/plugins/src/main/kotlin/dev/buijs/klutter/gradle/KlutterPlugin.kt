@@ -2,7 +2,9 @@ package dev.buijs.klutter.gradle
 
 import dev.buijs.klutter.core.adapter.service.KlutterServiceBuilder
 import dev.buijs.klutter.core.adapter.service.KlutterServiceDTO
-import dev.buijs.klutter.core.adapter.service.KlutterServicesDSL
+import dev.buijs.klutter.gradle.tasks.AdapterTask
+import dev.buijs.klutter.gradle.tasks.KlutterGeneratePigeonsTask
+import dev.buijs.klutter.gradle.tasks.ConfigProducerTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -17,10 +19,11 @@ private const val ADAPTER_EXTENSION_NAME = "klutter"
 
 class KlutterAdapterPlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        project.tasks.create("generateAdapter", KlutterAdapterTask::class.java) {}
-        project.tasks.create("produceConfig", KlutterProduceConfigTask::class.java) {}
-        project.tasks.create("generateApi", KlutterGeneratePigeonsTask::class.java) {}
-        project.extensions.create(ADAPTER_EXTENSION_NAME, KlutterAdapterExtension::class.java, project)
+        project.extensions.create(ADAPTER_EXTENSION_NAME, KlutterAdapterExtension::class.java)
+        project.tasks.register("generateAdapter", AdapterTask::class.java)
+        project.tasks.register("generateAndroidBuildGradle", AdapterTask::class.java)
+        project.tasks.register("produceConfig", ConfigProducerTask::class.java)
+        project.tasks.register("generateApi", KlutterGeneratePigeonsTask::class.java)
     }
 }
 
@@ -34,8 +37,6 @@ open class KlutterAdapterExtension(project: Project) {
     private var servicesDto: KlutterServiceDTO? = null
 
     var sources: List<File> = emptyList()
-    var android: File? = null
-    var ios: File? = null
     var flutter: File? = null
     var podspec: File? = null
     var modules: List<File> = emptyList()

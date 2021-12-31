@@ -6,4 +6,6 @@ pluginManagement {
     }
 }
 
+include(":android")
 include(":klutter")
+include(":kmp")

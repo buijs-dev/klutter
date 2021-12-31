@@ -1,11 +1,11 @@
 package dev.buijs.klutter.core.config.yaml
 
-data class KlutterYamlProperty(
+data class YamlProperty(
     val key: String,
     val value: String,
-    val type: KlutterYamlPropertyType
+    val type: YamlPropertyType
 )
 
-enum class KlutterYamlPropertyType {
+enum class YamlPropertyType {
     Int, String
 }

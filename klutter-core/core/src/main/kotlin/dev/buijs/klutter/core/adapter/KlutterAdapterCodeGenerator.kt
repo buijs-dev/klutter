@@ -18,7 +18,7 @@ import java.io.File
  */
 class KlutterAdapterCodeGenerator(
     val context: Project,
-    val sources: List<File>,
+    val kmp: File,
     val android: File,
     val flutter: File,
     val podspec: File) {
@@ -27,7 +27,7 @@ class KlutterAdapterCodeGenerator(
 
     fun generate(): KlutterLogger {
 
-        val scannedSources = scanSources(sources)
+        val scannedSources = scanSources(kmp)
             .filter { it.content.contains("@KlutterAdaptee") }
 
         if(scannedSources.isEmpty()){
@@ -42,7 +42,7 @@ class KlutterAdapterCodeGenerator(
             .map { KlutterAndroidAdapterPrinter().print(it) }
             .forEach { KlutterAndroidAdapterWriter().write(android, it)}
 
-        val activityFile = scanSources(listOf(android))
+        val activityFile = scanSources(android)
             .filter { it.content.contains("@KlutterAdapter") }
 
         if(activityFile.isEmpty()){
@@ -63,20 +63,18 @@ class KlutterAdapterCodeGenerator(
         return logger
     }
 
-    private fun scanSources(directories: List<File>): List<FileContent> {
+    private fun scanSources(directory: File): List<FileContent> {
         val classes = mutableListOf<FileContent>()
 
-        directories.forEach { directory ->
-            logger.debug("Scanning for files in directory '$directory'")
-            if (directory.exists()) {
-                directory.walkTopDown().forEach { f ->
-                    if(f.isFile) {
-                        logger.debug("Found file '$f' in directory '$directory'")
-                        classes.add(FileContent(file = f, content = f.readText()))
-                    }
+        logger.debug("Scanning for files in directory '$directory'")
+        if (directory.exists()) {
+            directory.walkTopDown().forEach { f ->
+                if(f.isFile) {
+                    logger.debug("Found file '$f' in directory '$directory'")
+                    classes.add(FileContent(file = f, content = f.readText()))
                 }
-            } else logger.error("Failed to scan directory because it does not exist: '$directory'")
-        }
+            }
+        } else logger.error("Failed to scan directory because it does not exist: '$directory'")
 
         return classes
     }
@@ -106,10 +104,24 @@ class KlutterAdapterCodeGenerator(
                     if(it is KtClassBody){
                         logger.debug("Scanning KtClass '${clazz.name}' for @KlutterAdaptee annotation")
                         if(it.text.contains("@KlutterAdaptee")){
-                            defintions.addAll(KtFileScanner(
-                                clazz.fqName?.asString(),
-                                clazz.name?:"",
-                                it.text).scan())
+                            val scanned = KtFileScanner(clazz.fqName?.asString(), clazz.name?:"", it.text).scan()
+
+                            if(scanned.isEmpty()){
+                                logger.error("""
+                                    Scanning KtFile failed. Please check if the @KlutterAdaptee annotation is used correctly.
+                                    It should be placed on a function and have a name. 
+                                    
+                                    Example:
+                                    
+                                    @KlutterAdaptee(name = "fooBar")
+                                    fun someFoo(): NotBar {
+                                        return "foo!"
+                                    }
+                                    
+                                    """.trimIndent())
+                            }
+
+                            defintions.addAll(scanned)
                             logger.info("Found @KlutterAdaptee annotation in KtClass '${clazz.name}'")
                         }
                     }

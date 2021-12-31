@@ -2,12 +2,11 @@ package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.KlutterConfigException
 import dev.buijs.klutter.core.config.KlutterConfigProducer
-import dev.buijs.klutter.core.config.yaml.KlutterYamlProperty
-import dev.buijs.klutter.core.config.yaml.KlutterYamlReader
+import dev.buijs.klutter.core.config.yaml.YamlProperty
+import dev.buijs.klutter.core.config.yaml.YamlReader
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import java.io.File
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 /**
  * @author Gillian Buijs
@@ -22,8 +21,7 @@ open class ConfigProducerTask
      */
     override fun describe() {
         val properties = getProperties()
-        val klutter = project.rootDir.toPath().resolve("klutter").toFile()
-        val modules = mutableListOf(klutter)
+        val modules = mutableListOf(project.rootDir)
         modules.addAll(modules())
         modules.forEach { module ->
             if(module.exists()) {
@@ -33,18 +31,24 @@ open class ConfigProducerTask
         }
     }
 
-    private fun getProperties(): List<KlutterYamlProperty> {
-        val configYaml = getFile(filename = "klutter/klutter.yaml", failWhenNotExists = true)!!
-        val secretYaml = getFile(filename = "klutter/klutter-secrets.yaml", failWhenNotExists = false)
+    private fun getProperties(): List<YamlProperty> {
+        val configYaml = getFile("klutter/klutter.yaml", failWhenNotExists = true)!!
+        val localYaml  = getFile("klutter/klutter-local.yaml", failWhenNotExists = false)
+        val secretYaml = getFile("klutter/klutter-secrets.yaml", failWhenNotExists = false)
 
-        return if(secretYaml?.exists() == true){
-            val config = KlutterYamlReader().read(configYaml)
-            val secret = KlutterYamlReader().read(secretYaml)
-            mutableListOf<KlutterYamlProperty>().also {
-                it.addAll(config)
-                it.addAll(secret)
+        return mutableListOf<YamlProperty>().also {
+            YamlReader().read(configYaml).also {
+                properties -> it.addAll(properties)
             }
-        } else KlutterYamlReader().read(configYaml)
+
+            secretYaml?.let { yaml -> YamlReader().read(yaml) }.also { maybeProperties ->
+                maybeProperties?.let { properties -> it.addAll(properties) }
+            }
+
+            localYaml?.let { yaml -> YamlReader().read(yaml) }.also { maybeProperties ->
+                maybeProperties?.let { properties -> it.addAll(properties) }
+            }
+        }
 
     }
 

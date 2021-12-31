@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-class KlutterConfigProducerGradleTest : WordSpec({
+class ConfigProducerGradleTest : WordSpec({
 
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {
@@ -82,7 +82,10 @@ class KlutterConfigProducerGradleTest : WordSpec({
                 }
 
                 klutter {
-                    sources = listOf(File("$sourcesDir"))
+                    multiplatform {
+                        source = "$sourcesDir"
+                    }
+                    
                     flutter = File("${flutterDir.absolutePath}")
                     podspec = File("${podspec.absolutePath}")
                     modules = listOf(File("$moduleDir"))
@@ -93,13 +96,12 @@ class KlutterConfigProducerGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("produceConfig")
+                .withArguments("sync", "--stacktrace")
                 .build()
 
-            val generatedConfigFile = moduleDir.resolve(".klutter/config.gradle.kts").toPath().toFile()
-
-            generatedConfigFile.exists()
-            generatedConfigFile.readText().filter { !it.isWhitespace() } shouldBe """
+            val klutterGradleFile = moduleDir.resolve(".klutter/klutter.gradle.kts").toPath().toFile()
+            klutterGradleFile.exists()
+            klutterGradleFile.readText().filter { !it.isWhitespace() } shouldBe """
                 val appVersionCode: Int by project.extra { 1 }
                 val appVersionName: String by project.extra { "1.0.0" }
                 val appId: String by project.extra { "dev.buijs.klutter.example.basic" }
@@ -114,6 +116,25 @@ class KlutterConfigProducerGradleTest : WordSpec({
                 val gradleDependencyUpdates: String by project.extra { "0.36.0" }
                 val junitVersion: String by project.extra { "4.3.12" }
                 val okhttpVersion: String by project.extra { "4.10.0-RC1" }
+                """.filter { !it.isWhitespace() }
+
+            val klutterPropertiesFile = moduleDir.resolve(".klutter/klutter.properties").toPath().toFile()
+            klutterPropertiesFile.exists()
+            klutterPropertiesFile.readText().filter { !it.isWhitespace() } shouldBe """
+                app.version.code=1
+                app.version.name=1.0.0
+                app.id=dev.buijs.klutter.example.basic
+                android.sdk.minimum=21
+                android.sdk.compile=31
+                android.sdk.target=31
+                ios.version=13.0
+                flutter.sdk.version=2.5.3
+                flutter.sdk.distributionUrl=https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.5.3-stable.zip
+                kotlin.version=1.6.0
+                gradle.version=7.0.4
+                gradle.dependencyUpdates=0.36.0
+                junit.version=4.3.12
+                okhttp.version=4.10.0-RC1
                 """.filter { !it.isWhitespace() }
         }
     }

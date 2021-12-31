@@ -13,7 +13,7 @@ internal class AndroidBuildGradlePrinter(
     private val props: HashMap<String, String>,
     private val aarFileLocation: File,
     private val androidLocation: File,
-    ): KlutterPrinter {
+): KlutterPrinter {
 
     override fun print(): String {
 
@@ -24,6 +24,7 @@ internal class AndroidBuildGradlePrinter(
         val targetSdk: Int = get("android.sdk.target").toInt()
         val minSdk: Int = get("android.sdk.minimum").toInt()
         val kotlinVersion: String = get("kotlin.version").substringAfter("\"").substringBefore("\"")
+        val kmpAnnotationsVersion: String = get("klutter.annotations.kmp.version").substringAfter("\"").substringBefore("\"")
         val flutterSdk: String = get("flutter.sdk.location").substringAfter("\"").substringBefore("\"")
         val kmpAarFile: String = aarFileLocation.relativeTo(androidLocation).toString()
 
@@ -95,6 +96,7 @@ internal class AndroidBuildGradlePrinter(
             |
             |dependencies {
             |    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+            |    implementation 'dev.buijs.klutter:annotations-kmp-android:$kmpAnnotationsVersion'
             |    implementation files('$kmpAarFile')
             |}
             |

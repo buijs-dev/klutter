@@ -34,10 +34,25 @@ class AndroidBuildGradleGenerator(
         logger.info("Created build.gradle file in directory '$gradle'")
 
         val aarFile = root.resolve(".klutter/kmp.aar").toAbsolutePath().toFile()
-        val content = AndroidBuildGradlePrinter(properties, aarFile, android).print()
-        logger.debug("Created content for build.gradle file: \r\n $content")
-        AndroidBuildGradleWriter().write(gradle, content)
-        logger.info("Written content to build.gradle file in directory '$gradle'")
+        val writer = AndroidBuildGradleWriter()
+
+        AndroidBuildGradlePrinter(properties, aarFile, android).print().also { content ->
+            logger.debug("Created content for build.gradle file: \r\n $content")
+            writer.write(gradle, content)
+            logger.info("Written content to build.gradle file in directory '$gradle'")
+        }
+
+        AndroidRootBuildGradlePrinter(properties).print().also { content ->
+            logger.debug("Created content for root build.gradle file: \r\n $content")
+            val file = android.resolve("..").normalize().resolve("build.gradle")
+            if(!file.exists()) {
+                logger.error("Build.gradle file in android folder not found. Creating a new file!")
+                file.createNewFile()
+            }
+            writer.write(file, content)
+            logger.info("Written content to root build.gradle file in directory '$gradle'")
+        }
+
         return logger
     }
 

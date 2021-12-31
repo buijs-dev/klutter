@@ -45,10 +45,11 @@ abstract class KlutterGradleTask
 
     fun modules() = ext.modules.map{ source -> getFileSafely(source,"KMP sources") }
     fun podspec() = getFileSafely(ext.podspec,"KMP .podspec")
-    fun sources() = ext.sources.map{ source -> getFileSafely(source,"KMP sources") }
     fun flutter() = getFileSafely(ext.flutter,"flutter")
     fun android() = flutter().resolve("android/app")
     fun ios() = flutter().resolve("ios")
+
+    fun kmp() = getFileSafely(ext.getMultiplatformDto()?.source?.let { File(it) },"KMP source")
 
 }
 

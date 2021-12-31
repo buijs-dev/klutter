@@ -18,12 +18,21 @@ flutter:
       - version: "2.5.3"
       - distributionUrl: "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.5.3-stable.zip"
 
+klutter:
+  - gradle:
+    - plugin:
+      - version: "0.3.24-pre-alpha"
+  - annotations:
+    - kmp:
+      - version: "0.2.49"
+
 kotlin:
-  - version: "1.6.0"
+  - version: "1.6.10"
 
 gradle:
   - version: "7.0.4"
-  - dependencyUpdates: "0.36.0"
+  - dependencyUpdates: "0.39.0"
+  - kotlinDslVersion: "2.1.7"
 
 junit:
   - version: "4.3.12"

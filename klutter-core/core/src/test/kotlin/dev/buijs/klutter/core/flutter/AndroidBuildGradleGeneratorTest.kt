@@ -37,12 +37,13 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                 |app.version.code=2
                 |gradle.version=7.0.4
                 |flutter.sdk.location="Users/Foo/Bar/flutter/bin"
+                |klutter.annotations.kmp.version=0.2.49
             """.trimMargin())
 
             val sut = AndroidBuildGradleGenerator(projectDir, androidAppDir.toFile())
             val logging = sut.generate()
 
-            logging.messages().size shouldBe 3
+            logging.messages().size shouldBe 6
 
             val generatedGradleFile = androidAppDir.resolve("build.gradle").toFile()
             generatedGradleFile.exists() shouldBe true
@@ -115,6 +116,7 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                     
                     dependencies {
                         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
+                        implementation 'dev.buijs.klutter:annotations-kmp-android:0.2.49'
                         implementation files('../../../.klutter/kmp.aar')
                     }
 

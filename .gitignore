@@ -51,3 +51,7 @@ hs_err_pid*
 /klutter-annotations-kmp/annotations-kmp/annotations_kmp.podspec
 /example-basic/.klutter/
 /example-basic/kmp/.klutter/
+/example-basic/klutter-secrets.yaml
+/example-basic/android/.klutter/
+/example-basic/android/app/.klutter/
+/example-basic/kmp/common/.klutter/

@@ -31,12 +31,11 @@ class KlutterAdapterPluginTest : WordSpec({
             project.adapter() shouldNotBe null
 
             //when
-            project.adapter().sources = listOf(File("."))
+            project.adapter().multiplatform { source = "la source" }
             project.adapter().flutter = File("flutter")
 
             //then
-            project.adapter().sources.isNotEmpty()
-            project.adapter().sources shouldBe  listOf(File("."))
+            project.adapter().getMultiplatformDto()?.source shouldBe "la source"
             project.adapter().flutter shouldBe File("flutter")
 
         }

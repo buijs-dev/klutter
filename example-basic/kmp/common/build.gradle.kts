@@ -1,3 +1,5 @@
+apply(from = ".klutter/klutter.gradle.kts")
+
 plugins {
     id("com.android.library")
     kotlin("multiplatform")

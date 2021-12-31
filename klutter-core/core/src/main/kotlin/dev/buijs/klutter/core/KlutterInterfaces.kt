@@ -17,3 +17,13 @@ interface KlutterPrinter { fun print(): String }
  * Utility interface which uses the KlutterPrinter and KlutterWriter for code generation.
  */
 interface KlutterCodeGenerator { fun generate(): KlutterLogger }
+
+/**
+ * Utility interface which creates a klutter file
+ */
+interface KlutterProducer { fun produce() }
+
+/**
+ * Utility interface which processes a given file and may or may not change it's content
+ */
+interface KlutterVisitor { fun visit() }

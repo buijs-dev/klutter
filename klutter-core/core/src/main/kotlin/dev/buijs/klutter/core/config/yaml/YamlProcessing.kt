@@ -10,28 +10,26 @@ import dev.buijs.klutter.core.log.KlutterLogger
  *
  */
 private var log: KlutterLogger? = null
-private var keyParts: MutableList<String> = mutableListOf()
+private val keyPartsProcessor: KeyPartsProcessor = KeyPartsProcessor()
 
 /**
  * Superclass to control processing of YAML file.
  */
 abstract class YamlProcesStep {
 
-
     abstract fun execute(): YamlProcesStep?
 
     abstract fun hasNext(): Boolean
 
-    open fun property(): KlutterYamlProperty? = null
+    open fun property(): YamlProperty? = null
 
     fun getLogger(): KlutterLogger {
 
-        if(log == null) {
+        if(log == null){
             log = KlutterLogger()
         }
 
         return log as KlutterLogger
-
     }
 
     fun setLogger(logger: KlutterLogger){ log = logger }
@@ -45,7 +43,7 @@ class YamlProcesStepStart(private val line: String): YamlProcesStep() {
     override fun execute(): YamlProcesStep {
         if(line == "") return YamlProcesEmptyLine()
 
-        getLogger().debug(yamlMessage("Current (sub) key is ==> '${keyParts.joinToString(".")}'"))
+        getLogger().debug(yamlMessage("Current (sub) key is ==> '${keyPartsProcessor.toKey()}'"))
         getLogger().debug(yamlMessage("Processing YAML line ==> '$line'"))
 
         //every nested line contains a '-' char so
@@ -106,10 +104,7 @@ class YamlProcesAsSubHeader(
         getLogger().debug(yamlMessage("Current line in YAML has indenting and no value."))
         getLogger().debug(yamlMessage("Procesing line as a sub header ==> '${splitted.joinToString { ":" }}'"))
 
-       keyParts
-           .mapIndexed { index, s -> Pair(index, s) }
-           .filter { it.first < index }
-           .map { it.second }
+        keyPartsProcessor.clearAfterIndex(index)
 
         val sub = splitted[0]
             .filter { !it.isWhitespace() }
@@ -117,8 +112,8 @@ class YamlProcesAsSubHeader(
             .removeSuffix(":")
 
         getLogger().debug(yamlMessage("Extracted sub header part of line ==> $sub"))
-        keyParts.add(sub)
-        getLogger().debug(yamlMessage("Current (sub) key is ==> '${keyParts.joinToString(".")}'"))
+        keyPartsProcessor.add(sub)
+        getLogger().debug(yamlMessage("Current (sub) key is ==> '${keyPartsProcessor.toKey()}'"))
         return YamlProcesStepSuccess()
     }
 }
@@ -136,23 +131,14 @@ class YamlProcesCreateProperty(
 
         //count spaces from start of line until char '-' and divide by 2 to get the level of indenting
         val indenting = line.substringBefore("-").toCharArray().size.div(2)
+        val keyPrefix = keyPartsProcessor.toSubKey(indenting)
+        val type: YamlPropertyType
 
-        var keyPrefix = ""
-
-        if(!keyParts.isEmpty()){
-            keyPrefix = keyParts[0]
-            keyParts.forEachIndexed { index, s ->
-                if(index in 1 until indenting) {
-                    keyPrefix += ".$s" }
-            }
-        }
-
-        val type: KlutterYamlPropertyType
         val value = if (line.contains('"')) {
-            type = KlutterYamlPropertyType.String
+            type = YamlPropertyType.String
             line.substringAfter('"').substringBeforeLast('"')
         } else {
-            type = KlutterYamlPropertyType.Int
+            type = YamlPropertyType.Int
             splitted[1].filter { !it.isWhitespace() }
         }
 
@@ -163,7 +149,7 @@ class YamlProcesCreateProperty(
                 .removeSuffix(":")
         }"
 
-        val property = KlutterYamlProperty(
+        val property = YamlProperty(
             key = name,
             value = value,
             type = type
@@ -176,22 +162,20 @@ class YamlProcesCreateProperty(
 
 }
 
-
 class YamlProcesNewBlock(private val line: String): YamlProcesStep() {
 
     override fun hasNext(): Boolean = true
 
     override fun execute(): YamlProcesStep {
         getLogger().debug(yamlMessage(("Current line in YAML starts a new property block.")))
-        keyParts = mutableListOf()
-        keyParts.add(line.filter { !it.isWhitespace() }.removeSuffix(":"))
-        getLogger().debug(yamlMessage("Cleared the (sub) keys and added new key ==> '${keyParts.joinToString(".")}'"))
+        keyPartsProcessor.clear()
+        keyPartsProcessor.add(line.filter { !it.isWhitespace() }.removeSuffix(":"))
+        getLogger().debug(yamlMessage("Cleared the (sub) keys and added new key ==> '${keyPartsProcessor.toKey()}'"))
         return YamlProcesStepSuccess()
     }
 }
 
-
-class YamlProcesStepSuccess(val property: KlutterYamlProperty? = null): YamlProcesStep() {
+class YamlProcesStepSuccess(val property: YamlProperty? = null): YamlProcesStep() {
     override fun hasNext() = false
 
     override fun execute(): YamlProcesStep? {
@@ -206,4 +190,31 @@ class YamlProcesStepFailed(private val message: String): YamlProcesStep() {
     override fun hasNext() = true
 
     override fun execute() = throw KlutterConfigException(message)
+}
+
+internal class KeyPartsProcessor {
+    private var keyParts: MutableList<String> = mutableListOf()
+
+    fun add(part: String) = keyParts.add(part)
+
+    fun toKey(): String = keyParts.joinToString(".")
+
+    fun toSubKey(indenting: Int): String {
+        return if(keyParts.isNotEmpty()){
+            var keyPrefix = keyParts[0]
+            keyParts.forEachIndexed { index, s -> if(index in 1 until indenting) { keyPrefix += ".$s" } }
+            keyPrefix
+        } else ""
+    }
+
+    fun clear() = keyParts.clear()
+
+    fun clearAfterIndex(indenting: Int){
+        val temp = mutableListOf<String>()
+        val until = indenting - 1
+        keyParts.forEachIndexed { index, s -> if(index < until) temp.add(s) }
+        keyParts.clear()
+        keyParts.addAll(temp)
+    }
+
 }

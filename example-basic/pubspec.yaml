@@ -1,5 +1,5 @@
-name: Klutter Example Basic
-description: Basic Klutter App
+name: klutter_example_basic
+description: Example app build with Klutter
 version: 1.0.0+1
 
 environment:

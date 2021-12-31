@@ -151,7 +151,9 @@ class KlutterAdapterPluginGradleTest : WordSpec({
                 }
 
                 klutter {
-                    sources = listOf(File("$sourcesDir"))
+                    multiplatform {
+                        source = "$sourcesDir"
+                    }
                     flutter = File("${project.flutterDir.absolutePath}")
                     podspec = File("${podspec.absolutePath}")
                 }

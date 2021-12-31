@@ -8,8 +8,7 @@ import java.nio.file.Files
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  *
  */
 class KlutterActivityPrinterTest : WordSpec({
@@ -140,7 +139,62 @@ class KlutterActivityPrinterTest : WordSpec({
                 
                 }""".filter { !it.isWhitespace() }
         }
-    }
 
+        "Append entire configureFlutterEngine function if its missing" {
+
+            mainActivity.createNewFile()
+            mainActivity.writeText(
+                """
+            package foo.bar.baz.appz
+
+
+            import io.flutter.embedding.android.FlutterActivity
+            
+            @KlutterAdapter
+            class MainActivity: FlutterActivity() {
+            
+                fun someOtherMethod(): String {}
+
+            }
+        """.trimIndent())
+
+            val content = KtFileContent(
+                file = mainActivity,
+                ktFile = mock(),
+                content = mainActivity.readText()
+            )
+
+
+            val actual = sut.print(content)
+
+            actual.content shouldNotBe null
+            actual.content.filter { !it.isWhitespace() } shouldBe """
+            package foo.bar.baz.appz
+
+
+            import io.flutter.plugins.GeneratedPluginRegistrant
+            import io.flutter.embedding.engine.FlutterEngine
+            import androidx.annotation.NonNull
+            import dev.buijs.klutter.adapter.GeneratedKlutterAdapter
+            import io.flutter.plugin.common.MethodChannel
+            import io.flutter.embedding.android.FlutterActivity
+            
+            @KlutterAdapter
+            class MainActivity: FlutterActivity() {
+            
+                override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+                    MethodChannel(flutterEngine.dartExecutor,"KLUTTER")
+                        .setMethodCallHandler{ call, result ->
+                            GeneratedKlutterAdapter().handleMethodCalls(call, result)
+                        }
+                    GeneratedPluginRegistrant.registerWith(flutterEngine)
+                }
+            
+                fun someOtherMethod(): String {}
+
+            }""".filter { !it.isWhitespace() }
+        }
+
+    }
 
 })

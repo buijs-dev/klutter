@@ -20,7 +20,9 @@ plugins {
 }
 
 klutteradapter {
-    sources = listOf("root/kotlinlibrary", "dir2")
+    multiplatform {
+        source = "root/kotlinlibrary"
+    } 
     flutter = "root/flutterproj/lib"
     android = "root/flutterproj/android/app"
     ios = "root/flutterproj/ios"

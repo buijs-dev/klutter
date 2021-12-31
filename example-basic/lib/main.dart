@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String platform = '?';
 
   void _incrementCounter() async {
-    platform = await Adapter.getPlatform??"";
+    platform = await Adapter.getGreeting??"";
     setState(() {
       _counter++;
     });

@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "dev.buijs.klutter"
-version = "0.3.9-pre-alpha"
+version = "0.3.24-pre-alpha"
 
 plugins {
     id("java-gradle-plugin")
@@ -13,7 +13,7 @@ plugins {
 pluginBundle {
     website = "https://buijs.dev/klutter/"
     vcsUrl = "https://github.com/buijs-dev/klutter"
-    tags = listOf("flutter", "kotlin", "multiplatform", "klutter")
+    tags = listOf("klutter", "flutter", "kotlin", "multiplatform")
 }
 
 gradlePlugin {
@@ -66,7 +66,7 @@ publishing {
 
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.2.32")
-    implementation("dev.buijs.klutter:core:0.3.9")
+    implementation("dev.buijs.klutter:core:0.3.19")
     implementation(kotlin("stdlib", "1.6.10"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 

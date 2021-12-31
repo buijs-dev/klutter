@@ -27,7 +27,7 @@ open class AdapterTask
     override fun describe() {
         val logging = KlutterAdapterCodeGenerator(
             context = context,
-            sources = sources(),
+            kmp = kmp(),
             android = android(),
             flutter = flutter(),
             podspec = podspec()

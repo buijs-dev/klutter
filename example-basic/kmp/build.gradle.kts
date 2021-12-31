@@ -1,86 +1,21 @@
 buildscript {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
-
-    if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
-    }
-
-    val properties = HashMap<String, String>()
-
-    file.forEachLine {
-        val pair = it.split("=")
-        if(pair.size == 2){
-            properties[pair[0]] = pair[1]
-        }
-    }
-
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
-
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
-
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
-
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-        maven {
-            url = uri(endpoint)
-            credentials {
-                username = user
-                password = pass
+    apply(from = ".klutter/klutter.gradle.kts").also {
+        repositories {
+            gradlePluginPortal()
+            google()
+            mavenCentral()
+            maven {
+                url = uri(project.extra["privateRepoUrl"] as String)
+                credentials {
+                    username = project.extra["privateRepoUsername"] as String
+                    password = project.extra["privateRepoPassword"] as String
+                }
             }
         }
-    }
 
-    apply(from = "./.klutter/config.gradle.kts")
-
-    val kotlinVersion: String by project.extra
-    val gradleVersion: String by project.extra
-
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.android.tools.build:gradle:$gradleVersion")
-    }
-}
-
-allprojects {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
-
-    if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
-    }
-
-    val properties = HashMap<String, String>()
-
-    file.forEachLine {
-        val pair = it.split("=")
-        if(pair.size == 2){
-            properties[pair[0]] = pair[1]
-        }
-    }
-
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
-
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
-
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
-
-    repositories {
-        google()
-        mavenCentral()
-        maven {
-            url = uri(endpoint)
-            credentials {
-                username = user
-                password = pass
-            }
+        dependencies {
+            classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.extra["kotlinVersion"]}")
+            classpath("com.android.tools.build:gradle:${project.extra["gradleVersion"]}")
         }
     }
 }

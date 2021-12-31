@@ -14,24 +14,24 @@ import java.io.File
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-private const val ADAPTER_EXTENSION_NAME = "klutter"
+private const val EXTENSION_NAME = "klutter"
 
-class KlutterAdapterPlugin: Plugin<Project> {
+class KlutterPlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create(ADAPTER_EXTENSION_NAME, KlutterAdapterExtension::class.java)
+        project.extensions.create(EXTENSION_NAME, KlutterExtension::class.java)
         project.tasks.register("generateAdapter", AdapterTask::class.java)
         project.tasks.register("generateAndroidBuildGradle", GenerateAndroidGradleTask::class.java)
-        project.tasks.register("sync", ConfigProducerTask::class.java)
+        project.tasks.register("synchronize", ConfigProducerTask::class.java)
         project.tasks.register("generateApi", KlutterGeneratePigeonsTask::class.java)
         project.tasks.register("buildDebug", BuildDebugTask::class.java)
     }
 }
 
-internal fun Project.adapter(): KlutterAdapterExtension =
-    extensions.getByName(ADAPTER_EXTENSION_NAME) as? KlutterAdapterExtension
-        ?: throw IllegalStateException("$ADAPTER_EXTENSION_NAME is not of the correct type")
+internal fun Project.adapter(): KlutterExtension =
+    extensions.getByName(EXTENSION_NAME) as? KlutterExtension
+        ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
 
-open class KlutterAdapterExtension(project: Project) {
+open class KlutterExtension(project: Project) {
 
     private val root = project.rootDir
     private var servicesDto: KlutterServiceDTO? = null

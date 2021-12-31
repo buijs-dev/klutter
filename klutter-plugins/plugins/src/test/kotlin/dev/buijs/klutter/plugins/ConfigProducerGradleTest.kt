@@ -96,7 +96,7 @@ class ConfigProducerGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("sync", "--stacktrace")
+                .withArguments("synchronize", "--stacktrace")
                 .build()
 
             val klutterGradleFile = moduleDir.resolve(".klutter/klutter.gradle.kts").toPath().toFile()

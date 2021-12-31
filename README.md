@@ -1,3 +1,5 @@
+![This is an image](example-basic/assets/metadata/icon/banner.png)
+
 # Klutter
 
 Klutter is a framework and tool set which uses Flutter to create the frontend

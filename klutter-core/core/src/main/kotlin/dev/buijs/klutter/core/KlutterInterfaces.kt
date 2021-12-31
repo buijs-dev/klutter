@@ -1,6 +1,5 @@
 package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.log.KlutterLogger
 import java.io.File
 
  /** Utility interface which takes (generated) file content and writes it to a file.

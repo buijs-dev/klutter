@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "dev.buijs.klutter"
-version = "0.3.24-pre-alpha"
+version = "0.3.28-pre-alpha"
 
 plugins {
     id("java-gradle-plugin")
@@ -22,7 +22,7 @@ gradlePlugin {
             id = "dev.buijs.klutter.gradle"
             displayName = "Klutter plugin to generate boilerplate for connecting Flutter and Kotlin Multiplatform"
             description = "The klutterPlugin generates the MethodChannel code used by the Flutter frontend to communicate with Kotlin Multiplatform backend."
-            implementationClass = "dev.buijs.klutter.gradle.KlutterAdapterPlugin"
+            implementationClass = "dev.buijs.klutter.gradle.KlutterPlugin"
         }
     }
 }
@@ -66,7 +66,7 @@ publishing {
 
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.2.32")
-    implementation("dev.buijs.klutter:core:0.3.19")
+    implementation("dev.buijs.klutter:core:0.3.20")
     implementation(kotlin("stdlib", "1.6.10"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 

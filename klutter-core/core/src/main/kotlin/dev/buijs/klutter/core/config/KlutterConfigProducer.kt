@@ -1,8 +1,8 @@
 package dev.buijs.klutter.core.config
 
 import dev.buijs.klutter.core.KlutterConfigException
-import dev.buijs.klutter.core.config.yaml.YamlProperty
-import dev.buijs.klutter.core.log.KlutterLogger
+import dev.buijs.klutter.core.KlutterProducer
+import dev.buijs.klutter.core.KlutterLogger
 import java.nio.file.Path
 import kotlin.io.path.exists
 
@@ -11,15 +11,16 @@ import kotlin.io.path.exists
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-class KlutterConfigProducer {
+class KlutterConfigProducer(
+    private val module: Path,
+    private val properties: List<YamlProperty>): KlutterProducer {
 
-    private val logger = KlutterLogger()
+    val logger = KlutterLogger()
 
-    fun produce(module: Path, properties: List<YamlProperty>): KlutterLogger {
+    override fun produce() {
         val directory = createKlutterDirectory(module)
         KlutterGradleProducer(directory, properties, logger).produce()
         KlutterPropertiesProducer(directory, properties, logger).produce()
-        return logger
     }
 
     private fun createKlutterDirectory(root: Path): Path {

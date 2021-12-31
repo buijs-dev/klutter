@@ -2,8 +2,8 @@ package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.KlutterConfigException
 import dev.buijs.klutter.core.config.KlutterConfigProducer
-import dev.buijs.klutter.core.config.yaml.YamlProperty
-import dev.buijs.klutter.core.config.yaml.YamlReader
+import dev.buijs.klutter.core.config.YamlProperty
+import dev.buijs.klutter.core.config.YamlReader
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import java.io.File
 import javax.inject.Inject
@@ -22,11 +22,12 @@ open class ConfigProducerTask
     override fun describe() {
         val properties = getProperties()
         val modules = mutableListOf(project.rootDir)
-        modules.addAll(modules())
+        modules.addAll(modules()?: emptyList())
         modules.forEach { module ->
             if(module.exists()) {
-                val logging = KlutterConfigProducer().produce(module.toPath(), properties)
-                logger.messages().addAll(logging.messages())
+                val producer = KlutterConfigProducer(module.toPath(), properties)
+                producer.produce()
+                logger.merge(producer.logger)
             } else logger.error("Module directory does not exist: ${module.absolutePath}")
         }
     }

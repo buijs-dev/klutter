@@ -1,9 +1,6 @@
 package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.core.adapter.service.KlutterServiceBuilder
-import dev.buijs.klutter.core.adapter.service.KlutterServiceDTO
-import dev.buijs.klutter.core.multiplatform.MultiplatformBuilder
-import dev.buijs.klutter.core.multiplatform.MultiplatformDTO
+import dev.buijs.klutter.gradle.dsl.*
 import dev.buijs.klutter.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -31,25 +28,31 @@ internal fun Project.adapter(): KlutterExtension =
     extensions.getByName(EXTENSION_NAME) as? KlutterExtension
         ?: throw IllegalStateException("$EXTENSION_NAME is not of the correct type")
 
-open class KlutterExtension(project: Project) {
+open class KlutterExtension(private val project: Project) {
 
-    private val root = project.rootDir
     private var servicesDto: KlutterServiceDTO? = null
-    private var multiplatformDto: MultiplatformDTO? = null
+    private var multiplatformDto: KlutterMultiplatformDTO? = null
+    private var modulesDto: KlutterModulesDTO? = null
+
 
     var flutter: File? = null
     var podspec: File? = null
-    var modules: List<File> = emptyList()
 
     fun services(lambda: KlutterServiceBuilder.() -> Unit) {
         servicesDto = KlutterServiceBuilder().apply(lambda).build()
     }
 
-    fun multiplatform(lambda: MultiplatformBuilder.() -> Unit) {
-        multiplatformDto = MultiplatformBuilder().apply(lambda).build()
+    fun multiplatform(lambda: KlutterMultiplatformBuilder.() -> Unit) {
+        multiplatformDto = KlutterMultiplatformBuilder().apply(lambda).build()
+    }
+
+    fun modules(lambda: KlutterModulesBuilder.() -> Unit) {
+        modulesDto = KlutterModulesBuilder(project.rootProject.rootDir).apply(lambda).build()
     }
 
     internal fun getServicesDto() = servicesDto
 
     internal fun getMultiplatformDto() = multiplatformDto
+
+    internal fun getModulesDto() = modulesDto
 }

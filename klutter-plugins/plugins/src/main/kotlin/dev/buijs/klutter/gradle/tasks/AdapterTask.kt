@@ -2,7 +2,7 @@ package dev.buijs.klutter.gradle.tasks
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import com.intellij.openapi.util.Disposer
-import dev.buijs.klutter.core.adapter.KlutterAdapterCodeGenerator
+import dev.buijs.klutter.core.adapter.AdapterCodeGenerator
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -25,7 +25,7 @@ open class AdapterTask
     }
 
     override fun describe() {
-        val logging = KlutterAdapterCodeGenerator(
+        val logging = AdapterCodeGenerator(
             context = context,
             kmp = kmp(),
             android = android(),

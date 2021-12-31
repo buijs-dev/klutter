@@ -1,7 +1,7 @@
 package dev.buijs.klutter.gradle.utils
 
-import dev.buijs.klutter.core.log.KlutterLogLevel
-import dev.buijs.klutter.core.log.KlutterLogger
+import dev.buijs.klutter.core.KlutterLogLevel
+import dev.buijs.klutter.core.KlutterLogger
 import org.gradle.internal.logging.text.StyledTextOutput
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 

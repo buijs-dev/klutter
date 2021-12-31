@@ -1,7 +1,7 @@
 package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.KlutterConfigException
-import dev.buijs.klutter.core.log.KlutterLogger
+import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.gradle.utils.GradleLoggingWrapper
 import dev.buijs.klutter.gradle.adapter
 import org.gradle.api.DefaultTask
@@ -43,10 +43,17 @@ abstract class KlutterGradleTask
         }
     }
 
-    fun modules() = ext.modules.map{ source -> getFileSafely(source,"KMP sources") }
+    fun modules() = ext.getModulesDto()
+        ?.modules
+        ?.map { File(it) }
+        ?.map{ source -> getFileSafely(source,"Klutter modules") }
+
     fun podspec() = getFileSafely(ext.podspec,"KMP .podspec")
+
     fun flutter() = getFileSafely(ext.flutter,"flutter")
+
     fun android() = flutter().resolve("android/app")
+
     fun ios() = flutter().resolve("ios")
 
     fun kmp() = getFileSafely(ext.getMultiplatformDto()?.source?.let { File(it) },"KMP source")

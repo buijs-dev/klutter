@@ -1,8 +1,7 @@
 package dev.buijs.klutter.core.config
 
+import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterProducer
-import dev.buijs.klutter.core.config.yaml.YamlProperty
-import dev.buijs.klutter.core.log.KlutterLogger
 import java.nio.file.Path
 
 class KlutterPropertiesProducer(

@@ -1,6 +1,6 @@
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.core.adapter.service.PigeonDartCodeGenerator
+import dev.buijs.klutter.gradle.utils.PigeonDartCodeGenerator
 import dev.buijs.klutter.gradle.utils.runCommand
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import javax.inject.Inject

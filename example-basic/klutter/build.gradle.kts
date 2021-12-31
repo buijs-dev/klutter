@@ -16,13 +16,14 @@ klutter {
 
     flutter = File("$root")
     podspec = File("$root/kmp/common/common.podspec")
-    modules = listOf(
-        File("$root/klutter"),
-        File("$root/kmp"),
-        File("$root/kmp/common"),
-        File("$root/android"),
-        File("$root/android/app")
-    )
+
+    modules {
+        module("klutter")
+        module("kmp")
+        module("kmp/common")
+        module("android")
+        module("android/app")
+    }
 
     services {
         api("PlatformApi") {

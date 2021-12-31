@@ -2,8 +2,8 @@ package dev.buijs.klutter.core.flutter
 
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterCodeGenerator
-import dev.buijs.klutter.core.log.KlutterLogger
-import dev.buijs.klutter.core.utils.readPropertiesFromFile
+import dev.buijs.klutter.core.KlutterLogger
+import dev.buijs.klutter.core.KlutterPropertiesReader
 import java.io.File
 import java.nio.file.Path
 
@@ -19,7 +19,7 @@ class AndroidBuildGradleGenerator(
     private var logger = KlutterLogger()
 
     override fun generate(): KlutterLogger {
-        val properties = readPropertiesFromFile(root.resolve(".klutter/klutter.properties").toAbsolutePath().toFile())
+        val properties = KlutterPropertiesReader(root.resolve(".klutter/klutter.properties").toAbsolutePath().toFile()).read()
 
         if(!android.exists()){
             throw KlutterCodeGenerationException("Android directory does not exist: ${android.absolutePath}")
@@ -42,7 +42,7 @@ class AndroidBuildGradleGenerator(
             logger.info("Written content to build.gradle file in directory '$gradle'")
         }
 
-        AndroidRootBuildGradlePrinter(properties).print().also { content ->
+        AndroidBuildRootGradlePrinter(properties).print().also { content ->
             logger.debug("Created content for root build.gradle file: \r\n $content")
             val file = android.resolve("..").normalize().resolve("build.gradle")
             if(!file.exists()) {

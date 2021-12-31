@@ -18,7 +18,7 @@ class AndroidBuildGradleWriter: KlutterWriter {
         if(!file.exists()){
             throw KlutterCodeGenerationException(
                 "The given path to $file folder does not exist. " +
-                "Make sure the given path in the KlutterAdapterPlugin is an absolute path pointing " +
+                "Make sure the given path in the KlutterPlugin is an absolute path pointing " +
                 "to the android/app folder in the flutter root project.")
         } else file.delete()
 

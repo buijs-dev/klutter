@@ -1,10 +1,8 @@
 package dev.buijs.klutter.core.config
 
+import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterProducer
-import dev.buijs.klutter.core.adapter.service.KotlinType
-import dev.buijs.klutter.core.config.yaml.YamlProperty
-import dev.buijs.klutter.core.config.yaml.YamlPropertyType
-import dev.buijs.klutter.core.log.KlutterLogger
+import dev.buijs.klutter.core.KotlinType
 import java.nio.file.Path
 
 class KlutterGradleProducer(

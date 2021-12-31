@@ -7,7 +7,7 @@ for everything from app design to CICD into a single cohesive framework.
 
 ## Project structure
 
-A typical project structure is as below. For the simplest example see [project example-basic](example-basic)
+A typical project structure is as below. For the simplest example see project [example-basic](example-basic)
 
 ```
 project

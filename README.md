@@ -7,7 +7,7 @@ and Kotlin Multiplatform for the backend. The connective layer is generated
 by the Klutter framework. Klutter combines industry best practices
 for everything from app design to CICD into a single cohesive framework.
 
-#Klutter is in PRE-ALPHA stage!
+# Klutter is in PRE-ALPHA stage!
 
 ## Project structure
 

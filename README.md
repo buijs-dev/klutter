@@ -55,14 +55,18 @@ To do this a set of tasks is available:
   - buildDebug
 
 ### Task: synchronize
-The synchronize task takes all yaml files in the klutter directory, merges them and creates 2 files: 
+The klutter module is the single source of truth of the project. Dependency versions, repositories, etc. 
+are all configured in the klutter module using yaml files.  The synchronize task takes all these yaml 
+files in the klutter directory, merges them and creates 2 files:
 - klutter.gradle.kts
 - klutter.properties
 
-These files are created in the klutter/.klutter directory. Any existing klutter.gradle.kts or
-klutter.properties file in this directory will be overwritten. Do <b>not</b> manually edit these files!
-Next the plugin will find all modules configured by the Klutter Plugin. A .klutter directory
-with klutter.gradle.kts and klutter.properties will be created in each module. 
+These files are created in the klutter/.klutter directory. Any existing klutter.gradle.kts or  
+klutter.properties file in this directory will be overwritten. Do <b>not</b> manually edit these files!  
+Next the plugin will find all modules configured by the Klutter Plugin. A .klutter directory 
+with klutter.gradle.kts and klutter.properties will be created in each module.
+
+More info: [Configuration management in Klutter](documentation/doc_configuration_management.md)
 
 #### Setup modules
 Example of a modules block:
@@ -109,6 +113,27 @@ to 'false'.
 If the klutter plugin is configured in build.gradle.kts file in directory
 "C:/Users/Anakin/MyProject/fancyapp/klutter" then setting the root this way will
 resolve module("kmp") to the absolute path "C:/Users/Anakin/foo/bar/kmp".
+
+
+#### Add configuration
+The klutter module is the single source of truth of the project.   Dependency versions, repositories, etc. are all configured in the klutter module using yaml files. Why
+
+This can be setup by adding and editting klutter.yaml files. There are 3 types of yaml files:
+- klutter.yaml
+- klutter-local.yaml
+- klutter-secrets.yaml
+
+##### klutter.yaml
+Mandatory file which contains the global project setup, dependency versions etc.
+
+##### klutter-local.yaml
+Optional (but recommended) file to store user-dependent configuration. For example
+the (absolute) location of SDK's. Should not be saved in version controle.
+
+##### klutter-secrets.yaml
+Optional (but recommended) file to store sensitive information. For example credentials, keystore (location), etc.
+
+
 
 #### Use configuration
 Because the synchronize task adds the generated configuration files to each module,

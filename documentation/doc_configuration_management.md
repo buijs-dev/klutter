@@ -124,8 +124,5 @@ def kProps = new Properties()
 
 1. Add repository management 
 2. Add klutter-ci.yaml for CI-CD configuration
-3. Add functionality for managing secrets 
-   Read env variables
-   Encode secrets with generated key
-   Get secrets from cloud service
+3. Add functionality for managing secrets: read env variables, encode secrets with generated key, get secrets from cloud service
    

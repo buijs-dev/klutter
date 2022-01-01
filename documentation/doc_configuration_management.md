@@ -1,9 +1,9 @@
 # Configuration management in Klutter
 
 Klutter has it's own way of managing project configuration. Here we talk about:
-1. [Underlaying principles of Klutter configuration management](#Underlaying principles of Klutter configuration management)
-2. [Brief summary of usage](#Brief summary of usage)
-3. [Future improvements](#Future improvements)
+1. [Underlaying principles of Klutter configuration management](#Underlaying-principles-of-Klutter-configuration-management)
+2. [Brief summary of usage](#Brief-summary-of-usage)
+3. [Future improvements](#Future-improvements)
 
 
 ## Underlaying principles of Klutter configuration management
@@ -120,7 +120,7 @@ def kProps = new Properties()
 ```
 
 
-#Future improvements
+# Future improvements
 
 1. Add repository management 
 2. Add klutter-ci.yaml for CI-CD configuration

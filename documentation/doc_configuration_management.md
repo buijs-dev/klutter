@@ -45,7 +45,7 @@ Why? A change in the SSOT should update all dependens. If this is not guaranteed
 entire project is compliant, meaning dependency issues can arise or worse.
 
 
-#Brief summary of usage
+# Brief summary of usage
 Configuration is setup by using yaml files in the klutter module. There are 3 types of yaml files:
 - klutter.yaml
 - klutter-local.yaml

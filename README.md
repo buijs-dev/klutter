@@ -1,7 +1,7 @@
 ![This is an image](example-basic/assets/metadata/icon/banner.png)
 
 # Klutter
-![GitHub](https://img.shields.io/github/license/buijs-dev/klutter/blob/main/LICENSE)
+![License](https://img.shields.io/github/license/buijs-dev/klutter)
 
 
 Klutter is a framework and tool set which uses Flutter to create the frontend

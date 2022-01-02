@@ -1,8 +1,7 @@
 ![This is an image](example-basic/assets/metadata/icon/banner.png)
 
 # Klutter
-![License](https://img.shields.io/github/license/buijs-dev/klutter)
-
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated
@@ -68,7 +67,7 @@ klutter.properties file in this directory will be overwritten. Do <b>not</b> man
 Next the plugin will find all modules configured by the Klutter Plugin. A .klutter directory 
 with klutter.gradle.kts and klutter.properties will be created in each module.
 
-More info: [Configuration management in Klutter](documentation/doc_configuration_management.md)
+More info: [Configuration management in Klutter](.documentation/doc_configuration_management.md)
 
 #### Setup modules
 Example of a modules block:

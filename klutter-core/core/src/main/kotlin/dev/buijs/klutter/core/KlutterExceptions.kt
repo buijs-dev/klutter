@@ -4,12 +4,12 @@ package dev.buijs.klutter.core
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-class KotlinFileScanningException(msg: String): Exception(msg)
+class KotlinFileScanningException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
-class KlutterCodeGenerationException(msg: String): Exception(msg)
+class KlutterCodeGenerationException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
-class KlutterConfigException(msg: String): Exception(msg)
+class KlutterConfigException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
-class KlutterGradleException(msg: String): Exception(msg)
+class KlutterGradleException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
-class KlutterMultiplatformException(msg: String): Exception(msg)
+class KlutterMultiplatformException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))

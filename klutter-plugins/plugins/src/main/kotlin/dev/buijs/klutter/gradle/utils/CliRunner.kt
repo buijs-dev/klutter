@@ -16,7 +16,6 @@ internal fun String.runCommand(workingDir: File): String? {
         proc.waitFor(30, TimeUnit.SECONDS)
         proc.inputStream.bufferedReader().readText()
     } catch(e: IOException) {
-        e.printStackTrace()
-        null
+        throw Exception("Failed to execute CLI command", e)
     }
 }

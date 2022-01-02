@@ -14,6 +14,10 @@ data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},
+    val kmpDir: File = projectDir.resolve("kmp/common/src/commonMain")
+        .toAbsolutePath()
+        .toFile()
+        .also { it.mkdirs()},
     val flutterDir: File = projectDir.toAbsolutePath().toFile()
         .also { it.mkdirs() },
     val flutterLibDir: File = flutterDir.resolve("lib")

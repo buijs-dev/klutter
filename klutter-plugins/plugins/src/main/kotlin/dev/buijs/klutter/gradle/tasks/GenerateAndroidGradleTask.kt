@@ -1,6 +1,7 @@
 package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.flutter.AndroidBuildGradleGenerator
+import dev.buijs.klutter.core.flutter.AndroidManifestVisitor
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import javax.inject.Inject
 
@@ -17,6 +18,8 @@ open class GenerateAndroidGradleTask
             android = android(),
             root = flutter().toPath()
         ).generate()
+
+        AndroidManifestVisitor(androidManifest()).visit()
         logger.messages().addAll(logging.messages())
     }
 

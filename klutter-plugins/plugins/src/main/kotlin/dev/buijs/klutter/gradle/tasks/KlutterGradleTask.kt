@@ -54,6 +54,8 @@ abstract class KlutterGradleTask
 
     fun android() = flutter().resolve("android/app")
 
+    fun androidManifest() = android().resolve("src/main/AndroidManifest.xml")
+
     fun ios() = flutter().resolve("ios")
 
     fun kmp() = getFileSafely(ext.getMultiplatformDto()?.source?.let { File(it) },"KMP source")

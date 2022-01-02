@@ -16,7 +16,6 @@ class MainActivity: FlutterActivity() {
             .setMethodCallHandler{ call, result ->
                 GeneratedKlutterAdapter().handleMethodCalls(call, result)
             }
-        GeneratedPluginRegistrant.registerWith(flutterEngine)
     }
 
 }

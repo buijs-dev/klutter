@@ -1,7 +1,9 @@
 ![This is an image](example-basic/assets/metadata/icon/banner.png)
 
 # Klutter
-![Coverage](.github/badges/license.svg)
+![License](.github/badges/license.svg)
+
+
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated
 by the Klutter framework. Klutter combines industry best practices

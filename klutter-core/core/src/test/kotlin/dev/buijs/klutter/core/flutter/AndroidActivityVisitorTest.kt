@@ -1,6 +1,6 @@
 package dev.buijs.klutter.core.flutter
 
-import dev.buijs.klutter.core.adapter.KtFileContent
+import dev.buijs.klutter.core.KtFileContent
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec

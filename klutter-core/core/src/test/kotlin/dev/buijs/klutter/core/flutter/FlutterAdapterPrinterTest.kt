@@ -1,6 +1,6 @@
 package dev.buijs.klutter.core.flutter
 
-import dev.buijs.klutter.core.adapter.MethodCallDefinition
+import dev.buijs.klutter.core.MethodCallDefinition
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
@@ -13,7 +13,6 @@ class FlutterAdapterPrinterTest : WordSpec({
 
     "Using the KlutterAdapterPrinter" should {
         "Create the body GeneratedAdapter body with a branch for each KlutterAdaptee annotation" {
-            val sut = FlutterAdapterPrinter()
 
             val definitions = listOf(
                 MethodCallDefinition(
@@ -28,7 +27,7 @@ class FlutterAdapterPrinterTest : WordSpec({
                     returns = Any::class.java)
             )
 
-            val actual = sut.print(definitions)
+            val actual = FlutterAdapterPrinter(definitions).print()
 
             actual.filter { !it.isWhitespace() } shouldBe """
                 import 'dart:async';

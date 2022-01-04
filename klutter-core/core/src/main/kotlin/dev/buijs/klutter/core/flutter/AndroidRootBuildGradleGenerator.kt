@@ -1,15 +1,32 @@
 package dev.buijs.klutter.core.flutter
 
 
-import dev.buijs.klutter.core.KlutterConfigException
+import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
+import java.io.File
+import java.nio.file.Path
 import kotlin.collections.HashMap
 
 /**
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-internal class AndroidBuildRootGradlePrinter(
+internal class AndroidRootBuildGradleGenerator(
+    private val root: Path,
+    private val android: File,
+): KlutterFileGenerator() {
+
+    override fun generate() = writer().write()
+
+    override fun printer() = AndroidRootBuildGradlePrinter(properties())
+
+    override fun writer() = AndroidRootBuildGradleWriter(android.resolve("build.gradle"), printer().print())
+
+    private fun properties() = KlutterPropertiesReader(root.resolve(".klutter/klutter.properties").toAbsolutePath().toFile()).read()
+
+}
+
+internal class AndroidRootBuildGradlePrinter(
     private val props: HashMap<String, String>,
 ): KlutterPrinter {
 
@@ -74,3 +91,20 @@ internal class AndroidBuildRootGradlePrinter(
 
 }
 
+internal class AndroidRootBuildGradleWriter(val file: File, val content: String): KlutterWriter {
+
+    override fun write(): KlutterLogger {
+        val logger = KlutterLogger()
+
+        if(file.exists()) {
+            file.delete().also {
+                logger.debug("Deleted build.gradle: $file")
+            }
+        } else logger.error("Build.gradle file in android folder not found. Creating a new file!")
+
+        file.createNewFile().also { logger.debug("Created new build.gradle: $file") }
+        file.writeText(content).also { logger.debug("Written content to $file:\r\n$content") }
+        return logger
+    }
+
+}

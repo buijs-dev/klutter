@@ -1,8 +1,9 @@
 package dev.buijs.klutter.core.flutter
 
 import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterVisitor
-import dev.buijs.klutter.core.adapter.KtFileContent
+import dev.buijs.klutter.core.KtFileContent
 import java.io.File
 
 
@@ -28,8 +29,8 @@ internal class AndroidActivityVisitor(
     private val metaFile: KtFileContent
     ) : KlutterVisitor {
 
-    override fun visit() {
-
+    override fun visit(): KlutterLogger {
+        val logger = KlutterLogger()
         val source = filteredSourceLines(metaFile)
         val output = mutableListOf<String>()
 
@@ -169,6 +170,7 @@ internal class AndroidActivityVisitor(
         }
 
         write(file = metaFile.file, classBody = output.joinToString("\r\n"))
+        return logger
     }
 
     private fun filteredSourceLines(metaFile: KtFileContent): List<String> {

@@ -58,6 +58,8 @@ abstract class KlutterGradleTask
 
     fun ios() = flutter().resolve("ios")
 
+    fun iosVersion() = ext.getIosDto()?.version?:"13.0"
+
     fun kmp() = getFileSafely(ext.getMultiplatformDto()?.source?.let { File(it) },"KMP source")
 
 }

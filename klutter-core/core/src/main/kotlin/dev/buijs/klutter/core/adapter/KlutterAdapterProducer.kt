@@ -3,14 +3,12 @@ package dev.buijs.klutter.core.adapter
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import dev.buijs.klutter.core.KlutterCodeGenerationException
-import dev.buijs.klutter.core.KlutterLogger
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.FileContent
+import dev.buijs.klutter.core.KtFileContent
+import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.flutter.*
 import dev.buijs.klutter.core.flutter.AndroidActivityVisitor
-import dev.buijs.klutter.core.flutter.AndroidAdapterPrinter
-import dev.buijs.klutter.core.flutter.AndroidAdapterWriter
-import dev.buijs.klutter.core.flutter.FlutterAdapterPrinter
-import dev.buijs.klutter.core.flutter.FlutterAdapterWriter
-import dev.buijs.klutter.core.flutter.KlutterIosAdapterWriter
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -22,17 +20,54 @@ import java.io.File
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-class AdapterCodeGenerator(
-    val context: Project,
-    val kmp: File,
-    val android: File,
-    val flutter: File,
-    val podspec: File) {
+@Suppress("unused")
+class KlutterAdapterProducer(
+    private val context: Project,
+    private val kmp: File,
+    private val flutter: File,
+    private val android: File,
+    private val androidManifest: File,
+    private val iosVersion: String,
+    private val podName: String): KlutterProducer {
 
     private var logger = KlutterLogger()
 
-    fun generate(): KlutterLogger {
+    override fun produce(): KlutterLogger {
+        val methods = scanForAdaptees()
+        val androidAdapterGenerator = AndroidAdapterGenerator(methods, android)
+        val androidActivityVisitor = AndroidActivityVisitor(findAndroidActivity(android))
+        val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, methods)
+        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(flutter.toPath(), android.resolve("app"))
+        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(flutter.toPath(), android)
+        val androidManifestVisitor = AndroidManifestVisitor(androidManifest)
+//        val iosAppDelegateVisitor = IosAppDelegateVisitor()
 
+        val iosPodspecVisitor = IosPodspecVisitor(
+            kmp.resolve(
+                if(podName.endsWith(".podspec")) { podName }
+                else "$podName.podspec" )
+        )
+
+        val iosPodFileGenerator = IosPodFileGenerator(
+            iosVersion = iosVersion,
+            iosDirectory = flutter.resolve("ios"),
+            kmpModuleDirectory = kmp,
+            podName = podName
+        )
+
+        return logger
+            .merge(androidAdapterGenerator.generate())
+            .merge(androidActivityVisitor.visit())
+            .merge(flutterAdapterGenerator.generate())
+            .merge(androidBuildGradleGenerator.generate())
+            .merge(androidRootBuildGradleGenerator.generate())
+            .merge(androidManifestVisitor.visit())
+//            .merge(iosAppDelegateVisitor.visit())
+            .merge(iosPodspecVisitor.visit())
+            .merge(iosPodFileGenerator.generate())
+    }
+
+    private fun scanForAdaptees(): List<MethodCallDefinition> {
         val scannedSources = scanSources(kmp)
             .filter { it.content.contains("@KlutterAdaptee") }
 
@@ -40,14 +75,13 @@ class AdapterCodeGenerator(
             logger.warn("None of the files contain @KlutterAdaptee annotation.")
         }
 
-        val methods = scannedSources
+        return scannedSources
             .map { convertToKotlinFiles(it) }
             .map { convertToMethodCallDefinitions(it) }
+            .flatten()
+    }
 
-        methods
-            .map { AndroidAdapterPrinter().print(it) }
-            .forEach { AndroidAdapterWriter().write(android, it)}
-
+    private fun findAndroidActivity(android: File): KtFileContent {
         val activityFile = scanSources(android)
             .filter { it.content.contains("@KlutterAdapter") }
 
@@ -55,17 +89,13 @@ class AdapterCodeGenerator(
             throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder $android.")
         }
 
-        activityFile
-            .map { convertToKotlinFiles(it) }
-            .map { AndroidActivityVisitor(it).visit() }
+        if(activityFile.size > 1) {
+            throw KlutterCodeGenerationException(
+                "Expected to find one @KlutterAdapter annotation in the MainActivity file but found ${activityFile.size} files."
+            )
+        }
 
-        val mainDartFile = findMainDartFile(flutter)
-        val adapterBody = FlutterAdapterPrinter().print(methods.flatten())
-        FlutterAdapterWriter().write(mainDartFile.parentFile, adapterBody)
-
-        KlutterIosAdapterWriter().write(podspec)
-
-        return logger
+        return convertToKotlinFiles(activityFile[0])
     }
 
     private fun scanSources(directory: File): List<FileContent> {
@@ -135,20 +165,4 @@ class AdapterCodeGenerator(
         }
         return defintions
     }
-
-    private fun findMainDartFile(directory: File): File {
-        logger.debug("Scanning for main.dart in directory '$directory'")
-        if (directory.exists()) {
-            directory.walkTopDown().forEach { f ->
-                logger.debug("Found file '$f' with name ${f.name} and extenions ${f.extension}")
-                if(f.isFile && f.name == "main.dart"){
-                    logger.debug("Found main.dart file in directory '$f''")
-                    return f
-                }
-            }
-            throw KlutterCodeGenerationException("Could not find main.dart in directory: '$directory'")
-        }
-        throw KlutterCodeGenerationException("Could not find main.dart because directory does not exist: '$directory'")
-    }
-
 }

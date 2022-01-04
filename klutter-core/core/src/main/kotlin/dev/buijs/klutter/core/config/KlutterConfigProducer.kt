@@ -11,16 +11,20 @@ import kotlin.io.path.exists
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
+@Suppress("unused")
 class KlutterConfigProducer(
     private val module: Path,
     private val properties: List<YamlProperty>): KlutterProducer {
 
     val logger = KlutterLogger()
 
-    override fun produce() {
+    override fun produce(): KlutterLogger {
         val directory = createKlutterDirectory(module)
-        KlutterGradleProducer(directory, properties, logger).produce()
-        KlutterPropertiesProducer(directory, properties, logger).produce()
+        val gradleGenerator = KlutterGradleFileGenerator(directory, properties)
+        val propertiesGenerator = KlutterPropertiesGenerator(directory, properties)
+        return logger
+            .merge(gradleGenerator.generate())
+            .merge(propertiesGenerator.generate())
     }
 
     private fun createKlutterDirectory(root: Path): Path {

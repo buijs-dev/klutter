@@ -12,7 +12,7 @@ import javax.inject.Inject
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-open class ConfigProducerTask
+open class SynchronizeTask
 @Inject constructor(styledTextOutputFactory: StyledTextOutputFactory):
     KlutterGradleTask(styledTextOutputFactory)
 {

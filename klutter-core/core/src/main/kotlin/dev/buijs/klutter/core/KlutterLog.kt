@@ -37,10 +37,7 @@ open class KlutterLogger {
 
 }
 
-data class KlutterLogMessage(
-    val message: String,
-    val level: KlutterLogLevel
-    )
+data class KlutterLogMessage(val message: String, val level: KlutterLogLevel)
 
 enum class KlutterLogLevel {
     INFORMATIVE,

@@ -10,7 +10,7 @@ import javax.inject.Inject
  * @contact https://buijs.dev
  */
 
-open class KlutterGeneratePigeonsTask
+open class GenerateApiTask
     @Inject constructor(styledTextOutputFactory: StyledTextOutputFactory):
 KlutterGradleTask(styledTextOutputFactory)
 {

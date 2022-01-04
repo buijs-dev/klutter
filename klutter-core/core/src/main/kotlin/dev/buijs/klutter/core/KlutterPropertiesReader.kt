@@ -9,16 +9,17 @@ import java.io.File
 class KlutterPropertiesReader(val file: File) {
 
     fun read(): HashMap<String, String> {
-        if(!file.exists()) { throw KlutterConfigException("File not found: $file") }
-
-        val properties = HashMap<String, String>()
-
-        file.forEachLine {
-            val pair = it.split("=")
-            if(pair.size == 2){ properties[pair[0]] = pair[1] }
-        }
-
-        return properties
+        if(file.exists()) {
+            val properties = HashMap<String, String>()
+            file.forEachLine {
+                it.split("=").also { pair ->
+                    if(pair.size == 2){
+                        properties[pair[0]] = pair[1]
+                    }
+                }
+            }
+            return properties
+        } else throw KlutterConfigException("File not found: $file")
     }
 
 }

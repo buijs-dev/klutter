@@ -16,11 +16,10 @@ private const val EXTENSION_NAME = "klutter"
 class KlutterPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create(EXTENSION_NAME, KlutterExtension::class.java)
-        project.tasks.register("generateAdapter", AdapterTask::class.java)
-        project.tasks.register("generateAndroidBuildGradle", GenerateAndroidGradleTask::class.java)
-        project.tasks.register("synchronize", ConfigProducerTask::class.java)
-        project.tasks.register("generateApi", KlutterGeneratePigeonsTask::class.java)
-        project.tasks.register("buildDebug", BuildDebugTask::class.java)
+        project.tasks.register("synchronize", SynchronizeTask::class.java)
+        project.tasks.register("generate api", GenerateApiTask::class.java)
+        project.tasks.register("generate adapters", GenerateAdapterTask::class.java)
+        project.tasks.register("build debug", BuildDebugTask::class.java)
     }
 }
 
@@ -33,7 +32,7 @@ open class KlutterExtension(private val project: Project) {
     private var servicesDto: KlutterServiceDTO? = null
     private var multiplatformDto: KlutterMultiplatformDTO? = null
     private var modulesDto: KlutterModulesDTO? = null
-
+    private var iosDTO: KlutterIosDTO? = null
 
     var flutter: File? = null
     var podspec: File? = null
@@ -50,9 +49,15 @@ open class KlutterExtension(private val project: Project) {
         modulesDto = KlutterModulesBuilder(project.rootProject.rootDir).apply(lambda).build()
     }
 
+    fun ios(lambda: KlutterIosBuilder.() -> Unit) {
+        iosDTO = KlutterIosBuilder().apply(lambda).build()
+    }
+
     internal fun getServicesDto() = servicesDto
 
     internal fun getMultiplatformDto() = multiplatformDto
 
     internal fun getModulesDto() = modulesDto
+
+    internal fun getIosDto() = iosDTO
 }

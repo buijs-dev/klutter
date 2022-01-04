@@ -21,8 +21,8 @@ sourceSets {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.+")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.1")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
@@ -74,7 +74,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.3.21"
+            version = "0.3.25"
             artifact("$projectDir/build/libs/core.jar")
         }
     }

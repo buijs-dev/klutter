@@ -1,13 +1,11 @@
-package dev.buijs.klutter.core.adapter
+package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.KotlinFileScanningException
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
+ * @contact https://buijs.dev
  */
 internal class KtFileScanner(
     private val fqdn: String?,

@@ -55,3 +55,6 @@ hs_err_pid*
 /example-basic/android/.klutter/
 /example-basic/android/app/.klutter/
 /example-basic/kmp/common/.klutter/
+/example-basic/lib/generated/
+/example-basic/ios/PodFile
+/example-basic/ios/Podfile.lock

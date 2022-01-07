@@ -5,6 +5,9 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import org.gradle.testkit.runner.GradleRunner
 import java.nio.file.Path
+import kotlin.io.path.createDirectory
+import kotlin.io.path.createFile
+import kotlin.io.path.writeText
 
 /**
  * @author Gillian Buijs
@@ -17,6 +20,24 @@ class KlutterPluginGradleTest : WordSpec({
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {
             val project = KlutterTestProject()
+            val klutterDir = project.projectDir.resolve(".klutter").also { it.createDirectory() }
+            val properties = klutterDir.resolve("klutter.properties").also { it.createFile() }
+            properties.writeText("""
+                       app.version.code=1
+                       app.version.name=1.0.0
+                       app.id=dev.buijs.klutter.example.basic
+                       android.sdk.minimum=21
+                       android.sdk.compile=31
+                       android.sdk.target=31
+                       ios.version=13.0
+                       flutter.sdk.version=2.5.3
+                       klutter.gradle.plugin.version=0.3.39-pre-alpha
+                       klutter.annotations.kmp.version=0.2.49
+                       kotlin.version=1.6.10
+                       gradle.version=7.0.4
+                       flutter.sdk.location=/Users/boba/tools/flutter
+            """.trimIndent())
+
             project.flutterMainFile.writeText("""
                 import 'package:flutter/material.dart';
 
@@ -42,9 +63,9 @@ class KlutterPluginGradleTest : WordSpec({
 
             """.trimIndent())
 
-            val sourcesDir = project.androidAppDir.resolve("FakeClass.kt").absoluteFile
-            sourcesDir.createNewFile()
-            sourcesDir.writeText("""
+            val sourceFile = project.kmpDir.resolve("FakeClass.kt").absoluteFile
+            sourceFile.createNewFile()
+            sourceFile.writeText("""
                 package foo.bar.baz
 
                 import dev.buijs.klutter.annotations.Annotations
@@ -60,7 +81,7 @@ class KlutterPluginGradleTest : WordSpec({
                         return listOf("baz")
                     }
 
-                    @KlutterAdaptee(name = "BabyYoda")
+                    @KlutterAdaptee(name = "ObiWan")
                     fun zeta(): List<String> =
                         listOf(foo()).map { str ->
                             "str = str                "
@@ -69,6 +90,56 @@ class KlutterPluginGradleTest : WordSpec({
                         }
 
                 }
+            """.trimIndent())
+
+            val androidManifestDir = project.androidAppDir.resolve(Path.of("src", "main").toFile())
+            androidManifestDir.mkdirs()
+
+            val androidManifest = androidManifestDir.resolve("AndroidManifest.xml")
+            androidManifest.createNewFile()
+            androidManifest.writeText("""
+                <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+                    package="foo.bar.cest.moi">
+                   <application
+                        android:label="example"
+                        android:icon="@mipmap/ic_launcher">
+                        <activity
+                            android:exported="true"
+                            android:name=".MainActivity"
+                            android:launchMode="singleTop"
+                            android:theme="@style/LaunchTheme"
+                            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+                            android:hardwareAccelerated="true"
+                            android:windowSoftInputMode="adjustResize">
+                            <!-- Specifies an Android theme to apply to this Activity as soon as
+                                 the Android process has started. This theme is visible to the user
+                                 while the Flutter UI initializes. After that, this theme continues
+                                 to determine the Window background behind the Flutter UI. -->
+                            <meta-data
+                              android:name="io.flutter.embedding.android.NormalTheme"
+                              android:resource="@style/NormalTheme"
+                              />
+                            <!-- Displays an Android View that continues showing the launch screen
+                                 Drawable until Flutter paints its first frame, then this splash
+                                 screen fades out. A splash screen is useful to avoid any visual
+                                 gap between the end of Android's launch screen and the painting of
+                                 Flutter's first frame. -->
+                            <meta-data
+                              android:name="io.flutter.embedding.android.SplashScreenDrawable"
+                              android:resource="@drawable/launch_background"
+                              />
+                            <intent-filter>
+                                <action android:name="android.intent.action.MAIN"/>
+                                <category android:name="android.intent.category.LAUNCHER"/>
+                            </intent-filter>
+                        </activity>
+                        <!-- Don't delete the meta-data below.
+                             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+                        <meta-data
+                            android:name="flutterEmbedding"
+                            android:value="2" />
+                    </application>
+                </manifest>
             """.trimIndent())
 
             val mainActivityDir = project.androidAppDir.resolve(
@@ -94,7 +165,7 @@ class KlutterPluginGradleTest : WordSpec({
                 }
             """.trimIndent())
 
-            val podspec = project.flutterDir.resolve("somepod.spec").absoluteFile
+            val podspec = project.podspecDir.resolve("common.podspec").absoluteFile
             podspec.createNewFile()
             podspec.writeText("""
                 Pod::Spec.new do |spec|
@@ -144,7 +215,6 @@ class KlutterPluginGradleTest : WordSpec({
                 end
             """.trimIndent())
 
-
             project.buildGradle.writeText("""
                 plugins {
                     id("dev.buijs.klutter.gradle")
@@ -152,10 +222,8 @@ class KlutterPluginGradleTest : WordSpec({
 
                 klutter {
                     multiplatform {
-                        source = "$sourcesDir"
+                        source = "${project.kmpDir}"
                     }
-                    flutter = File("${project.flutterDir.absolutePath}")
-                    podspec = File("${podspec.absolutePath}")
                 }
 
             """.trimIndent())
@@ -163,7 +231,7 @@ class KlutterPluginGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(project.projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("generateAdapter")
+                .withArguments("generate adapter","--stacktrace")
                 .build()
 
             val generatedFile = project.androidAppDir.resolve(
@@ -179,11 +247,8 @@ class KlutterPluginGradleTest : WordSpec({
                 import io.flutter.plugin.common.MethodCall
 
                  /**
-                  * Generated code By Gillian Buijs
-                  *
-                  * For bugs or improvements contact me: https://buijs.dev
-                  *
-                  */
+                 * Generated code by the Klutter Framework
+                 */
                  class GeneratedKlutterAdapter {
 
                    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
@@ -191,7 +256,7 @@ class KlutterPluginGradleTest : WordSpec({
                             result.success(FakeClass().foo())
                         } else if (call.method == "BabyYoda") {
                             result.success(FakeClass().fooBar())
-                        } else  if (call.method == "BabyYoda") {
+                        } else  if (call.method == "ObiWan") {
                             result.success(FakeClass().zeta())
                         } else result.notImplemented()
                    }

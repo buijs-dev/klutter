@@ -4,12 +4,6 @@ plugins {
     kotlin("jvm")
 }
 
-buildscript {
-//    apply(".klutter/klutter.gradle.kts")
-
-//    val kotlinVersion: String by project.extra
-}
-
 sourceSets {
     main {
         java {
@@ -74,7 +68,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.3.25"
+            version = "0.3.44"
             artifact("$projectDir/build/libs/core.jar")
         }
     }

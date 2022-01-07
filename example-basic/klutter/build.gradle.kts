@@ -8,15 +8,6 @@ plugins {
 
 klutter {
 
-    val root = rootProject.projectDir
-
-    multiplatform {
-       source = "$root/kmp/common/src/commonMain"
-    }
-
-    flutter = File("$root")
-    podspec = File("$root/kmp/common/common.podspec")
-
     modules {
         module("klutter")
         module("kmp")

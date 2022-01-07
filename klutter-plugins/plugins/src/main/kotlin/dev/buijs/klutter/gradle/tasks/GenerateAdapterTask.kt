@@ -3,6 +3,7 @@ package dev.buijs.klutter.gradle.tasks
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import com.intellij.openapi.util.Disposer
 import dev.buijs.klutter.core.adapter.KlutterAdapterProducer
+import dev.buijs.klutter.gradle.KlutterTask
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -16,7 +17,7 @@ import javax.inject.Inject
  */
 open class GenerateAdapterTask
 @Inject constructor(styledTextOutputFactory: StyledTextOutputFactory)
-    : KlutterGradleTask(styledTextOutputFactory) {
+    : KlutterTask(styledTextOutputFactory) {
 
     private val context by lazy {
         val config = CompilerConfiguration()
@@ -25,17 +26,13 @@ open class GenerateAdapterTask
     }
 
     override fun describe() {
-        val logging = KlutterAdapterProducer(
+        KlutterAdapterProducer(
             context = context,
-            kmp = kmp(),
-            flutter = flutter(),
-            android = android(),
+            project = project(),
             androidManifest = androidManifest(),
             iosVersion = iosVersion(),
-            podName = podspec().nameWithoutExtension
-        ).produce()
-
-        logger.merge(logging)
+            podName = project().kmp.podspec().nameWithoutExtension
+        ).produce().also { logger.merge(it) }
     }
 
 

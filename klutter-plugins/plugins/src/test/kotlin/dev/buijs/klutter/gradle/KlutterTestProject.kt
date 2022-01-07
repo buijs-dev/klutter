@@ -10,6 +10,16 @@ data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.mkdir() },
+    val iosDir: File = projectDir.resolve("ios")
+        .toAbsolutePath()
+        .toFile()
+        .also { it.mkdir() },
+    val iosRunnerDir: File = iosDir.resolve("Runner")
+        .absoluteFile
+        .also { it.mkdir() },
+    val iosAppDelegate: File = iosRunnerDir.resolve("AppDelegate.swift")
+        .absoluteFile
+        .also { it.createNewFile() },
     val androidAppDir: File = projectDir.resolve("android/app")
         .toAbsolutePath()
         .toFile()
@@ -18,14 +28,15 @@ data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},
-    val flutterDir: File = projectDir.toAbsolutePath().toFile()
-        .also { it.mkdirs() },
-    val flutterLibDir: File = flutterDir.resolve("lib")
-        .toPath()
+    val podspecDir: File = projectDir.resolve("kmp/common")
         .toAbsolutePath()
         .toFile()
-        .also { it.mkdir() },
-    val flutterMainFile: File = flutterLibDir.resolve("main.dart")
+        .also { it.mkdirs()},
+    val flutterDir: File = projectDir.resolve("lib")
+        .toAbsolutePath()
+        .toFile()
+        .also { it.mkdirs() },
+    val flutterMainFile: File = flutterDir.resolve("main.dart")
         .toPath()
         .toAbsolutePath()
         .toFile()

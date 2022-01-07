@@ -19,7 +19,6 @@ class ConfigProducerGradleTest : WordSpec({
             val projectDir = project.projectDir
             val buildScript = project.buildGradle
             val androidAppDir = project.androidAppDir
-            val flutterDir = project.flutterDir
             val klutterDir = project.klutterDir
             val moduleDir = projectDir.resolve("somemodule")
                 .toAbsolutePath()
@@ -87,8 +86,6 @@ class ConfigProducerGradleTest : WordSpec({
                         source = "$sourcesDir"
                     }
                     
-                    flutter = File("${flutterDir.absolutePath}")
-                    podspec = File("${podspec.absolutePath}")
                     modules {
                         module("$moduleDir")
                     }

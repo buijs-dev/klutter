@@ -33,9 +33,9 @@ open class KlutterExtension(private val project: Project) {
     private var multiplatformDto: KlutterMultiplatformDTO? = null
     private var modulesDto: KlutterModulesDTO? = null
     private var iosDTO: KlutterIosDTO? = null
+    internal var root: File = project.rootProject.projectDir
 
-    var flutter: File? = null
-    var podspec: File? = null
+    fun root(file: String){ root = File(file) }
 
     fun services(lambda: KlutterServiceBuilder.() -> Unit) {
         servicesDto = KlutterServiceBuilder().apply(lambda).build()

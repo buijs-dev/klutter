@@ -4,6 +4,7 @@ import dev.buijs.klutter.core.KlutterConfigException
 import dev.buijs.klutter.core.config.KlutterConfigProducer
 import dev.buijs.klutter.core.config.YamlProperty
 import dev.buijs.klutter.core.config.YamlReader
+import dev.buijs.klutter.gradle.KlutterTask
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import java.io.File
 import javax.inject.Inject
@@ -14,7 +15,7 @@ import javax.inject.Inject
  */
 open class SynchronizeTask
 @Inject constructor(styledTextOutputFactory: StyledTextOutputFactory):
-    KlutterGradleTask(styledTextOutputFactory)
+    KlutterTask(styledTextOutputFactory)
 {
     /**
      * Write config to klutter module and every module defined in the Klutter Gradle Plugin

@@ -4,7 +4,6 @@ package dev.buijs.klutter.core.flutter
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import java.io.File
-import java.nio.file.Path
 import kotlin.collections.HashMap
 
 /**
@@ -12,17 +11,17 @@ import kotlin.collections.HashMap
  * @contact https://buijs.dev
  */
 internal class AndroidRootBuildGradleGenerator(
-    private val root: Path,
-    private val android: File,
+    private val root: Root,
+    private val android: Android,
 ): KlutterFileGenerator() {
 
     override fun generate() = writer().write()
 
     override fun printer() = AndroidRootBuildGradlePrinter(properties())
 
-    override fun writer() = AndroidRootBuildGradleWriter(android.resolve("build.gradle"), printer().print())
+    override fun writer() = AndroidRootBuildGradleWriter(android.file.resolve("build.gradle"), printer().print())
 
-    private fun properties() = KlutterPropertiesReader(root.resolve(".klutter/klutter.properties").toAbsolutePath().toFile()).read()
+    private fun properties() = KlutterPropertiesReader(root.folder.resolve(".klutter/klutter.properties")).read()
 
 }
 

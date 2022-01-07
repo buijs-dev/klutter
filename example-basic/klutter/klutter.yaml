@@ -21,7 +21,7 @@ flutter:
 klutter:
   - gradle:
     - plugin:
-      - version: "0.3.39-pre-alpha"
+      - version: "0.3.54-pre-alpha"
   - annotations:
     - kmp:
       - version: "0.2.49"

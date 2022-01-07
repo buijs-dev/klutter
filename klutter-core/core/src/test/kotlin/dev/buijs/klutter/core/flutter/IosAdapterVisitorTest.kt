@@ -1,5 +1,6 @@
 package dev.buijs.klutter.core.flutter
 
+import dev.buijs.klutter.core.kmp.IosPodspecVisitor
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files
@@ -49,7 +50,6 @@ class IosAdapterVisitorTest : WordSpec({
                 spec.license                  = ''
                 spec.summary                  = 'Some description for the Shared Module'
             
-                #This line is altered by Klutter Framework to use the fat-framework
                 spec.vendored_frameworks      = "build/fat-framework/debug/common.framework"
                 spec.libraries                = "c++"
                 spec.module_name              = "#{spec.name}_umbrella"

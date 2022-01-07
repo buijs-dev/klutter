@@ -9,6 +9,7 @@ import dev.buijs.klutter.core.KtFileContent
 import dev.buijs.klutter.core.MethodCallDefinition
 import dev.buijs.klutter.core.flutter.*
 import dev.buijs.klutter.core.flutter.AndroidActivityVisitor
+import dev.buijs.klutter.core.kmp.IosPodspecVisitor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
@@ -23,9 +24,7 @@ import java.io.File
 @Suppress("unused")
 class KlutterAdapterProducer(
     private val context: Project,
-    private val kmp: File,
-    private val flutter: File,
-    private val android: File,
+    private val project: KlutterProject,
     private val androidManifest: File,
     private val iosVersion: String,
     private val podName: String): KlutterProducer {
@@ -33,25 +32,27 @@ class KlutterAdapterProducer(
     private var logger = KlutterLogger()
 
     override fun produce(): KlutterLogger {
+        val root = project.root
+        val flutter = project.flutter
+        val android = project.android
+        val ios = project.ios
+        val kmp = project.kmp
+        val podspec = project.kmp.podspec()
         val methods = scanForAdaptees()
-        val androidAdapterGenerator = AndroidAdapterGenerator(methods, android)
+        val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
         val androidActivityVisitor = AndroidActivityVisitor(findAndroidActivity(android))
         val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, methods)
-        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(flutter.toPath(), android.resolve("app"))
-        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(flutter.toPath(), android)
+        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app())
+        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android)
         val androidManifestVisitor = AndroidManifestVisitor(androidManifest)
-//        val iosAppDelegateVisitor = IosAppDelegateVisitor()
+        val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, kmp.podspec().nameWithoutExtension)
 
-        val iosPodspecVisitor = IosPodspecVisitor(
-            kmp.resolve(
-                if(podName.endsWith(".podspec")) { podName }
-                else "$podName.podspec" )
-        )
+        val iosPodspecVisitor = IosPodspecVisitor(podspec)
 
         val iosPodFileGenerator = IosPodFileGenerator(
             iosVersion = iosVersion,
-            iosDirectory = flutter.resolve("ios"),
-            kmpModuleDirectory = kmp,
+            ios = project.ios,
+            kmp = kmp,
             podName = podName
         )
 
@@ -62,13 +63,13 @@ class KlutterAdapterProducer(
             .merge(androidBuildGradleGenerator.generate())
             .merge(androidRootBuildGradleGenerator.generate())
             .merge(androidManifestVisitor.visit())
-//            .merge(iosAppDelegateVisitor.visit())
+            .merge(iosAppDelegateGenerator.generate())
             .merge(iosPodspecVisitor.visit())
             .merge(iosPodFileGenerator.generate())
     }
 
     private fun scanForAdaptees(): List<MethodCallDefinition> {
-        val scannedSources = scanSources(kmp)
+        val scannedSources = scanSources(project.kmp.source())
             .filter { it.content.contains("@KlutterAdaptee") }
 
         if(scannedSources.isEmpty()){
@@ -81,12 +82,13 @@ class KlutterAdapterProducer(
             .flatten()
     }
 
-    private fun findAndroidActivity(android: File): KtFileContent {
-        val activityFile = scanSources(android)
+    private fun findAndroidActivity(android: Android): KtFileContent {
+        val appDir = android.app()
+        val activityFile = scanSources(appDir)
             .filter { it.content.contains("@KlutterAdapter") }
 
         if(activityFile.isEmpty()){
-            throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder $android.")
+            throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder $appDir.")
         }
 
         if(activityFile.size > 1) {

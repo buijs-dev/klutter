@@ -4,16 +4,14 @@ package dev.buijs.klutter.core.flutter
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import java.io.File
-import java.nio.file.Path
 import kotlin.collections.HashMap
-import kotlin.io.path.exists
 
 /**
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
 internal class AndroidBuildGradleGenerator(
-    private val root: Path,
+    private val root: Root,
     private val android: File,
 ): KlutterFileGenerator() {
 
@@ -23,23 +21,11 @@ internal class AndroidBuildGradleGenerator(
 
     override fun writer() = AndroidBuildGradleWriter(android.resolve("build.gradle"), printer().print())
 
-    private val properties = KlutterPropertiesReader(root.resolve(".klutter/klutter.properties").toAbsolutePath().toFile()).read()
+    private val properties = KlutterPropertiesReader(root.folder.resolve(".klutter/klutter.properties")).read()
 
-    private fun aarFile(): File {
-        if(!root.exists()){
-            throw KlutterCodeGenerationException("Directory does not exist: $root")
-        }
+    private fun aarFile() = root.folder.resolve(".klutter/kmp.aar")
 
-        return root.resolve(".klutter/kmp.aar").toAbsolutePath().toFile()
-    }
-
-    private fun android(): File {
-        if(!android.exists()){
-            throw KlutterCodeGenerationException("Directory does not exist: $android")
-        }
-
-        return android
-    }
+    private fun android() = android
 
 }
 

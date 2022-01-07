@@ -39,12 +39,9 @@ class AndroidAdapterPrinterTest: WordSpec({
                  import io.flutter.plugin.common.MethodChannel.Result
                  import io.flutter.plugin.common.MethodCall
                 
-                 /**
-                  * Generated code By Gillian Buijs
-                  *
-                  * For bugs or improvements contact me: https://buijs.dev
-                  *
-                  */
+                /**
+                 * Generated code by the Klutter Framework
+                 */
                  class GeneratedKlutterAdapter {
                 
                    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {

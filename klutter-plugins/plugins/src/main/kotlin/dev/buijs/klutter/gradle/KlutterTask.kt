@@ -1,7 +1,6 @@
-package dev.buijs.klutter.gradle.tasks
+package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.core.KlutterConfigException
-import dev.buijs.klutter.core.KlutterLogger
+import dev.buijs.klutter.core.*
 import dev.buijs.klutter.gradle.utils.GradleLoggingWrapper
 import dev.buijs.klutter.gradle.adapter
 import org.gradle.api.DefaultTask
@@ -20,7 +19,7 @@ import javax.inject.Inject
  * The implementing class shall return a KlutterLogging object which is here outputted to the console using the GradleLoggingWrapper.
  *
  */
-abstract class KlutterGradleTask
+abstract class KlutterTask
 @Inject constructor(private val styledTextOutputFactory: StyledTextOutputFactory) :DefaultTask()
 {
     init { group = "klutter" }
@@ -48,19 +47,11 @@ abstract class KlutterGradleTask
         ?.map { File(it) }
         ?.map{ source -> getFileSafely(source,"Klutter modules") }
 
-    fun podspec() = getFileSafely(ext.podspec,"KMP .podspec")
-
-    fun flutter() = getFileSafely(ext.flutter,"flutter")
-
-    fun android() = flutter().resolve("android/app")
-
-    fun androidManifest() = android().resolve("src/main/AndroidManifest.xml")
-
-    fun ios() = flutter().resolve("ios")
+    fun androidManifest() = project().android.manifest()
 
     fun iosVersion() = ext.getIosDto()?.version?:"13.0"
 
-    fun kmp() = getFileSafely(ext.getMultiplatformDto()?.source?.let { File(it) },"KMP source")
+    fun project() = KlutterProjectFactory().fromRoot(Root(ext.root))
 
 }
 

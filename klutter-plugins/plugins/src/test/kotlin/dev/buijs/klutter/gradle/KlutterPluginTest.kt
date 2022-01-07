@@ -30,11 +30,11 @@ class KlutterPluginTest : WordSpec({
 
             //when
             project.adapter().multiplatform { source = "la source" }
-            project.adapter().flutter = File("flutter")
+            project.adapter().root = File("flutter")
 
             //then
             project.adapter().getMultiplatformDto()?.source shouldBe "la source"
-            project.adapter().flutter shouldBe File("flutter")
+            project.adapter().root shouldBe File("flutter")
 
         }
     }

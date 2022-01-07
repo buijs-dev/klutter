@@ -1,5 +1,6 @@
 package dev.buijs.klutter.core.flutter
 
+import dev.buijs.klutter.core.Root
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
@@ -41,7 +42,7 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                 |klutter.annotations.kmp.version=0.2.49
             """.trimMargin())
 
-            val sut = AndroidBuildGradleGenerator(projectDir, androidAppDir.toFile())
+            val sut = AndroidBuildGradleGenerator(Root(projectDir.toFile()), androidAppDir.toFile())
             val logging = sut.generate()
 
             logging.messages().size shouldNotBe 0

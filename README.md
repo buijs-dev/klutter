@@ -207,7 +207,7 @@ klutter {
         source = "myproject/kmp/common/src/commonMain"
     } 
     
-    flutter = "root/flutterproj/lib"
+    root = "root/flutterproj/lib"
     android = "root/flutterproj/android/app"
     ios = "root/flutterproj/ios"
 }

@@ -9,16 +9,16 @@ import java.io.File
  */
 internal class IosPodFileGenerator(
     private val iosVersion: String,
-    private val iosDirectory: File,
-    private val kmpModuleDirectory: File,
+    private val ios: IOS,
+    private val kmp: KMP,
     private val podName: String
 ) : KlutterFileGenerator() {
 
     override fun generate() = writer().write()
 
-    override fun printer() = IosPodFilePrinter(iosVersion, iosDirectory, kmpModuleDirectory, podName)
+    override fun printer() = IosPodFilePrinter(iosVersion, ios.file, kmp.module(), podName)
 
-    override fun writer() = IosPodFileWriter(iosDirectory, printer().print())
+    override fun writer() = IosPodFileWriter(ios.file, printer().print())
 
 }
 
@@ -65,7 +65,7 @@ internal class IosPodFilePrinter(
             |  use_frameworks!
             |  use_modular_headers!
             |
-            |  pod '$$podName', :path => '$${kmpModuleDirectory.relativeTo(iosDirectory)}'
+            |  pod '$podName', :path => '${kmpModuleDirectory.relativeTo(iosDirectory)}'
             |
             |  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
             |end

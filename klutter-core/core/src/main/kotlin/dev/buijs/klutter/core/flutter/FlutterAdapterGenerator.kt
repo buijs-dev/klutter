@@ -11,7 +11,7 @@ import java.io.File
  * @contact https://buijs.dev
  */
 internal class FlutterAdapterGenerator(
-    private val flutter: File,
+    private val flutter: Flutter,
     private val methods: List<MethodCallDefinition>
     ): KlutterFileGenerator() {
 
@@ -51,7 +51,7 @@ internal class FlutterAdapterPrinter(
 }
 
 internal class FlutterAdapterWriter(
-    private val path: File,
+    private val path: Flutter,
     private val classBody: String)
     : KlutterWriter {
 
@@ -59,13 +59,13 @@ internal class FlutterAdapterWriter(
 
     override fun write(): KlutterLogger {
 
-        val dartFile = findMainDartFile(path)
+        val libFolder = path.file
 
-        if(!dartFile.exists()){
-            throw KlutterCodeGenerationException("File does not exist: $dartFile")
+        val generatedFolder = libFolder.resolve("generated").also {
+            if(!it.exists()) it.mkdir()
         }
 
-        val classFile = dartFile.resolve( "GeneratedKlutterAdapter.dart").also { file ->
+        val classFile = generatedFolder.resolve( "adapter.dart").also { file ->
             if(file.exists()) {
                 file.delete()
                 logger.info("Deleted existing file: $file")
@@ -74,27 +74,31 @@ internal class FlutterAdapterWriter(
 
         classFile.createNewFile().also { exists ->
             if(!exists){
-                throw KlutterCodeGenerationException("Unable to create GeneratedKlutterAdapter file in the given path $path")
+                throw KlutterCodeGenerationException("Unable to create adapter file in the given path $path")
             } else logger.info("Created new file: $classFile")
         }
 
-        val main = dartFile.resolve("main.dart").absoluteFile
+        val dartFile = findMainDartFile(libFolder)
 
-        val mainLines = main.readLines()
+        if(!dartFile.exists()){
+            throw KlutterCodeGenerationException("File does not exist: $dartFile")
+        }
+
+        val mainLines = dartFile.readLines()
 
         val hasAdapterImport = mainLines.any {
-            it.contains("import 'GeneratedKlutterAdapter.dart'")
+            it.contains("import 'generated/adapter.dart'")
         }
 
         val mainBody = if(hasAdapterImport) {
             mainLines.joinToString("\r\n")
         } else {
-            logger.debug("Added import to main.dart file: $main")
-            "import 'GeneratedKlutterAdapter.dart';\r\n" + mainLines.joinToString("\r\n")
+            logger.debug("Added import to main.dart file: $dartFile")
+            "import 'generated/adapter.dart';\r\n" + mainLines.joinToString("\r\n")
         }
 
-        main.writeText(mainBody).also {
-            logger.debug("Written content to file $main:\r\n$mainBody")
+        dartFile.writeText(mainBody).also {
+            logger.debug("Written content to file $dartFile:\r\n$mainBody")
         }
 
         classFile.writeText(classBody).also {

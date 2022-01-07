@@ -17,9 +17,7 @@ import java.io.File
  * @author Gillian Buijs
  * @contact https://buijs.dev
  *
- * Takes the AndroidManifest file in
- * flutter/android/app/src/main folder
- * and makes necessary changes if needed.
+ * Takes the AndroidManifest file in flutter/android/app/src/main folder and makes necessary changes if needed.
  */
 internal class AndroidManifestVisitor(
     private val manifestFile: File
@@ -38,7 +36,8 @@ internal class AndroidManifestVisitor(
         val logger = KlutterLogger()
         val rawContent = manifestFile.readText()
         val parsedXml: AndroidManifestXML = xmlMapper.readValue(rawContent)
-        if(parsedXml.application?.androidExported == null) {
+
+        if(parsedXml.application?.activity?.androidExported == null) {
             val output = mutableListOf<String>()
             for (line in rawContent.reader().readLines()) {
                 output.add(line)
@@ -60,11 +59,19 @@ internal class AndroidManifestVisitor(
 
 @JacksonXmlRootElement(localName = "manifest")
 private class AndroidManifestXML {
-    @field:JacksonXmlProperty(localName = "application")
     val application: AndroidManifestApplication? = null
 }
 
+@JacksonXmlRootElement(localName = "application")
 private class AndroidManifestApplication {
-    @field:JacksonXmlProperty(isAttribute = true, namespace = "android")
+    val activity: AndroidActivity? = null
+}
+
+@JacksonXmlRootElement(localName = "activity")
+private class AndroidActivity {
+    @field:JacksonXmlProperty(
+        namespace = "android",
+        localName = "exported",
+        isAttribute = true, )
     val androidExported: String? = null
 }

@@ -39,11 +39,14 @@ buildscript {
                 password = pass
             }
         }
+        maven {
+            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
+        }
     }
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.0.2")
+        classpath("com.android.tools.build:gradle:7.0.4")
     }
 }
 
@@ -82,6 +85,9 @@ allprojects {
                 username = user
                 password = pass
             }
+        }
+        maven {
+            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
         }
     }
 }

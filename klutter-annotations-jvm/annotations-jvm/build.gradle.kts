@@ -4,6 +4,11 @@ plugins {
     kotlin("jvm")
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 sourceSets {
     main {
         java {
@@ -39,11 +44,14 @@ publishing {
 
     repositories {
         maven {
-            url = uri(endpoint)
             credentials {
                 username = user
                 password = pass
             }
+
+            url = uri(endpoint)
+            //url = uri("https://repsy.io/mvn/buijs-dev/klutter")
+
         }
     }
 
@@ -52,13 +60,39 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-jvm"
-            version = "0.2.32"
+            version = "0.5.0"
+            //version = "2022-pre-alpha-1"
 
             artifact("$projectDir/build/libs/annotations-jvm.jar")
 
+            pom {
+                name.set("Klutter: Annotations - JVM ")
+                description.set("Klutter Framework annotations used in Java components")
+                url.set("https://buijs.dev/klutter/")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://github.com/buijs-dev/klutter/blob/main/LICENSE")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("buijs-dev")
+                        name.set("Gillian Buijs")
+                        email.set("info@buijs.dev")
+                    }
+                }
+
+                scm {
+                    connection.set("git@github.com:buijs-dev/klutter.git")
+                    developerConnection.set("git@github.com:buijs-dev/klutter.git")
+                    url.set("https://github.com/buijs-dev/klutter")
+                }
+            }
         }
     }
-
 }
 
 java {

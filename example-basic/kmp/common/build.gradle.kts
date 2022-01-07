@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter.example.basic"
-version = "0.2.20"
+version = "2022-pre-alpha-1"
 
 kotlin {
     android()
@@ -26,7 +26,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("dev.buijs.klutter:annotations-kmp:0.2.49")
+                implementation("dev.buijs.klutter:annotations-kmp:2022-pre-alpha-1")
             }
         }
         val commonTest by getting {

@@ -62,14 +62,6 @@ internal class AndroidRootBuildGradlePrinter(
             |    repositories {
             |        google()
             |        mavenCentral()
-            |        //todo upload artifacts to public repo and remove privates (ouch)
-            |        maven {
-            |            url = uri(kProps.getProperty('private.repo.url'))
-            |            credentials {
-            |                username = kProps.getProperty('private.repo.username')
-            |                password = kProps.getProperty('private.repo.password')
-            |            }
-            |        }
             |    }
             |}
             |

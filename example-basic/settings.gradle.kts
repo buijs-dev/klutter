@@ -3,9 +3,10 @@ pluginManagement {
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
+        }
     }
 }
 
-include(":android")
 include(":klutter")
-include(":kmp")

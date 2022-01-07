@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "dev.buijs.klutter"
-version = "0.4.0-pre-alpha"
+version = "0.5.0"
+//version = "2022-pre-alpha-1"
 
 plugins {
     id("java-gradle-plugin")
@@ -68,8 +69,10 @@ publishing {
 }
 
 dependencies {
-    implementation("dev.buijs.klutter:annotations-jvm:0.2.32")
-    implementation("dev.buijs.klutter:core:0.3.44")
+    implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
+    implementation("dev.buijs.klutter:core:0.5.0-pre-alpha")
+//    implementation("dev.buijs.klutter:annotations-jvm:2022-pre-alpha-1")
+//    implementation("dev.buijs.klutter:core:2022-pre-alpha-1")
     implementation(kotlin("stdlib", "1.6.10"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 

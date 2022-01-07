@@ -5,11 +5,7 @@ buildscript {
             gradlePluginPortal()
             mavenCentral()
             maven {
-                url = uri(project.extra["privateRepoUrl"] as String)
-                credentials {
-                    username = project.extra["privateRepoUsername"] as String
-                    password = project.extra["privateRepoPassword"] as String
-                }
+                url = uri("https://repsy.io/mvn/buijs-dev/klutter")
             }
         }
 
@@ -28,11 +24,7 @@ allprojects {
             gradlePluginPortal()
             mavenCentral()
             maven {
-                url = uri(project.extra["privateRepoUrl"] as String)
-                credentials {
-                    username = project.extra["privateRepoUsername"] as String
-                    password = project.extra["privateRepoPassword"] as String
-                }
+                url = uri("https://repsy.io/mvn/buijs-dev/klutter")
             }
         }
     }

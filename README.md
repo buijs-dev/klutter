@@ -11,7 +11,7 @@ for everything from app design to CICD into a single cohesive framework.
 # Klutter is in PRE-ALPHA stage!
 Roadmap
 
-### Code generation:
+### Code generation
 * [x] Generate android build.gradle in root/android and root/android/app
 * [x] Generate PodFile in root/ios and AppDelegate.swift in ios/Runner 
 * [x] Generate adapter.dart in root/lib/generated
@@ -19,7 +19,7 @@ Roadmap
 * [x] Generate PodFile in root/ios and AppDelegate.swift in ios/Runner
 * [ ] Read annotations from KMP source and generate method calls that take args
 
-### Example apps:
+### Example apps
 * [x] [example-basic](example-basic) Add basic project which works on iOS and Android
 * [ ] Add example project which uses libraries in KMP
 * [ ] Add example project which uses more advanced method calls
@@ -31,6 +31,8 @@ Roadmap
 * [ ] Add repository management 
 * [ ] Add mechanism for key file loading/storing
 
+### Continuous Integration and Delivery
+* [ ] Add tasks to release new builds to App Store/Playstore
 
 ## Project structure
 

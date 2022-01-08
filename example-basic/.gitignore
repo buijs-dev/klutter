@@ -49,3 +49,4 @@ app.*.map.json
 /klutter/klutter-secrets.yaml
 /klutter/klutter-local.yaml
 /klutter/.klutter/
+/android/app/src/main/java/dev/buijs/klutter/adapter/GeneratedKlutterAdapter.kt

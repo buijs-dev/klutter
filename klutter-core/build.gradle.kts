@@ -1,6 +1,23 @@
 plugins {
     kotlin("jvm") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.0-RC"
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("Klutter: Core")
+            includes.from("module.md")
+            sourceLink {
+                localDirectory.set(file("core/src/main/kotlin"))
+            }
+        }
+    }
+}
+
+subprojects {
+    plugins.apply("org.jetbrains.dokka")
 }
 
 buildscript {

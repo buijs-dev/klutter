@@ -1,3 +1,16 @@
-# Klutter Framework
+---
+title: Klutter modules
+---
+/
 
-[Klutter: Core](dokka/index.md)
+
+
+## All modules:
+
+
+| Name |
+|---|
+| [Klutter: Core](dokka/core/index.md) |  |
+
+
+

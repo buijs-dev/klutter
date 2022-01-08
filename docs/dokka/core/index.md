@@ -15,10 +15,10 @@ The core module contains all the essential Klutter functionality.
 | [dev.buijs.klutter.core.flutter](core/dev.buijs.klutter.core.flutter/index.md) |
 
 ### Core
-[KlutterExceptions](core/dev.buijs.klutter.core/index.md)
-[KlutterInterfaces](core/dev.buijs.klutter.core/index.md)
-[KlutterLogger](core/dev.buijs.klutter.core/-klutter-logger/index.md)
-[KlutterProject](core/dev.buijs.klutter.core/-klutter-project/index.md)
+- [KlutterExceptions](core/dev.buijs.klutter.core/index.md)
+- [KlutterInterfaces](core/dev.buijs.klutter.core/index.md)
+- [KlutterLogger](core/dev.buijs.klutter.core/-klutter-logger/index.md)
+- [KlutterProject](core/dev.buijs.klutter.core/-klutter-project/index.md)
 
 ### Core - Adapter
 Facade for Gradle AdapterTask which delegates creation and editing to specific classes.

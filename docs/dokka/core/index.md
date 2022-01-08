@@ -2,7 +2,7 @@
 title: Klutter: Core
 ---
 
-# About
+# Klutter: Core
 
 The core module contains all the essential Klutter functionality.
 Most notably these include: 

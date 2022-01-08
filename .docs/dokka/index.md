@@ -10,5 +10,5 @@ title: All modules
 
 | Name |
 |---|
-| [core](core/index.html) |  |
+| [core](core/index.md) |  |
 

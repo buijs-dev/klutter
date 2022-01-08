@@ -1,8 +1,6 @@
 ---
 title: Klutter modules
 ---
-/
-
 
 
 ## All modules:
@@ -11,6 +9,5 @@ title: Klutter modules
 | Name |
 |---|
 | [Klutter: Core](dokka/core/index.md) |  |
-
 
 

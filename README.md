@@ -92,7 +92,7 @@ klutter.properties file in this directory will be overwritten. Do <b>not</b> man
 Next the plugin will find all modules configured by the Klutter Plugin. A .klutter directory 
 with klutter.gradle.kts and klutter.properties will be created in each module.
 
-More info: [Configuration management in Klutter](.documentation/doc_configuration_management.md)
+More info: [Configuration management in Klutter](.docs/doc_configuration_management.md)
 
 #### Setup modules
 Example of a modules block:

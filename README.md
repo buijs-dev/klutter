@@ -4,7 +4,6 @@
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
 [![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--1-blue)](https://repsy.io/mvn/buijs-dev/klutter/)
-[![Documentation](https://img.shields.io/badge/documentation-code-%2313BFDA)](https://buijs-dev.github.io/klutter/)
 
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
@@ -13,6 +12,7 @@ by the Klutter framework. Klutter combines industry best practices
 for everything from app design to CICD into a single cohesive framework.
 
 # Klutter is in PRE-ALPHA stage!
+[Documentation](https://buijs-dev.github.io/klutter/)
 Roadmap
 
 ### Code generation

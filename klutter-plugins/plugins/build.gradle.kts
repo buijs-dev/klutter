@@ -70,7 +70,7 @@ publishing {
 
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    implementation("dev.buijs.klutter:core:0.5.0-pre-alpha")
+    implementation("dev.buijs.klutter:core:0.5.0")
 //    implementation("dev.buijs.klutter:annotations-jvm:2022-pre-alpha-1")
 //    implementation("dev.buijs.klutter:core:2022-pre-alpha-1")
     implementation(kotlin("stdlib", "1.6.10"))

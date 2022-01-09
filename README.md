@@ -38,6 +38,12 @@ Roadmap
 ### Continuous Integration and Delivery
 * [ ] Add tasks to release new builds to App Store/Playstore
 
+### Kotlin - Dart transpiler
+* [ ] Create Klutter UI components in Kotlin
+* [ ] Embed Klutter UI components in Flutter views
+* [ ] Create Klutter UI library
+
+
 ## Project structure
 
 A typical project structure is as below. For the simplest example see project [example-basic](example-basic)

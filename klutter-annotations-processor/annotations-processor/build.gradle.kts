@@ -13,7 +13,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.5.31-1.0.0")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.6.10-1.0.2")
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")

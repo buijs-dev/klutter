@@ -25,7 +25,7 @@ internal fun dedotkey(dottie: String): String {
     return output
 }
 
-internal class KlutterGradleFilePrinter(
+class KlutterGradleFilePrinter(
     private val properties: List<YamlProperty>)
     : KlutterPrinter
 {
@@ -52,19 +52,17 @@ internal class KlutterGradleFilePrinter(
 
     private fun formatAsString(key: String, value: String): String {
         val formattedKey = dedotkey(key)
-        val type = KotlinType.String.name
-        return "val $formattedKey: $type by project.extra { \"$value\" }\r\n"
+        return "val $formattedKey: String by project.extra { \"$value\" }\r\n"
     }
 
     private fun formatAsInt(key: String, value: String): String {
         val formattedKey = dedotkey(key)
-        val type = KotlinType.Int.name
-        return "val $formattedKey: $type by project.extra { $value }\r\n"
+        return "val $formattedKey: Int by project.extra { $value }\r\n"
     }
 
 }
 
-internal class KlutterGradleFileWriter(val path: Path, val content: String): KlutterWriter {
+class KlutterGradleFileWriter(val path: Path, val content: String): KlutterWriter {
 
     override fun write(): KlutterLogger {
         val logger = KlutterLogger()

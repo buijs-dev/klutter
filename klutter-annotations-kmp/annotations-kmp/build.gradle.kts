@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter"
-version = "0.5.0"
+version = "0.5.1"
 //version = "2022-pre-alpha-1"
 
 kotlin {

@@ -18,7 +18,7 @@ class KlutterPropertiesGenerator(
 
 }
 
-internal class KlutterPropertiesPrinter(
+class KlutterPropertiesPrinter(
     private val properties: List<YamlProperty>)
     : KlutterPrinter
 {
@@ -36,7 +36,7 @@ internal class KlutterPropertiesPrinter(
 }
 
 
-internal class KlutterPropertiesWriter(
+class KlutterPropertiesWriter(
     val path: Path,
     val content: String)
     : KlutterWriter

@@ -8,9 +8,6 @@ import java.io.File
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
- *
  */
 class KlutterPluginTest : WordSpec({
 

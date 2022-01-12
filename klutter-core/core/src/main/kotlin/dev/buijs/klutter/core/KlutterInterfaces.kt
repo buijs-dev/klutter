@@ -23,12 +23,12 @@ abstract class KlutterFileGenerator {
  /**
   * @return a [KlutterPrinter] to create the content of a file.
   */
- internal abstract fun printer(): KlutterPrinter
+ abstract fun printer(): KlutterPrinter
 
  /**
   * @return a [KlutterWriter] to write the content to a file location.
   */
- internal abstract fun writer(): KlutterWriter
+ abstract fun writer(): KlutterWriter
 
 }
 
@@ -36,10 +36,10 @@ abstract class KlutterFileGenerator {
  * Utility interface which takes (generated) file content and writes it to a file.
  * Used for editing and/or creating classes and configuration files.
  *
- * KlutterWriter is an internal class to be used by [KlutterFileGenerator] and
+ * KlutterWriter is an class to be used by [KlutterFileGenerator] and
  * should not be exposed for external usage.
  */
-internal interface KlutterWriter {
+interface KlutterWriter {
 
  /**
   * Creates a new file and writes the content to said file.
@@ -50,12 +50,12 @@ internal interface KlutterWriter {
 }
 
 /**
- * The purpose of this internal class is to output the content of a file.
+ * The purpose of this class is to output the content of a file.
  *
- * KlutterPrinter is an internal class to be used by [KlutterFileGenerator] and
+ * KlutterPrinter is an class to be used by [KlutterFileGenerator] and
  * should not be exposed for external usage.
  */
-internal interface KlutterPrinter {
+interface KlutterPrinter {
 
  /**
   * @return the created file content as String.

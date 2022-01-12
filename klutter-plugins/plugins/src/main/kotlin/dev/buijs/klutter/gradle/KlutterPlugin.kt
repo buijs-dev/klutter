@@ -17,7 +17,6 @@ class KlutterPlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create(EXTENSION_NAME, KlutterExtension::class.java)
         project.tasks.register("synchronize", SynchronizeTask::class.java)
-        project.tasks.register("generate api", GenerateApiTask::class.java)
         project.tasks.register("generate adapters", GenerateAdapterTask::class.java)
         project.tasks.register("build debug", BuildDebugTask::class.java)
     }
@@ -29,17 +28,12 @@ internal fun Project.adapter(): KlutterExtension =
 
 open class KlutterExtension(private val project: Project) {
 
-    private var servicesDto: KlutterServiceDTO? = null
     private var multiplatformDto: KlutterMultiplatformDTO? = null
     private var modulesDto: KlutterModulesDTO? = null
     private var iosDTO: KlutterIosDTO? = null
     internal var root: File = project.rootProject.projectDir
 
     fun root(file: String){ root = File(file) }
-
-    fun services(lambda: KlutterServiceBuilder.() -> Unit) {
-        servicesDto = KlutterServiceBuilder().apply(lambda).build()
-    }
 
     fun multiplatform(lambda: KlutterMultiplatformBuilder.() -> Unit) {
         multiplatformDto = KlutterMultiplatformBuilder().apply(lambda).build()
@@ -52,8 +46,6 @@ open class KlutterExtension(private val project: Project) {
     fun ios(lambda: KlutterIosBuilder.() -> Unit) {
         iosDTO = KlutterIosBuilder().apply(lambda).build()
     }
-
-    internal fun getServicesDto() = servicesDto
 
     internal fun getMultiplatformDto() = multiplatformDto
 

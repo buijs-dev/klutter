@@ -1,18 +1,4 @@
-package dev.buijs.klutter.gradle.dsl
-
-/**
- * @author Gillian Buijs
- * @contact https://buijs.dev
- *
- * DTO for storing the data configured created by the KlutterServicesDSL.
- * The KlutterServicesDSL is used by the KlutterGeneratePigeonsTask.
- *
- */
-data class KlutterServiceDTO(
-    val apis: List<KlutterApi>,
-    val dataClasses: List<KlutterDataClass>,
-    val enumClasses: List<KlutterEnumClass>
-): KlutterDTO
+package dev.buijs.klutter.core.protobuf
 
 data class KlutterApi(
     var name: String? = null,
@@ -38,9 +24,33 @@ data class KlutterEnumClass(
 
 data class KlutterMetaNamedField(
     var name: String? = null,
-    var type: String? = null
+    var type: String? = null,
+    var required: Boolean = false
 )
 
 data class KlutterMetaField(
     var type: String? = null
+)
+
+data class ProtoObjects(
+    val messages: List<ProtoMessage>,
+    val enumerations: List<ProtoEnum>
+)
+
+data class ProtoMessage(
+    val name: String,
+    val fields: List<ProtoField>
+)
+
+data class ProtoEnum(
+    val name: String,
+    val values: List<String>
+)
+
+data class ProtoField(
+    val dataType: ProtoDataType,
+    val name: String,
+    val optional: Boolean,
+    val repeated: Boolean,
+    var customDataType: String? = null,
 )

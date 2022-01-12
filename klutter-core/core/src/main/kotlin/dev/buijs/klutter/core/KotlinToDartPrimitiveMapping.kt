@@ -3,34 +3,27 @@ package dev.buijs.klutter.core
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
  *
  * This is not an exhaustive mapping but a basic mapping to facilitate
  * rudimentary type safety in the KotlinServicesDSL.
  *
  */
-class KotlinToDartPrimitiveMapping {
+enum class KotlinDartMap(val kotlinType: String, val dartType: String) {
 
-    private val mapping: Map<KotlinType, DartType> = mapOf(
-        KotlinType.Int to DartType.int,
-        KotlinType.Double to DartType.double,
-        KotlinType.Boolean to DartType.bool,
-        KotlinType.String to DartType.String,
-        KotlinType.List to DartType.List,
-        KotlinType.Map to DartType.Map)
+    KInt("Int", "int"),
+    KDouble("Double", "double"),
+    KBoolean("Boolean", "bool"),
+    KString("String", "String"),
+    KList("List", "List"),
+    KMap("Map", "Map");
 
-    fun dart2Kotlin(type: DartType): KotlinType =
-        mapping.entries.first { entry -> entry.value == type }.key
+    companion object {
 
-    fun kotlin2Dart(type: KotlinType): DartType =
-        mapping.entries.first { entry -> entry.key == type }.value
+        fun toKotlinType(type: String) = values().firstOrNull { it.kotlinType == type } ?.kotlinType
+            ?: throw KlutterCodeGenerationException("No such kotlinType in KotlinDartMap: $type")
 
-}
+        fun toDartType(type: String) = values().firstOrNull { it.dartType == type } ?.dartType
+            ?: throw KlutterCodeGenerationException("No such dartType in KotlinDartMap: $type")
 
-enum class KotlinType {
-    Int, Double, Boolean, String, List, Map;
-}
-
-enum class DartType {
-    int, double, String, bool, List, Map
+    }
 }

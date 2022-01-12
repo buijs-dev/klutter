@@ -5,7 +5,6 @@ import java.io.File
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
  */
 internal class KtFileScanner(
     private val fqdn: String?,

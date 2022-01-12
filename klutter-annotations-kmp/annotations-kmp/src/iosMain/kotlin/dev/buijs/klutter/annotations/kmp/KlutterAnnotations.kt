@@ -1,9 +1,13 @@
 package dev.buijs.klutter.annotations.kmp
 
-/**
- * @author Gillian Buijs
- * @contact https://buijs.dev
- */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
 actual annotation class KlutterAdaptee(actual val name: String)
 
-actual annotation class KlutterAdapter()
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+actual annotation class KlutterAdapter
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+actual annotation class KlutterResponse

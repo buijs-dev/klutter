@@ -22,30 +22,24 @@
 
 package dev.buijs.klutter.core
 
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-/**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
- * @author Gillian Buijs
- */
-class KlutterPropertiesReader(val file: File) {
+data class MethodCallDefinition(
+    val getter: String,
+    val import: String,
+    val call: String,
+    val returns: Class<*>)
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
-            }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
-    }
+data class MethodData(
+    val getter: String,
+    val methodCall: String)
 
-}
+data class FileContent(
+    val file: File,
+    val content: String)
+
+data class KtFileContent(
+    val file: File,
+    val ktFile: KtFile,
+    val content: String)

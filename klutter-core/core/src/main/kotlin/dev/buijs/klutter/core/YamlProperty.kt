@@ -22,30 +22,18 @@
 
 package dev.buijs.klutter.core
 
-import java.io.File
-
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-class KlutterPropertiesReader(val file: File) {
+data class YamlProperty(
+    val key: String,
+    val value: String,
+    val type: YamlPropertyType
+)
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
-            }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
-    }
-
+/**
+ * @author Gillian Buijs
+ */
+enum class YamlPropertyType {
+    Int, String
 }

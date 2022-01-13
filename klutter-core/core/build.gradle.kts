@@ -74,7 +74,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.5.3"
+            version = "0.6.1"
 //            version = "2022-pre-alpha-1"
             artifact("$projectDir/build/libs/core.jar")
 

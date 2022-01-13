@@ -1,3 +1,25 @@
+/* Copyright (c) 2021 - 2022 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 package dev.buijs.klutter.core
 
 import dev.buijs.klutter.core.Klutter.KlutterYaml.*
@@ -16,7 +38,6 @@ import java.io.File
  * @property klutter is the folder containing all Klutter configuration and the configured Klutter Plugin.
  *
  * @author Gillian Buijs
- * @contact https://buijs.dev
  */
 data class KlutterProject(
     val root: Root,
@@ -29,8 +50,10 @@ data class KlutterProject(
 
 /**
  * Factory to create a KlutterProject.
+ *
+ * @author Gillian Buijs
  */
-class KlutterProjectFactory() {
+class KlutterProjectFactory {
 
     /**
      * @return a KlutterProject basing all module paths from the given root.
@@ -48,9 +71,12 @@ class KlutterProjectFactory() {
 
 /**
  * @property folder path to the top level of the project.
+ *
+ * @author Gillian Buijs
  */
 class Root(file: File) {
 
+    @Suppress("private")
     val folder: File = if (file.exists()) {
         file.absoluteFile
     } else throw KlutterConfigException(
@@ -83,9 +109,12 @@ class Root(file: File) {
 
 
 /**
+ * Wrapper class with a file instance pointing to the klutter sub-module.
  * If no custom path is given, Klutter assumes the path to the klutter folder is [root]/klutter.
  *
  * @property file path to the klutter folder.
+ *
+ * @author Gillian Buijs
  */
 class Klutter(file: File? = null, root: Root) : KlutterFolder(
     root, file, "Klutter directory", root.resolve("klutter")
@@ -94,6 +123,7 @@ class Klutter(file: File? = null, root: Root) : KlutterFolder(
     enum class KlutterYaml { PUBLIC, LOCAL, SECRETS }
 
     /**
+     * Function to return the location of yaml files used by Klutter.
      * Assumes all yaml files for klutter configuration are stored in [root]/klutter.
      * @throws KlutterConfigException if file(s) do not exist.
      * @return absolute path to a requested yaml file.
@@ -125,9 +155,12 @@ class Klutter(file: File? = null, root: Root) : KlutterFolder(
 }
 
 /**
+ * Wrapper class with a file instance pointing to the flutter/lib sub-module.
  * If no custom path is given, Klutter assumes the path to the flutter lib folder is [root]/lib.
  *
  * @property file path to the (flutter) lib folder.
+ *
+ * @author Gillian Buijs
  */
 class Flutter(file: File? = null, root: Root) :
     KlutterFolder(root, file, "Flutter lib directory", root.resolve("lib")) {
@@ -144,9 +177,12 @@ class Flutter(file: File? = null, root: Root) :
 }
 
 /**
+ * Wrapper class with a file instance pointing to the kmp sub-module.
  * If no custom path is given, Klutter assumes the path to the KMP module is [root]/kmp.
  *
  * @property file path to the KMP folder.
+ *
+ * @author Gillian Buijs
  */
 class KMP(
     root: Root,
@@ -157,6 +193,7 @@ class KMP(
 ) : KlutterFolder(root, file, "KMP directory", root.resolve("kmp")) {
 
     /**
+     * Function to return the location of the src module containing the common/shared platform code.
      * If no custom path is given, Klutter assumes the path to the KMP sourcecode is root-project/kmp/common/src/commonMain.
      *
      * @throws KlutterConfigException if file(s) do not exist.
@@ -176,6 +213,7 @@ class KMP(
     }
 
     /**
+     * Function to return the location of the podspec file in the kmp sub-module.
      * If no custom path is given, Klutter assumes the path to the KMP sourcecode is root-project/kmp/common/commmon.podspec.
      *
      * @throws KlutterConfigException if file(s) do not exist.
@@ -191,14 +229,17 @@ class KMP(
     }
 
     /**
+     * Function to return the location of the common/shared sub-module in the KMP module.
      * If no custom path is given, Klutter assumes the path to the KMP module is root-project/kmp/common.
      *
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the podspec file.
      */
+    @Suppress("private")
     fun module() = getFileSafely(file.resolve(moduleName), file.absolutePath, "root-project/kmp/common")
 
     /**
+     * Function to return the location of build folder in the KMP common/shared sub-module.
      * If no custom path is given, Klutter assumes the path to the KMP build folder is root-project/kmp/common/build.
      *
      * @throws KlutterConfigException if file(s) do not exist.
@@ -215,14 +256,18 @@ class KMP(
 }
 
 /**
- * If no custom path is given, Klutter assumes the path to the iOS module is [root]/ios.
+ * Wrapper class with a file instance pointing to the ios sub-module.
+ * If no custom path is given, Klutter assumes the path to the ios module is [root]/ios.
  *
  * @property file path to the iOS folder.
+ *
+ * @author Gillian Buijs
  */
 class IOS(file: File? = null, root: Root) :
     KlutterFolder(root, file, "IOS directory", root.resolve("ios")) {
 
     /**
+     * Function to return the location of the PodFile in the ios sub-module.
      * If no custom path is given, Klutter assumes the path to the iOS Podfile is root-project/ios/PodFile.
      *
      * @throws KlutterConfigException if file(s) do not exist.
@@ -234,7 +279,8 @@ class IOS(file: File? = null, root: Root) :
         "root-project/ios/Podfile")
 
     /**
-     * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swfit is root-project/ios/Runner/AppDelegate.swift.
+     * Function to return the location of the AppDelegate.swift file in the ios folder.
+     * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swift is root-project/ios/Runner/AppDelegate.swift.
      *
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the ios AppDelegate.
@@ -253,21 +299,27 @@ class IOS(file: File? = null, root: Root) :
 }
 
 /**
+ * Wrapper class with a file instance pointing to the android sub-module.
  * If no custom path is given, Klutter assumes the path to the Android module is [root]/android.
  *
  * @property file path to the Android folder.
+ *
+ * @author Gillian Buijs
  */
 class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Android directory", root.resolve("android")) {
 
     /**
+     * Function to return the location of the app sub-module in the android folder.
      * If no custom path is given, Klutter assumes the path to the android app folder is root-project/android/app.
      *
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
+    @Suppress("private")
     fun app() = getFileSafely(file.resolve("app"), file.absolutePath, "root-project/android/app")
 
     /**
+     * Function to return the location of the AndroidManifest.xml file in the android/app sub-module.
      * If no custom path is given, Klutter assumes the path to the android app manifest file is root-project/android/app/src/main/AndroidManifest.xml.
      *
      * @throws KlutterConfigException if file(s) do not exist.
@@ -287,6 +339,16 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
     }
 }
 
+/**
+ * A wrapper class which holds a reference to the Klutter project root folder.
+ * This class is used to safely get file instances by setting default locations for mandatory folders.
+ * These defaults can be overwritten with custom values and when those do not exist the KlutterFolder
+ * falls back to the default value.
+ *
+ * @throws KlutterConfigException if both given <b>maybeFile</b> and <b>defaultLocation</b> do not exist.
+ *
+ * @author Gillian Buijs
+ */
 abstract class KlutterFolder(
     val root: Root,
     maybeFile: File?,
@@ -318,6 +380,12 @@ abstract class KlutterFolder(
         }
 }
 
+/**
+ * Helper method to get a file safely.
+ * @throws KlutterConfigException if [file] is null or does not exists.
+ *
+ * @author Gillian Buijs
+ */
 internal fun getFileSafely(file: File?, whichFolder: String, defaultLocation: String): File {
     if (file == null) {
         throw KlutterConfigException(

@@ -22,30 +22,65 @@
 
 package dev.buijs.klutter.core
 
-import java.io.File
-
 /**
- * Utility class to read properties from a file.
+ * Type of Proto being either a message or an enum.
  *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
+ * It's a ProtoType! :-)
  *
  * @author Gillian Buijs
  */
-class KlutterPropertiesReader(val file: File) {
-
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
-            }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
-    }
-
+enum class ProtoObjectType(val type: String) {
+    MESSAGE("message"),
+    ENUM("enum")
 }
+
+/**
+ * Mapping of Data Type between protobuf and Kotlin.
+ *
+ * @author Gillian Buijs
+ */
+enum class ProtoDataType(val type: String, val kotlinType: String) {
+    DOUBLE("double", "Double"),
+    FLOAT("float", "Float"),
+    INTEGER("int32", "Int"),
+    LONG("int64", "Long"),
+    BOOLEAN("bool", "Boolean"),
+    STRING("string", "String"),
+    NONE("", "")
+}
+
+/**
+ * @author Gillian Buijs
+ */
+data class ProtoObjects(
+    val messages: List<ProtoMessage>,
+    val enumerations: List<ProtoEnum>
+)
+
+/**
+ * @author Gillian Buijs
+ */
+data class ProtoMessage(
+    val name: String,
+    val fields: List<ProtoField>
+)
+
+/**
+ * @author Gillian Buijs
+ */
+data class ProtoEnum(
+    val name: String,
+    val values: List<String>
+)
+
+/**
+ * @author Gillian Buijs
+ */
+data class ProtoField(
+    val dataType: ProtoDataType,
+    val name: String,
+    val optional: Boolean,
+    val repeated: Boolean,
+    var customDataType: String? = null,
+)
+

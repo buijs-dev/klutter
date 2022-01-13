@@ -297,25 +297,21 @@ Dart DTO with all boilerplate code to (de)serialize.
 
 The annotated class should comply with the following rules:
 
-1 Must be an open class\
+1. Must be an open class
+2. Fields may be mutable (var) and immutable (val)
+3. Constructor only (no body)
+4. No inheritance
+5. Any field type should comply with the same rules
+
+A KlutterResponse acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
+
 Open classes can be extended so the dto can be used as interface between KMP and Flutter and you can extend it
-to add behaviour designed for frontend or backend respectively.
-
-2 Fields may be mutable (var) and immutable (val)\
-Prefer immutable fields wherever possible, but mutability is allowed.
-
-3 Constructor only (no body)\
-Any behaviour should be written in subclasses (in accordance with point 1).
-
-4 No inheritance\
-The DTO class should be extended so to avoid any unnecessary complexity it may not inherit any fields/behaviour from other classes.
+to add behaviour designed for frontend or backend respectively. Always prefer immutable fields wherever possible, but mutability is allowed.
+Any behaviour should be written in subclasses. To avoid any unnecessary complexity it may not inherit any fields/behaviour from other classes.
 This is a functional design choise, not a technical limitation.
 
-5 Any field type should comply with the same rules\
-Any field declaration may use another DTO as type but that DTO should comply as well.
-
-Any class annotated with KlutterResponse will be logged as error and ignored for processing.
-Any other dependent class will also be ignored as result.
+Any field declaration may use another DTO as type but that DTO should comply as well. Any class annotated with KlutterResponse will be logged 
+as error and ignored for processing. Any other dependent class will also be ignored as result.
 
 Example of valid declaration:
 
@@ -332,7 +328,7 @@ Example of valid declaration:
     )
 
 ```
-
+<br />
 
 Example of invalid declaration (Inheritance):
 
@@ -349,7 +345,7 @@ Example of invalid declaration (Inheritance):
     )
 
 ```
-
+<br />
 
 Example of invalid declaration (SomethingElse class should not have a body):
 
@@ -368,7 +364,7 @@ Example of invalid declaration (SomethingElse class should not have a body):
     }
 
 ```
-
+<br />
 
 ### Task: build debug
 This task builds the KMP library, renames the created .aar file to kmp.aar and copies 

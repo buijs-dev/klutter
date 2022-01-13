@@ -305,7 +305,7 @@ The annotated class should comply with the following rules:
 
 A KlutterResponse acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
 
-Open classes can be extended so the dto can be used as interface between KMP and Flutter and you can extend it
+Open classes can be extended so the DTO can be used as interface between KMP and Flutter and you can extend it
 to add behaviour designed for frontend or backend respectively. Always prefer immutable fields wherever possible, but mutability is allowed.
 Any behaviour should be written in subclasses. To avoid any unnecessary complexity it may not inherit any fields/behaviour from other classes.
 This is a functional design choise, not a technical limitation.

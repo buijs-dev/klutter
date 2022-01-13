@@ -1,6 +1,9 @@
-package dev.buijs.klutter.gradle.dsl
+package dev.buijs.klutter.plugins.gradle.dsl
 
 import dev.buijs.klutter.core.KlutterMultiplatformException
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterDSL
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterDSLBuilder
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterDTO
 
 /**
  * @author Gillian Buijs

@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.utils
+package dev.buijs.klutter.plugins.gradle.utils
 
 import dev.buijs.klutter.core.KlutterLogLevel
 import dev.buijs.klutter.core.KlutterLogger

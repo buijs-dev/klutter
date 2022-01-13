@@ -1,5 +1,7 @@
 package dev.buijs.klutter.gradle
 
+import dev.buijs.klutter.plugins.gradle.KlutterPlugin
+import dev.buijs.klutter.plugins.gradle.adapter
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec

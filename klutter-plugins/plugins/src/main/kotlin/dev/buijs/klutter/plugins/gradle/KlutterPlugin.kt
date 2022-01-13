@@ -1,7 +1,9 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.gradle.dsl.*
-import dev.buijs.klutter.gradle.tasks.*
+import dev.buijs.klutter.plugins.gradle.dsl.*
+import dev.buijs.klutter.plugins.gradle.tasks.config.SynchronizeTask
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.GenerateAdapterTask
+import dev.buijs.klutter.plugins.gradle.tasks.build.BuildDebugTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File

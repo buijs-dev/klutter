@@ -1,13 +1,11 @@
-package dev.buijs.klutter.gradle.dsl
+package dev.buijs.klutter.plugins.gradle.dsl
+
 
 import java.io.File
 import java.nio.file.Path
 
-
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
- *
  */
 @DslMarker
 internal annotation class ModulesDSLMarker

@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.dsl
+package dev.buijs.klutter.plugins.gradle.dsl
 
 
 interface KlutterDSL<T> {

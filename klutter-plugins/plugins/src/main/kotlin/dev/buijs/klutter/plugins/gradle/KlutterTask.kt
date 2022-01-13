@@ -1,8 +1,7 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.plugins.gradle
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.gradle.utils.GradleLoggingWrapper
-import dev.buijs.klutter.gradle.adapter
+import dev.buijs.klutter.plugins.gradle.utils.GradleLoggingWrapper
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -46,8 +45,6 @@ abstract class KlutterTask
         ?.modules
         ?.map { File(it) }
         ?.map{ source -> getFileSafely(source,"Klutter modules") }
-
-    fun androidManifest() = project().android.manifest()
 
     fun iosVersion() = ext.getIosDto()?.version?:"13.0"
 

@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.utils
+package dev.buijs.klutter.plugins.gradle.utils
 
 import java.io.File
 import java.io.IOException

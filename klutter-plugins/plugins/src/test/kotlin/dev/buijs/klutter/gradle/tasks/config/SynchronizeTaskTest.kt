@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.tasks
+package dev.buijs.klutter.gradle.tasks.config
 
 
 import dev.buijs.klutter.gradle.KlutterTestProject
@@ -11,7 +11,7 @@ import java.nio.file.Path
  * @author Gillian Buijs
  * @contact https://buijs.dev
  */
-class ConfigProducerGradleTest : WordSpec({
+class SynchronizeTaskTest : WordSpec({
 
     "A configured Kotlin DSL builscript" should {
         "Lead to a successful build" {

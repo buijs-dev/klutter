@@ -1,9 +1,8 @@
-package dev.buijs.klutter.gradle.dsl
+package dev.buijs.klutter.plugins.gradle.dsl
+
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
- *
  */
 @DslMarker
 internal annotation class KlutterIosDSLMarker

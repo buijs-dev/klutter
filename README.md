@@ -226,12 +226,10 @@ def kProps = new Properties()
 The generatedAdapter task creates all the boilerplate code needed to make the Dart code in Flutter 
 communicate with Kotlin in the Multiplatform module.
 - //todo explan methodchannels and typesafety through protobuff
-- //link to the generateServices task
-- //edit the example to latest code
 
 ```kotlin
 plugins {
-    id("dev.buijs.klutter.plugins.adapter")
+    id("dev.buijs.klutter.gradle")
 }
 
 klutter {
@@ -249,10 +247,20 @@ dependencies {
 ```
 
 #### Place annotations
-The MainActivity in the flutter/android/app source should be annotated with the @KlutterAdapter annotation.
+There are 3 annotations:
+- KlutterAdapter
+- KlutterAdaptee
+- KlutterResponse
+
+**KlutterAdapter**
+The MainActivity in the flutter/android/app source should be annotated with the **@KlutterAdapter** annotation.
 This will enable the plugin to find the file and add all the needed methods to call into KMP.
 The MainActivity will handle all MethodChannel calls by delegating the request to the GeneratedKlutterAdapter code.
-Next annotate all corresponding methods in the KMP module with @KlutterAdaptee and give it a corresponding name.
+
+**KlutterAdaptee**
+All corresponding methods in the KMP module should be annotated with **@KlutterAdaptee** and given a corresponding name.
+All methods annotated with this annotation are added to the GeneratedKlutterAdapter. In other words: Adding this annotation
+to a method in KMP will make it visible for the Flutter.
 
 For example this method in your KMP module:
 
@@ -279,8 +287,82 @@ Will generate this code and add it to the GeneratedKlutterAdapter class:
 
 ```
 
-### Task: generate api
-//TODO generate api is incubating, not sure yet which way to go!
+**KlutterResponse**
+This annotation enables KMP and Flutter to communicate using data transfer objects instead of Strings.
+The KlutterResponse can be used to annotate a simple DTO after which Klutter will generate an equivalent 
+Dart DTO with all boilerplate code to (de)serialize.
+
+The annotated class should comply with the following rules:
+
+1 Must be an open class
+Open classes can be extended so the dto can be used as interface between KMP and Flutter and you can extend it
+to add behaviour designed for frontend or backend respectively.
+
+2 Fields may be mutable (var) and immutable (val)
+Prefer immutable fields wherever possible, but mutability is allowed.
+
+3 Constructor only (no body)
+Any behaviour should be written in subclasses (in accordance with point 1).
+
+4 No inheritance
+The DTO class should be extended so to avoid any unnecessary complexity it may not inherit any fields/behaviour from other classes.
+This is a functional design choise, not a technical limitation.
+
+5 Any field type should comply with the same rules
+Any field declaration may use another DTO as type but that DTO should comply as well.
+
+Any class annotated with KlutterResponse will be logged as error and ignored for processing.
+Any other dependent class will also be ignored as result.
+
+Example of valid declaration:
+
+```kotlin
+
+    open class Something(
+        val x: String?,
+        var y: SomethingElse
+    )
+
+    open class SomethingElse(
+        val a: Int?,
+        val b: List<Boolean>
+    )
+
+```
+
+Example of invalid declaration (Inheritance):
+
+```kotlin
+
+    open class Something(
+        val x: String?,
+        var y: SomethingElse
+    ) : SomethingElse(1, listOf())
+    
+    open class SomethingElse(
+        val a: Int?,
+        val b: List<Boolean>
+    )
+
+```
+
+Example of invalid declaration (SomethingElse class should not have a body):
+
+```kotlin
+
+    open class Something(
+        val x: String?,
+        var y: SomethingElse
+    )
+
+    open class SomethingElse(
+        val a: Int?,
+        val b: List<Boolean>
+    ) {
+        val bodyNotAllowed: Boolean = true
+    }
+
+```
 
 ### Task: build debug
 This task builds the KMP library, renames the created .aar file to kmp.aar and copies 

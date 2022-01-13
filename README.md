@@ -253,11 +253,13 @@ There are 3 annotations:
 - KlutterResponse
 
 **KlutterAdapter**
+
 The MainActivity in the flutter/android/app source should be annotated with the **@KlutterAdapter** annotation.
 This will enable the plugin to find the file and add all the needed methods to call into KMP.
 The MainActivity will handle all MethodChannel calls by delegating the request to the GeneratedKlutterAdapter code.
 
 **KlutterAdaptee**
+
 All corresponding methods in the KMP module should be annotated with **@KlutterAdaptee** and given a corresponding name.
 All methods annotated with this annotation are added to the GeneratedKlutterAdapter. In other words: Adding this annotation
 to a method in KMP will make it visible for the Flutter.
@@ -288,6 +290,7 @@ Will generate this code and add it to the GeneratedKlutterAdapter class:
 ```
 
 **KlutterResponse**
+
 This annotation enables KMP and Flutter to communicate using data transfer objects instead of Strings.
 The KlutterResponse can be used to annotate a simple DTO after which Klutter will generate an equivalent 
 Dart DTO with all boilerplate code to (de)serialize.

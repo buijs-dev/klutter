@@ -67,11 +67,10 @@ internal class FlutterAdapterPrinter(
             """.trimMargin()
     }
 
-    private fun printFun(definition: MethodCallDefinition): String {
-        return """|    static Future<String?> get ${definition.getter} async {
-                  |      return await _channel.invokeMethod('${definition.getter}');
-                  |    }""".trimMargin()
-    }
+    private fun printFun(definition: MethodCallDefinition) =
+        """|    static Future<String?> get ${definition.getter} async {
+           |      return await _channel.invokeMethod('${definition.getter}');
+           |    }""".trimMargin()
 
 }
 

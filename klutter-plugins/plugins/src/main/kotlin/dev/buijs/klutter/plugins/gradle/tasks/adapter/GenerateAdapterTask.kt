@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import com.intellij.openapi.util.Disposer
 
 import dev.buijs.klutter.plugins.gradle.KlutterTask
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.protobuf.ProtoObjects
 import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -49,12 +48,10 @@ open class GenerateAdapterTask
     }
 
     override fun describe() {
-
         KlutterAdapterProducer(
             context = context,
             project = project(),
             iosVersion = iosVersion(),
-            protoObjects = ProtoObjects()
         ).produce().also { logger.merge(it) }
     }
 

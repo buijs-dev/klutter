@@ -13,12 +13,15 @@ sourceSets {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.6.10-1.0.2")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    testImplementation("junit:junit:4.13.2")
+    implementation("dev.buijs.klutter:core:0.6.12")
+
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
-    testImplementation("org.mockito:mockito-core:4.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
 }
 
 java {
@@ -66,7 +69,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-processor"
-            version = "0.5.0"
+            version = "0.6.13"
 
             artifact("$projectDir/build/libs/annotations-processor.jar")
 
@@ -78,4 +81,8 @@ publishing {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }

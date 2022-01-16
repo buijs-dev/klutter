@@ -7,21 +7,8 @@ plugins {
 }
 
 klutter {
-
     modules {
         module("klutter")
-        module("kmp")
-        module("kmp/common")
-        module("android")
-        module("android/app")
-    }
-
-    services {
-        api("PlatformApi") {
-            func("version"){
-                gives { String() }
-            }
-        }
     }
 }
 

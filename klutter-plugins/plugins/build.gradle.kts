@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "dev.buijs.klutter"
-version = "0.6.0"
+version = "0.6.9"
 //version = "2022-pre-alpha-1"
 
 plugins {
@@ -71,8 +71,8 @@ publishing {
 
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    implementation("dev.buijs.klutter:core:0.6.1")
-    implementation("dev.buijs.klutter:annotations-processor:0.6.1")
+    implementation("dev.buijs.klutter:core:0.6.12")
+    implementation("dev.buijs.klutter:annotations-processor:0.6.13")
 
     implementation(kotlin("stdlib", "1.6.10"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
@@ -84,6 +84,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(gradleTestKit())
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
+
+    testImplementation("org.mockito:mockito-core:4.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 }
 
 tasks.test {

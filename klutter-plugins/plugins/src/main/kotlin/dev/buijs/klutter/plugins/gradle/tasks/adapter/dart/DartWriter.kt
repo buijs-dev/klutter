@@ -20,67 +20,39 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.dart
+
+
+import dev.buijs.klutter.core.Flutter
+import dev.buijs.klutter.core.Klutter
+import dev.buijs.klutter.core.KlutterLogger
+import dev.buijs.klutter.core.KlutterWriter
 
 /**
- * Type of Proto being either a message or an enum.
- *
- * It's a ProtoType! :-)
- *
  * @author Gillian Buijs
  */
-enum class ProtoObjectType(val type: String) {
-    MESSAGE("message"),
-    ENUM("enum")
+class DartWriter(val content: String, val flutter: Flutter): KlutterWriter {
+
+    override fun write(): KlutterLogger {
+        val logger = KlutterLogger()
+
+        val file = flutter.file.resolve("generated").also {
+            if(!it.exists()){
+                it.mkdir()
+            }
+        }
+
+        val dartFile = file.resolve("messages.dart").also {
+            if(it.exists()) {
+                it.delete().also {
+                    logger.debug("Deleted file: $file")
+                }
+            } else logger.error("File not found. Creating a new file!")
+        }
+
+        dartFile.createNewFile().also { logger.debug("Created new file: $file") }
+        dartFile.writeText(content).also { logger.debug("Written content to $file:\r\n$content") }
+        return logger
+    }
+
 }
-
-/**
- * Mapping of Data Type between protobuf and Kotlin.
- *
- * @author Gillian Buijs
- */
-enum class ProtoDataType(val type: String, val kotlinType: String) {
-    DOUBLE("double", "Double"),
-    FLOAT("float", "Float"),
-    INTEGER("int32", "Int"),
-    LONG("int64", "Long"),
-    BOOLEAN("bool", "Boolean"),
-    STRING("string", "String"),
-    NONE("", "")
-}
-
-/**
- * @author Gillian Buijs
- */
-data class ProtoObjects(
-    val messages: List<ProtoMessage>,
-    val enumerations: List<ProtoEnum>
-)
-
-/**
- * @author Gillian Buijs
- */
-data class ProtoMessage(
-    val name: String,
-    val fields: List<ProtoField>
-)
-
-/**
- * @author Gillian Buijs
- */
-data class ProtoEnum(
-    val name: String,
-    val values: List<String>
-)
-
-/**
- * @author Gillian Buijs
- */
-data class ProtoField(
-    val dataType: ProtoDataType,
-    val name: String,
-    val optional: Boolean,
-    val repeated: Boolean,
-    var customDataType: String? = null,
-)
-

@@ -21,10 +21,10 @@ flutter:
 klutter:
   - gradle:
     - plugin:
-      - version: "0.4.0-pre-alpha"
+      - version: "0.6.9"
   - annotations:
     - kmp:
-      - version: "0.2.49"
+      - version: "0.5.1"
 
 kotlin:
   - version: "1.6.10"

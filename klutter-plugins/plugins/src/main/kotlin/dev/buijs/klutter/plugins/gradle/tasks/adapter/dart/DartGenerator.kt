@@ -20,7 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks.adapter.protobuf
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.dart
 
 
 import dev.buijs.klutter.core.*
@@ -28,13 +28,13 @@ import dev.buijs.klutter.core.*
 /**
  * @author Gillian Buijs
  */
-class ProtoGenerator(
-    private val klutter: Klutter,
-    private val objects: ProtoObjects,
+class DartGenerator(
+    private val flutter: Flutter,
+    private val objects: DartObjects,
     ): KlutterFileGenerator() {
 
-    override fun printer() = ProtoPrinter(objects)
+    override fun printer() = DartPrinter(objects)
 
-    override fun writer() = ProtoWriter(printer().print(), klutter)
+    override fun writer() = DartWriter(printer().print(), flutter)
 
 }

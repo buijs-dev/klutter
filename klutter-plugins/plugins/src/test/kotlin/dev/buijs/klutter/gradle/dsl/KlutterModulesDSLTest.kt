@@ -1,5 +1,6 @@
 package dev.buijs.klutter.gradle.dsl
 
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterModulesDSL
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
@@ -7,7 +8,6 @@ import java.io.File
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
  */
 class KlutterModulesDSLTest: WordSpec({
 

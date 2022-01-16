@@ -26,7 +26,8 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import dev.buijs.klutter.annotations.processor.KtFileScanner
+import dev.buijs.klutter.annotations.processor.KlutterAdapteeScanner
+import dev.buijs.klutter.annotations.processor.KlutterResponseScanner
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.FileContent
 import dev.buijs.klutter.core.KtFileContent
@@ -38,13 +39,13 @@ import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidBuildGradle
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidRootBuildGradleGenerator
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.FlutterAdapterGenerator
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.IosPodspecVisitor
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.protobuf.ProtoGenerator
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.DartGenerator
+import dev.buijs.klutter.plugins.gradle.utils.AnnotatedSourceCollector
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import java.io.File
 
 /**
  * @author Gillian Buijs
@@ -54,23 +55,22 @@ class KlutterAdapterProducer(
     private val context: Project,
     private val project: KlutterProject,
     private val iosVersion: String,
-    private val protoObjects: ProtoObjects
 ): KlutterProducer
 {
 
     private var logger = KlutterLogger()
 
+    //todo complexity
     override fun produce(): KlutterLogger {
         val root = project.root
         val flutter = project.flutter
         val android = project.android
         val ios = project.ios
         val kmp = project.kmp
-        val klutter = project.klutter
         val podspec = project.kmp.podspec()
         val methods = scanForAdaptees()
         val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
-        val androidActivityVisitor = AndroidActivityVisitor(findAndroidActivity(android))
+        val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
         val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, methods)
         val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app())
         val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android)
@@ -86,10 +86,11 @@ class KlutterAdapterProducer(
             podName = podspec.nameWithoutExtension
         )
 
-        val protoGenerator = ProtoGenerator(klutter, protoObjects)
+        val dartObjects = scanForResponses()
+        val dartGenerator = DartGenerator(flutter, dartObjects)
 
         return logger
-            .merge(protoGenerator.generate())
+            .merge(dartGenerator.generate())
             .merge(androidAdapterGenerator.generate())
             .merge(androidActivityVisitor.visit())
             .merge(flutterAdapterGenerator.generate())
@@ -101,27 +102,85 @@ class KlutterAdapterProducer(
             .merge(iosPodFileGenerator.generate())
     }
 
-    private fun scanForAdaptees(): List<MethodCallDefinition> {
-        val scannedSources = scanSources(project.kmp.source())
-            .filter { it.content.contains("@KlutterAdaptee") }
+    //todo does not belong here and too big
+    private fun scanForResponses(): DartObjects {
+        val sources = AnnotatedSourceCollector(project.kmp.source(), "@KlutterResponse")
+            .collect()
+            .also { logger.merge(it.logger) }
+            .collection
+            .map { convertToKotlinFiles(it) }
+            .map { KlutterResponseScanner(it.content).scan() }
 
-        if(scannedSources.isEmpty()){
-            logger.warn("None of the files contain @KlutterAdaptee annotation.")
+        val enumerations = mutableListOf<DartEnum>()
+        val messages = mutableListOf<DartMessage>()
+
+        sources.forEach {
+            enumerations.addAll(it.enumerations)
+            messages.addAll(it.messages)
         }
 
-        return scannedSources
+        val customDataTypes = mutableListOf<String>()
+
+        //Collect all custom data types
+        for (message in messages) {
+            for (field in message.fields) {
+                field.customDataType?.let { customDataTypes.add(it) }
+            }
+        }
+
+        //Iterate the message names and match it to the custom data types.
+        //Remove from custom data types list if matched.
+        messages.map { it.name }.forEach { customDataTypes.remove(it) }
+
+        //Iterate the enumeration names and match it to the custom data types.
+        //Remove from custom data types list if matched.
+        enumerations.map { it.name }.forEach { customDataTypes.remove(it) }
+
+        //Any custom data type name left in the list means there is no class definition found by this name
+        messages.removeIf { message ->
+            message.fields.map { field -> field.name }.any { customDataTypes.contains(it) }
+        }
+
+        if(customDataTypes.isNotEmpty()) {
+            throw KlutterCodeGenerationException(
+                """ |Processing annotation '@KlutterResponse' failed, caused by:
+                    |
+                    |Could not resolve all class names.
+                    |
+                    |Verify if all KlutterResponse annotated classes comply with the following rules:
+                    |
+                    |1. Must be an open class
+                    |2. Fields must be immutable
+                    |3. Constructor only (no body)
+                    |4. No inheritance
+                    |5. Any field type should comply with the same rules
+                    |
+                    |If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
+                """.trimMargin())
+        }
+
+        return DartObjects(messages, enumerations)
+    }
+
+    private fun scanForAdaptees(): List<MethodCallDefinition> {
+        val sources = AnnotatedSourceCollector(project.kmp.source(), "@KlutterAdaptee")
+            .collect()
+            .also { logger.merge(it.logger) }
+
+        return sources.collection
             .map { convertToKotlinFiles(it) }
             .map { convertToMethodCallDefinitions(it) }
             .flatten()
     }
 
-    private fun findAndroidActivity(android: Android): KtFileContent {
-        val appDir = android.app()
-        val activityFile = scanSources(appDir)
-            .filter { it.content.contains("@KlutterAdapter") }
+    private fun scanForAndroidActivity(android: Android): KtFileContent {
+        val activityFile = AnnotatedSourceCollector(android.app(), "@KlutterAdapter")
+            .collect()
+            .also { logger.merge(it.logger) }
+            .collection
 
         if(activityFile.isEmpty()){
-            throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder $appDir.")
+            throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder ${android.app()}.")
         }
 
         if(activityFile.size > 1) {
@@ -131,22 +190,6 @@ class KlutterAdapterProducer(
         }
 
         return convertToKotlinFiles(activityFile[0])
-    }
-
-    private fun scanSources(directory: File): List<FileContent> {
-        val classes = mutableListOf<FileContent>()
-
-        logger.debug("Scanning for files in directory '$directory'")
-        if (directory.exists()) {
-            directory.walkTopDown().forEach { f ->
-                if(f.isFile) {
-                    logger.debug("Found file '$f' in directory '$directory'")
-                    classes.add(FileContent(file = f, content = f.readText()))
-                }
-            }
-        } else logger.error("Failed to scan directory because it does not exist: '$directory'")
-
-        return classes
     }
 
     private fun convertToKotlinFiles(source: FileContent): KtFileContent {
@@ -163,6 +206,7 @@ class KlutterAdapterProducer(
         return KtFileContent(file = source.file, ktFile = ktFile, content = ktFile.text)
     }
 
+    //todo  does not belong here
     private fun convertToMethodCallDefinitions(ktFileContent: KtFileContent): List<MethodCallDefinition> {
         val defintions = mutableListOf<MethodCallDefinition>()
 
@@ -174,7 +218,7 @@ class KlutterAdapterProducer(
                     if(it is KtClassBody){
                         logger.debug("Scanning KtClass '${clazz.name}' for @KlutterAdaptee annotation")
                         if(it.text.contains("@KlutterAdaptee")){
-                            val scanned = KtFileScanner(clazz.fqName?.asString(), clazz.name?:"", it.text).scan()
+                            val scanned = KlutterAdapteeScanner(clazz.fqName?.asString(), clazz.name?:"", it.text).scan()
 
                             if(scanned.isEmpty()){
                                 logger.error("""

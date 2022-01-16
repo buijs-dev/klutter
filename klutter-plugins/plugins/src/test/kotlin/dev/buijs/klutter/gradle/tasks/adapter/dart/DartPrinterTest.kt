@@ -1,32 +1,38 @@
-package dev.buijs.klutter.gradle.tasks.adapter.protobuf
+package dev.buijs.klutter.gradle.tasks.adapter.dart
 
+import dev.buijs.klutter.core.DartKotlinMap
+import dev.buijs.klutter.core.DartEnum
+import dev.buijs.klutter.core.DartField
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.EnumerationPrinter
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.MemberPrinter
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
 /**
  * @author Gillian Buijs
  */
-class ProtoPrinterTest : WordSpec({
+class DartPrinterTest : WordSpec({
 
     //TestData:
-    val nullableField = ProtoField(
+    val nullableField = DartField(
         name = "nullableFoo",
-        dataType = ProtoDataType.STRING,
+        dataType = DartKotlinMap.STRING.dartType,
         optional = true,
-        repeated = false
+        isList = false,
     )
 
-    val requiredField = ProtoField(
+    val requiredField = DartField(
         name = "foo",
-        dataType = ProtoDataType.INTEGER,
+        dataType = DartKotlinMap.INTEGER.dartType,
         optional = false,
-        repeated = false
+        isList = false,
     )
 
-    val repeatedField = ProtoField(
+    val repeatedField = DartField(
         name = "fooBaca",
-        dataType = ProtoDataType.LONG,
+        dataType = DartKotlinMap.DOUBLE.dartType,
         optional = false,
-        repeated = true
+        isList = true,
     )
 
     "When using the MemberPrinter" should {
@@ -40,9 +46,9 @@ class ProtoPrinterTest : WordSpec({
 
             //Then:
             actual.filter { !it.isWhitespace() } shouldBe """
-                | int32 foo = 1;
-                | repeated int64 fooBaca = 2;
-                | optional string nullableFoo = 3;
+                final int foo;
+                final List<double> fooBaca;
+                String? nullableFoo;
             """.filter { !it.isWhitespace() }
 
         }
@@ -52,9 +58,9 @@ class ProtoPrinterTest : WordSpec({
         "Print all fields as immutable" {
 
             //Given:
-            val enumeration = ProtoEnum(
+            val enumeration = DartEnum(
                 name = "NothingElseMatters",
-                values = listOf("FOREVER", "TRUSTING", "WHO", "WE", "ARE"))
+                values = listOf("forever", "trusting", "who", "we", "are"))
 
             val printer = EnumerationPrinter(enumeration)
 
@@ -64,11 +70,12 @@ class ProtoPrinterTest : WordSpec({
             //Then:
             actual.filter { !it.isWhitespace() } shouldBe """
                 enum NothingElseMatters {
-                   FOREVER = 0;
-                   TRUSTING = 1;
-                   WHO = 2;
-                   WE = 3;
-                   ARE = 4;
+                    forever,
+                    trusting,
+                    who,
+                    we,
+                    are,
+                    none
                 }
             """.filter { !it.isWhitespace() }
 

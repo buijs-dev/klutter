@@ -29,7 +29,7 @@ data class MethodCallDefinition(
     val getter: String,
     val import: String,
     val call: String,
-    val returns: Class<*>)
+    val returns: String)
 
 data class MethodData(
     val getter: String,

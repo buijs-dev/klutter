@@ -225,7 +225,6 @@ def kProps = new Properties()
 
 The generatedAdapter task creates all the boilerplate code needed to make the Dart code in Flutter 
 communicate with Kotlin in the Multiplatform module.
-- //todo explan methodchannels and typesafety through protobuff
 
 ```kotlin
 plugins {
@@ -298,7 +297,7 @@ Dart DTO with all boilerplate code to (de)serialize.
 The annotated class should comply with the following rules:
 
 1. Must be an open class
-2. Fields may be mutable (var) and immutable (val)
+2. Fields must be immutable
 3. Constructor only (no body)
 4. No inheritance
 5. Any field type should comply with the same rules
@@ -306,12 +305,33 @@ The annotated class should comply with the following rules:
 A KlutterResponse acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
 
 Open classes can be extended so the DTO can be used as interface between KMP and Flutter and you can extend it
-to add behaviour designed for frontend or backend respectively. Always prefer immutable fields wherever possible, but mutability is allowed.
+to add behaviour designed for frontend or backend respectively. All fields must be immutable. The generated code includes
+builders to create a new instance of the DTO if needed. Make sure to declare fields in the DTO as <i>val</i> and not var.
 Any behaviour should be written in subclasses. To avoid any unnecessary complexity it may not inherit any fields/behaviour from other classes.
 This is a functional design choise, not a technical limitation.
 
-Any field declaration may use another DTO as type but that DTO should comply as well. Any class annotated with KlutterResponse will be logged 
-as error and ignored for processing. Any other dependent class will also be ignored as result.
+**Supported Kotlin datatypes**
+1. Int
+2. Double
+3. Boolean
+4. List
+
+**Maps?**
+Maps are currently not supported. A DTO is a better/safer option by providing typesafety e.a.
+
+**Enumerations?**
+Enumerations can be used as datatype but only if the enumeration itself has a no-args constructor.
+Values should be defined in UPPER_SNAKE_CASE. Klutter will convert it to lowerCamelCase for usage in Dart/Flutter.
+The value "none" is a reserved value used to represent null. 
+
+**Custom data types?**
+Any field declaration may use another DTO as type but that DTO should comply with before mentioned rules as well.
+
+**What could possibly go wrong?**
+Any class annotated with KlutterResponse that does not comply will be logged as error and ignored for processing. 
+Any other dependent class will also be ignored as result.
+
+**Examples**
 
 Example of valid declaration:
 
@@ -319,7 +339,7 @@ Example of valid declaration:
 
     open class Something(
         val x: String?,
-        var y: SomethingElse
+        val y: SomethingElse
     )
 
     open class SomethingElse(
@@ -336,12 +356,24 @@ Example of invalid declaration (Inheritance):
 
     open class Something(
         val x: String?,
-        var y: SomethingElse
+        val y: SomethingElse
     ) : SomethingElse(1, listOf())
     
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
+    )
+
+```
+<br />
+
+Example of invalid declaration (Mutability):
+
+```kotlin
+
+    open class Something(
+        var x: String?,
+        var y: Int,
     )
 
 ```
@@ -388,7 +420,7 @@ Pull requests are welcome. Contact me at info@buijs.dev
 ## License
 MIT License
 
-Copyright (c) [2021] [Gillian Buijs]
+Copyright (c) [2021] [Buijs Software]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

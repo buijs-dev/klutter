@@ -27,6 +27,13 @@ allprojects {
             google()
             gradlePluginPortal()
             mavenCentral()
+            maven {
+                url = uri(project.extra["privateRepoUrl"] as String)
+                credentials {
+                    username = project.extra["privateRepoUsername"] as String
+                    password = project.extra["privateRepoPassword"] as String
+                }
+            }
         }
     }
 }

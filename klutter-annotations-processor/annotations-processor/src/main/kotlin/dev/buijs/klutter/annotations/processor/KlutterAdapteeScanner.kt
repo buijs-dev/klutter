@@ -37,8 +37,6 @@ class KlutterAdapteeScanner(
 
     fun scan(): List<MethodCallDefinition> {
 
-        val methods = mutableListOf<MethodData>()
-
         val packagename = """package(.*)""".toRegex()
             .find(ktFileBody)
             ?.value
@@ -47,30 +45,29 @@ class KlutterAdapteeScanner(
 
         val trimmedBody = ktFileBody.filter { !it.isWhitespace() }
 
-        """@KlutterAdaptee\(name="([^"]+?)"\)fun([^:]+?):""".toRegex()
-            .findAll(trimmedBody).forEach { match ->
-                methods.add(
-                    MethodData(
-                    getter = match.groups[1]?.value?:throw KotlinFileScanningException("""
+        return """@KlutterAdaptee\(name="([^"]+?)"\)fun([^:]+?):(.+?)\{""".toRegex()
+            .findAll(trimmedBody).map { match ->
+                val getter = match.groups[1]?.value?:throw KotlinFileScanningException("""
                        Unable to process KlutterAdaptee annotation.
                        Please make sure the annotation is as follows: 'klutterAdaptee(name = "foo")'
-                       """.trim()),
-                    methodCall = match.groups[2]?.value?:throw KotlinFileScanningException("""
-                       Unable to process KlutterAdaptee annotation.
-                       Please make sure the annotation is as follows: 'klutterAdaptee(name = "foo")'
-                       """.trim()),
-                    )
-                )
-            }
+                       """.trim())
 
-        return methods.map {
-            MethodCallDefinition(
-                call = "$className().${it.methodCall}",
-                import = fqdn?:packagename,
-                returns = Any::class.java,
-                getter = it.getter
-            )
-        }
+                val caller = match.groups[2]?.value?:throw KotlinFileScanningException("""
+                       Unable to process KlutterAdaptee annotation.
+                       Please make sure the annotation is as follows: 'klutterAdaptee(name = "foo")'
+                       """.trim())
+
+                val returns = match.groups[3]?.value?.trim()?:throw KotlinFileScanningException("""
+                        Unable to determine return type of function annotated with @KlutterAdaptee.
+                        The method signature should be as follows: fun foo(): Bar { //your implementation }
+                       """.trim())
+
+                MethodCallDefinition(
+                    import = fqdn?:packagename,
+                    getter = getter,
+                    call = "$className().$caller",
+                    returns = returns)
+
+            }.toList()
     }
-
 }

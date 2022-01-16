@@ -26,7 +26,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("dev.buijs.klutter:annotations-kmp:0.2.49")
+                implementation("dev.buijs.klutter:annotations-kmp:0.6.0")
             }
         }
         val commonTest by getting {

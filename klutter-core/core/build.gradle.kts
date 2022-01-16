@@ -23,10 +23,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.1")
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
-    testImplementation("org.mockito:mockito-core:4.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
 }
 
 java {
@@ -74,7 +74,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
             artifactId = "core"
-            version = "0.6.1"
+            version = "0.6.12"
 //            version = "2022-pre-alpha-1"
             artifact("$projectDir/build/libs/core.jar")
 
@@ -107,7 +107,6 @@ publishing {
         }
     }
 }
-
 
 tasks.named<Test>("test") {
     useJUnitPlatform()

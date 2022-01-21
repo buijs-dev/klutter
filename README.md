@@ -32,7 +32,7 @@ Roadmap
 * [x] Read yaml files for configuration from root/klutter folder
 * [x] Separate public, local and secret config with yaml files
 * [ ] Add encryption support for secrets
-* [ ] Add repository management 
+* [x] Add repository management 
 * [ ] Add mechanism for key file loading/storing
 
 ### Continuous Integration and Delivery

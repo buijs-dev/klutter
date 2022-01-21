@@ -2,11 +2,12 @@ plugins {
     id("com.android.library")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization") version "1.6.10"
     id("maven-publish")
 }
 
 group = "dev.buijs.klutter"
-version = "0.5.1"
+version = "0.7.1"
 //version = "2022-pre-alpha-1"
 
 kotlin {
@@ -33,13 +34,18 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
             }
         }
 
         val commonTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-common")
-                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common")
+                implementation(kotlin("test"))
+                implementation(kotlin("test-junit"))
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+
+
             }
         }
 
@@ -49,13 +55,7 @@ kotlin {
             }
         }
 
-        val jvmTest by getting  {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test")
-                implementation("org.jetbrains.kotlin:kotlin-test-junit")
-            }
-        }
-
+        val jvmTest by getting
         val androidMain by getting
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -117,38 +117,4 @@ publishing {
         }
     }
 
-    publications {
-        create<MavenPublication>("maven") {
-
-            groupId = "dev.buijs.klutter"
-            artifactId = "annotations-kmp"
-
-            pom {
-                name.set("Klutter: Annotations - KMP ")
-                description.set("Klutter Framework annotations used in Kotlin Multiplatform components")
-                url.set("https://buijs.dev/klutter/")
-
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://github.com/buijs-dev/klutter/blob/main/LICENSE")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("buijs-dev")
-                        name.set("Gillian Buijs")
-                        email.set("info@buijs.dev")
-                    }
-                }
-
-                scm {
-                    connection.set("git@github.com:buijs-dev/klutter.git")
-                    developerConnection.set("git@github.com:buijs-dev/klutter.git")
-                    url.set("https://github.com/buijs-dev/klutter")
-                }
-            }
-        }
-    }
 }

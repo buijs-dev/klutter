@@ -6,8 +6,8 @@ actual annotation class KlutterAdaptee(actual val name: String)
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-actual annotation class KlutterAdapter
+actual annotation class KlutterAdapter()
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-actual annotation class KlutterResponse
+actual annotation class KlutterResponse()

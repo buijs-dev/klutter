@@ -25,6 +25,7 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterRepository
 import java.io.File
 import kotlin.collections.HashMap
 
@@ -34,11 +35,12 @@ import kotlin.collections.HashMap
 internal class AndroidRootBuildGradleGenerator(
     private val root: Root,
     private val android: Android,
+    private val repositories: List<KlutterRepository>
 ): KlutterFileGenerator() {
 
     override fun generate() = writer().write()
 
-    override fun printer() = AndroidRootBuildGradlePrinter(properties())
+    override fun printer() = AndroidRootBuildGradlePrinter(properties(), repositories)
 
     override fun writer() = AndroidRootBuildGradleWriter(android.file.resolve("build.gradle"), printer().print())
 
@@ -51,6 +53,7 @@ internal class AndroidRootBuildGradleGenerator(
  */
 internal class AndroidRootBuildGradlePrinter(
     private val props: HashMap<String, String>,
+    private val repositories: List<KlutterRepository>,
 ): KlutterPrinter {
 
     override fun print(): String {
@@ -86,6 +89,7 @@ internal class AndroidRootBuildGradlePrinter(
             |    repositories {
             |        google()
             |        mavenCentral()
+            |        ${repositories()}
             |    }
             |}
             |
@@ -104,7 +108,30 @@ internal class AndroidRootBuildGradlePrinter(
     private fun get(key: String) = props[key]
         ?: throw KlutterConfigException("klutter.properties is missing property: $key")
 
+    private fun repositories(): String {
+        return repositories.joinToString {
+            if (it.username == null && it.password == null) {
+                """
+                |maven {
+                |   url = uri(kProps.getProperty('${it.url}'))
+                |}
+            """.trimMargin()
+
+            } else {
+                """
+                |maven {
+                |   url = uri(kProps.getProperty('${it.url}'))
+                |   credentials {
+                |       username = kProps.getProperty('${it.username}')
+                |       password = kProps.getProperty('${it.password}')
+                |   }
+                |}
+            """.trimMargin()
+            }
+        }
+    }
 }
+
 
 /**
  * @author Gillian Buijs

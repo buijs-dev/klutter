@@ -46,6 +46,8 @@ abstract class KlutterTask
         ?.map { File(it) }
         ?.map{ source -> getFileSafely(source,"Klutter modules") }
 
+    fun repositories() = ext.getRepositoriesDto()?.repositories ?: emptyList()
+
     fun iosVersion() = ext.getIosDto()?.version?:"13.0"
 
     fun project() = KlutterProjectFactory().fromRoot(Root(ext.root))

@@ -31,6 +31,7 @@ internal fun Project.adapter(): KlutterExtension =
 open class KlutterExtension(private val project: Project) {
 
     private var multiplatformDto: KlutterMultiplatformDTO? = null
+    private var repositoriesDto: KlutterRepositoriesDTO? = null
     private var modulesDto: KlutterModulesDTO? = null
     private var iosDTO: KlutterIosDTO? = null
     internal var root: File = project.rootProject.projectDir
@@ -39,6 +40,10 @@ open class KlutterExtension(private val project: Project) {
 
     fun multiplatform(lambda: KlutterMultiplatformBuilder.() -> Unit) {
         multiplatformDto = KlutterMultiplatformBuilder().apply(lambda).build()
+    }
+
+    fun repositories(lambda: KlutterRepositoriesBuilder.() -> Unit) {
+        repositoriesDto = KlutterRepositoriesBuilder().apply(lambda).build()
     }
 
     fun modules(lambda: KlutterModulesBuilder.() -> Unit) {
@@ -50,6 +55,8 @@ open class KlutterExtension(private val project: Project) {
     }
 
     internal fun getMultiplatformDto() = multiplatformDto
+
+    internal fun getRepositoriesDto() = repositoriesDto
 
     internal fun getModulesDto() = modulesDto
 

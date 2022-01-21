@@ -43,7 +43,7 @@ class KlutterResponseScannerTest : WordSpec({
             val scanner = KlutterResponseScanner(ktFileBody = content)
 
             //When:
-            val actual = scanner.scan()
+            val actual = scanner.scan().dart
 
             //Then:
             actual.messages.size shouldBe 1

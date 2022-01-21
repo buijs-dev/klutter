@@ -16,7 +16,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    implementation("dev.buijs.klutter:core:0.6.12")
+    implementation("dev.buijs.klutter:core:0.7.1")
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -69,7 +69,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-processor"
-            version = "0.6.13"
+            version = "0.7.2"
 
             artifact("$projectDir/build/libs/annotations-processor.jar")
 

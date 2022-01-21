@@ -27,23 +27,27 @@ import dev.buijs.klutter.annotations.processor.dart.DartEnumValueBuilder
 import dev.buijs.klutter.annotations.processor.dart.DartFieldBuilder
 import dev.buijs.klutter.core.*
 
+private val enumRegex = """(enum class ([^{]+?)\{[^}]+})""".toRegex()
+private val bodiesRegex = """(open class ([^(]+?)\([^)]+\))""".toRegex()
+
 /**
  * @author Gillian Buijs
  */
 class KlutterResponseScanner(private val ktFileBody: String) {
 
-    fun scan(): DartObjects {
+    fun scan(): KlutterResponseScanResult {
         val messages = MessageScanner(ktFileBody).scan()
         val enumerations = EnumScanner(ktFileBody).scan()
-        return DartObjects(messages, enumerations)
+        return KlutterResponseScanResult(DartObjects(messages, enumerations))
     }
 }
 
+/**
+ * @author Gillian Buijs
+ */
 private class EnumScanner(private val content: String) {
 
-    private val bodiesRegex = """(enum class ([^{]+?)\{[^}]+})""".toRegex()
-
-    fun scan() = bodiesRegex.findAll(content).map { match ->
+    fun scan() = enumRegex.findAll(content).map { match ->
         DartEnum(
             name = match.groups[2]?.value?.filter { !it.isWhitespace() }
                 ?: throw KotlinFileScanningException("Failed to process an enum class."),
@@ -53,9 +57,10 @@ private class EnumScanner(private val content: String) {
 
 }
 
+/**
+ * @author Gillian Buijs
+ */
 private class MessageScanner(private val content: String) {
-
-    private val bodiesRegex = """(open class ([^(]+?)\([^)]+\))""".toRegex()
 
     fun scan() = bodiesRegex.findAll(content).map { match ->
         DartMessage(
@@ -66,3 +71,10 @@ private class MessageScanner(private val content: String) {
     }.toList()
 
 }
+
+/**
+ * @author Gillian Buijs
+ */
+data class KlutterResponseScanResult(
+    val dart: DartObjects,
+)

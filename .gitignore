@@ -59,3 +59,4 @@ hs_err_pid*
 /example-basic/ios/PodFile
 /example-basic/ios/Podfile.lock
 /test-project/lib/generated/messages.dart
+/klutter-annotations/annotations-jvm/dev.properties

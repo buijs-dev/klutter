@@ -27,11 +27,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import dev.buijs.klutter.annotations.processor.KlutterAdapteeScanner
+import dev.buijs.klutter.annotations.processor.KlutterResponseScanResult
 import dev.buijs.klutter.annotations.processor.KlutterResponseScanner
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.FileContent
 import dev.buijs.klutter.core.KtFileContent
 import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterRepository
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.*
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidActivityVisitor
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidAdapterGenerator
@@ -55,6 +57,7 @@ class KlutterAdapterProducer(
     private val context: Project,
     private val project: KlutterProject,
     private val iosVersion: String,
+    private val repositories: List<KlutterRepository>,
 ): KlutterProducer
 {
 
@@ -73,7 +76,7 @@ class KlutterAdapterProducer(
         val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
         val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, methods)
         val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app())
-        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android)
+        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android, repositories)
         val androidManifestVisitor = AndroidManifestVisitor(android.manifest())
         val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, podspec.nameWithoutExtension)
 
@@ -87,7 +90,7 @@ class KlutterAdapterProducer(
         )
 
         val dartObjects = scanForResponses()
-        val dartGenerator = DartGenerator(flutter, dartObjects)
+        val dartGenerator = DartGenerator(flutter, dartObjects.dart)
 
         return logger
             .merge(dartGenerator.generate())
@@ -103,21 +106,21 @@ class KlutterAdapterProducer(
     }
 
     //todo does not belong here and too big
-    private fun scanForResponses(): DartObjects {
-        val sources = AnnotatedSourceCollector(project.kmp.source(), "@KlutterResponse")
+    private fun scanForResponses(): KlutterResponseScanResult {
+
+        val enumerations = mutableListOf<DartEnum>()
+        val messages = mutableListOf<DartMessage>()
+
+        AnnotatedSourceCollector(project.kmp.source(), "@KlutterResponse")
             .collect()
             .also { logger.merge(it.logger) }
             .collection
             .map { convertToKotlinFiles(it) }
             .map { KlutterResponseScanner(it.content).scan() }
-
-        val enumerations = mutableListOf<DartEnum>()
-        val messages = mutableListOf<DartMessage>()
-
-        sources.forEach {
-            enumerations.addAll(it.enumerations)
-            messages.addAll(it.messages)
-        }
+            .forEach {
+                enumerations.addAll(it.dart.enumerations)
+                messages.addAll(it.dart.messages)
+            }
 
         val customDataTypes = mutableListOf<String>()
 
@@ -159,7 +162,10 @@ class KlutterAdapterProducer(
                 """.trimMargin())
         }
 
-        return DartObjects(messages, enumerations)
+        return KlutterResponseScanResult(
+            dart = DartObjects(messages, enumerations),
+        )
+
     }
 
     private fun scanForAdaptees(): List<MethodCallDefinition> {

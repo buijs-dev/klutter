@@ -52,6 +52,7 @@ open class GenerateAdapterTask
             context = context,
             project = project(),
             iosVersion = iosVersion(),
+            repositories = repositories(),
         ).produce().also { logger.merge(it) }
     }
 

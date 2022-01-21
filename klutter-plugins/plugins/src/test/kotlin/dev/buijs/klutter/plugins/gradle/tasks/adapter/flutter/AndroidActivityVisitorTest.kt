@@ -1,7 +1,6 @@
-package dev.buijs.klutter.gradle.tasks.adapter.flutter
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.KtFileContent
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidActivityVisitor
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec

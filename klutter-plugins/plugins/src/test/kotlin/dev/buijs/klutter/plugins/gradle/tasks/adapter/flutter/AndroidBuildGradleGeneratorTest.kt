@@ -1,6 +1,7 @@
-package dev.buijs.klutter.gradle.tasks.adapter.flutter
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.Root
+import dev.buijs.klutter.plugins.gradle.dsl.KlutterRepository
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidBuildGradleGenerator
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
@@ -10,7 +11,6 @@ import kotlin.io.path.createDirectories
 
 /**
  * @author Gillian Buijs
- * @author https://buijs.dev
  */
 class AndroidBuildGradleGeneratorTest: WordSpec({
 
@@ -41,9 +41,14 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                 |gradle.version=7.0.4
                 |flutter.sdk.location="Users/Foo/Bar/flutter/bin"
                 |klutter.annotations.kmp.version=0.2.49
+                |kotlinx.version=1.3.2
             """.trimMargin())
 
-            val sut = AndroidBuildGradleGenerator(Root(projectDir.toFile()), androidAppDir.toFile())
+            val sut = AndroidBuildGradleGenerator(
+                Root(projectDir.toFile()),
+                androidAppDir.toFile(),
+            )
+
             val logging = sut.generate()
 
             logging.messages().size shouldNotBe 0
@@ -120,6 +125,7 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                     dependencies {
                         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0"
                         implementation 'dev.buijs.klutter:annotations-kmp-android:0.2.49'
+                        implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
                         implementation files('../../../.klutter/kmp.aar')
                     }
 

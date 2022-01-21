@@ -1,6 +1,5 @@
-package dev.buijs.klutter.gradle.dsl
+package dev.buijs.klutter.plugins.gradle.dsl
 
-import dev.buijs.klutter.plugins.gradle.dsl.KlutterModulesDSL
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec

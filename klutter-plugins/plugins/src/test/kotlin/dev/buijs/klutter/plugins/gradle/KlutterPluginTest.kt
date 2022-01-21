@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.plugins.gradle
 
 import dev.buijs.klutter.plugins.gradle.KlutterPlugin
 import dev.buijs.klutter.plugins.gradle.adapter

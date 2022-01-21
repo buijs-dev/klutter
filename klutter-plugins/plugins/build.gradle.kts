@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "dev.buijs.klutter"
-version = "0.6.9"
+version = "0.7.7"
 //version = "2022-pre-alpha-1"
 
 plugins {
@@ -71,14 +71,15 @@ publishing {
 
 dependencies {
     implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    implementation("dev.buijs.klutter:core:0.6.12")
-    implementation("dev.buijs.klutter:annotations-processor:0.6.13")
+    implementation("dev.buijs.klutter:core:0.7.1")
+    implementation("dev.buijs.klutter:annotations-processor:0.7.2")
 
     implementation(kotlin("stdlib", "1.6.10"))
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.1")
+
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")

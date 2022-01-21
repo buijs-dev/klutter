@@ -62,9 +62,13 @@ internal class AndroidAdapterPrinter(
     }
 
     private fun printFun(definition: MethodCallDefinition): String {
+        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+            ".toKJson()"
+        } else ""
+
         return """
             | if (call.method == "${definition.getter}") {
-            |            result.success(${definition.call})
+            |            result.success(${definition.call}${type})
             |        } """.trimMargin()
     }
 

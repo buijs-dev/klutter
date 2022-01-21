@@ -1,7 +1,7 @@
-package dev.buijs.klutter.gradle.tasks.config
+package dev.buijs.klutter.plugins.gradle.tasks.config
 
 
-import dev.buijs.klutter.gradle.KlutterTestProject
+import dev.buijs.klutter.plugins.gradle.KlutterTestProject
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import org.gradle.testkit.runner.GradleRunner

@@ -1,5 +1,4 @@
-package dev.buijs.klutter.gradle.tasks.adapter.flutter
-
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidManifestVisitor
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec

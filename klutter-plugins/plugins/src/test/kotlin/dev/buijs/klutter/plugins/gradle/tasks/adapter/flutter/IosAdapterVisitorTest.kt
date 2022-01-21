@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.tasks.adapter.flutter
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.IosPodspecVisitor
 import io.kotlintest.shouldBe

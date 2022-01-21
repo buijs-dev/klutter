@@ -91,9 +91,13 @@ internal class IosAppDelegatePrinter(
     }
 
     private fun printFun(definition: MethodCallDefinition): String {
+        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+            ".toKJson()"
+        } else ""
+
         return """
             | if (call.method == "${definition.getter}") {
-            |        result(${definition.call})
+            |        result(${definition.call}$type)
             |      } """.trimMargin()
     }
 }

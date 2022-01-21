@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.tasks.adapter.flutter
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.MethodCallDefinition
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidAdapterPrinter
@@ -26,7 +26,7 @@ class AndroidAdapterPrinterTest: WordSpec({
                     call = "FooBar().beta()",
                     getter = "doNotFooBar",
                     import = "io.foo.bar.FooBar",
-                    returns = "String"
+                    returns = "BetaObject"
                 ),
             )
 
@@ -49,7 +49,7 @@ class AndroidAdapterPrinterTest: WordSpec({
                         if (call.method == "doFooBar") {
                             result.success(FooBar().zeta())
                         } else if (call.method == "doNotFooBar") {
-                            result.success(FooBar().beta())
+                            result.success(FooBar().beta().toKJson())
                         } else result.notImplemented()
                    }
                 

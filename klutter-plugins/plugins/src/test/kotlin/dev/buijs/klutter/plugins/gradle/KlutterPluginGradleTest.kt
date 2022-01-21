@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.plugins.gradle
 
 
 import io.kotlintest.shouldBe
@@ -11,9 +11,6 @@ import kotlin.io.path.writeText
 
 /**
  * @author Gillian Buijs
- *
- * Contact me: https://buijs.dev
- *
  */
 class KlutterPluginGradleTest : WordSpec({
 
@@ -34,6 +31,7 @@ class KlutterPluginGradleTest : WordSpec({
                        klutter.gradle.plugin.version=0.3.39-pre-alpha
                        klutter.annotations.kmp.version=0.2.49
                        kotlin.version=1.6.10
+                       kotlinx.version=1.3.10
                        gradle.version=7.0.4
                        flutter.sdk.location=/Users/boba/tools/flutter
             """.trimIndent())
@@ -73,7 +71,7 @@ class KlutterPluginGradleTest : WordSpec({
                 class FakeClass {
                     @KlutterAdaptee(name = "DartMaul")
                     fun foo(): String {
-                        return "bar"
+                        return "Maul"
                     }
 
                     @KlutterAdaptee(name = "BabyYoda")
@@ -90,6 +88,7 @@ class KlutterPluginGradleTest : WordSpec({
                         }
 
                 }
+                
             """.trimIndent())
 
             val androidManifestDir = project.androidAppDir.resolve(Path.of("src", "main").toFile())
@@ -255,9 +254,9 @@ class KlutterPluginGradleTest : WordSpec({
                         if (call.method == "DartMaul") {
                             result.success(FakeClass().foo())
                         } else if (call.method == "BabyYoda") {
-                            result.success(FakeClass().fooBar())
+                            result.success(FakeClass().fooBar().toKJson())
                         } else  if (call.method == "ObiWan") {
-                            result.success(FakeClass().zeta())
+                            result.success(FakeClass().zeta().toKJson())
                         } else result.notImplemented()
                    }
                  }

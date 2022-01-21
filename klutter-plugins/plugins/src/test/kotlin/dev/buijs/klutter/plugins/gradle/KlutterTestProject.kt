@@ -1,8 +1,9 @@
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.plugins.gradle
 
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectory
 
 data class KlutterTestProject(
     val projectDir: Path = Files.createTempDirectory(""),

@@ -1,4 +1,4 @@
-package dev.buijs.klutter.gradle.tasks.config
+package dev.buijs.klutter.plugins.gradle.tasks.config
 
 import dev.buijs.klutter.plugins.gradle.tasks.config.dedotkey
 import io.kotlintest.shouldBe

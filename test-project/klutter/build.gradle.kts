@@ -7,9 +7,21 @@ plugins {
 }
 
 klutter {
+
     modules {
         module("klutter")
+        module("kmp")
+        module("android")
     }
+
+    repositories {
+        maven {
+            url = secret("private.repo.url")
+            username = secret("private.repo.username")
+            password = secret("private.repo.password")
+        }
+    }
+
 }
 
 dependencies {

@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 group = "dev.buijs.klutter.example.basic"
@@ -24,9 +25,12 @@ kotlin {
     }
     
     sourceSets {
+        val junitVersion: String by project.extra
+
         val commonMain by getting {
             dependencies {
-                implementation("dev.buijs.klutter:annotations-kmp:0.6.0")
+                implementation("dev.buijs.klutter:annotations-kmp:0.7.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
             }
         }
         val commonTest by getting {

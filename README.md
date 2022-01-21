@@ -298,9 +298,11 @@ The annotated class should comply with the following rules:
 
 1. Must be an open class
 2. Fields must be immutable
-3. Constructor only (no body)
-4. No inheritance
+3. Must implement KlutterJSON class
+4. No additional functionality implemented in body
 5. Any field type should comply with the same rules
+
+**Note:** Extending the KlutterJSON class might be no longer needed if a compiler plugin is created.
 
 A KlutterResponse acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
 
@@ -331,38 +333,56 @@ Any field declaration may use another DTO as type but that DTO should comply wit
 Any class annotated with KlutterResponse that does not comply will be logged as error and ignored for processing. 
 Any other dependent class will also be ignored as result.
 
+**Requirements**
+To serialize the KlutterResponse kotlinx serialization is used. Add the plugin to the KMP build.gradle.kts:
+
+````kotlin
+plugins {
+    kotlin("plugin.serialization") version "<use-project-kotlin-version>"
+}
+````
+
+Also add the json dependency to the commonMain sourceset:
+
+```kotlin
+ val commonMain by getting {
+    dependencies {
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    }
+}
+```
+
 **Examples**
 
 Example of valid declaration:
 
 ```kotlin
 
+    @Serializable
+    @KlutterResponse
     open class Something(
         val x: String?,
         val y: SomethingElse
-    )
+    ): KlutterJSON<Something>() {
 
+        override fun data() = this
+
+        override fun strategy() = serializer()
+
+    }
+
+    @Serializable
+    @KlutterResponse
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
-    )
+    ): KlutterJSON<SomethingElse>() {
 
-```
-<br />
+        override fun data() = this
 
-Example of invalid declaration (Inheritance):
+        override fun strategy() = serializer()
 
-```kotlin
-
-    open class Something(
-        val x: String?,
-        val y: SomethingElse
-    ) : SomethingElse(1, listOf())
-    
-    open class SomethingElse(
-        val a: Int?,
-        val b: List<Boolean>
-    )
+    }
 
 ```
 <br />
@@ -371,10 +391,18 @@ Example of invalid declaration (Mutability):
 
 ```kotlin
 
+    @Serializable
+    @KlutterResponse
     open class Something(
         var x: String?,
         var y: Int,
-    )
+    ): KlutterJSON<SomethingElse>() {
+
+        override fun data() = this
+
+        override fun strategy() = serializer()
+
+    }
 
 ```
 <br />
@@ -383,16 +411,32 @@ Example of invalid declaration (SomethingElse class should not have a body):
 
 ```kotlin
 
+    @Serializable
+    @KlutterResponse
     open class Something(
         val x: String?,
         var y: SomethingElse
-    )
+    ): KlutterJSON<SomethingElse>() {
 
+        override fun data() = this
+
+        override fun strategy() = serializer()
+
+    }
+
+    @Serializable
+    @KlutterResponse
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
-    ) {
+    ): KlutterJSON<SomethingElse>() {
+
         val bodyNotAllowed: Boolean = true
+        
+        override fun data() = this
+
+        override fun strategy() = serializer()
+
     }
 
 ```

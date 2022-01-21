@@ -22,7 +22,7 @@ import common
      if (call.method == "getGreeting") {
         result(Greeting().greeting())
       } else if (call.method == "getExtensiveGreeting") {
-        result(ExtensiveGreeting().greeting())
+        result(ExtensiveGreeting().greeting().toKJson())
       }  else { result(FlutterMethodNotImplemented) }
 
     }

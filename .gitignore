@@ -58,3 +58,4 @@ hs_err_pid*
 /example-basic/lib/generated/
 /example-basic/ios/PodFile
 /example-basic/ios/Podfile.lock
+/test-project/lib/generated/messages.dart

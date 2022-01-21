@@ -14,9 +14,10 @@ Pod::Spec.new do |spec|
     spec.ios.deployment_target = '13.0'
 
     #These lines are added by the Klutter Framework to enable the app to run on a simulator
-    spec.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' } 
-    spec.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' } 
+    spec.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+    spec.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
+                
 
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':common',

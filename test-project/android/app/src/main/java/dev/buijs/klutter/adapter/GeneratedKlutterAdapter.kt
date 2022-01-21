@@ -15,7 +15,7 @@ class GeneratedKlutterAdapter {
         if (call.method == "getGreeting") {
             result.success(Greeting().greeting())
         } else if (call.method == "getExtensiveGreeting") {
-            result.success(ExtensiveGreeting().greeting())
+            result.success(ExtensiveGreeting().greeting().toKJson())
         }  else result.notImplemented()
   }
 

@@ -35,7 +35,8 @@ enum class DartObjectType(val type: String) {
 /**
  * @author Gillian Buijs
  *
- * This is not an exhaustive mapping but a basic mapping to facilitate converting
+ * This is not an exhaustive mapping but a
+ * basic mapping to facilitate converting
  * Kotlin DTO classes to Dart DTO classes.
  *
  */
@@ -44,9 +45,7 @@ enum class DartKotlinMap(val kotlinType: String, val dartType: String) {
     INTEGER("Int", "int"),
     DOUBLE("Double", "double"),
     BOOLEAN("Boolean", "bool"),
-    STRING("String", "String"),
-    LIST("List", "List"),
-    MAP("Map", "Map");
+    STRING("String", "String");
 
     companion object {
 

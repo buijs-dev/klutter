@@ -25,21 +25,37 @@ package dev.buijs.klutter.core
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
+/**
+ * @author Gillian Buijs
+ */
 data class MethodCallDefinition(
     val getter: String,
     val import: String,
     val call: String,
-    val returns: String)
+    val returns: String,
+)
 
+/**
+ * @author Gillian Buijs
+ */
 data class MethodData(
     val getter: String,
-    val methodCall: String)
+    val methodCall: String,
+)
 
+/**
+ * @author Gillian Buijs
+ */
 data class FileContent(
     val file: File,
-    val content: String)
+    val content: String,
+)
 
+/**
+ * @author Gillian Buijs
+ */
 data class KtFileContent(
     val file: File,
     val ktFile: KtFile,
-    val content: String)
+    val content: String,
+)

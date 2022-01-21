@@ -16,8 +16,6 @@ class DartKotlinMapTest: WordSpec({
             DartKotlinMap.toDartType("Int") shouldBe "int"
             DartKotlinMap.toDartType("Boolean") shouldBe "bool"
             DartKotlinMap.toDartType("String") shouldBe "String"
-            DartKotlinMap.toDartType("List") shouldBe "List"
-            DartKotlinMap.toDartType("Map") shouldBe "Map"
 
         }
 
@@ -27,8 +25,6 @@ class DartKotlinMapTest: WordSpec({
             DartKotlinMap.toKotlinType("int") shouldBe "Int"
             DartKotlinMap.toKotlinType("bool") shouldBe "Boolean"
             DartKotlinMap.toKotlinType("String") shouldBe "String"
-            DartKotlinMap.toKotlinType("List") shouldBe "List"
-            DartKotlinMap.toKotlinType("Map") shouldBe "Map"
 
         }
 

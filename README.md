@@ -15,6 +15,7 @@ for everything from app design to CICD into a single cohesive framework.
 - [Documentation](https://buijs-dev.github.io/klutter/)
 - [Project Structure](docs/doc_project_structure.md)
 - [Klutter Gradle Plugin](docs/doc_gradle_plugin.md)
+- [Repository management](docs/doc_gradle_plugin_repositories.md)
 - [Configuration management](docs/doc_configuration_management.md)
 
 

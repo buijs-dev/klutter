@@ -21,6 +21,8 @@ import common
     methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
      if (call.method == "getGreeting") {
         result(Greeting().greeting())
+      } else if (call.method == "getExtensiveGreeting") {
+        result(ExtensiveGreeting().greeting().toKJson())
       }  else { result(FlutterMethodNotImplemented) }
 
     }

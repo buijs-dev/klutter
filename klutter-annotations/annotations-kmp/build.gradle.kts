@@ -6,8 +6,17 @@ plugins {
     id("maven-publish")
 }
 
+val properties = HashMap<String, String>()
+
+File("${rootDir.absolutePath}/../publish/_publish.properties").normalize().forEachLine {
+    val pair = it.split("=")
+    if(pair.size == 2){
+        properties[pair[0]] = pair[1]
+    }
+}
+
 group = "dev.buijs.klutter"
-version = "0.8.0"//not used!!!
+version = properties["annotations.version"] ?: throw Exception("annotations.version not set in _publish.properties")
 
 kotlin {
 
@@ -111,15 +120,6 @@ publishing {
             }
 
             url = uri(endpoint)
-        }
-    }
-
-    publications {
-        create<MavenPublication>("maven") {
-
-            version = properties["annotations.version"]
-                ?:throw GradleException("annotations.version in _publish.properties")
-
         }
     }
 

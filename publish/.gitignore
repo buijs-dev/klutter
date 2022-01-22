@@ -3,3 +3,6 @@
 ./_develop.properties
 ./_release.properties
 ./publish_plugins-release.sh
+/_develop.properties
+/_publish.properties
+/_release.properties

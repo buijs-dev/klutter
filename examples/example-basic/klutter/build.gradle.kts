@@ -16,13 +16,6 @@ klutter {
         module("android/app")
     }
 
-    services {
-        api("PlatformApi") {
-            func("version"){
-                gives { String() }
-            }
-        }
-    }
 }
 
 dependencies {

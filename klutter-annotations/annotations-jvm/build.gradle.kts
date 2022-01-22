@@ -18,10 +18,10 @@ sourceSets {
 }
 
 publishing {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
     if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
     }
 
     val properties = HashMap<String, String>()
@@ -33,14 +33,14 @@ publishing {
         }
     }
 
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
+    val user = properties["repo.username"]
+        ?:throw GradleException("missing repo.username in .properties")
 
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
+    val pass = properties["repo.password"]
+        ?:throw GradleException("missing repo.password in .properties")
 
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
+    val endpoint = properties["repo.url"]
+        ?:throw GradleException("missing repo.url in .properties")
 
     repositories {
         maven {
@@ -50,7 +50,6 @@ publishing {
             }
 
             url = uri(endpoint)
-            //url = uri("https://repsy.io/mvn/buijs-dev/klutter")
 
         }
     }
@@ -60,8 +59,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-jvm"
-            version = "0.5.0"
-            //version = "2022-pre-alpha-1"
+            version = properties["annotations.version"]
 
             artifact("$projectDir/build/libs/annotations-jvm.jar")
 

@@ -11,6 +11,8 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
+cd "klutter-annotations" || cd ".." && cd "klutter-annotations"
+
 echo "\0/ Klutter: step: build annotations-jvm modules"
 echo "------------------"
 ./gradlew clean -p "annotations-jvm"
@@ -37,3 +39,5 @@ echo "------------------"
 echo "\0/ Klutter: step: publish annotations-processor modules"
 echo "------------------"
 ./gradlew publish -p "annotations-processor"
+
+cd ".."

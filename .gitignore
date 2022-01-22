@@ -60,3 +60,5 @@ hs_err_pid*
 /example-basic/ios/Podfile.lock
 /test-project/lib/generated/messages.dart
 /klutter-annotations/annotations-jvm/dev.properties
+/klutter-annotations/annotations-kmp/annotations_kmp.podspec
+/publish/publish_plugins-release.sh

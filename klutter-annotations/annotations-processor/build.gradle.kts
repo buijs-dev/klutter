@@ -13,10 +13,32 @@ sourceSets {
 }
 
 dependencies {
+
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
+
+    if(!file.exists()) {
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
+    }
+
+    val properties = HashMap<String, String>()
+
+    file.forEachLine {
+        val pair = it.split("=")
+        if(pair.size == 2){
+            properties[pair[0]] = pair[1]
+        }
+    }
+
+    val annotationsVersion = properties["annotations.version"]
+        ?:throw GradleException("missing annotations.version")
+
+    val coreVersion = properties["core.version"]
+        ?:throw GradleException("missing core.version")
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
-    implementation("dev.buijs.klutter:annotations-jvm:0.5.0")
-    implementation("dev.buijs.klutter:core:0.7.1")
+    implementation("dev.buijs.klutter:annotations-jvm:$annotationsVersion")
+    implementation("dev.buijs.klutter:core:$coreVersion")
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -30,10 +52,10 @@ java {
 }
 
 publishing {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
     if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
     }
 
     val properties = HashMap<String, String>()
@@ -45,22 +67,23 @@ publishing {
         }
     }
 
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
+    val user = properties["repo.username"]
+        ?:throw GradleException("missing repo.username in _publish.properties")
 
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
+    val pass = properties["repo.password"]
+        ?:throw GradleException("missing repo.password in _publish.properties")
 
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
+    val endpoint = properties["repo.url"]
+        ?:throw GradleException("missing repo.url in _publish.properties")
 
     repositories {
         maven {
-            url = uri(endpoint)
             credentials {
                 username = user
                 password = pass
             }
+
+            url = uri(endpoint)
         }
     }
 
@@ -69,7 +92,8 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-processor"
-            version = "0.7.2"
+            version = properties["annotations.version"]
+                ?:throw GradleException("annotations.version in _publish.properties")
 
             artifact("$projectDir/build/libs/annotations-processor.jar")
 

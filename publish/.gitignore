@@ -1,0 +1,5 @@
+# Created by .ignore support plugin (hsz.mobi)
+./_publish.properties
+./_develop.properties
+./_release.properties
+./publish_plugins-release.sh

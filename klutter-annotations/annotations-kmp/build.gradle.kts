@@ -7,8 +7,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter"
-version = "0.7.1"
-//version = "2022-pre-alpha-1"
+version = "0.8.0"//not used!!!
 
 kotlin {
 
@@ -80,10 +79,10 @@ android {
 }
 
 publishing {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
     if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
     }
 
     val properties = HashMap<String, String>()
@@ -95,14 +94,14 @@ publishing {
         }
     }
 
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
+    val user = properties["repo.username"]
+        ?:throw GradleException("missing repo.username in _publish.properties")
 
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
+    val pass = properties["repo.password"]
+        ?:throw GradleException("missing repo.password in _publish.properties")
 
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
+    val endpoint = properties["repo.url"]
+        ?:throw GradleException("missing repo.url in _publish.properties")
 
     repositories {
         maven {
@@ -112,7 +111,14 @@ publishing {
             }
 
             url = uri(endpoint)
-//            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
+        }
+    }
+
+    publications {
+        create<MavenPublication>("maven") {
+
+            version = properties["annotations.version"]
+                ?:throw GradleException("annotations.version in _publish.properties")
 
         }
     }

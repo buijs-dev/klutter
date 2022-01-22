@@ -1,8 +1,9 @@
 buildscript {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
     if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
     }
 
     val properties = HashMap<String, String>()
@@ -14,14 +15,14 @@ buildscript {
         }
     }
 
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
+    val user = properties["repo.username"]
+        ?:throw GradleException("missing repo.username in _publish.properties")
 
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
+    val pass = properties["repo.password"]
+        ?:throw GradleException("missing repo.password in _publish.properties")
 
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
+    val endpoint = properties["repo.url"]
+        ?:throw GradleException("missing repo.url in _publish.properties")
 
     repositories {
         google()
@@ -38,15 +39,15 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
-        classpath("com.android.tools.build:gradle:7.0.2")
+        classpath("com.android.tools.build:gradle:7.0.4")
     }
 }
 
 allprojects {
-    val file = File("${rootDir.absolutePath}/dev.properties").normalize()
+    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
     if(!file.exists()) {
-        throw GradleException("missing dev.properties file in ${file.absolutePath}")
+        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
     }
 
     val properties = HashMap<String, String>()
@@ -58,14 +59,14 @@ allprojects {
         }
     }
 
-    val user = properties["private.repo.username"]
-        ?:throw GradleException("missing private.repo.username in dev.properties")
+    val user = properties["repo.username"]
+        ?:throw GradleException("missing repo.username in _publish.properties")
 
-    val pass = properties["private.repo.password"]
-        ?:throw GradleException("missing private.repo.password in dev.properties")
+    val pass = properties["repo.password"]
+        ?:throw GradleException("missing repo.password in _publish.properties")
 
-    val endpoint = properties["private.repo.url"]
-        ?:throw GradleException("missing private.repo.url in dev.properties")
+    val endpoint = properties["repo.url"]
+        ?:throw GradleException("missing repo.url in _publish.properties")
 
     repositories {
         google()
@@ -83,12 +84,4 @@ allprojects {
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
-}
-
-tasks.register("buildAndPublish") {
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish.sh")
-        }
-    }
 }

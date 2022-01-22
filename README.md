@@ -1,4 +1,4 @@
-![This is an image](example-basic/assets/metadata/icon/banner.png)
+![This is an image](examples/example-basic/assets/metadata/icon/banner.png)
 
 # Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
@@ -27,7 +27,7 @@ for everything from app design to CICD into a single cohesive framework.
 * [ ] Read annotations from KMP source and generate method calls that take args
 
 ### Example apps
-* [x] [example-basic](example-basic) Add basic project which works on iOS and Android
+* [x] [example-basic](examples/example-basic) Add basic project which works on iOS and Android
 * [ ] Add example project which uses libraries in KMP
 * [ ] Add example project which uses more advanced method calls
   

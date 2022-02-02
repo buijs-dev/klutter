@@ -15,12 +15,19 @@ class KlutterAdapteeScannerTest : WordSpec({
             //given:
             val body = """
        
-                    @KlutterAdaptee(name = "getGreeting")
+                    @KlutterAdaptee("getGreeting")
                     fun greeting(): String {
                         return "Hello"
                     }
         
+                    @KlutterAdaptee(name = "getAnotherGreeting")
+                    suspend fun anotherGreeting(): String {
+                        return "Hello"
+                    }
+                    
             """.trimIndent()
+
+
 
             //and:
             val sut = KlutterAdapteeScanner(
@@ -33,10 +40,14 @@ class KlutterAdapteeScannerTest : WordSpec({
             val actual = sut.scan()
 
             //then:
-            actual.size shouldBe 1
+            actual.size shouldBe 2
             actual[0].call shouldBe "Greeting().greeting()"
             actual[0].getter shouldBe "getGreeting"
             actual[0].returns shouldBe "String"
+
+            actual[1].call shouldBe "Greeting().anotherGreeting()"
+            actual[1].getter shouldBe "getAnotherGreeting"
+            actual[1].returns shouldBe "String"
 
         }
 

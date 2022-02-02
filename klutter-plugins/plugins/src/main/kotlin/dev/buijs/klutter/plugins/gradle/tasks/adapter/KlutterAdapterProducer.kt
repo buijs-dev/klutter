@@ -148,7 +148,9 @@ class KlutterAdapterProducer(
             throw KlutterCodeGenerationException(
                 """ |Processing annotation '@KlutterResponse' failed, caused by:
                     |
-                    |Could not resolve all class names.
+                    |Could not resolve the following classes:
+                    |
+                    |${customDataTypes.joinToString{ "- '$it'\r\n" }}
                     |
                     |Verify if all KlutterResponse annotated classes comply with the following rules:
                     |

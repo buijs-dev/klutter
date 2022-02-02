@@ -119,13 +119,13 @@ internal class AndroidRootBuildGradlePrinter(
 
             } else {
                 """
-                |maven {
-                |   url = uri(kProps.getProperty('${it.url}'))
-                |   credentials {
-                |       username = kProps.getProperty('${it.username}')
-                |       password = kProps.getProperty('${it.password}')
-                |   }
-                |}
+                |        maven {
+                |           url = uri(kProps.getProperty('${it.url}'))
+                |           credentials {
+                |               username = kProps.getProperty('${it.username}')
+                |               password = kProps.getProperty('${it.password}')
+                |           }
+                |        }
             """.trimMargin()
             }
         }

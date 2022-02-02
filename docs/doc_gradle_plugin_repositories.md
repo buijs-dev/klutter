@@ -48,7 +48,7 @@ klutter {
     
     repositories {
         maven {
-            url = secrets("private.repo.url")
+            url = secret("private.repo.url")
             username = local("private.repo.username")
             password = local("private.repo.password")
         }

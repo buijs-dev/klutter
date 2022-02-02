@@ -11,7 +11,7 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-cd "klutter-plugins" || cd ".." && cd "klutter-plugins"
+cd "klutter-plugins"
 
 echo "\0/ Klutter: step: build plugin modules"
 echo "------------------"
@@ -21,5 +21,3 @@ echo "------------------"
 echo "\0/ Klutter: step: publish plugin modules"
 echo "------------------"
 ./gradlew publish -p "plugins"
-
-cd ".."

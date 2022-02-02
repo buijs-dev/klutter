@@ -11,7 +11,7 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-cd "klutter-core" || cd ".." && cd "klutter-core"
+cd "klutter-core"
 
 echo "\0/ Klutter: step: build core modules"
 echo "------------------"
@@ -21,5 +21,3 @@ echo "------------------"
 echo "\0/ Klutter: step: publish core modules"
 echo "------------------"
 ./gradlew publish -p "core"
-
-cd ".."

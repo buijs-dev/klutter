@@ -91,13 +91,13 @@ internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrint
         |extension _${message.name} on ${message.name} {
         |
         |  static ${message.name} fromJson(String value) {
-        |    switch(value) {${cases()};
+        |    switch(value) {${cases()}
         |      default: return ${message.name}.none;
         |    }
         | }
         |
         |  String? toJson() {
-        |    switch(this) { ${serializers()};
+        |    switch(this) { ${serializers()}
         |      default: return null;
         |    }
         |  }
@@ -105,11 +105,35 @@ internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrint
         |}
     """.trimMargin()
 
-    private fun cases() =
-        message.values.joinToString(";") { "$BR      case \"$it\": return ${message.name}.${toCamelCase(it)}"}
+    private fun cases(): String {
+        if(message.jsonValues.isEmpty()) {
+            return message.values.joinToString(";") {
+                "$BR      case \"$it\": return ${message.name}.${toCamelCase(it)}"
+            } + ";"
+        }
 
-    private fun serializers() =
-        message.values.joinToString(";") { "$BR      case ${message.name}.${toCamelCase(it)}: return \"$it\""}
+        var print = ""
+        message.jsonValues.forEachIndexed { index, json ->
+            print += "$BR      case \"$json\": return ${message.name}.${toCamelCase(message.values[index])};"
+        }
+
+        return print
+    }
+
+    private fun serializers(): String {
+        if(message.jsonValues.isEmpty()) {
+            return message.values.joinToString(";") {
+                "$BR      case ${message.name}.${toCamelCase(it)}: return \"$it\""
+            }  + ";"
+        }
+
+        var print = ""
+        message.jsonValues.forEachIndexed { index, json ->
+            print += "$BR      case ${message.name}.${toCamelCase(message.values[index])}: return \"$json\";"
+        }
+
+        return print
+    }
 
 }
 
@@ -144,11 +168,12 @@ internal fun toCamelCase(snake: String): String {
 internal class MessagePrinter(private val message: DartMessage): KlutterPrinter {
 
     override fun print() = """
+        |
         |class ${message.name} {
         |  
-        |${ConstructorPrinter(message).print()}
+        ${ConstructorPrinter(message).print()}
         |  
-        |${FactoryPrinter(message).print()}
+        ${FactoryPrinter(message).print()}
         |
         |${MemberPrinter(message.fields).print()}
         |
@@ -169,8 +194,8 @@ internal class ConstructorPrinter(
 
     override fun print() =
         "" +
-        "|  ${message.name}({$BR" +
-        "|${message.fields.sortedBy { it.optional }.joinToString(BR){ printField(it) }}$BR" +
+        "  ${message.name}({$BR" +
+        "${message.fields.sortedBy { it.optional }.joinToString(BR){ printField(it) }}$BR" +
         "  });"
 
     private fun printField(field: DartField) =
@@ -197,8 +222,8 @@ internal class FactoryPrinter(
 ): KlutterPrinter {
 
     override fun print() = "" +
-            "| factory ${message.name}.fromJson(dynamic message) {$BR" +
-            "|  final json = jsonDecode(message);$BR" +
+            "factory ${message.name}.fromJson(dynamic message) {$BR" +
+            "  final json = jsonDecode(message);$BR" +
             "   return ${message.name} ($BR" +
             "${message.fields.joinToString(BR) { printField(it) }}$BR" +
             "   );$BR" +
@@ -220,13 +245,13 @@ internal class FactoryPrinter(
                 sb.append(".from(json.decode(json['${field.name}'])")
 
                 if(isCustomDataType){
-                    sb.append(".map((o) => _$dataType.fromJson(o)))")
+                    sb.append(".map((o) => $dataType.fromJson(o)))")
                 } else sb.append("$q.map((o) => o${getCastMethod(dataType)}))")
 
             } else {
 
                 if(isCustomDataType){
-                    sb.append("_$dataType.fromJson(json['${field.name}'])")
+                    sb.append("$dataType.fromJson(json['${field.name}'])")
                 } else sb.append("json['${field.name}']$q${getCastMethod(dataType)}")
 
             }
@@ -297,7 +322,7 @@ internal class SerializerPrinter(
             }
 
             out += "$q.toList()"
-        } else field.customDataType?.let { out = "$out$q.toJson()" }
+        } else field.customDataType?.let { out = "$out.toJson()" }
 
         return out
     }

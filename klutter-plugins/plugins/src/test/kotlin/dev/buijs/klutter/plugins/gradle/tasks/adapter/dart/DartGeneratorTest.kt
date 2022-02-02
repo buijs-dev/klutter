@@ -62,7 +62,8 @@ class DartGeneratorTest: WordSpec({
                         values = listOf(
                             "SUPER_STRENGTH",
                             "SUPER_FUNNY"
-                        )
+                        ),
+                        jsonValues = emptyList()
                     )
                 )
             )

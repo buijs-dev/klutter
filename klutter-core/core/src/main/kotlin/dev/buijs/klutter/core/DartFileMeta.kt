@@ -80,11 +80,16 @@ data class DartMessage(
 )
 
 /**
+ * @property name enum class name.
+ * @property values the enum constants.
+ * @property jsonValues the serializable values.
+ *
  * @author Gillian Buijs
  */
 data class DartEnum(
     val name: String,
-    val values: List<String>
+    val values: List<String>,
+    val jsonValues: List<String>,
 )
 
 /**

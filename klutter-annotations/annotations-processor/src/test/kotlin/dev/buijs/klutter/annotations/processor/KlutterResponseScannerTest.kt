@@ -21,7 +21,7 @@ class KlutterResponseScannerTest : WordSpec({
                 |open class Jedi(
                 |    val name: String,
                 |    val age: Int,
-                |    val alliance: String?,
+                |    val alliance: String? = null,
                 |    val abilities: List<Ability>,
                 |    val rank: Rank
                 |)
@@ -35,6 +35,13 @@ class KlutterResponseScannerTest : WordSpec({
                 |
                 |enum class Rank {
                 |    S, A, B, C, D
+                |}
+                |
+                |@Serializable
+                |enum class SerializableRank {
+                |    @SerialName("Super") S,
+                |    @SerialName("Awesome") A,
+                |    @SerialName("Badass") B,
                 |}
             """.trimMargin()
 
@@ -86,7 +93,7 @@ class KlutterResponseScannerTest : WordSpec({
 
 
             //And asserting enumerations
-            actual.enumerations.size shouldBe 2
+            actual.enumerations.size shouldBe 3
             actual.enumerations[0].name shouldBe "Ability"
             actual.enumerations[0].values.size shouldBe 4
             actual.enumerations[0].values[0] shouldBe "FORCE_JUMP"
@@ -102,6 +109,14 @@ class KlutterResponseScannerTest : WordSpec({
             actual.enumerations[1].values[3] shouldBe "C"
             actual.enumerations[1].values[4] shouldBe "D"
 
+            actual.enumerations[2].name shouldBe "SerializableRank"
+            actual.enumerations[2].values.size shouldBe 3
+            actual.enumerations[2].values[0] shouldBe "S"
+            actual.enumerations[2].values[1] shouldBe "A"
+            actual.enumerations[2].values[2] shouldBe "B"
+            actual.enumerations[2].jsonValues[0] shouldBe "Super"
+            actual.enumerations[2].jsonValues[1] shouldBe "Awesome"
+            actual.enumerations[2].jsonValues[2] shouldBe "Badass"
         }
 
     }

@@ -48,10 +48,13 @@ class KlutterResponseScanner(private val ktFileBody: String) {
 private class EnumScanner(private val content: String) {
 
     fun scan() = enumRegex.findAll(content).map { match ->
+        val values = DartEnumValueBuilder(match.value).build()
+
         DartEnum(
             name = match.groups[2]?.value?.filter { !it.isWhitespace() }
                 ?: throw KotlinFileScanningException("Failed to process an enum class."),
-            values = DartEnumValueBuilder(match.value).build()
+            values = values.constants,
+            jsonValues = values.jsonValues
         )
     }.toList()
 

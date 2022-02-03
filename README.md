@@ -10,7 +10,7 @@ and Kotlin Multiplatform for the backend. The connective layer is generated
 by the Klutter framework. Klutter combines industry best practices
 for everything from app design to CICD into a single cohesive framework.
 
-<img src="docs/klutter.png)" alt="klutter-overview" width="300"/>
+<img src="https://raw.githubusercontent.com/buijs-dev/klutter/main/docs/klutter.png)" alt="klutter-overview" width="300"/>
 
 [Source of this picture and a good read](https://littlegnal.github.io/2019-07-09/kmpp_flutter_en)
 

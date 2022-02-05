@@ -9,7 +9,6 @@ import java.nio.file.Files
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
  *
  */
 class AndroidActivityVisitorTest : WordSpec({

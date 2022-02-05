@@ -1,7 +1,6 @@
 package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.MethodCallDefinition
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidAdapterPrinter
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
@@ -33,27 +32,36 @@ class AndroidAdapterPrinterTest: WordSpec({
             val actual = AndroidAdapterPrinter(definitions).print()
 
             actual.filter { !it.isWhitespace() } shouldBe """
-                 package dev.buijs.klutter.adapter
+                    package dev.buijs.klutter.adapter
 
-                 import io.foo.bar.FooBar
-                 import io.flutter.plugin.common.MethodChannel
-                 import io.flutter.plugin.common.MethodChannel.Result
-                 import io.flutter.plugin.common.MethodCall
-                
-                /**
-                 * Generated code by the Klutter Framework
-                 */
-                 class GeneratedKlutterAdapter {
-                
-                   fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
-                        if (call.method == "doFooBar") {
-                            result.success(FooBar().zeta())
-                        } else if (call.method == "doNotFooBar") {
-                            result.success(FooBar().beta().toKJson())
-                        } else result.notImplemented()
-                   }
-                
-                 }
+                    import io.foo.bar.FooBar
+                    import io.flutter.plugin.common.MethodChannel
+                    import io.flutter.plugin.common.MethodCall
+                    import kotlinx.coroutines.CoroutineScope
+                    import kotlinx.coroutines.Dispatchers
+                    import kotlinx.coroutines.launch
+                    
+                    /**
+                     * Generated code by the Klutter Framework
+                     */
+                    class GeneratedKlutterAdapter {
+                    
+                        private val mainScope = CoroutineScope(Dispatchers.Main)   
+                        
+                        fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
+                            mainScope.launch {
+                               when (call.method) {
+                                    "doFooBar" -> {
+                                        result.success(FooBar().zeta())
+                                    }
+                                    "doNotFooBar" -> {
+                                        result.success(FooBar().beta().toKJson())
+                                    } 
+                                    else -> result.notImplemented()
+                               }
+                            }
+                        }
+                    }
                 """.filter { !it.isWhitespace() }
         }
     }

@@ -8,7 +8,6 @@ import java.nio.file.Path
 
 /**
  * @author Gillian Buijs
- * @contact https://buijs.dev
  */
 internal class AndroidAdapterGenerator(
     private val definitions: List<MethodCallDefinition>,
@@ -31,8 +30,8 @@ internal class AndroidAdapterPrinter(
         val block = if (definitions.isEmpty()) {
             "return result.notImplemented()"
         } else {
-            val defs = definitions.joinToString("else") { printFun(it) }
-            "$defs else result.notImplemented()"
+            val defs = definitions.joinToString("\r\n") { printFun(it) }
+            "$defs \r\n                else -> result.notImplemented()"
         }
 
         val imports = definitions
@@ -45,18 +44,25 @@ internal class AndroidAdapterPrinter(
             |
             |$imports
             |import io.flutter.plugin.common.MethodChannel
-            |import io.flutter.plugin.common.MethodChannel.Result
             |import io.flutter.plugin.common.MethodCall
+            |import kotlinx.coroutines.CoroutineScope
+            |import kotlinx.coroutines.Dispatchers
+            |import kotlinx.coroutines.launch
             |
             |/**
             | * Generated code by the Klutter Framework
             | */
             |class GeneratedKlutterAdapter {
             |
-            |  fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
-            |       $block
-            |  }
-            |
+            |    private val mainScope = CoroutineScope(Dispatchers.Main)   
+            |    
+            |    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
+            |        mainScope.launch {
+            |           when (call.method) {
+            |$block
+            |           }
+            |        }
+            |    }
             |}
             """.trimMargin()
     }
@@ -66,10 +72,9 @@ internal class AndroidAdapterPrinter(
             ".toKJson()"
         } else ""
 
-        return """
-            | if (call.method == "${definition.getter}") {
-            |            result.success(${definition.call}${type})
-            |        } """.trimMargin()
+        return  "                \"${definition.getter}\" -> {\r\n" +
+                "                    result.success(${definition.call}${type})\r\n" +
+                "                }"
     }
 
 }

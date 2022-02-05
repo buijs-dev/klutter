@@ -74,13 +74,26 @@ class KlutterAdapterProducer(
         val methods = scanForAdaptees()
         val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
         val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
-        val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, methods)
         val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app())
         val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android, repositories)
         val androidManifestVisitor = AndroidManifestVisitor(android.manifest())
         val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, podspec.nameWithoutExtension)
 
+        //todo need a better DTO or change the flow because this is getting out of hand here
+        //MCD stores the Kotlin type so need to convert it dart type for generating the proper adapter in Dart.
+        val dartMethods = methods.map { MethodCallDefinition(
+            getter = it.getter,
+            import = it.import,
+            call = it.call,
+            async = it.async,
+            returns = DartKotlinMap.toMapOrNull(it.returns)?.dartType?:it.returns,
+        ) }
+        val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, dartMethods)
+
         val iosPodspecVisitor = IosPodspecVisitor(podspec)
+        val appFrameworkInfoPlistVisitor = AppFrameworkInfoPlistVisitor(
+            ios.file.resolve("Flutter/AppFrameworkInfo.plist"), iosVersion
+        )
 
         val iosPodFileGenerator = IosPodFileGenerator(
             iosVersion = iosVersion,
@@ -103,6 +116,7 @@ class KlutterAdapterProducer(
             .merge(iosAppDelegateGenerator.generate())
             .merge(iosPodspecVisitor.visit())
             .merge(iosPodFileGenerator.generate())
+            .merge(appFrameworkInfoPlistVisitor.visit())
     }
 
     //todo does not belong here and too big
@@ -133,11 +147,11 @@ class KlutterAdapterProducer(
 
         //Iterate the message names and match it to the custom data types.
         //Remove from custom data types list if matched.
-        messages.map { it.name }.forEach { customDataTypes.remove(it) }
+        messages.map { it.name }.forEach { customDataTypes.removeAll { cdt -> cdt == it } }
 
         //Iterate the enumeration names and match it to the custom data types.
         //Remove from custom data types list if matched.
-        enumerations.map { it.name }.forEach { customDataTypes.remove(it) }
+        enumerations.map { it.name }.forEach { customDataTypes.removeAll { cdt -> cdt == it } }
 
         //Any custom data type name left in the list means there is no class definition found by this name
         messages.removeIf { message ->

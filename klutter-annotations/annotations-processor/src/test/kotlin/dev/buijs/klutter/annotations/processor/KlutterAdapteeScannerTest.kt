@@ -43,10 +43,12 @@ class KlutterAdapteeScannerTest : WordSpec({
             actual.size shouldBe 2
             actual[0].call shouldBe "Greeting().greeting()"
             actual[0].getter shouldBe "getGreeting"
+            actual[0].async shouldBe false
             actual[0].returns shouldBe "String"
 
             actual[1].call shouldBe "Greeting().anotherGreeting()"
             actual[1].getter shouldBe "getAnotherGreeting"
+            actual[1].async shouldBe true
             actual[1].returns shouldBe "String"
 
         }

@@ -89,6 +89,13 @@ class KlutterPluginGradleTest : WordSpec({
 
                 }
                 
+                @Serializable
+                @KlutterResponse
+                enum class {
+                    @SerialName("boom") BOOM,
+                    @SerialName("boom boom") BOOM_BOOM,
+                }
+                
             """.trimIndent())
 
             val androidManifestDir = project.androidAppDir.resolve(Path.of("src", "main").toFile())
@@ -214,6 +221,39 @@ class KlutterPluginGradleTest : WordSpec({
                 end
             """.trimIndent())
 
+
+            val frameworkinfo = project.appFrameworkInfoPlist
+            frameworkinfo.writeText(
+                    """
+              <?xml version="1.0" encoding="UTF-8"?>
+                <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+                <plist version="1.0">
+                <dict>
+                  <key>CFBundleDevelopmentRegion</key>
+                  <string>en</string>
+                  <key>CFBundleExecutable</key>
+                  <string>App</string>
+                  <key>CFBundleIdentifier</key>
+                  <string>io.flutter.flutter.app</string>
+                  <key>CFBundleInfoDictionaryVersion</key>
+                  <string>6.0</string>
+                  <key>CFBundleName</key>
+                  <string>App</string>
+                  <key>CFBundlePackageType</key>
+                  <string>FMWK</string>
+                  <key>CFBundleShortVersionString</key>
+                  <string>1.0</string>
+                  <key>CFBundleSignature</key>
+                  <string>????</string>
+                  <key>CFBundleVersion</key>
+                  <string>1.0</string>
+                  <key>MinimumOSVersion</key>
+                  <string>9.0</string>
+                </dict>
+                </plist>
+            """.trimIndent()
+                )
+
             project.buildGradle.writeText("""
                 plugins {
                     id("dev.buijs.klutter.gradle")
@@ -230,7 +270,7 @@ class KlutterPluginGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(project.projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("generate adapter","--stacktrace")
+                .withArguments("generate adapters","--stacktrace")
                 .build()
 
             val generatedFile = project.androidAppDir.resolve(
@@ -238,28 +278,39 @@ class KlutterPluginGradleTest : WordSpec({
 
             generatedFile.exists()
             generatedFile.readText().filter { !it.isWhitespace() } shouldBe """
-                package dev.buijs.klutter.adapter
+               package dev.buijs.klutter.adapter
 
                 import foo.bar.baz.FakeClass
                 import io.flutter.plugin.common.MethodChannel
-                import io.flutter.plugin.common.MethodChannel.Result
                 import io.flutter.plugin.common.MethodCall
-
-                 /**
+                import kotlinx.coroutines.CoroutineScope
+                import kotlinx.coroutines.Dispatchers
+                import kotlinx.coroutines.launch
+                
+                /**
                  * Generated code by the Klutter Framework
                  */
-                 class GeneratedKlutterAdapter {
-
-                   fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
-                        if (call.method == "DartMaul") {
-                            result.success(FakeClass().foo())
-                        } else if (call.method == "BabyYoda") {
-                            result.success(FakeClass().fooBar().toKJson())
-                        } else  if (call.method == "ObiWan") {
-                            result.success(FakeClass().zeta().toKJson())
-                        } else result.notImplemented()
-                   }
-                 }
+                class GeneratedKlutterAdapter {
+                
+                    private val mainScope = CoroutineScope(Dispatchers.Main)   
+                    
+                    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
+                        mainScope.launch {
+                           when (call.method) {
+                                "DartMaul" -> {
+                                    result.success(FakeClass().foo())
+                                }
+                                "BabyYoda" -> {
+                                    result.success(FakeClass().fooBar().toKJson())
+                                }
+                                "ObiWan" -> {
+                                    result.success(FakeClass().zeta().toKJson())
+                                } 
+                                else -> result.notImplemented()
+                           }
+                        }
+                    }
+                }
             """.filter { !it.isWhitespace() }
 
             mainActivity.readText().filter { !it.isWhitespace() } shouldBe """

@@ -42,6 +42,7 @@ import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidRootBuildGr
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.FlutterAdapterGenerator
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.IosPodspecVisitor
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.DartGenerator
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.KmpCommonMainBuildGradleVisitor
 import dev.buijs.klutter.plugins.gradle.utils.AnnotatedSourceCollector
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
@@ -74,7 +75,11 @@ class KlutterAdapterProducer(
         val methods = scanForAdaptees()
         val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
         val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
-        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app())
+
+        val kmpCommonMainBuildGradleVisitor = KmpCommonMainBuildGradleVisitor(kmp).also { it.visit() }
+        val dependencies = kmpCommonMainBuildGradleVisitor.requiredDependencies
+
+        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app(), dependencies)
         val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android, repositories)
         val androidManifestVisitor = AndroidManifestVisitor(android.manifest())
         val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, podspec.nameWithoutExtension)

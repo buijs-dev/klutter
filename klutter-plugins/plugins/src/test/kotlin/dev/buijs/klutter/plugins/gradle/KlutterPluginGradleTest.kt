@@ -31,7 +31,8 @@ class KlutterPluginGradleTest : WordSpec({
                        klutter.gradle.plugin.version=0.3.39-pre-alpha
                        klutter.annotations.kmp.version=0.2.49
                        kotlin.version=1.6.10
-                       kotlinx.version=1.3.10
+                       kotlinx.serialization.version=1.3.10
+                       kotlinx.coroutines.version=1.8.35
                        gradle.version=7.0.4
                        flutter.sdk.location=/Users/boba/tools/flutter
             """.trimIndent())

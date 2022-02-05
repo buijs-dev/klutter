@@ -32,6 +32,7 @@ data class MethodCallDefinition(
     val getter: String,
     val import: String,
     val call: String,
+    val async: Boolean = false,
     val returns: String,
 )
 

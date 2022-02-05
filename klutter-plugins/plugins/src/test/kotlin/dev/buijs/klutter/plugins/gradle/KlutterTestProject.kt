@@ -3,6 +3,7 @@ package dev.buijs.klutter.plugins.gradle
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createDirectory
 
 data class KlutterTestProject(
@@ -19,6 +20,12 @@ data class KlutterTestProject(
         .absoluteFile
         .also { it.mkdir() },
     val iosAppDelegate: File = iosRunnerDir.resolve("AppDelegate.swift")
+        .absoluteFile
+        .also { it.createNewFile() },
+    val iosFlutterDir: File = iosDir.resolve("Flutter")
+        .absoluteFile
+        .also { it.mkdir() },
+    val appFrameworkInfoPlist: File = iosFlutterDir.resolve("AppFrameworkInfo.plist")
         .absoluteFile
         .also { it.createNewFile() },
     val androidAppDir: File = projectDir.resolve("android/app")

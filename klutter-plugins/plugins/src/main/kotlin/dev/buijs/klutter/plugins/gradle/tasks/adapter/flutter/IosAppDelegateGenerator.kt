@@ -72,34 +72,57 @@ internal class IosAppDelegatePrinter(
         |    let rootViewController = window?.rootViewController as! FlutterBinaryMessenger
         |    let methodChannel = FlutterMethodChannel(name: channelName, binaryMessenger: rootViewController)
         |
-        |    methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: FlutterResult) -> Void in
-        |    ${blocks()}
+        |    methodChannel.setMethodCallHandler {(call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+        |    
+        |        switch call.method {
+        |${blocks()}
+        |        default:
+        |            result(FlutterMethodNotImplemented)
+        |        }
         |
         |    }
         |    
         |    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
         |    
         |  }
+        |  
+        |${methods()}  
+        |
         |}
         """.trimMargin()
 
-    private fun blocks() = if (definitions.isEmpty()) {
-        "return result(FlutterMethodNotImplemented)"
-    } else {
-        val defs = definitions.joinToString("else") { printFun(it) }
-        "$defs else { result(FlutterMethodNotImplemented) }"
+    private fun blocks() = definitions.joinToString("\n") {
+        "        case \"${it.getter}\":\n            self.${it.getter}(result: result)"
     }
 
-    private fun printFun(definition: MethodCallDefinition): String {
+    private fun methods(): String {
+        return definitions.joinToString("\n\n") { printMethod(it) }
+    }
+
+    private fun printMethod(definition: MethodCallDefinition): String {
+
         val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
             ".toKJson()"
         } else ""
 
-        return """
-            | if (call.method == "${definition.getter}") {
-            |        result(${definition.call}$type)
-            |      } """.trimMargin()
+        return if(definition.async) {
+            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                    "        ${definition.call.removeSuffix("()")} { data, error in\n" +
+                    "\n" +
+                    "            if let response = data { result(response$type) }\n" +
+                    "\n" +
+                    "            if let failure = error { result(failure) }\n" +
+                    "\n" +
+                    "        }\n" +
+                    "    }\n"
+        } else {
+            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                    "        result(${definition.call}$type)\n" +
+                    "    }"
+        }
+
     }
+
 }
 
 /**

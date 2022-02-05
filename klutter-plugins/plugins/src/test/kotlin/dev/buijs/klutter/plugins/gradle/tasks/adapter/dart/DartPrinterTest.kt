@@ -54,34 +54,33 @@ class DartPrinterTest : WordSpec({
 
             //Then:
             actual.filter { !it.isWhitespace() } shouldBe """
-               class Monster {
-
-                  Monster({
-                    required this.foo,
-                    required this.fooBaca,
-                    this.nullableFoo,
-                  });
+              class Monster {
+  
+              Monster({
+                required this.foo,
+                required this.fooBaca,
+                this.nullableFoo,
+              });
+                  
+               factory Monster.fromJson(dynamic json) {
+                   return Monster (
+                     nullableFoo: json['nullableFoo']?.toString(),
+                     foo: json['foo'].toInt(),
+                     fooBaca: List<double>.from(json['fooBaca'].map((o) => o.toDouble())),
+                   );
+                 }
                 
-                  factory Monster.fromJson(dynamic message) {
-                    final json = jsonDecode(message);
-                    return Monster (
-                      nullableFoo: json['nullableFoo']?.toString(),
-                      foo: json['foo'].toInt(),
-                      fooBaca: List<double>.from(json.decode(json['fooBaca']).map((o) => o.toDouble())),
-                    );
-                  }
+                 final int foo;
+                 final List<double> fooBaca;
+                 String? nullableFoo;
                 
-                  final int foo;
-                  final List<double> fooBaca;
-                  String? nullableFoo;
-                
-                  Map<String, dynamic> toJson() {
-                    return {
-                      'nullableFoo': nullableFoo,
-                      'foo': foo,
-                      'fooBaca': fooBaca.toList()
-                    };
-                  }
+                 Map<String, dynamic> toJson() {
+                   return {
+                     'nullableFoo': nullableFoo,
+                     'foo': foo,
+                     'fooBaca': fooBaca.toList()
+                   };
+                 }  
                 }
             """.filter { !it.isWhitespace() }
 
@@ -123,13 +122,45 @@ class DartPrinterTest : WordSpec({
 
             //Then:
             actual.filter { !it.isWhitespace() } shouldBe """
-                enum NothingElseMatters {
-                    forever,
-                    trusting,
-                    who,
-                    we,
-                    are,
-                    none
+                class NothingElseMatters {
+                final String string;
+                
+                const NothingElseMatters._(this.string);  static const forever = NothingElseMatters._('forever');
+                  static const trusting = NothingElseMatters._('trusting');
+                  static const who = NothingElseMatters._('who');
+                  static const we = NothingElseMatters._('we');
+                  static const are = NothingElseMatters._('are');
+                  static const none = NothingElseMatters._('none');
+                
+                
+                static const values = [forever,trusting,who,we,are];
+                
+                  @override
+                  String toString() {
+                    return 'NothingElseMatters.${dollar()}string';
+                  }
+                
+                  static NothingElseMatters fromJson(String value) {
+                    switch(value) {
+                      case "forever": return NothingElseMatters.forever;
+                      case "trusting": return NothingElseMatters.trusting;
+                      case "who": return NothingElseMatters.who;
+                      case "we": return NothingElseMatters.we;
+                      case "are": return NothingElseMatters.are;
+                      default: return NothingElseMatters.none;
+                    }
+                 }
+                
+                  String? toJson() {
+                    switch(this) { 
+                      case NothingElseMatters.forever: return "forever";
+                      case NothingElseMatters.trusting: return "trusting";
+                      case NothingElseMatters.who: return "who";
+                      case NothingElseMatters.we: return "we";
+                      case NothingElseMatters.are: return "are";
+                      default: return null;
+                    }
+                  }
                 }
             """.filter { !it.isWhitespace() }
 
@@ -152,8 +183,7 @@ class DartPrinterTest : WordSpec({
 
             //Then:
             actual.filter { !it.isWhitespace() }  shouldBe """
-                    extension _NothingElseMatters on NothingElseMatters {
-                    
+                
                       static NothingElseMatters fromJson(String value) {
                         switch(value) {
                           case "FOREVER": return NothingElseMatters.forever;
@@ -176,7 +206,7 @@ class DartPrinterTest : WordSpec({
                         }
                       }
                     
-                    }
+                    
             """.filter { !it.isWhitespace() }
 
         }
@@ -184,3 +214,4 @@ class DartPrinterTest : WordSpec({
 
 })
 
+fun dollar() = "$"

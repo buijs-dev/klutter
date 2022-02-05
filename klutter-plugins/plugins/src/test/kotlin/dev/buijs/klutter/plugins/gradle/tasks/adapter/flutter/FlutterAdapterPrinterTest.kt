@@ -1,6 +1,5 @@
 package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 import dev.buijs.klutter.core.MethodCallDefinition
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.FlutterAdapterPrinter
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
@@ -33,6 +32,7 @@ class FlutterAdapterPrinterTest : WordSpec({
             val actual = FlutterAdapterPrinter(definitions).print()
 
             actual.filter { !it.isWhitespace() } shouldBe """
+                import 'dart:convert';
                 import 'dart:async';
                 import 'messages.dart';
                 import 'package:flutter/services.dart';
@@ -43,7 +43,6 @@ class FlutterAdapterPrinterTest : WordSpec({
                 /// 
                 /// Adapter class which handles communication with the KMP library.
                 class Adapter {
-                
                   static const MethodChannel _channel = MethodChannel('KLUTTER');
                 
                   static Future<AdapterResponse<String>> get doFooBar async {
@@ -51,7 +50,9 @@ class FlutterAdapterPrinterTest : WordSpec({
                       final json = await _channel.invokeMethod('doFooBar');
                       return AdapterResponse.success(json.toString());
                     } catch (e) {
-                      return AdapterResponse.failure(e as Exception);
+                      return AdapterResponse.failure(
+                        e is Error ? Exception(e.stackTrace) : e as Exception
+                      );
                     }
                   }
                 
@@ -60,16 +61,21 @@ class FlutterAdapterPrinterTest : WordSpec({
                       final json = await _channel.invokeMethod('notDoFooBar');
                       return AdapterResponse.success(json.toInt());
                     } catch (e) {
-                      return AdapterResponse.failure(e as Exception);
+                      return AdapterResponse.failure(
+                        e is Error ? Exception(e.stackTrace) : e as Exception
+                      );
                     }
                   }
                 
                   static Future<AdapterResponse<List<Complex>>> get complexityGetter async {
                     try {
-                      final json = await _channel.invokeMethod('complexityGetter');
-                      return AdapterResponse.success(List<Complex>.from(json.decode(json).map((o) => Complex.fromJson(o))));
+                      final response = await _channel.invokeMethod('complexityGetter');
+                      final json = jsonDecode(response);
+                      return AdapterResponse.success(List<Complex>.from(json.map((o) => Complex.fromJson(o))));
                     } catch (e) {
-                      return AdapterResponse.failure(e as Exception);
+                      return AdapterResponse.failure(
+                        e is Error ? Exception(e.stackTrace) : e as Exception
+                      );
                     }
                   }
                 

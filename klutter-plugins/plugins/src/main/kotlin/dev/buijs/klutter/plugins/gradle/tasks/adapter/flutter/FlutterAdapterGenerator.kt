@@ -56,6 +56,7 @@ internal class FlutterAdapterPrinter(
         val block = definitions.joinToString("\r\n\r\n") { printFun(it) }
 
         return """
+            |import 'dart:convert';
             |import 'dart:async';
             |import 'messages.dart';
             |import 'package:flutter/services.dart';
@@ -66,10 +67,9 @@ internal class FlutterAdapterPrinter(
             |/// 
             |/// Adapter class which handles communication with the KMP library.
             |class Adapter {
-            |
             |  static const MethodChannel _channel = MethodChannel('KLUTTER');
             |  
-            |$block
+            $block
             |
             |}
             |
@@ -107,14 +107,31 @@ internal class FlutterAdapterPrinter(
     }
 
     private fun printFun(definition: MethodCallDefinition) =
-        """|static Future<AdapterResponse<${definition.returns}>> get ${definition.getter} async {
-           |  try {
-           |    final json = await _channel.invokeMethod('${definition.getter}');
-           |    return AdapterResponse.success(${serializer(definition)});
-           |  } catch (e) {
-           |    return AdapterResponse.failure(e as Exception);
-           |  }
-           |}""".trimMargin()
+        if(DartKotlinMap.toMapOrNull(definition.returns) == null) {
+            """|  static Future<AdapterResponse<${definition.returns}>> get ${definition.getter} async {
+           |    try {
+           |      final response = await _channel.invokeMethod('${definition.getter}');
+           |      final json = jsonDecode(response);
+           |      return AdapterResponse.success(${serializer(definition)});
+           |    } catch (e) {
+           |      return AdapterResponse.failure(
+           |          e is Error ? Exception(e.stackTrace) : e as Exception
+           |      );
+           |    }
+           |  }"""
+        } else {
+            """|  static Future<AdapterResponse<${definition.returns}>> get ${definition.getter} async {
+           |    try {
+           |      final json = await _channel.invokeMethod('${definition.getter}');
+           |      return AdapterResponse.success(${serializer(definition)});
+           |    } catch (e) {
+           |      return AdapterResponse.failure(
+           |          e is Error ? Exception(e.stackTrace) : e as Exception
+           |      );
+           |    }
+           |  }"""
+        }
+
 
     private fun serializer(definition: MethodCallDefinition): String {
 
@@ -134,13 +151,13 @@ internal class FlutterAdapterPrinter(
         //Standard DART datatype
         if(dartType != null) {
             return if(isList) {
-                "List<$type>.from(json.decode(json).map((o) => o$q${getCastMethod(dartType)}))"
+                "List<$type>.from(json.map((o) => o$q${getCastMethod(dartType)}))"
             } else "json${getCastMethod(dartType)}"
         }
 
         //Custom DTO or enum
         return if(isList) {
-            "List<$type>.from(json.decode(json).map((o) => $type.fromJson(o)))"
+            "List<$type>.from(json.map((o) => $type.fromJson(o)))"
         } else "$type.fromJson(json)"
 
     }

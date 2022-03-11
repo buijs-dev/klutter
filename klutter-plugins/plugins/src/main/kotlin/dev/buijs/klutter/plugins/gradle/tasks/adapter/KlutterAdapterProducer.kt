@@ -73,6 +73,8 @@ class KlutterAdapterProducer(
         val kmp = project.kmp
         val podspec = project.kmp.podspec()
         val methods = scanForAdaptees()
+        val appName = PupspecVisitor(project.flutter.root.resolve("pubspec.yaml")).appName()
+
         val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
         val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
 
@@ -81,7 +83,7 @@ class KlutterAdapterProducer(
 
         val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app(), dependencies)
         val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android, repositories)
-        val androidManifestVisitor = AndroidManifestVisitor(android.manifest())
+        val androidManifestVisitor = AndroidManifestVisitor(android.manifest(), appName)
         val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, podspec.nameWithoutExtension)
 
         //todo need a better DTO or change the flow because this is getting out of hand here
@@ -96,8 +98,13 @@ class KlutterAdapterProducer(
         val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, dartMethods)
 
         val iosPodspecVisitor = IosPodspecVisitor(podspec)
-        val appFrameworkInfoPlistVisitor = AppFrameworkInfoPlistVisitor(
-            ios.file.resolve("Flutter/AppFrameworkInfo.plist"), iosVersion
+        val iosInfoPlistVisitor = IosInfoPlistVisitor(
+            appName = appName,
+            infoPlist = ios.file.resolve("Runner/Info.plist"))
+
+        val appFrameworkInfoPlistVisitor = IosAppFrameworkInfoPlistVisitor(
+            ios.file.resolve("Flutter/AppFrameworkInfo.plist"),
+            iosVersion,
         )
 
         val iosPodFileGenerator = IosPodFileGenerator(
@@ -119,6 +126,7 @@ class KlutterAdapterProducer(
             .merge(androidRootBuildGradleGenerator.generate())
             .merge(androidManifestVisitor.visit())
             .merge(iosAppDelegateGenerator.generate())
+            .merge(iosInfoPlistVisitor.visit())
             .merge(iosPodspecVisitor.visit())
             .merge(iosPodFileGenerator.generate())
             .merge(appFrameworkInfoPlistVisitor.visit())

@@ -37,6 +37,11 @@ class KlutterPluginGradleTest : WordSpec({
                        flutter.sdk.location=/Users/boba/tools/flutter
             """.trimIndent())
 
+            project.flutterPubspec.writeText(""" 
+                name: some crazy app
+                description: Awesome App 
+            """.trimIndent())
+
             project.flutterMainFile.writeText("""
                 import 'package:flutter/material.dart';
 

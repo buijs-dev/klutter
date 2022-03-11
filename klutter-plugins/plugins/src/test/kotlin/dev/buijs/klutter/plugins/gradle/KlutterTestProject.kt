@@ -19,6 +19,9 @@ data class KlutterTestProject(
     val iosRunnerDir: File = iosDir.resolve("Runner")
         .absoluteFile
         .also { it.mkdir() },
+    val iosInfoPlist: File = iosRunnerDir.resolve("Info.plist")
+        .absoluteFile
+        .also { it.createNewFile() },
     val iosAppDelegate: File = iosRunnerDir.resolve("AppDelegate.swift")
         .absoluteFile
         .also { it.createNewFile() },
@@ -46,6 +49,10 @@ data class KlutterTestProject(
         .also { it.mkdirs() },
     val flutterMainFile: File = flutterDir.resolve("main.dart")
         .toPath()
+        .toAbsolutePath()
+        .toFile()
+        .also { it.createNewFile() },
+    val flutterPubspec: File = projectDir.resolve("pubspec.yaml")
         .toAbsolutePath()
         .toFile()
         .also { it.createNewFile() },

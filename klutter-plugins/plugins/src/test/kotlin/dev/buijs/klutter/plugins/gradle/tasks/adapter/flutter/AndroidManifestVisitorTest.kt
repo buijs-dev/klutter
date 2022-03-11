@@ -68,7 +68,7 @@ class AndroidManifestVisitorTest: WordSpec({
             /**
              * When visitor comes to visit
              */
-            AndroidManifestVisitor(manifest).visit()
+            AndroidManifestVisitor(manifest, "myapp").visit()
 
             /**
              * The AndroidManifest XML has the android:exported="true" attribute
@@ -78,7 +78,7 @@ class AndroidManifestVisitorTest: WordSpec({
                              <manifest xmlns:android="http://schemas.android.com/apk/res/android"
                                  package="dev.buijs.klutter.example.basic">
                                 <application
-                                     android:label="example"
+                                     android:label="myapp"
                                      android:icon="@mipmap/ic_launcher">
                                      <activity
                                          android:exported="true"
@@ -174,7 +174,7 @@ class AndroidManifestVisitorTest: WordSpec({
             /**
              * When visitor comes to visit
              */
-            AndroidManifestVisitor(manifest).visit()
+            AndroidManifestVisitor(manifest, "myapp").visit()
 
             /**
              * The AndroidManifest XML has the android:exported="true" attribute only once
@@ -184,7 +184,7 @@ class AndroidManifestVisitorTest: WordSpec({
                              <manifest xmlns:android="http://schemas.android.com/apk/res/android"
                                  package="dev.buijs.klutter.example.basic">
                                 <application
-                                     android:label="example"
+                                     android:label="myapp"
                                      android:icon="@mipmap/ic_launcher">
                                      <activity
                                          android:exported="true"

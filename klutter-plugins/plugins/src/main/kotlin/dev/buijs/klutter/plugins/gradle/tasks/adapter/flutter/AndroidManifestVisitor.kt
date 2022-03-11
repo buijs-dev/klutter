@@ -42,7 +42,8 @@ import java.io.File
  * @author Gillian Buijs
  */
 internal class AndroidManifestVisitor(
-    private val manifestFile: File
+    private val manifestFile: File,
+    private val appName: String,
 ): KlutterVisitor {
 
     private val xmlMapper = XmlMapper(JacksonXmlModule()
@@ -58,24 +59,28 @@ internal class AndroidManifestVisitor(
         val logger = KlutterLogger()
         val rawContent = manifestFile.readText()
         val parsedXml: AndroidManifestXML = xmlMapper.readValue(rawContent)
+        val isExported = parsedXml.application?.activity?.androidExported != null
 
-        if(parsedXml.application?.activity?.androidExported == null) {
-            val output = mutableListOf<String>()
-            for (line in rawContent.reader().readLines()) {
+        val output = mutableListOf<String>()
+        for (line in rawContent.reader().readLines()) {
+
+            if(line.contains("android:label=")) {
+                output.add("        android:label=\"$appName\"")
+            } else {
                 output.add(line)
-                if(line.contains("<activity")) {
-                    output.add("""            android:exported="true"""")
-                    logger.debug("""Added line to $manifestFile:  'android:exported="true"'""")
-                }
             }
-            manifestFile.delete()
-            manifestFile.createNewFile()
-            manifestFile.writeText(output.joinToString("\r\n"))
-            return logger
-        }
 
-        logger.debug("AndroidManifest file is OK, no editing done.")
+            if(line.contains("<activity") && !isExported) {
+                output.add("""            android:exported="true"""")
+                logger.debug("""Added line to $manifestFile:  'android:exported="true"'""")
+            }
+
+        }
+        manifestFile.delete()
+        manifestFile.createNewFile()
+        manifestFile.writeText(output.joinToString("\r\n"))
         return logger
+
     }
 }
 
@@ -86,7 +91,15 @@ private class AndroidManifestXML {
 
 @JacksonXmlRootElement(localName = "application")
 private class AndroidManifestApplication {
+
+    @field:JacksonXmlProperty(
+        namespace = "android",
+        localName = "label",
+        isAttribute = true, )
+    val androidExported: String? = null
+
     val activity: AndroidActivity? = null
+
 }
 
 @JacksonXmlRootElement(localName = "activity")

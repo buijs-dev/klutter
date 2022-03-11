@@ -7,7 +7,7 @@ import java.nio.file.Files
 /**
  * @author Gillian Buijs
  */
-class AppFrameworkInfoPlistVisitorTest: WordSpec({
+class IosAppFrameworkInfoPlistVisitorTest: WordSpec({
 
     "Using the AppFrameworkInfoPlistVisitor" should {
 
@@ -51,7 +51,7 @@ class AppFrameworkInfoPlistVisitorTest: WordSpec({
             /**
              * When visitor comes to visit
              */
-            AppFrameworkInfoPlistVisitor(frameworkinfo, "13.0").visit()
+            IosAppFrameworkInfoPlistVisitor(frameworkinfo, "13.0").visit()
 
             /**
              * The AndroidManifest XML has the android:exported="true" attribute
@@ -119,8 +119,6 @@ class AppFrameworkInfoPlistVisitorTest: WordSpec({
                 </plist>
             """.trimIndent()
             )
-
-            AndroidManifestVisitor(frameworkinfo).visit()
 
             frameworkinfo.readText().filter { !it.isWhitespace() } shouldBe  """
          <?xml version="1.0" encoding="UTF-8"?>

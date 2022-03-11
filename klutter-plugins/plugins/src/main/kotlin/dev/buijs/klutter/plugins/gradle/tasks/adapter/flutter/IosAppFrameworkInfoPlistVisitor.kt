@@ -36,7 +36,7 @@ import java.io.File
  *
  * @author Gillian Buijs
  */
-internal class AppFrameworkInfoPlistVisitor(
+internal class IosAppFrameworkInfoPlistVisitor(
     private val appFrameworkInfo: File,
     private val iosVersion: String
 ): KlutterVisitor {

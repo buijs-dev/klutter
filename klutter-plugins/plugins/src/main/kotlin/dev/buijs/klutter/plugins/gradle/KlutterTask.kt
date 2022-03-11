@@ -50,6 +50,8 @@ abstract class KlutterTask
 
     fun iosVersion() = ext.getIosDto()?.version?:"13.0"
 
+    fun appName() = ext.getAppName() ?: throw KlutterConfigException("App name not set. Supply a name for the app in the app DSL.")
+
     fun project() = KlutterProjectFactory().fromRoot(Root(ext.root))
 
 }

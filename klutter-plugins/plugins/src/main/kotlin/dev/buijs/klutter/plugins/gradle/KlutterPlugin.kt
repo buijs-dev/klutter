@@ -34,6 +34,7 @@ open class KlutterExtension(private val project: Project) {
     private var repositoriesDto: KlutterRepositoriesDTO? = null
     private var modulesDto: KlutterModulesDTO? = null
     private var iosDTO: KlutterIosDTO? = null
+    private var appConfig: AppConfigDTO? = null
     internal var root: File = project.rootProject.projectDir
 
     fun root(file: String){ root = File(file) }
@@ -53,6 +54,12 @@ open class KlutterExtension(private val project: Project) {
     fun ios(lambda: KlutterIosBuilder.() -> Unit) {
         iosDTO = KlutterIosBuilder().apply(lambda).build()
     }
+
+    fun app(lambda: AppConfigBuilder.() -> Unit) {
+        appConfig = AppConfigBuilder().apply(lambda).build()
+    }
+
+    internal fun getAppName() = appConfig?.name
 
     internal fun getMultiplatformDto() = multiplatformDto
 

@@ -34,7 +34,7 @@ yet but feel free to experiment and let me know what you think.
 Download the CLI tool: 
 
 ```shell
-wget "https://github.com/buijs-dev/klutter/blob/main/klutter-cli/cli.zip"
+wget "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4/klutter-cli/cli.zip"
 ```
 
 Unzip the file. Move to folder cli/bin. Run:

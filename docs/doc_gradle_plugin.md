@@ -11,6 +11,8 @@ Klutter is Kotlin first, which means it uses Kotlin as much as possible. The Klu
 which will generate anything from settings files to Kotlin/Dart/Groovy code needed to make Flutter and KMP work together.
 To do this a set of tasks is available:
 
-1. [Generate Adapter](doc_gradle_plugin_task_generate_adapter.md)
-2. [Synchronize](doc_gradle_plugin_task_synchronize.md)
-3. [Build Debug](doc_gradle_plugin_task_build_debug.md)
+1. [generateAdapters](doc_gradle_plugin_task_generate_adapter.md)
+2. [generateAndroidBuildGradle](doc_gradle_plugin_task_generate_android_build_gradle.md)
+3. [generateIOSPodfile](doc_gradle_plugin_task_generate_ios_podfile.md)
+4. [updatePlatformPodspec](doc_gradle_plugin_task_update_platform_podspec.md)
+5. [setupProject](doc_gradle_plugin_task_setup_project.md)

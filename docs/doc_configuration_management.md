@@ -3,7 +3,6 @@
 Klutter has it's own way of managing project configuration. Here we talk about:
 1. [Underlaying principles of Klutter configuration management](#Underlaying-principles-of-Klutter-configuration-management)
 2. [Brief summary of usage](#Brief-summary-of-usage)
-3. [Future improvements](#Future-improvements)
 
 
 ## Underlaying principles of Klutter configuration management
@@ -46,83 +45,5 @@ entire project is compliant, meaning dependency issues can arise or worse.
 
 
 # Brief summary of usage
-Configuration is setup by using yaml files in the klutter module. There are 3 types of yaml files:
-- klutter.yaml
-- klutter-local.yaml
-- klutter-secrets.yaml
-
-##### klutter.yaml
-Mandatory file which contains the global project setup, dependency versions etc.
-
-##### klutter-local.yaml
-Optional (but recommended) file to store user-dependent configuration. For example
-the (absolute) location of SDK's. Should not be saved in version controle.
-
-##### klutter-secrets.yaml
-Optional (but recommended) file to store sensitive information. For example credentials, keystore (location), etc.
-Should not be saved in version controle.
-
-The Klutter plugin takes all these yaml files in the klutter directory, merges them and creates 2 files:
-- klutter.gradle.kts
-- klutter.properties
-
-These files are created in the klutter/.klutter directory. Any existing klutter.gradle.kts or  
-klutter.properties file in this directory will be overwritten. Do <b>not</b> manually edit these files!  
-Next the plugin will find all modules configured by the Klutter Plugin. A .klutter directory
-with klutter.gradle.kts and klutter.properties will be created in each module. 
-- //todo link to doc describing module management. For now see readme file in root.
-
-The preferred way of accessing the configuration is by applying the klutter.gradle.kts file as follows:
-
-```kotlin
-apply(from = ".klutter/klutter.gradle.kts")
-```
-
-An idiomatic Kotlin way of applying and using the generated klutter.gradle.kts file is
-by using the .also function:
-
-```kotlin
-buildscript {
-    apply(from = ".klutter/klutter.gradle.kts").also {
-        repositories {
-            maven {
-                url = uri(project.extra["privateRepoUrl"] as String)
-                credentials {
-                    username = project.extra["privateRepoUsername"] as String
-                    password = project.extra["privateRepoPassword"] as String
-                }
-            }
-        }
-    }
-}
-```
-
-When this is not an option then it is also possible to read the properties directly from the klutter.properties file:
-
-
-```groovy
-
-def kProps = new Properties()
-   new File(project.projectDir, ".klutter/klutter.properties")
-           .getCanonicalFile()
-           .withReader('UTF-8') { reader -> kProps.load(reader)}
-
-    repositories {
-        maven {
-            url = uri(kProps.getProperty('private.repo.url'))
-            credentials {
-                username = kProps.getProperty('private.repo.username')
-                password = kProps.getProperty('private.repo.password')
-            }
-        }
-    }
-
-```
-
-
-# Future improvements
-
-1. Add repository management 
-2. Add klutter-ci.yaml for CI-CD configuration
-3. Add functionality for managing secrets: read env variables, encode secrets with generated key, get secrets from cloud service
-   
+//TODO buildSrc is now used, explain
+//TODO Secrets are loaded with Secrets class, explain

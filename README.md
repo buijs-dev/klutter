@@ -1,4 +1,4 @@
-![This is an image](examples/example-basic/assets/metadata/icon/banner.png)
+![This is an image](examples/assets/metadata/icon/banner.png)
 
 # Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
@@ -27,37 +27,24 @@ yet but feel free to experiment and let me know what you think.
 - [Documentation](https://buijs-dev.github.io/klutter/)
 - [Project Structure](docs/doc_project_structure.md)
 - [Klutter Gradle Plugin](docs/doc_gradle_plugin.md)
-- [Repository management](docs/doc_gradle_plugin_repositories.md)
 - [Configuration management](docs/doc_configuration_management.md)
 
+# Gettings started
 
-### Code generation
-* [x] Generate android build.gradle in root/android and root/android/app
-* [x] Generate PodFile in root/ios and AppDelegate.swift in ios/Runner 
-* [x] Generate adapter.dart in root/lib/generated
-* [x] Read annotations from KMP source and generate simple method calls
-* [x] Generate PodFile in root/ios and AppDelegate.swift in ios/Runner
-* [ ] Read annotations from KMP source and generate method calls that take args
+Download the CLI tool: 
 
-### Example apps
-* [x] [example-basic](examples/example-basic) Add basic project which works on iOS and Android
-* [ ] Add example project which uses libraries in KMP
-* [ ] Add example project which uses more advanced method calls
-  
-### Configuration management
-* [x] Read yaml files for configuration from root/klutter folder
-* [x] Separate public, local and secret config with yaml files
-* [ ] Add encryption support for secrets
-* [x] Add repository management 
-* [ ] Add mechanism for key file loading/storing
+```shell
+wget "https://github.com/buijs-dev/klutter/blob/main/klutter-cli/cli.zip"
+```
 
-### Continuous Integration and Delivery
-* [ ] Add tasks to release new builds to App Store/Playstore
+Unzip the file. Move to folder cli/bin. Run:
 
-### Kotlin - Dart transpiler
-* [ ] Create Klutter UI components in Kotlin
-* [ ] Embed Klutter UI components in Flutter views
-* [ ] Create Klutter UI library
+```shell
+./cli
+```
+
+This generates a Klutter project in the folder where the CLI tool is unzipped.
+For more information see [Klutter CLI tool](docs/doc_cli_tool.md)
 
 ## Contributing
 Pull requests are welcome. Contact me at info@buijs.dev

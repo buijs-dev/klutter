@@ -22,7 +22,7 @@
 
 package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.Klutter.KlutterYaml.*
+import dev.buijs.klutter.core.BuildSrc.KlutterYaml.*
 import java.io.File
 
 /**
@@ -33,9 +33,9 @@ import java.io.File
  * @property root is the top level of the project.
  * @property ios is the folder containing the iOS frontend code, basically the iOS folder from a standard Flutter project.
  * @property android is the folder containing the Android frontend code, basically the iOS folder from a standard Flutter project.
- * @property kmp is the folder containing the native backend code, basically a Kotlin Multiplatform library module.
+ * @property platform is the folder containing the native backend code, basically a Kotlin Multiplatform library module.
  * @property flutter is the lib folder containing the main.dart, the starting point of the Android/iOS application.
- * @property klutter is the folder containing all Klutter configuration and the configured Klutter Plugin.
+ * @property buildSrc is the folder containing all Klutter configuration and the configured Klutter Plugin.
  *
  * @author Gillian Buijs
  */
@@ -44,8 +44,8 @@ data class KlutterProject(
     val ios: IOS,
     val android: Android,
     val flutter: Flutter,
-    val kmp: KMP,
-    val klutter: Klutter
+    val platform: Platform,
+    val buildSrc: BuildSrc
 )
 
 /**
@@ -61,10 +61,10 @@ class KlutterProjectFactory {
     fun fromRoot(root: Root) = KlutterProject(
         root = root,
         ios = IOS(root = root),
-        kmp = KMP(root = root),
+        platform = Platform(root = root),
         android = Android(root = root),
         flutter = Flutter(root = root),
-        klutter = Klutter(root = root),
+        buildSrc = BuildSrc(root = root),
     )
 
 }
@@ -109,22 +109,22 @@ class Root(file: File) {
 
 
 /**
- * Wrapper class with a file instance pointing to the klutter sub-module.
- * If no custom path is given, Klutter assumes the path to the klutter folder is [root]/klutter.
+ * Wrapper class with a file instance pointing to the buildSrc sub-module.
+ * If no custom path is given, Klutter assumes the path to the buildSrc folder is [root]/buildSrc.
  *
- * @property file path to the klutter folder.
+ * @property file path to the buildSrc folder.
  *
  * @author Gillian Buijs
  */
-class Klutter(file: File? = null, root: Root) : KlutterFolder(
-    root, file, "Klutter directory", root.resolve("klutter")
+class BuildSrc(file: File? = null, root: Root) : KlutterFolder(
+    root, file, "BuildSrc directory", root.resolve("buildSrc")
 ) {
 
     enum class KlutterYaml { PUBLIC, LOCAL, SECRETS }
 
     /**
      * Function to return the location of yaml files used by Klutter.
-     * Assumes all yaml files for klutter configuration are stored in [root]/klutter.
+     * Assumes all yaml files for klutter configuration are stored in [root]/buildSrc.
      * @throws KlutterConfigException if file(s) do not exist.
      * @return absolute path to a requested yaml file.
      */
@@ -133,7 +133,7 @@ class Klutter(file: File? = null, root: Root) : KlutterFolder(
             getFileSafely(
                 file.resolve("klutter-local.yaml"),
                 file.absolutePath,
-                "root-project/klutter/klutter-local.yaml"
+                "root-project/buildSrc/klutter-local.yaml"
             )
         }
 
@@ -141,7 +141,7 @@ class Klutter(file: File? = null, root: Root) : KlutterFolder(
             getFileSafely(
                 file.resolve("klutter.yaml"),
                 file.absolutePath,
-                "root-project/klutter/klutter-local.yaml"
+                "root-project/buildSrc/klutter-local.yaml"
             )
         }
 
@@ -149,7 +149,7 @@ class Klutter(file: File? = null, root: Root) : KlutterFolder(
             getFileSafely(
                 file.resolve("klutter-secrets.yaml"),
                 file.absolutePath,
-                "root-project/klutter/klutter-local.yaml")
+                "root-project/buildSrc/klutter-local.yaml")
         }
     }
 }
@@ -178,19 +178,18 @@ class Flutter(file: File? = null, root: Root) :
 
 /**
  * Wrapper class with a file instance pointing to the kmp sub-module.
- * If no custom path is given, Klutter assumes the path to the KMP module is [root]/kmp.
+ * If no custom path is given, Klutter assumes the path to the Platform module is [root]/platform.
  *
- * @property file path to the KMP folder.
+ * @property file path to the Platform folder.
  *
  * @author Gillian Buijs
  */
-class KMP(
+class Platform(
     root: Root,
     file: File? = null,
-    private val podspecName: String = "common.podspec",
-    private val moduleName: String = "common",
-    private val moduleMainName: String = "commonMain",
-) : KlutterFolder(root, file, "KMP directory", root.resolve("kmp")) {
+    private val podspecName: String = "platform.podspec",
+    private val moduleName: String = "commonMain",
+) : KlutterFolder(root, file, "Platform directory", root.resolve("platform")) {
 
     /**
      * Function to return the location of the src module containing the common/shared platform code.
@@ -199,56 +198,34 @@ class KMP(
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
-    fun source(): File {
-        val commonFolder = getFileSafely(
-            file.resolve(moduleName),
-            file.absolutePath, "root-project/kmp/common"
-        )
-
-        return getFileSafely(
-            commonFolder.resolve("src/$moduleMainName"),
-            commonFolder.absolutePath, "root-project/kmp/common/src/commonMain"
-        )
-
-    }
+    fun source() = getFileSafely(
+        file.resolve("src/$moduleName"),
+        file.absolutePath, "root-project/platform/src/$moduleName"
+    )
 
     /**
      * Function to return the location of the podspec file in the kmp sub-module.
-     * If no custom path is given, Klutter assumes the path to the KMP sourcecode is root-project/kmp/common/commmon.podspec.
+     * If no custom path is given, Klutter assumes the path to the Platform sourcecode is root-project/platform/platform.podspec.
      *
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the podspec file.
      */
-    fun podspec(): File {
-        val commonFolder = module()
-
-        return getFileSafely(
-            commonFolder.resolve(if (podspecName.endsWith(".podspec")) podspecName else "$podspecName.podspec"),
-            commonFolder.absolutePath, "root-project/kmp/common/common.podspec"
-        )
-    }
+    fun podspec() = getFileSafely(
+        file.resolve(if (podspecName.endsWith(".podspec")) podspecName else "$podspecName.podspec"),
+        file.absolutePath, "root-project/platform/platform.podspec"
+    )
 
     /**
-     * Function to return the location of the common/shared sub-module in the KMP module.
-     * If no custom path is given, Klutter assumes the path to the KMP module is root-project/kmp/common.
-     *
-     * @throws KlutterConfigException if file(s) do not exist.
-     * @return the absolute path to the podspec file.
-     */
-    @Suppress("private")
-    fun module() = getFileSafely(file.resolve(moduleName), file.absolutePath, "root-project/kmp/common")
-
-    /**
-     * Function to return the location of build folder in the KMP common/shared sub-module.
-     * If no custom path is given, Klutter assumes the path to the KMP build folder is root-project/kmp/common/build.
+     * Function to return the location of build folder in the Platform module.
+     * If no custom path is given, Klutter assumes the path to the Platform build folder is root-project/platform/build.
      *
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
     fun build() = getFileSafely(
-        file.resolve("$moduleName/build"),
+        file.resolve("build"),
         file.absolutePath,
-        "root-project/kmp/common/build"
+        "root-project/platform/build"
     )
 
     fun moduleName() = moduleName

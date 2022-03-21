@@ -65,3 +65,11 @@ hs_err_pid*
 /examples/example-basic/gradlew
 /examples/example-basic/gradlew.bat
 /examples/example-basic/local.properties
+/klutter-cli/local.properties
+/klutter-cli/example/
+/klutter-cli/cli/src/main/resources/example/
+/klutter-cli/.gradle/
+/klutter-cli/build/
+/klutter-cli/cli/build/
+/klutter-cli/.gradle/
+/klutter-annotations/build/

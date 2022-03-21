@@ -8,6 +8,17 @@ tasks.register("_switch_release") {
         .writeText(file("publish/_release.properties").readText())
 }
 
+tasks.register("_publish_release_all") {
+
+    dependsOn(tasks["_switch_release"])
+
+    doLast {
+        project.exec {
+            commandLine("bash", "./publish/publish_all_release.sh")
+        }
+    }
+}
+
 tasks.register("_publish_develop") {
 
     dependsOn(tasks["_switch_develop"])
@@ -92,6 +103,28 @@ tasks.register("_publish_plugins_release") {
     doLast {
         project.exec {
             commandLine("bash", "./publish/publish_plugins-release.sh")
+        }
+    }
+}
+
+tasks.register("_publish_cli_develop") {
+
+    dependsOn(tasks["_switch_develop"])
+
+    doLast {
+        project.exec {
+            commandLine("bash", "./publish/publish_cli.sh")
+        }
+    }
+}
+
+tasks.register("_publish_cli_release") {
+
+    dependsOn(tasks["_switch_release"])
+
+    doLast {
+        project.exec {
+            commandLine("bash", "./publish/publish_cli.sh")
         }
     }
 }

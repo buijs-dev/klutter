@@ -65,9 +65,8 @@ interface KlutterWriter {
 
  /**
   * Creates a new file and writes the content to said file.
-  * @return logger with info about the steps done by the writer.
   */
- fun write(): KlutterLogger
+ fun write()
 
 }
 
@@ -93,9 +92,8 @@ interface KlutterProducer {
 
  /**
   * Creates one or more files.
-  * @return logger with info about the steps done by the producer.
   */
- fun produce(): KlutterLogger
+ fun produce()
 
 }
 
@@ -106,8 +104,7 @@ interface KlutterVisitor {
 
  /**
   * Reads the content of a file and determines if any editting should be done.
-  * @return logger with info about the steps done by the visitor.
   */
- fun visit(): KlutterLogger
+ fun visit()
 
 }

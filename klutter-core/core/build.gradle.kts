@@ -1,4 +1,5 @@
 plugins {
+    id("groovy")
     id("maven-publish")
     id("java-library")
     kotlin("jvm")
@@ -18,6 +19,7 @@ sourceSets {
 }
 
 dependencies {
+    implementation(gradleApi())
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.10")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1")
@@ -26,6 +28,12 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
+
+    //Easier to test groovy gradle functionality in a spock test
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
+    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
+
+    testImplementation(gradleTestKit())
 
 }
 

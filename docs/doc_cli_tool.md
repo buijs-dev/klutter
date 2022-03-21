@@ -4,17 +4,7 @@ The Klutter CLI is a small utility to generate a new Klutter project.
 
 # Getting started
 
-Download the CLI tool:
-
-```shell
-wget "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4/klutter-cli/cli.zip"
-```
-
-For windows:
-
-```shell
-curl "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4/klutter-cli/cli.zip"
-```
+Download the CLI tool: "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4/klutter-cli/cli.zip"
 
 Unzip the file. Move to folder cli/bin. Run:
 

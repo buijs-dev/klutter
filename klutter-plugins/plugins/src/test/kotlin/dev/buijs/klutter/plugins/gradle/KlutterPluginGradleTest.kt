@@ -67,7 +67,7 @@ class KlutterPluginGradleTest : WordSpec({
 
             """.trimIndent())
 
-            val sourceFile = project.kmpDir.resolve("FakeClass.kt").absoluteFile
+            val sourceFile = project.platformSourceDir.resolve("FakeClass.kt").absoluteFile
             sourceFile.createNewFile()
             sourceFile.writeText("""
                 package foo.bar.baz
@@ -177,7 +177,7 @@ class KlutterPluginGradleTest : WordSpec({
                 }
             """.trimIndent())
 
-            val podspec = project.podspecDir.resolve("common.podspec").absoluteFile
+            val podspec = project.platformDir.resolve("platform.podspec").absoluteFile
             podspec.createNewFile()
             podspec.writeText("""
                 Pod::Spec.new do |spec|
@@ -267,7 +267,7 @@ class KlutterPluginGradleTest : WordSpec({
 
                 klutter {
                     multiplatform {
-                        source = "${project.kmpDir}"
+                        source = "${project.platformDir}"
                     }
                 }
 
@@ -276,7 +276,7 @@ class KlutterPluginGradleTest : WordSpec({
             GradleRunner.create()
                 .withProjectDir(project.projectDir.toFile())
                 .withPluginClasspath()
-                .withArguments("generate adapters","--stacktrace")
+                .withArguments("generateAdapters","--stacktrace")
                 .build()
 
             val generatedFile = project.androidAppDir.resolve(

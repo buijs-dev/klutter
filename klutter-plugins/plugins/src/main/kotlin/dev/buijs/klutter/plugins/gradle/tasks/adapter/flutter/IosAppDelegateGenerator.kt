@@ -24,6 +24,7 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 
 import dev.buijs.klutter.core.*
+import org.gradle.api.logging.Logging
 import java.io.File
 
 /**
@@ -130,9 +131,9 @@ internal class IosAppDelegatePrinter(
  */
 internal class IosAppDelegateWriter(val file: File, val content: String): KlutterWriter {
 
-    override fun write(): KlutterLogger {
+    private val log = Logging.getLogger(IosAppDelegateWriter::class.java)
 
-        val logger = KlutterLogger()
+    override fun write() {
 
         if(file.exists()){
             file.delete()
@@ -141,14 +142,13 @@ internal class IosAppDelegateWriter(val file: File, val content: String): Klutte
         file.createNewFile().also {
             if(!file.exists()){
                 throw KlutterCodeGenerationException("Unable to create file: $file.")
-            } else logger.info("Created new AppDelegate.swift: $file")
+            } else log.info("Created new AppDelegate.swift: $file")
         }
 
         file.writeText(content).also {
-            logger.debug("Written content to AppDelegate.swfit: \r\n$content")
+            log.debug("Written content to AppDelegate.swfit: \r\n$content")
         }
 
-        return logger
     }
 
 }

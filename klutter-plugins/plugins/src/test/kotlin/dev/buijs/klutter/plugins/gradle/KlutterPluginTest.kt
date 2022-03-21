@@ -1,7 +1,5 @@
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.plugins.gradle.KlutterPlugin
-import dev.buijs.klutter.plugins.gradle.adapter
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
@@ -13,13 +11,13 @@ import java.io.File
  */
 class KlutterPluginTest : WordSpec({
 
-    "Using the KlutterPlugin ID" should {
-        "Apply the Plugin" {
-            val project = ProjectBuilder.builder().build()
-            project.pluginManager.apply("dev.buijs.klutter.gradle")
-            project.plugins.getPlugin(KlutterPlugin::class.java) shouldNotBe null
-        }
-    }
+//    "Using the KlutterPlugin ID" should {
+//        "Apply the Plugin" {
+//            val project = ProjectBuilder.builder().build()
+//            project.pluginManager.apply("dev.buijs.klutter.gradle")
+//            project.plugins.getPlugin(KlutterPlugin::class.java) shouldNotBe null
+//        }
+//    }
 
     "Applying the KlutterPlugin" should {
         "Register the 'KlutterPluginExtension' extension" {

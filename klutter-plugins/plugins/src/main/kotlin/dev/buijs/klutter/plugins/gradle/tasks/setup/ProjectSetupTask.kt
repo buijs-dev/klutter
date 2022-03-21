@@ -21,40 +21,46 @@
  */
 
 
-package dev.buijs.klutter.plugins.gradle.tasks.adapter
-
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import com.intellij.openapi.util.Disposer
+package dev.buijs.klutter.plugins.gradle.tasks.setup
 
 import dev.buijs.klutter.plugins.gradle.KlutterTask
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidManifestVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.IosAppFrameworkInfoPlistVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.IosInfoPlistVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.PupspecVisitor
 import org.gradle.internal.logging.text.StyledTextOutputFactory
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import javax.inject.Inject
 
 /**
  * @author Gillian Buijs
  */
-open class GenerateAdapterTask
-@Inject constructor(styledTextOutputFactory: StyledTextOutputFactory)
-    : KlutterTask(styledTextOutputFactory) {
-
-    private val context by lazy {
-        val config = CompilerConfiguration()
-        config.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES).project
-    }
+open class ProjectSetupTask
+@Inject constructor(styledTextOutputFactory: StyledTextOutputFactory):
+    KlutterTask(styledTextOutputFactory)
+{
 
     override fun describe() {
-        KlutterAdapterProducer(
-            context = context,
-            project = project(),
-            iosVersion = iosVersion(),
-            repositories = repositories(),
-        ).produce()
+
+        val project = project()
+        val android = project.android
+        val ios = project.ios
+        val appName = PupspecVisitor(project.flutter.root.resolve("pubspec.yaml")).appName()
+
+        val androidManifestVisitor = AndroidManifestVisitor(android.manifest(), appName)
+        val iosInfoPlistVisitor = IosInfoPlistVisitor(
+            appName = appName,
+            infoPlist = ios.file.resolve("Runner/Info.plist"))
+
+        val appFrameworkInfoPlistVisitor = IosAppFrameworkInfoPlistVisitor(
+            ios.file.resolve("Flutter/AppFrameworkInfo.plist"),
+            iosVersion(),
+        )
+
+        androidManifestVisitor.visit()
+        iosInfoPlistVisitor.visit()
+        appFrameworkInfoPlistVisitor.visit()
+
     }
 
-
 }
+

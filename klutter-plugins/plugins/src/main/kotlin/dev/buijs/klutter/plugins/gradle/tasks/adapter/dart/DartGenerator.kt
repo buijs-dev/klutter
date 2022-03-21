@@ -31,7 +31,7 @@ import dev.buijs.klutter.core.*
 class DartGenerator(
     private val flutter: Flutter,
     private val objects: DartObjects,
-    ): KlutterFileGenerator() {
+): KlutterFileGenerator() {
 
     override fun printer() = DartPrinter(objects)
 

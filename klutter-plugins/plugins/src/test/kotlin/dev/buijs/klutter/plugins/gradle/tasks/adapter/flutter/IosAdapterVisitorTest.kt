@@ -1,6 +1,6 @@
 package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.IosPodspecVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.platform.IosPodspecVisitor
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files

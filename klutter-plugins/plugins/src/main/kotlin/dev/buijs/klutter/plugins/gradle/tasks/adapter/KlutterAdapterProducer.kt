@@ -37,12 +37,9 @@ import dev.buijs.klutter.plugins.gradle.dsl.KlutterRepository
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.*
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidActivityVisitor
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidAdapterGenerator
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidBuildGradleGenerator
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidRootBuildGradleGenerator
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.FlutterAdapterGenerator
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.IosPodspecVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.platform.IosPodspecVisitor
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.DartGenerator
-import dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp.KmpCommonMainBuildGradleVisitor
 import dev.buijs.klutter.plugins.gradle.utils.AnnotatedSourceCollector
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtClass
@@ -65,25 +62,16 @@ class KlutterAdapterProducer(
     private var logger = KlutterLogger()
 
     //todo complexity
-    override fun produce(): KlutterLogger {
-        val root = project.root
+    override fun produce() {
         val flutter = project.flutter
         val android = project.android
         val ios = project.ios
-        val kmp = project.kmp
-        val podspec = project.kmp.podspec()
+        val platform = project.platform
+        val podspec = platform.podspec()
         val methods = scanForAdaptees()
-        val appName = PupspecVisitor(project.flutter.root.resolve("pubspec.yaml")).appName()
 
         val androidAdapterGenerator = AndroidAdapterGenerator(methods, android.app())
         val androidActivityVisitor = AndroidActivityVisitor(scanForAndroidActivity(android))
-
-        val kmpCommonMainBuildGradleVisitor = KmpCommonMainBuildGradleVisitor(kmp).also { it.visit() }
-        val dependencies = kmpCommonMainBuildGradleVisitor.requiredDependencies
-
-        val androidBuildGradleGenerator = AndroidBuildGradleGenerator(root, android.app(), dependencies)
-        val androidRootBuildGradleGenerator = AndroidRootBuildGradleGenerator(root, android, repositories)
-        val androidManifestVisitor = AndroidManifestVisitor(android.manifest(), appName)
         val iosAppDelegateGenerator = IosAppDelegateGenerator(methods, ios, podspec.nameWithoutExtension)
 
         //todo need a better DTO or change the flow because this is getting out of hand here
@@ -95,41 +83,17 @@ class KlutterAdapterProducer(
             async = it.async,
             returns = DartKotlinMap.toMapOrNull(it.returns)?.dartType?:it.returns,
         ) }
+
         val flutterAdapterGenerator = FlutterAdapterGenerator(flutter, dartMethods)
-
-        val iosPodspecVisitor = IosPodspecVisitor(podspec)
-        val iosInfoPlistVisitor = IosInfoPlistVisitor(
-            appName = appName,
-            infoPlist = ios.file.resolve("Runner/Info.plist"))
-
-        val appFrameworkInfoPlistVisitor = IosAppFrameworkInfoPlistVisitor(
-            ios.file.resolve("Flutter/AppFrameworkInfo.plist"),
-            iosVersion,
-        )
-
-        val iosPodFileGenerator = IosPodFileGenerator(
-            iosVersion = iosVersion,
-            ios = project.ios,
-            kmp = kmp,
-            podName = podspec.nameWithoutExtension
-        )
-
         val dartObjects = scanForResponses()
         val dartGenerator = DartGenerator(flutter, dartObjects.dart)
 
-        return logger
-            .merge(dartGenerator.generate())
-            .merge(androidAdapterGenerator.generate())
-            .merge(androidActivityVisitor.visit())
-            .merge(flutterAdapterGenerator.generate())
-            .merge(androidBuildGradleGenerator.generate())
-            .merge(androidRootBuildGradleGenerator.generate())
-            .merge(androidManifestVisitor.visit())
-            .merge(iosAppDelegateGenerator.generate())
-            .merge(iosInfoPlistVisitor.visit())
-            .merge(iosPodspecVisitor.visit())
-            .merge(iosPodFileGenerator.generate())
-            .merge(appFrameworkInfoPlistVisitor.visit())
+        dartGenerator.generate()
+        androidAdapterGenerator.generate()
+        androidActivityVisitor.visit()
+        flutterAdapterGenerator.generate()
+        iosAppDelegateGenerator.generate()
+
     }
 
     //todo does not belong here and too big
@@ -138,9 +102,8 @@ class KlutterAdapterProducer(
         val enumerations = mutableListOf<DartEnum>()
         val messages = mutableListOf<DartMessage>()
 
-        AnnotatedSourceCollector(project.kmp.source(), "@KlutterResponse")
+        AnnotatedSourceCollector(project.platform.source(), "@KlutterResponse")
             .collect()
-            .also { logger.merge(it.logger) }
             .collection
             .map { convertToKotlinFiles(it) }
             .map { KlutterResponseScanner(it.content).scan() }
@@ -198,9 +161,8 @@ class KlutterAdapterProducer(
     }
 
     private fun scanForAdaptees(): List<MethodCallDefinition> {
-        val sources = AnnotatedSourceCollector(project.kmp.source(), "@KlutterAdaptee")
+        val sources = AnnotatedSourceCollector(project.platform.source(), "@KlutterAdaptee")
             .collect()
-            .also { logger.merge(it.logger) }
 
         return sources.collection
             .map { convertToKotlinFiles(it) }
@@ -210,9 +172,7 @@ class KlutterAdapterProducer(
 
     private fun scanForAndroidActivity(android: Android): KtFileContent {
         val activityFile = AnnotatedSourceCollector(android.app(), "@KlutterAdapter")
-            .collect()
-            .also { logger.merge(it.logger) }
-            .collection
+            .collect().collection
 
         if(activityFile.isEmpty()){
             throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder ${android.app()}.")

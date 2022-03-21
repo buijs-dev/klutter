@@ -26,6 +26,7 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterVisitor
+import org.gradle.api.logging.Logging
 import java.io.File
 
 
@@ -42,12 +43,12 @@ internal class IosInfoPlistVisitor(
     private val appName: String
 ): KlutterVisitor {
 
-    override fun visit(): KlutterLogger {
+    override fun visit() {
+
         if(!infoPlist.exists()) {
             throw KlutterCodeGenerationException("Could not locate Info.plist file at path: ${infoPlist.absolutePath}")
         }
 
-        val logger = KlutterLogger()
         val lines = infoPlist.readLines()
         val output = mutableListOf<String>()
         var setDisplayName = false
@@ -85,7 +86,6 @@ internal class IosInfoPlistVisitor(
         infoPlist.createNewFile()
         infoPlist.writeText(output.joinToString("\r\n"))
 
-        return logger
     }
 
     private fun String.toDisplayName() = this

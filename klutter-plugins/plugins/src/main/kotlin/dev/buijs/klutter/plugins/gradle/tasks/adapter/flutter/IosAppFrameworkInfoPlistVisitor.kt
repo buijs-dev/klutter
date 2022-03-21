@@ -26,6 +26,7 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterVisitor
+import org.gradle.api.logging.Logging
 import java.io.File
 
 
@@ -41,45 +42,43 @@ internal class IosAppFrameworkInfoPlistVisitor(
     private val iosVersion: String
 ): KlutterVisitor {
 
-    override fun visit(): KlutterLogger {
+    private val log = Logging.getLogger(IosAppFrameworkInfoPlistVisitor::class.java)
+
+    override fun visit() {
         if(!appFrameworkInfo.exists()) {
             throw KlutterCodeGenerationException("Could not locate AppFrameworkInfo.plist file at path: ${appFrameworkInfo.absolutePath}")
         }
 
-        val logger = KlutterLogger()
         val rawContent = appFrameworkInfo.readText().filter { !it.isWhitespace() }
 
         if(rawContent.contains("<key>MinimumOSVersion</key><string>$iosVersion</string>")){
-            logger.debug("AppFrameworkInfo.plist file is OK, no editing done.")
-            return logger
-        }
+            log.debug("AppFrameworkInfo.plist file is OK, no editing done.")
+        } else {
+            val lines = appFrameworkInfo.readLines()
+            val output = mutableListOf<String>()
+            var setVersion = false
+            for (line in lines) {
+                when {
 
-        val lines = appFrameworkInfo.readLines()
-        val output = mutableListOf<String>()
-        var setVersion = false
-        for (line in lines) {
-            when {
+                    line.contains("<key>MinimumOSVersion</key>") -> {
+                        setVersion = true
+                        output.add(line)
+                    }
 
-                line.contains("<key>MinimumOSVersion</key>") -> {
-                    setVersion = true
-                    output.add(line)
+                    setVersion -> {
+                        output.add("  <string>$iosVersion</string>")
+                        setVersion = false
+                    }
+
+                    else -> output.add(line)
                 }
 
-                setVersion -> {
-                    output.add("  <string>$iosVersion</string>")
-                    setVersion = false
-                }
-
-                else -> output.add(line)
             }
 
+            appFrameworkInfo.delete()
+            appFrameworkInfo.createNewFile()
+            appFrameworkInfo.writeText(output.joinToString("\r\n"))
         }
-
-        appFrameworkInfo.delete()
-        appFrameworkInfo.createNewFile()
-        appFrameworkInfo.writeText(output.joinToString("\r\n"))
-
-        return logger
     }
-}
 
+}

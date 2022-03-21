@@ -10,24 +10,22 @@ import java.io.File
 import javax.inject.Inject
 
 /**
- * @author Gillian Buijs
- * @contact https://buijs.dev
- *
  * Parent of all Gradle Tasks.
  * This class groups all implementing class under the <b>klutter</> group and gives access to the klutter configuration.
  * The implementing class shall return a KlutterLogging object which is here outputted to the console using the GradleLoggingWrapper.
  *
+ * @author Gillian Buijs
  */
 abstract class KlutterTask
-@Inject constructor(private val styledTextOutputFactory: StyledTextOutputFactory) :DefaultTask()
+@Inject constructor(
+    private val styledTextOutputFactory: StyledTextOutputFactory,
+)
+    :DefaultTask()
 {
     init { group = "klutter" }
 
     @Internal
     val ext = project.adapter()
-
-    @Internal
-    val logger = KlutterLogger()
 
     /**
      * The implementing class must describe what the task does by implementing this function.
@@ -35,11 +33,7 @@ abstract class KlutterTask
     abstract fun describe()
 
     @TaskAction
-    fun execute() {
-        describe().also {
-            GradleLoggingWrapper(logger, styledTextOutputFactory.create(javaClass.name)).sout()
-        }
-    }
+    fun execute() = describe()
 
     fun modules() = ext.getModulesDto()
         ?.modules

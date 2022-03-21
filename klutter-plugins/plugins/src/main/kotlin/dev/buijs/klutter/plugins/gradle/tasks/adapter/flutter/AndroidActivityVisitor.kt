@@ -53,8 +53,7 @@ internal class AndroidActivityVisitor(
     private val metaFile: KtFileContent
 ): KlutterVisitor {
 
-    override fun visit(): KlutterLogger {
-        val logger = KlutterLogger()
+    override fun visit() {
         val source = filteredSourceLines(metaFile)
         val output = mutableListOf<String>()
 
@@ -194,7 +193,6 @@ internal class AndroidActivityVisitor(
         }
 
         write(file = metaFile.file, classBody = output.joinToString("\r\n"))
-        return logger
     }
 
     private fun filteredSourceLines(metaFile: KtFileContent): List<String> {

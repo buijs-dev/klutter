@@ -24,18 +24,22 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.dart
 
 
 import dev.buijs.klutter.core.Flutter
-import dev.buijs.klutter.core.Klutter
 import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterWriter
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.AndroidManifestVisitor
+import org.gradle.api.logging.Logging
 
 /**
  * @author Gillian Buijs
  */
-class DartWriter(val content: String, val flutter: Flutter): KlutterWriter {
+class DartWriter(
+    val content: String,
+    val flutter: Flutter,
+): KlutterWriter {
 
-    override fun write(): KlutterLogger {
-        val logger = KlutterLogger()
+    private val log = Logging.getLogger(DartWriter::class.java)
 
+    override fun write() {
         val file = flutter.file.resolve("generated").also {
             if(!it.exists()){
                 it.mkdir()
@@ -45,14 +49,14 @@ class DartWriter(val content: String, val flutter: Flutter): KlutterWriter {
         val dartFile = file.resolve("messages.dart").also {
             if(it.exists()) {
                 it.delete().also {
-                    logger.debug("Deleted file: $file")
+                    log.lifecycle("Deleted file: $file")
                 }
-            } else logger.error("File not found. Creating a new file!")
+            } else log.error("File not found. Creating a new file!")
         }
 
-        dartFile.createNewFile().also { logger.debug("Created new file: $file") }
-        dartFile.writeText(content).also { logger.debug("Written content to $file:\r\n$content") }
-        return logger
+        dartFile.createNewFile().also { log.lifecycle("Created new file: $file") }
+        dartFile.writeText(content).also { log.lifecycle("Written content to $file:\r\n$content") }
+
     }
 
 }

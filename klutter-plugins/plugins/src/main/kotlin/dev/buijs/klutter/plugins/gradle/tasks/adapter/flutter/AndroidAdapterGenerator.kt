@@ -85,8 +85,7 @@ internal class AndroidAdapterWriter(
     : KlutterWriter
 {
 
-    override fun write(): KlutterLogger {
-        val logger = KlutterLogger()
+    override fun write() {
 
         if(!path.exists()){
             throw KlutterCodeGenerationException("The given path to the android/app folder does not exist.\r\n"+
@@ -116,6 +115,6 @@ internal class AndroidAdapterWriter(
         }
 
         classFile.writeText(classBody)
-        return logger
+
     }
 }

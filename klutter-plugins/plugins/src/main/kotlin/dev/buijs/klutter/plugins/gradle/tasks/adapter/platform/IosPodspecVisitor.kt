@@ -20,10 +20,10 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks.adapter.kmp
+package dev.buijs.klutter.plugins.gradle.tasks.adapter.platform
 
-import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterVisitor
+import org.gradle.api.logging.Logging
 import java.io.File
 
 /**
@@ -31,12 +31,14 @@ import java.io.File
  */
 internal class IosPodspecVisitor(private val podspec: File) : KlutterVisitor {
 
+    private val log = Logging.getLogger(IosPodspecVisitor::class.java)
+
     private val excludeForPod = "spec.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
     private val excludeForUser = "spec.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
     private val excludedComment = "#These lines are added by the Klutter Framework to enable the app to run on a simulator"
 
-    override fun visit(): KlutterLogger {
-        val logger = KlutterLogger()
+    override fun visit() {
+
         val podspecName = podspec.name.substringBefore(".podspec")
         val rawContent = podspec.readText()
         val hasExcludedForPod = rawContent.contains(excludeForPod)
@@ -46,7 +48,7 @@ internal class IosPodspecVisitor(private val podspec: File) : KlutterVisitor {
             .map { line ->
                 when {
                     line.contains("spec.ios.deployment_target") -> {
-                        logger.debug("Adding lines to file $podspec to exclude iphonesimulator SDK")
+                        log.debug("Adding lines to file $podspec to exclude iphonesimulator SDK")
 
                         if(!mustEditLine){
                             line
@@ -61,7 +63,7 @@ internal class IosPodspecVisitor(private val podspec: File) : KlutterVisitor {
                     }
 
                     line.filter { !it.isWhitespace() }.contains("spec.vendored_frameworks=\"build") -> {
-                        logger.debug("Changing line in $podspec to use fat-framework")
+                        log.debug("Changing line in $podspec to use fat-framework")
                         "    spec.vendored_frameworks      = \"build/fat-framework/debug/${podspecName}.framework\""
                     }
 
@@ -72,9 +74,9 @@ internal class IosPodspecVisitor(private val podspec: File) : KlutterVisitor {
 
         newPodspecContent.joinToString(separator = "\n").also {
             podspec.writeText(it)
-            logger.debug("Written content to file $podspec:\r\n$it")
+            log.debug("Written content to file $podspec:\r\n$it")
         }
-        return logger
+
     }
 
 }

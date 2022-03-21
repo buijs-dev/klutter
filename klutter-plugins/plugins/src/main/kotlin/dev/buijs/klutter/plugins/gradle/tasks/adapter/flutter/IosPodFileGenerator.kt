@@ -24,6 +24,7 @@ package dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter
 
 
 import dev.buijs.klutter.core.*
+import org.gradle.api.logging.Logging
 import java.io.File
 
 /**
@@ -32,13 +33,13 @@ import java.io.File
 internal class IosPodFileGenerator(
     private val iosVersion: String,
     private val ios: IOS,
-    private val kmp: KMP,
+    private val platform: Platform,
     private val podName: String
 ) : KlutterFileGenerator() {
 
     override fun generate() = writer().write()
 
-    override fun printer() = IosPodFilePrinter(iosVersion, ios.file, kmp.module(), podName)
+    override fun printer() = IosPodFilePrinter(iosVersion, ios.file, platform.file, podName)
 
     override fun writer() = IosPodFileWriter(ios.file, printer().print())
 
@@ -112,11 +113,14 @@ internal class IosPodFilePrinter(
 /**
  * @author Gillian Buijs
  */
-internal class IosPodFileWriter(val file: File, val content: String): KlutterWriter {
+internal class IosPodFileWriter(
+    val file: File,
+    val content: String,
+): KlutterWriter {
 
-    override fun write(): KlutterLogger {
+    private val log = Logging.getLogger(IosPodFileWriter::class.java)
 
-        val logger = KlutterLogger()
+    override fun write() {
 
         if(!file.exists()){
             throw KlutterCodeGenerationException("Path does not exist: $file")
@@ -126,21 +130,20 @@ internal class IosPodFileWriter(val file: File, val content: String): KlutterWri
 
         if(podFile.exists()) {
             podFile.delete().also {
-                logger.info("Deleted existing PodFile: $it")
+                log.info("Deleted existing PodFile: $it")
             }
         }
 
         podFile.createNewFile().also {
             if(!podFile.exists()){
                 throw KlutterCodeGenerationException("Unable to create file: $podFile.")
-            } else logger.info("Created new PodFile: $podFile")
+            } else log.info("Created new PodFile: $podFile")
         }
 
         podFile.writeText(content).also {
-            logger.debug("Written content to PodFile: \r\n$content")
+            log.debug("Written content to PodFile: \r\n$content")
         }
 
-        return logger
     }
 
 }

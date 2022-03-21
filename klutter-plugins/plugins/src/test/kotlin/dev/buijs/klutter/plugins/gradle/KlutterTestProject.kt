@@ -8,7 +8,7 @@ import kotlin.io.path.createDirectory
 
 data class KlutterTestProject(
     val projectDir: Path = Files.createTempDirectory(""),
-    val klutterDir: File = projectDir.resolve("klutter")
+    val buildSrc: File = projectDir.resolve("buildSrc")
         .toAbsolutePath()
         .toFile()
         .also { it.mkdir() },
@@ -35,11 +35,11 @@ data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},
-    val kmpDir: File = projectDir.resolve("kmp/common/src/commonMain")
+    val platformDir: File = projectDir.resolve("platform")
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},
-    val podspecDir: File = projectDir.resolve("kmp/common")
+    val platformSourceDir: File = projectDir.resolve("platform/src/commonMain")
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},

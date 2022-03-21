@@ -47,22 +47,21 @@ internal class PupspecVisitor(
         return appName ?: throw KlutterCodeGenerationException("App Name not found in pubspec.yaml")
     }
 
-    override fun visit(): KlutterLogger {
+    override fun visit() {
+
         if(!pubspec.exists()) {
             throw KlutterCodeGenerationException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
         }
 
-        val logger = KlutterLogger()
         val lines = pubspec.readLines()
 
         for (line in lines) {
             if (line.startsWith("name:")) {
                 appName = line.substringAfter("name:").removePrefix(" ")
-                return logger
+                return
             }
         }
 
-        return logger
     }
 
 

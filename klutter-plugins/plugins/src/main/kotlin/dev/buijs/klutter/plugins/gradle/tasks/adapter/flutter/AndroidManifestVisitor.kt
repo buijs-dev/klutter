@@ -33,6 +33,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterLogger
 import dev.buijs.klutter.core.KlutterVisitor
+import dev.buijs.klutter.plugins.gradle.tasks.setup.ProjectSetupTask
+import org.gradle.api.logging.Logging
 import java.io.File
 
 
@@ -46,17 +48,18 @@ internal class AndroidManifestVisitor(
     private val appName: String,
 ): KlutterVisitor {
 
+    private val log = Logging.getLogger(AndroidManifestVisitor::class.java)
+
     private val xmlMapper = XmlMapper(JacksonXmlModule()
         .apply { setDefaultUseWrapper(false) })
         .apply { enable(SerializationFeature.INDENT_OUTPUT) }
         .apply { configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) }
 
-    override fun visit(): KlutterLogger {
+    override fun visit() {
         if(!manifestFile.exists()) {
             throw KlutterCodeGenerationException("Could not locate AndroidManifest file at path: ${manifestFile.absolutePath}")
         }
 
-        val logger = KlutterLogger()
         val rawContent = manifestFile.readText()
         val parsedXml: AndroidManifestXML = xmlMapper.readValue(rawContent)
         val isExported = parsedXml.application?.activity?.androidExported != null
@@ -72,14 +75,14 @@ internal class AndroidManifestVisitor(
 
             if(line.contains("<activity") && !isExported) {
                 output.add("""            android:exported="true"""")
-                logger.debug("""Added line to $manifestFile:  'android:exported="true"'""")
+                log.lifecycle("""Added line to $manifestFile:  'android:exported="true"'""")
             }
 
         }
+
         manifestFile.delete()
         manifestFile.createNewFile()
         manifestFile.writeText(output.joinToString("\r\n"))
-        return logger
 
     }
 }

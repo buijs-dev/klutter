@@ -21,40 +21,35 @@
  */
 
 
-package dev.buijs.klutter.plugins.gradle.tasks.adapter
-
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import com.intellij.openapi.util.Disposer
+package dev.buijs.klutter.plugins.gradle.tasks.ios
 
 import dev.buijs.klutter.plugins.gradle.KlutterTask
+import dev.buijs.klutter.plugins.gradle.tasks.adapter.flutter.IosPodFileGenerator
+import org.gradle.api.logging.Logging
 import org.gradle.internal.logging.text.StyledTextOutputFactory
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import javax.inject.Inject
 
 /**
  * @author Gillian Buijs
  */
-open class GenerateAdapterTask
-@Inject constructor(styledTextOutputFactory: StyledTextOutputFactory)
-    : KlutterTask(styledTextOutputFactory) {
-
-    private val context by lazy {
-        val config = CompilerConfiguration()
-        config.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES).project
-    }
+open class GenerateIosPodfile
+@Inject constructor(styledTextOutputFactory: StyledTextOutputFactory):
+    KlutterTask(styledTextOutputFactory)
+{
 
     override fun describe() {
-        KlutterAdapterProducer(
-            context = context,
-            project = project(),
+
+        val root = project()
+        val iosPodFileGenerator = IosPodFileGenerator(
             iosVersion = iosVersion(),
-            repositories = repositories(),
-        ).produce()
+            ios = root.ios,
+            platform = root.platform,
+            podName = root.platform.podspec().nameWithoutExtension
+        )
+
+        iosPodFileGenerator.generate()
+
     }
 
-
 }
+

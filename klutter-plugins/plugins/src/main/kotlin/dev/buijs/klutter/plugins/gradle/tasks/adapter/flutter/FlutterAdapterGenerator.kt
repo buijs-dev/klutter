@@ -28,6 +28,7 @@ import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.KlutterWriter
 import dev.buijs.klutter.core.MethodCallDefinition
 import dev.buijs.klutter.plugins.gradle.tasks.adapter.dart.getCastMethod
+import org.gradle.api.logging.Logging
 import java.io.File
 
 /**
@@ -171,9 +172,9 @@ internal class FlutterAdapterWriter(
     private val classBody: String)
     : KlutterWriter {
 
-    private val logger = KlutterLogger()
+    private val log = Logging.getLogger(FlutterAdapterWriter::class.java)
 
-    override fun write(): KlutterLogger {
+    override fun write() {
 
         val libFolder = path.file
 
@@ -184,14 +185,14 @@ internal class FlutterAdapterWriter(
         val classFile = generatedFolder.resolve( "adapter.dart").also { file ->
             if(file.exists()) {
                 file.delete()
-                logger.info("Deleted existing file: $file")
+                log.info("Deleted existing file: $file")
             }
         }
 
         classFile.createNewFile().also { exists ->
             if(!exists){
                 throw KlutterCodeGenerationException("Unable to create adapter file in the given path $path")
-            } else logger.info("Created new file: $classFile")
+            } else log.info("Created new file: $classFile")
         }
 
         val dartFile = findMainDartFile(libFolder)
@@ -209,28 +210,27 @@ internal class FlutterAdapterWriter(
         val mainBody = if(hasAdapterImport) {
             mainLines.joinToString("\r\n")
         } else {
-            logger.debug("Added import to main.dart file: $dartFile")
+            log.debug("Added import to main.dart file: $dartFile")
             "import 'generated/adapter.dart';\r\n" + mainLines.joinToString("\r\n")
         }
 
         dartFile.writeText(mainBody).also {
-            logger.debug("Written content to file $dartFile:\r\n$mainBody")
+            log.debug("Written content to file $dartFile:\r\n$mainBody")
         }
 
         classFile.writeText(classBody).also {
-            logger.debug("Written content to file $classFile:\r\n$classBody")
+            log.debug("Written content to file $classFile:\r\n$classBody")
         }
 
-        return logger
     }
 
     private fun findMainDartFile(directory: File): File {
-        logger.debug("Scanning for main.dart in directory '$directory'")
+        log.debug("Scanning for main.dart in directory '$directory'")
         if (directory.exists()) {
             directory.walkTopDown().forEach { f ->
-                logger.debug("Found file '$f' with name ${f.name} and extenions ${f.extension}")
+                log.debug("Found file '$f' with name ${f.name} and extenions ${f.extension}")
                 if(f.isFile && f.name == "main.dart"){
-                    logger.debug("Found main.dart file in directory '$f''")
+                    log.debug("Found main.dart file in directory '$f''")
                     return f
                 }
             }

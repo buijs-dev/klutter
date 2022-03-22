@@ -43,7 +43,7 @@ import java.net.URL
  *
  * @author Gillian Buijs
  */
-private const val klutterVersion = "2022-pre-alpha-4"
+private const val klutterVersion = "2022-pre-alpha-4a"
 
 fun main(args: Array<String>) = ProjectGenerator().main(args)
 

@@ -59,30 +59,12 @@ class AndroidRootBuildGradlePrinter: KlutterPrinter {
             |// See: https://buijs.dev/klutter
             |buildscript {
             |
-            |   def properties = new Properties()
-            |   def propertiesFile = new File("$dollar{projectDir}/../buildSrc/buildsrc.properties")
-            |   if (propertiesFile.exists()) {
-            |       propertiesFile.withReader('UTF-8') { reader ->
-            |           properties.load(reader)
-            |       }
-            |   } else {
-            |       throw new GradleException("File not found ${dollar}propertiesFile")
+            |   def klutterGradleFile = new File("$dollar{projectDir}/../klutter.gradle")
+            |   if (!klutterGradleFile.exists()) {
+            |       throw new GradleException("File not found ${dollar}klutterGradleFile")
             |   }
             |
-            |   def kotlin = properties.getProperty('kotlin')
-            |   if (kotlin == null) {
-            |       throw new GradleException("Kotlin version not found. Define kotlin version in buildSrc/buildsrc.properties")
-            |   }
-            |
-            |   def gradle = properties.getProperty('android.gradle')
-            |   if (gradle == null) {
-            |       throw new GradleException("Android Gradle tools version not found. Define android.gradle version in buildSrc/buildsrc.properties")
-            |   }
-            |
-            |   def klutter = properties.getProperty('klutter')
-            |   if (klutter == null) {
-            |       throw new GradleException("Klutter version not found. Define klutter in buildSrc/buildsrc.properties")
-            |   }
+            |   apply from: "${dollar}klutterGradleFile"
             |
             |   repositories {
             |       google()
@@ -90,10 +72,11 @@ class AndroidRootBuildGradlePrinter: KlutterPrinter {
             |       maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
             |   }
             |
+            |
             |   dependencies {
-            |       classpath "com.android.tools.build:gradle:${dollar}gradle"
-            |       classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${dollar}kotlin"
-            |       classpath "dev.buijs.klutter:core:${dollar}klutter"
+            |       classpath "com.android.tools.build:gradle:$dollar{project.ext["androidGradleVersion"]}"
+            |       classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$dollar{project.ext["kotlinVersion"]}"
+            |       classpath "dev.buijs.klutter:core:$dollar{project.ext["klutterVersion"]}"
             |   }
             |    
             |}

@@ -35,31 +35,23 @@ class AndroidBuildGradleGenerator(
 
     override fun generate() = writer().write()
 
-    override fun printer() = AndroidBuildGradlePrinter(aarFile(), app())
+    override fun printer() = AndroidBuildGradlePrinter()
 
     override fun writer() = AndroidBuildGradleWriter(app().resolve("build.gradle"), printer().print())
-
-    private fun aarFile() = app().resolve(".klutter/platform-release.aar")
 
     private fun app() = android.app().absoluteFile
 
 }
 
-class AndroidBuildGradlePrinter(
-    private val aarFileLocation: File,
-    private val androidLocation: File,
-): KlutterPrinter {
+class AndroidBuildGradlePrinter: KlutterPrinter {
 
     override fun print(): String {
         val dollar = "$"
-        val kmpAarFile: String = aarFileLocation.relativeTo(androidLocation).toString()
 
         val dependencies = mutableListOf(
-            "implementation \"dev.buijs.klutter:core:${dollar}klutter\"",
-            "implementation \"org.jetbrains.kotlin:kotlin-stdlib-jdk8:${dollar}kotlin\"",
-            "implementation \"dev.buijs.klutter:annotations-kmp-android:${dollar}klutter\"",
-            "runtimeOnly \"org.jetbrains.kotlinx:kotlinx-coroutines-android:${dollar}kotlinxCoroutinesVersion\"",
-            "implementation files(\"../$kmpAarFile\")"
+            "implementation \"dev.buijs.klutter:core:${dollar}{project.ext[\"klutterVersion\"]}\"",
+            "runtimeOnly \"org.jetbrains.kotlinx:kotlinx-coroutines-android:${dollar}{project.ext[\"kotlinxVersion\"]}\"",
+            "implementation project(\":platform\")"
         )
 
         return """
@@ -82,69 +74,20 @@ class AndroidBuildGradlePrinter(
             |    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
             |}
             |
+            |def klutterGradleFile = new File("$dollar{projectDir}/../../klutter.gradle")
+            |if (!klutterGradleFile.exists()) {
+            |    throw new GradleException("File not found ${dollar}klutterGradleFile")
+            |}
+            |
             |apply plugin: 'com.android.application'
             |apply plugin: 'kotlin-android'
             |apply from: "${dollar}flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-            |
-            |def propertiesFile = new File("${dollar}{projectDir}/../../buildSrc/buildsrc.properties")
-            |if (!propertiesFile.exists()) {
-            |    throw new GradleException("File not found ${dollar}propertiesFile")
-            |}
-            |
-            |def properties = new Properties()
-            |propertiesFile.withReader('UTF-8') { reader ->
-            |    properties.load(reader)
-            |}
-            |
-            |def appId = properties.getProperty('app.id')
-            |if (appId == null) {
-            |    throw new GradleException("ApplicationId not found. Define app.id in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def minSdk = properties.getProperty('android.sdk.min')
-            |if (minSdk == null) {
-            |    throw new GradleException("Android min SDK version not found. Define android.sdk.min in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def targetSdk = properties.getProperty('android.sdk.target')
-            |if (targetSdk == null) {
-            |    throw new GradleException("Android target SDK version not found. Define android.target.sdk in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def compileSdk = properties.getProperty('android.sdk.compile')
-            |if (compileSdk == null) {
-            |    throw new GradleException("Android compile SDK version not found. Define android.compile.sdk in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def appVersionCode = properties.getProperty('app.version.code')
-            |if (appVersionCode == null) {
-            |    throw new GradleException("App version code not found. Define app.version.code in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def appVersionName = properties.getProperty('app.version.name')
-            |if (appVersionName == null) {
-            |    throw new GradleException("App version name not found. Define app.version.name in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def klutter = properties.getProperty('klutter')
-            |if (klutter == null) {
-            |    throw new GradleException("Klutter version not found. Define klutter in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def kotlin = properties.getProperty('kotlin')
-            |if (kotlin == null) {
-            |    throw new GradleException("Kotlin version not found. Define kotlin in buildSrc/buildsrc.properties")
-            |}
-            |
-            |def kotlinxCoroutinesVersion = properties.getProperty('kotlinxCoroutinesVersion')
-            |if (kotlinxCoroutinesVersion == null) {
-            |    throw new GradleException("Kotlinx Coroutines version not found. Define kotlinxCoroutinesVersion in buildSrc/buildsrc.properties")
-            |}      
+            |apply from: "${dollar}klutterGradleFile"
             |
             |def secrets = Klutter.secrets(project)
             |
             |android {
-            |    compileSdkVersion compileSdk.toInteger()
+            |    compileSdkVersion project.ext["androidCompileSdk"].toInteger()
             |
             |    compileOptions {
             |        sourceCompatibility JavaVersion.VERSION_1_8
@@ -160,11 +103,11 @@ class AndroidBuildGradlePrinter(
             |    }
             |
             |    defaultConfig {
-            |        applicationId appId
-            |        minSdkVersion minSdk.toInteger()
-            |        targetSdkVersion targetSdk.toInteger()
-            |        versionCode appVersionCode.toInteger()
-            |        versionName appVersionName
+            |       applicationId project.ext["applicationId"]
+            |       minSdkVersion project.ext["androidMinSdk"].toInteger()
+            |       targetSdkVersion project.ext["androidTargetSdk"].toInteger()
+            |       versionCode project.ext["appVersionCode"].toInteger()
+            |       versionName project.ext["appVersionName"]
             |    }
             |
             |    signingConfigs {

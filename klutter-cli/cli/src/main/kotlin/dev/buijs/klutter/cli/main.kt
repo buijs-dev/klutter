@@ -87,8 +87,7 @@ class ProjectGenerator : CliktCommand() {
 
 }
 
-internal fun getResource(): InputStream? =
-    URL("https://github.com/buijs-dev/klutter/blob/main/klutter-cli/cli/src/main/resources/example.zip").openStream()
+internal fun getResource(): InputStream? = ProjectGenerator::class.java.getResourceAsStream("/example.zip")
 
 internal fun copy(
     input: InputStream,

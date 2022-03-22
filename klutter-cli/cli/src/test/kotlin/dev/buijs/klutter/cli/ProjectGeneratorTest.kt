@@ -27,12 +27,12 @@ class ProjectGeneratorTest: WordSpec({
             copy(resource!!, temp, "example") shouldBe true
 
             //then
-//            temp.resolve("android").exists() shouldBe true
-//            temp.resolve("buildSrc").exists() shouldBe true
-//            temp.resolve("gradle").exists() shouldBe true
-//            temp.resolve("ios").exists() shouldBe true
-//            temp.resolve("lib").exists() shouldBe true
-//            temp.resolve("platform").exists() shouldBe true
+            temp.resolve("android").exists() shouldBe true
+            temp.resolve("buildSrc").exists() shouldBe true
+            temp.resolve("gradle").exists() shouldBe true
+            temp.resolve("ios").exists() shouldBe true
+            temp.resolve("lib").exists() shouldBe true
+            temp.resolve("platform").exists() shouldBe true
         }
 
     }

@@ -4,7 +4,7 @@ package dev.buijs.klutter.core
 import org.gradle.api.Project
 import java.io.File
 
-private const val secretname = "klutter-secrets.properties"
+private const val secretname = "klutter.properties"
 
 fun Project.key(name: String) = keys(toLocation(this))[name]
 
@@ -24,7 +24,7 @@ internal fun keys(location: File): HashMap<String, String> {
 
     val secrets = location.listFiles()
         ?.firstOrNull { it.name == secretname }
-        ?: throw KlutterGradleException("File klutter-secrets.properties could not be located in $location")
+        ?: throw KlutterGradleException("File klutter.properties could not be located in $location")
 
     val properties = HashMap<String, String>()
 
@@ -45,8 +45,8 @@ internal fun toLocation(project: Project): File {
     //This means that rootDir is pointing to android folder as root package
     //and not the top level when called from the android or app build.gradle.
     return if(rootProject.absolutePath.endsWith("android")){
-        rootProject.resolve("..").resolve("buildSrc")
+        rootProject.resolve("..")
     } else {
-        rootProject.resolve("buildSrc")
+        rootProject
     }
 }

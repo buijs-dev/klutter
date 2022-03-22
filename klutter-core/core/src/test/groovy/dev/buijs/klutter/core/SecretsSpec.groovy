@@ -10,7 +10,7 @@ class SecretsSpec extends Specification {
 
         given:
         def temp = Files.createTempDirectory("buildsrc")
-        def properties = temp.resolve("klutter-secrets.properties").toFile()
+        def properties = temp.resolve("klutter.properties").toFile()
         properties.createNewFile()
         properties.write(
                 "store.file.uri=x\nstore.password=y\nkey.alias=me\nkey.password=pass\n"

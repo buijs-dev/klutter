@@ -1,0 +1,1 @@
+class BuildSrcException(cause: String): Exception(cause)

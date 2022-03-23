@@ -1,7 +1,10 @@
 package dev.buijs.klutter.cli
 
+import dev.buijs.klutter.cli.commands.CreateOptions
+import dev.buijs.klutter.cli.commands.CreateOptionsDefaults
+import dev.buijs.klutter.cli.commands.CreateResult
+import dev.buijs.klutter.cli.commands.CreateTask
 import io.kotlintest.shouldBe
-import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files
 
@@ -10,29 +13,35 @@ import java.nio.file.Files
  */
 class ProjectGeneratorTest: WordSpec({
 
-    "Using the ProjectGenerator" should {
+    "Using the Create command" should {
 
-        "generate a default project" {
+        "create a project named example in the root folder" {
 
             //given
             val temp = Files.createTempDirectory("foo").toFile()
 
+            //and
+            val sut = CreateTask(
+                options = CreateOptions(
+                    projectName = CreateOptionsDefaults.projectName,
+                    appId = CreateOptionsDefaults.appId,
+                    location = temp.absolutePath,
+                )
+            )
+
             //when
-            val resource = getResource()
+            val result = sut.run()
 
             //then
-            resource shouldNotBe null
-
-            //when
-            copy(resource!!, temp, "example") shouldBe true
+            result shouldBe CreateResult.PROJECT_CREATED
 
             //then
-//            temp.resolve("android").exists() shouldBe true
-//            temp.resolve("buildSrc").exists() shouldBe true
-//            temp.resolve("gradle").exists() shouldBe true
-//            temp.resolve("ios").exists() shouldBe true
-//            temp.resolve("lib").exists() shouldBe true
-//            temp.resolve("platform").exists() shouldBe true
+            temp.resolve("example/android").exists() shouldBe true
+            temp.resolve("example/buildSrc").exists() shouldBe true
+            temp.resolve("example/gradle").exists() shouldBe true
+            temp.resolve("example/ios").exists() shouldBe true
+            temp.resolve("example/lib").exists() shouldBe true
+            temp.resolve("example/platform").exists() shouldBe true
         }
 
     }

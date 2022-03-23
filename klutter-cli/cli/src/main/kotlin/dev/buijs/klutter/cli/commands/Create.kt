@@ -282,12 +282,10 @@ internal class CreateTask(options: CreateOptions) {
     }
 
     private fun writeBytes(file: File): Boolean {
+        val excludes = listOf("png", "jar", "zip", "lproj", "pbxproj")
         val ext = file.extension
         return when {
-            ext == "jar" -> true
-            ext == "zip" -> true
-            ext == "lproj" -> true
-            ext == "pbxproj" -> true
+            excludes.contains(ext) -> true
             ext.startsWith("xc") -> true
             else -> false
         }

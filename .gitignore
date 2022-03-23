@@ -62,14 +62,10 @@ hs_err_pid*
 /klutter-annotations/annotations-jvm/dev.properties
 /klutter-annotations/annotations-kmp/annotations_kmp.podspec
 /publish/publish_plugins-release.sh
-/examples/example-basic/gradlew
-/examples/example-basic/gradlew.bat
-/examples/example-basic/local.properties
 /klutter-cli/local.properties
 /klutter-cli/example/
 /klutter-cli/cli/src/main/resources/example/
 /klutter-cli/.gradle/
 /klutter-cli/build/
 /klutter-cli/cli/build/
-/klutter-cli/.gradle/
 /klutter-annotations/build/

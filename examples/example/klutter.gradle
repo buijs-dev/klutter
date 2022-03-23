@@ -1,0 +1,16 @@
+ext {
+    klutterVersion = "2022-pre-alpha-4a"
+    applicationId = "com.example.example"
+    appVersionCode = 1
+    appVersionName = "1.0.0"
+    androidMinSdk = 21
+    androidTargetSdk = 31
+    androidCompileSdk = 31
+    iosVersion = "13"
+    kotlinDslVersion = "2.1.7"
+    kotlinVersion = "1.6.10"
+    gradleVersion = "7.4.1"
+    androidGradleVersion = "7.0.4"
+    kotlinxVersion = "1.3.2"
+    junitVersion = "4.13.2"
+}

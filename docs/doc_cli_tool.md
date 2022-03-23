@@ -45,7 +45,7 @@ Use <b>--project-name</b> to specify the name of the project, meaning the root f
 ./klutter create --project-name order66
 ```
 
-The app will be named jeditrackingapp.
+The project will be named order66.
 When not specified the default projectName is example.
 
 ### Putting it all together

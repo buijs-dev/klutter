@@ -51,7 +51,7 @@ When not specified the default projectName is example.
 ### Putting it all together
 
 The following command will create a klutter project in the directory <b>/Users/sidious/projects/order66</b>
-with an app named <b>jeditrackingapp</b>, beloning to the org <b>dev.empire.apps</b>.
+with an app named <b>jeditrackingapp</b>, belonging to the org <b>dev.empire.apps</b>.
 
 ```shell
 ./klutter create --project-name order66 --app-id dev.empire.apps.jeditrackingapp --location /Users/sidious/projects/

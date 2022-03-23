@@ -253,8 +253,8 @@ internal class CreateTask(options: CreateOptions) {
      */
     private fun createFile(file: File, content: ZipInputStream) {
 
-        //Jar and Zip files should be written as is
-        if(file.extension == "jar" || file.extension == "zip") {
+        //If not text based then it should be written as bytes
+        if(writeBytes(file)) {
             file.createNewFile()
             file.writeBytes(content.readAllBytes())
         }
@@ -279,6 +279,18 @@ internal class CreateTask(options: CreateOptions) {
             }
         }
 
+    }
+
+    private fun writeBytes(file: File): Boolean {
+        val ext = file.extension
+        return when {
+            ext == "jar" -> true
+            ext == "zip" -> true
+            ext == "lproj" -> true
+            ext == "pbxproj" -> true
+            ext.startsWith("xc") -> true
+            else -> false
+        }
     }
 
 }

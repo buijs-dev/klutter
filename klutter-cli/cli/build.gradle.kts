@@ -140,3 +140,9 @@ publishing {
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
+
+tasks.withType<CreateStartScripts> {
+    doFirst {
+        applicationName = "klutter"
+    }
+}

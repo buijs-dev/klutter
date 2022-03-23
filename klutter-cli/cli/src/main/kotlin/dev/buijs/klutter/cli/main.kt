@@ -38,7 +38,7 @@ import dev.buijs.klutter.cli.commands.CreateOptionsDefaults
  *
  * @author Gillian Buijs
  */
-internal const val klutterVersion = "2022-pre-alpha-4a"
+internal const val klutterVersion = "2022-pre-alpha-4b"
 
 fun main(args: Array<String>) = KlutterCli()
     .subcommands(Create())

@@ -3,7 +3,7 @@
 # Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
-[![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--4a-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
+[![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--4b-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated
@@ -31,12 +31,12 @@ yet but feel free to experiment and let me know what you think.
 
 # Gettings started
 
-Download the CLI tool: "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4a/klutter-cli/cli.zip"
+Download the CLI tool: "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4b/klutter-cli/cli.zip"
 
 Unzip the file. Move to folder cli/bin. Run:
 
 ```shell
-./cli
+./klutter create
 ```
 
 This generates a Klutter project in the folder where the CLI tool is unzipped.

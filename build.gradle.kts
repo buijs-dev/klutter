@@ -106,25 +106,3 @@ tasks.register("_publish_plugins_release") {
         }
     }
 }
-
-tasks.register("_publish_cli_develop") {
-
-    dependsOn(tasks["_switch_develop"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_cli.sh")
-        }
-    }
-}
-
-tasks.register("_publish_cli_release") {
-
-    dependsOn(tasks["_switch_release"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_cli.sh")
-        }
-    }
-}

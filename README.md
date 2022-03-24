@@ -31,16 +31,16 @@ yet but feel free to experiment and let me know what you think.
 
 # Gettings started
 
-Download the CLI tool: "https://github.com/buijs-dev/klutter/blob/v2022-pre-alpha-4b/klutter-cli/cli.zip"
+Download the CLI tool: https://github.com/buijs-dev/klutter-cli/blob/main/klutter-cli.zip
 
-Unzip the file. Move to folder cli/bin. Run:
+Unzip the file, move to folder cli/bin and run:
 
 ```shell
 ./klutter create
 ```
 
 This generates a Klutter project in the folder where the CLI tool is unzipped.
-For more information see [Klutter CLI tool](docs/doc_cli_tool.md)
+For more information see [Klutter CLI](https://buijs-dev.github.io/klutter-cli/)
 
 ## Contributing
 Pull requests are welcome. Contact me at info@buijs.dev

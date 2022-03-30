@@ -20,32 +20,24 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.tasks.adapter
 
-import java.io.File
+
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.tasks.adapter.platform.IosPodspecVisitor
 
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-internal class KlutterPropertiesReader(val file: File) {
+@Suppress("unused")
+class UpdatePlatformPodspecTask(
+    private val project: KlutterProject,
+)
+    : KlutterTask
+{
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
-            }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
+    override fun run() {
+        IosPodspecVisitor(project.platform.podspec()).visit()
     }
 
 }

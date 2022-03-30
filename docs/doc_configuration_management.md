@@ -45,5 +45,88 @@ entire project is compliant, meaning dependency issues can arise or worse.
 
 
 # Brief summary of usage
-//TODO buildSrc is now used, explain
-//TODO Secrets are loaded with Secrets class, explain
+Klutter differentiates between public and private project information.
+
+- [public](#public)
+- [private](#private)
+
+### Public 
+BuildSrc and included builds are commonly used to manage dependencies, plugins etc. in Gradle projects.
+Unfortunately it is not possible to access the buildSrc and/or any included builds from the Flutter/Android project.
+As discussed above having a single source of truth is a hard requirement. Klutter therefore generates a klutter.gradle
+file which does nothing more than hold a set of properties. This gradle file can then be either be applied by 
+other Gradle modules (the platform module, android module, etc) or even just read as text file. 
+
+A new generated Klutter project will for example contain the following boilerplate in the Platform build.gradle:
+
+```kotlin
+
+apply(from = "${project.projectDir}/../klutter.gradle")
+
+val applicationId: String by extra
+val appVersionName: String by extra
+val kotlinxVersion: String by extra
+val klutterVersion: String by extra
+val junitVersion: String by extra
+val androidCompileSdk: Int by extra
+val androidMinSdk: Int by extra
+val androidTargetSdk: Int by extra
+val iosVersion: String by extra
+
+
+```
+
+And in the Android build.gradle:
+
+```groovy
+
+    def klutterGradleFile = new File("${projectDir}/../klutter.gradle")
+    if (!klutterGradleFile.exists()) {
+        throw new GradleException("File not found $klutterGradleFile")
+    }
+
+    apply from: "$klutterGradleFile"
+
+
+```
+
+Changing the android compile SDK for example is as simple as updating this property in the klutter.gradle file
+in the root folder.
+
+The default Klutter project contains a buildSrc folder which adds all necessary libraries to the classpath.
+For more type safety it is possible to also create classes in the buildSrc module which would read the klutter.gradle file
+and return it's information through type safe getters. 
+
+### Private
+
+Some information should be kept private like API keys for example. Environment variables are commonly used for this. 
+I'm personally not a huge fan of using environment variables for everything. I prefer to put information in files and 
+store them. Of course you should never store private information as-is in your GIT repository (not even private ones)!
+Luckily there are ways to safely store private information by encrypting it. [Git secret](https://git-secret.io/) for 
+example enables you to encrypt/decrypt files automatically when committing to GIT. 
+
+Klutter provides a little utility to read properties from a file which should be kept local only (like local.properties)
+or stored encrypted in GIT (with git secret or something similar): 
+
+```groovy
+import dev.buijs.klutter.core.*
+
+def secrets = Klutter.secrets(project)
+
+signingConfigs {
+    release {
+        storeFile file(secrets.get("store.file.uri") ?: project.projectDir)
+        storePassword secrets.get("store.password") ?: ""
+        keyAlias secrets.get("key.alias") ?: ""
+        keyPassword secrets.get("key.password") ?: ""
+    }
+}
+
+```
+
+The secrets method will look for a klutter.properties file in the Gradle project and find the property values. By storing
+this klutter.properties file encrypted in your GIT repository you will always have all project information stored in one place.
+
+As much as I don't like environment variables I realise it is commonly used in CI environments. Also some people might
+do prefer to use environment variables. In the future I will make the secrets method configurable to also look for environment
+variables.

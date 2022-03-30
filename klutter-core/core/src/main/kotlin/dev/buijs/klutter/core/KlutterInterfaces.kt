@@ -108,3 +108,12 @@ interface KlutterVisitor {
  fun visit()
 
 }
+
+/**
+ * Class which contains all logic to fully execute a functional task.
+ */
+interface KlutterTask {
+
+ fun run()
+
+}

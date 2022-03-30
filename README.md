@@ -1,5 +1,3 @@
-![This is an image](examples/assets/metadata/icon/banner.png)
-
 # Klutter
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
@@ -16,18 +14,20 @@ for everything from app design to CICD into a single cohesive framework.
 
 
 # Klutter is in PRE-ALPHA stage!
-Pre-alpha you say my good sir? What can I expect then?
-It means we have moved away from the inital POC phase and the concept works but anything and everything can 
-and/or will change, blowup, refuse to work at any time. If you're in the pre-alpha phase of remodelling your 
-house then you might paint a wall green, the next day yellow only to decide to take down the entire wall anyway. 
-But then the wife gets pregnant and you need an extra room so you're building up a new wall, but I'll be damned
-if it's not going to be a blue wall this time! Anyway... Don't use this for production or any serious project 
-yet but feel free to experiment and let me know what you think.
+Pre-alpha means the inital POC phase was successful and the concept works but nothing is set in stone yet. 
+The next stage, being alpha, is reached once all components are created. I am just one developer working
+on this project in my free time. To see what I'm working on check [here](https://github.com/users/buijs-dev/projects/1).
+For now don't use this for production or any serious project yet but feel free to experiment and let me know what you think.
 
 - [Documentation](https://buijs-dev.github.io/klutter/)
 - [Project Structure](docs/doc_project_structure.md)
-- [Klutter Gradle Plugin](docs/doc_gradle_plugin.md)
 - [Configuration management](docs/doc_configuration_management.md)
+
+## Klutter Gradle Plugin:
+Gradle plugin to manage the Klutter project: [klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)
+
+## Klutter CLI:
+Command line to create and manage a Klutter project: [klutter CLI](https://github.com/buijs-dev/klutter-cli)
 
 # Gettings started
 

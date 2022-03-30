@@ -20,32 +20,32 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.annotations.processor
 
-import java.io.File
+
+import com.intellij.openapi.project.Project
+import dev.buijs.klutter.core.KlutterProject
+import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.toKotlinFiles
 
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-internal class KlutterPropertiesReader(val file: File) {
+internal class KlutterAdapteeScanner(
+    private val project: KlutterProject,
+    private val context: Project,
+) {
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
-            }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
+    fun scan(): List<MethodCallDefinition> {
+        val sources = KlutterAnnotatedSourceCollector(
+            project.platform.source(),
+            "@KlutterAdaptee"
+        ).collect()
+
+        return sources
+            .map { it.toKotlinFiles(context) }
+            .map { it.toMethodCallDefinition() }
+            .flatten()
     }
 
 }

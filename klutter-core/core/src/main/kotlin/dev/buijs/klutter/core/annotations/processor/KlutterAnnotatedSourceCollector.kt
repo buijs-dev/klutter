@@ -20,32 +20,43 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.annotations.processor
 
+import dev.buijs.klutter.core.*
 import java.io.File
 
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-internal class KlutterPropertiesReader(val file: File) {
+internal class KlutterAnnotatedSourceCollector(
+    private val source: File,
+    private val annotationName: String,
+){
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
+    fun collect():  List<FileContent> {
+
+        var annotation = annotationName
+        if(!annotation.startsWith("@")) {
+            annotation = "@$annotationName"
+        }
+
+        return search(source)
+            .filter { it.content.contains(annotation) }
+
+    }
+
+    private fun search(directory: File): List<FileContent> {
+        val classes = mutableListOf<FileContent>()
+
+        if (directory.exists()) {
+            directory.walkTopDown().forEach { f ->
+                if(f.isFile) {
+                    classes.add(FileContent(file = f, content = f.readText()))
                 }
             }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
+        }
+
+        return classes
     }
 
 }

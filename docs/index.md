@@ -12,13 +12,15 @@ for everything from app design to CICD into a single cohesive framework.
 [Configuration management](doc_configuration_management.md)
 
 ## Klutter Gradle Plugin:
-[Klutter Gradle Plugin](https://github.com/buijs-dev/klutter/blob/main/README.md)
+[Klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)
+
+## Klutter CLI:
+[Klutter CLI](https://github.com/buijs-dev/klutter-cli)
 
 ## All modules:
 
 | Name |
 |---|
 | [Klutter: Core](dokka/core/index.md) |  |
-| Klutter: Plugins (coming soon)|  |
 | Klutter: Annotations (coming soon)|  |
 

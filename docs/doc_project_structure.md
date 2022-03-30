@@ -13,7 +13,9 @@ project
 └───platform [7]
 │   build.gradle.kts [8]
 │   settings.gradle.kts [9] 
-│   pubspec.yaml [10] 
+│   klutter.gradle [10] 
+│   klutter.properties [11] 
+│   pubspec.yaml [12] 
 ```
 
 1. Android module (flutter).
@@ -25,4 +27,6 @@ project
 7. Platform (Kotlin Multiplatform) module containing the Kotlin Multiplatform backend.
 8. Project build.gradle.kts which adds the Klutter plugins to the classpath.
 9. Project settings.gradle.kts to include Kotlin module: Platform, Android and iOS (buildSrc is automatically included)
-10. Pubspec.yaml (flutter)
+10. Gradle file containing public project properties.   
+11. Properties file containing private project properties.
+12. Pubspec.yaml (flutter)

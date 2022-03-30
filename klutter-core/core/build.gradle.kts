@@ -33,7 +33,12 @@ dependencies {
     testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
     testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
 
+    //Gradle
     testImplementation(gradleTestKit())
+
+    //Mock
+    testImplementation("org.mockito:mockito-core:4.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
 }
 

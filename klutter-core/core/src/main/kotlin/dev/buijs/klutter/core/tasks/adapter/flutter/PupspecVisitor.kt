@@ -20,32 +20,47 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.tasks.adapter.flutter
 
+
+import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterVisitor
 import java.io.File
 
+
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-internal class KlutterPropertiesReader(val file: File) {
+internal class PupspecVisitor(
+    private val pubspec: File,
+): KlutterVisitor {
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
+    private var appName: String? = null
+
+    fun appName(): String {
+
+        if(appName == null) {
+            visit()
+        }
+
+        return appName ?: throw KlutterCodeGenerationException("App Name not found in pubspec.yaml")
+    }
+
+    override fun visit() {
+
+        if(!pubspec.exists()) {
+            throw KlutterCodeGenerationException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
+        }
+
+        val lines = pubspec.readLines()
+
+        for (line in lines) {
+            if (line.startsWith("name:")) {
+                appName = line.substringAfter("name:").removePrefix(" ")
+                return
             }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
+        }
+
     }
 
 }

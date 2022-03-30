@@ -20,32 +20,41 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.tasks.adapter.dart
 
-import java.io.File
+
+import dev.buijs.klutter.core.Flutter
+import dev.buijs.klutter.core.KlutterWriter
+import org.gradle.api.logging.Logging
 
 /**
- * Utility class to read properties from a file.
- *
- * @throws KlutterConfigException if the file does not exist.
- * @return map of key - value pairs as Strings.
- *
  * @author Gillian Buijs
  */
-internal class KlutterPropertiesReader(val file: File) {
+internal class DartWriter(
+    val content: String,
+    val flutter: Flutter,
+): KlutterWriter {
 
-    fun read(): HashMap<String, String> {
-        if(file.exists()) {
-            val properties = HashMap<String, String>()
-            file.forEachLine {
-                it.split("=").also { pair ->
-                    if(pair.size == 2){
-                        properties[pair[0]] = pair[1]
-                    }
-                }
+    private val log = Logging.getLogger(DartWriter::class.java)
+
+    override fun write() {
+        val file = flutter.file.resolve("generated").also {
+            if(!it.exists()){
+                it.mkdir()
             }
-            return properties
-        } else throw KlutterConfigException("File not found: $file")
+        }
+
+        val dartFile = file.resolve("messages.dart").also {
+            if(it.exists()) {
+                it.delete().also {
+                    log.lifecycle("Deleted file: $file")
+                }
+            } else log.error("File not found. Creating a new file!")
+        }
+
+        dartFile.createNewFile().also { log.lifecycle("Created new file: $file") }
+        dartFile.writeText(content).also { log.lifecycle("Written content to $file:\r\n$content") }
+
     }
 
 }

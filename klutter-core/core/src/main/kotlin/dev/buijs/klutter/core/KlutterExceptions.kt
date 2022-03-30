@@ -61,3 +61,11 @@ class KlutterGradleException(msg: String, cause: String = ""): Exception(msg, Th
  */
 @Suppress("unused")
 class KlutterMultiplatformException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
+
+/**
+ * Signals a failure internally which likely points to a coding issue or bug.
+ *
+ * @author Gillian Buijs
+ */
+@Suppress("unused")
+class KlutterInternalException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))

@@ -1,3 +1,26 @@
+plugins {
+    id("org.jetbrains.dokka") version "1.6.10"
+}
+
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+    dokkaSourceSets {
+        named("main") {
+            moduleName.set("Klutter: Annotations")
+//            includes.from("module.md")
+            sourceLink {
+                localDirectory.set(file("annotations-jvm/src/main/kotlin"))
+                localDirectory.set(file("annotations-kmp/src/androidMain/kotlin"))
+                localDirectory.set(file("annotations-kmp/src/commonMain/kotlin"))
+                localDirectory.set(file("annotations-processor/src/iosMain/kotlin"))
+            }
+        }
+    }
+}
+
+subprojects {
+    plugins.apply("org.jetbrains.dokka")
+}
+
 buildscript {
 
     val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()

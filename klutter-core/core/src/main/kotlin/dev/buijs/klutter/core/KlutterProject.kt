@@ -53,12 +53,12 @@ data class KlutterProject(
  *
  * @author Gillian Buijs
  */
-class KlutterProjectFactory {
+object KlutterProjectFactory {
 
     /**
      * @return a KlutterProject basing all module paths from the given root.
      */
-    fun fromRoot(root: Root) = KlutterProject(
+    fun create(root: Root) = KlutterProject(
         root = root,
         ios = IOS(root = root),
         platform = Platform(root = root),

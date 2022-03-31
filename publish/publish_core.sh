@@ -11,6 +11,7 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
+cd ".."
 cd "klutter-core"
 
 echo "\0/ Klutter: step: build core modules"

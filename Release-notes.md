@@ -1,0 +1,11 @@
+# Klutter CLI release notes
+
+## v2022-pre-alpha-6 (NOT RELEASED)
+- Add tasks to add fastlane to the klutter project.
+- Separate AndroidManifest deserializer from the AndroidManifestVisitor.
+
+## v2022-pre-alpha-5
+- Extract all task functionality from the plugins module and add it to klutter-core. CLI and Gradle plugin can now both use the same functionality.
+- Move annotations-processor to klutter-core because there is no requirement to use the processor on any other place.
+- Remove gradle-plugins module from klutter repo and to it's own [repo](https://github.com/buijs-dev/klutter-gradle)
+- Add buildSrc to the template.

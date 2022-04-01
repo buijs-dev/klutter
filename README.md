@@ -17,8 +17,12 @@ for everything from app design to CICD into a single cohesive framework.
 Pre-alpha means the inital POC phase was successful and the concept works but nothing is set in stone yet. 
 The next stage, being alpha, is reached once all components are created. I am just one developer working
 on this project in my free time. To see what I'm working on check [here](https://github.com/users/buijs-dev/projects/1).
-For now don't use this for production or any serious project yet but feel free to experiment and let me know what you think.
+For now don't use this for production or any serious project yet but feel free to ex
 
+<b>Important:</b> Checkout the latest branch (see release notes) for stable releases. 
+The main-branch is currently used for development.
+
+- [Release-notes](Release-notes.md)
 - [Documentation](https://buijs-dev.github.io/klutter/)
 - [Project Structure](docs/doc_project_structure.md)
 - [Configuration management](docs/doc_configuration_management.md)

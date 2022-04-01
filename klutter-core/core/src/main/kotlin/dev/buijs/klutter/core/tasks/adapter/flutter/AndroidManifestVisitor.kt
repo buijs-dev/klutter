@@ -48,22 +48,16 @@ internal class AndroidManifestVisitor(
 
     private val log = Logging.getLogger(AndroidManifestVisitor::class.java)
 
-    private val xmlMapper = XmlMapper(JacksonXmlModule()
-        .apply { setDefaultUseWrapper(false) })
-        .apply { enable(SerializationFeature.INDENT_OUTPUT) }
-        .apply { configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) }
-
     override fun visit() {
+
         if(!manifestFile.exists()) {
             throw KlutterCodeGenerationException("Could not locate AndroidManifest file at path: ${manifestFile.absolutePath}")
         }
 
-        val rawContent = manifestFile.readText()
-        val parsedXml: AndroidManifestXML = xmlMapper.readValue(rawContent)
+        val parsedXml: AndroidManifestXML = AndroidManifestReader.deserialize(manifestFile.readText())
         val isExported = parsedXml.application?.activity?.androidExported != null
-
         val output = mutableListOf<String>()
-        for (line in rawContent.reader().readLines()) {
+        for (line in manifestFile.readText().reader().readLines()) {
 
             if(line.contains("android:label=")) {
                 output.add("        android:label=\"$appName\"")
@@ -83,15 +77,33 @@ internal class AndroidManifestVisitor(
         manifestFile.writeText(output.joinToString("\r\n"))
 
     }
+
+
+}
+
+object AndroidManifestReader {
+
+    private val xmlMapper = XmlMapper(JacksonXmlModule()
+        .apply { setDefaultUseWrapper(false) })
+        .apply { enable(SerializationFeature.INDENT_OUTPUT) }
+        .apply { configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false) }
+
+    fun deserialize(xml: String): AndroidManifestXML = xmlMapper.readValue(xml)
 }
 
 @JacksonXmlRootElement(localName = "manifest")
-private class AndroidManifestXML {
+class AndroidManifestXML {
+
+    @field:JacksonXmlProperty(
+        localName = "package",
+        isAttribute = true, )
+    val applicationId: String? = null
+
     val application: AndroidManifestApplication? = null
 }
 
 @JacksonXmlRootElement(localName = "application")
-private class AndroidManifestApplication {
+class AndroidManifestApplication {
 
     @field:JacksonXmlProperty(
         namespace = "android",
@@ -104,7 +116,7 @@ private class AndroidManifestApplication {
 }
 
 @JacksonXmlRootElement(localName = "activity")
-private class AndroidActivity {
+class AndroidActivity {
     @field:JacksonXmlProperty(
         namespace = "android",
         localName = "exported",

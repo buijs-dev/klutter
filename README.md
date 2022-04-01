@@ -31,7 +31,7 @@ Command line to create and manage a Klutter project: [klutter CLI](https://githu
 
 # Gettings started
 
-Download the CLI tool: https://github.com/buijs-dev/klutter-cli/blob/main/klutter-cli.zip
+Download the CLI tool: https://www.dropbox.com/s/zc1ctg5tdcvu177/klutter-cli-pre-alpha-5.zip
 
 Unzip the file, move to folder cli/bin and run:
 

@@ -56,7 +56,7 @@ class CreateProjectTask(
 
         //Load the zip file with the project template
         //or return Resource_NOT_FOUND if not possible
-        val resource = CreateProjectTask::class.java.getResourceAsStream("/example.zip")
+        val resource = CreateProjectTask::class.java.classLoader.getResourceAsStream("/example.zip")
             ?: throw KlutterInternalException("Could not locate template for project.")
 
         //Copy the unzipped project template to the given folder

@@ -15,7 +15,6 @@
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 
@@ -62,10 +61,8 @@ hs_err_pid*
 /klutter-annotations/annotations-jvm/dev.properties
 /klutter-annotations/annotations-kmp/annotations_kmp.podspec
 /publish/publish_plugins-release.sh
-/klutter-cli/local.properties
-/klutter-cli/example/
-/klutter-cli/cli/src/main/resources/example/
-/klutter-cli/.gradle/
-/klutter-cli/build/
-/klutter-cli/cli/build/
 /klutter-annotations/build/
+/.gradle/
+/gradle/
+/klutter-core/build/
+/klutter-core/.gradle/

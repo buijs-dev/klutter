@@ -22,7 +22,6 @@
 
 package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.BuildSrc.KlutterYaml.*
 import java.io.File
 
 /**
@@ -45,7 +44,7 @@ data class KlutterProject(
     val android: Android,
     val flutter: Flutter,
     val platform: Platform,
-    val buildSrc: BuildSrc
+    val buildSrc: BuildSrc,
 )
 
 /**
@@ -67,6 +66,11 @@ object KlutterProjectFactory {
         buildSrc = BuildSrc(root = root),
     )
 
+    /**
+     * @return a KlutterProject basing all module paths from the given location.
+     */
+    fun create(location: String) = create(Root(location))
+
 }
 
 /**
@@ -75,6 +79,8 @@ object KlutterProjectFactory {
  * @author Gillian Buijs
  */
 class Root(file: File) {
+
+    constructor(location: String) : this(File(location))
 
     @Suppress("private")
     val folder: File = if (file.exists()) {
@@ -118,41 +124,7 @@ class Root(file: File) {
  */
 class BuildSrc(file: File? = null, root: Root) : KlutterFolder(
     root, file, "BuildSrc directory", root.resolve("buildSrc")
-) {
-
-    enum class KlutterYaml { PUBLIC, LOCAL, SECRETS }
-
-    /**
-     * Function to return the location of yaml files used by Klutter.
-     * Assumes all yaml files for klutter configuration are stored in [root]/buildSrc.
-     * @throws KlutterConfigException if file(s) do not exist.
-     * @return absolute path to a requested yaml file.
-     */
-    fun yaml(which: KlutterYaml) = when (which) {
-        LOCAL -> {
-            getFileSafely(
-                file.resolve("klutter-local.yaml"),
-                file.absolutePath,
-                "root-project/buildSrc/klutter-local.yaml"
-            )
-        }
-
-        PUBLIC -> {
-            getFileSafely(
-                file.resolve("klutter.yaml"),
-                file.absolutePath,
-                "root-project/buildSrc/klutter-local.yaml"
-            )
-        }
-
-        SECRETS -> {
-            getFileSafely(
-                file.resolve("klutter-secrets.yaml"),
-                file.absolutePath,
-                "root-project/buildSrc/klutter-local.yaml")
-        }
-    }
-}
+)
 
 /**
  * Wrapper class with a file instance pointing to the flutter/lib sub-module.
@@ -256,6 +228,14 @@ class IOS(file: File? = null, root: Root) :
         "root-project/ios/Podfile")
 
     /**
+     * Function to return the location of the (optional) fastlane folder in the ios sub-module.
+     * If no custom path is given, Klutter assumes the path to the iOS folder is root-project/ios/fastlane.
+     *
+     * @return the absolute path to the ios fastlane folder.
+     */
+    fun fastlane() = file.resolve("fastlane")
+
+    /**
      * Function to return the location of the AppDelegate.swift file in the ios folder.
      * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swift is root-project/ios/Runner/AppDelegate.swift.
      *
@@ -314,6 +294,14 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
             "root-project/android/app/src/main/AndroidManifest.xml"
         )
     }
+
+    /**
+     * Function to return the location of the (optional) fastlane folder in the android sub-module.
+     * If no custom path is given, Klutter assumes the path to the fastlane folder is root-project/android/fastlane.
+     *
+     * @return the absolute path to the android fastlane folder.
+     */
+    fun fastlane() = file.resolve("fastlane")
 }
 
 /**

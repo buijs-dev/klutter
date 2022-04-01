@@ -3,6 +3,7 @@ package dev.buijs.klutter.core
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.createDirectories
 
 data class KlutterTestProject(
     val projectDir: Path = Files.createTempDirectory(""),
@@ -29,10 +30,19 @@ data class KlutterTestProject(
     val appFrameworkInfoPlist: File = iosFlutterDir.resolve("AppFrameworkInfo.plist")
         .absoluteFile
         .also { it.createNewFile() },
-    val androidAppDir: File = projectDir.resolve("android/app")
+    val androidDir: File = projectDir.resolve("android")
         .toAbsolutePath()
         .toFile()
         .also { it.mkdirs()},
+    val androidAppDir: File = projectDir.resolve("android/app")
+        .toAbsolutePath()
+        .toFile()
+        .also { it.mkdirs() }
+        .also { projectDir.resolve("android/app/src/main").createDirectories() },
+    val androidAppManifest: File = projectDir.resolve("android/app/src/main/AndroidManifest.xml")
+        .toAbsolutePath()
+        .toFile()
+        .also { it.createNewFile()},
     val platformDir: File = projectDir.resolve("platform")
         .toAbsolutePath()
         .toFile()

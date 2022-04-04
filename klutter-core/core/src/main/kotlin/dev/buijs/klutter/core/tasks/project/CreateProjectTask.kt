@@ -27,7 +27,9 @@ import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidBuildGradleGenerator
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidRootBuildGradleGenerator
 import java.io.File
+import java.io.FileInputStream
 import java.io.InputStream
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
@@ -37,13 +39,26 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 
 private const val klutterVersion = "2022-pre-alpha-5"
+private const val klutterCoreVersion = "core-0.10.11"
 
 /**
+ * Task to create a new Klutter project. This task is only available through the CLI distribution.
+ *
+ * <Note about the CLI dist:</b>
+ * The default Klutter template contains its own CLI distribution which places the executables in the root project
+ * and the lib folder in buildSrc/klutter-cli. This makes it easier to use by enabling to run./klutter from the root.
+ * This task copies the lib folder from the calling CLI distribution to avoid downloading the CLI distribution twice.
+ *
+ * [cliDistributionLocation] Absolute path to klutter-cli root folder.
+ * [projectName] Name of root folder containing the Klutter project.
+ * [appId] ApplicationId of the app.
+ *
  * @author Gillian Buijs
  */
 class CreateProjectTask(
     private val projectName: String,
     private val appId: String,
+    private val cliDistributionLocation: String,
     projectLocation: String,
 )
     : KlutterTask
@@ -53,10 +68,9 @@ class CreateProjectTask(
 
     override fun run() {
 
-
         //Load the zip file with the project template
         //or return Resource_NOT_FOUND if not possible
-        val resource = CreateProjectTask::class.java.classLoader.getResourceAsStream("/example.zip")
+        val resource = CreateProjectTask::class.java.classLoader.getResourceAsStream("example.zip")
             ?: throw KlutterInternalException("Could not locate template for project.")
 
         //Copy the unzipped project template to the given folder
@@ -66,16 +80,41 @@ class CreateProjectTask(
         }
 
         //Create project structure
-        val root = Root(folder)
-        val project = KlutterProjectFactory.create(root)
+        val project = KlutterProjectFactory.create(folder, validate = true)
+            ?: throw KlutterInternalException("Project was created but some folders are missing...")
 
         //Generate android gradle files
         AndroidRootBuildGradleGenerator(project.android).generate()
 
         //Generate android/app gradle files
         AndroidBuildGradleGenerator(project.android).generate()
-    }
 
+        //Copy the lib folder from the CLI dist to buildSrc
+        File(cliDistributionLocation).resolve("lib").also { binFolder ->
+
+            if(!binFolder.exists()) {
+                throw KlutterInternalException("Failed to locate Klutter CLI lib folder in $binFolder")
+            }
+
+            //Create klutter-cli/lib folder
+            val destination = project.root.resolve(".tools/klutter-cli/lib").also {
+                if(!it.exists()) {
+                    it.mkdirs().also { created ->
+                        if(!created) {
+                            throw KlutterInternalException("Failed to create .tools/klutter-cli/lib folder.")
+                        }
+                    }
+                }
+            }
+
+            //Copy all jar files from the CLI dist folder to buildSrc/klutter-cli/lib
+            binFolder.listFiles()?.forEach { file ->
+                Files.copy(file.toPath(), destination.resolve(file.name).toPath())
+            }
+
+        }
+
+    }
 
     /**
      * Extract the zip file and write the content to the project location.
@@ -187,6 +226,7 @@ class CreateProjectTask(
             val text = String(content.readAllBytes())
                 .maybeReplace("KLUTTER_PROJECT_NAME", projectName)
                 .maybeReplace("KLUTTER_VERSION", klutterVersion)
+                .maybeReplace("KLUTTER_CORE_VERSION", klutterCoreVersion)
                 .maybeReplace("KLUTTER_APP_ID", appId)
                 .maybeReplace("KLUTTER_APP_NAME", appId.substringAfterLast("."))
 

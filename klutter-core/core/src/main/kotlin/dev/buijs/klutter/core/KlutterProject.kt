@@ -55,21 +55,48 @@ data class KlutterProject(
 object KlutterProjectFactory {
 
     /**
+     * @param validate check if all required folders are present and return null if not.
+     * If validate is false then validation is skipped and a [KlutterConfigException] is thrown
+     * when a folder that should be present is not.
+     *
      * @return a KlutterProject basing all module paths from the given root.
      */
-    fun create(root: Root) = KlutterProject(
-        root = root,
-        ios = IOS(root = root),
-        platform = Platform(root = root),
-        android = Android(root = root),
-        flutter = Flutter(root = root),
-        buildSrc = BuildSrc(root = root),
-    )
+    fun create(root: Root, validate: Boolean = false): KlutterProject? {
 
-    /**
-     * @return a KlutterProject basing all module paths from the given location.
-     */
-    fun create(location: String) = create(Root(location))
+        val project = KlutterProject(
+            root = root,
+            ios = IOS(root = root),
+            platform = Platform(root = root),
+            android = Android(root = root),
+            flutter = Flutter(root = root),
+            buildSrc = BuildSrc(root = root),
+        )
+
+        if(validate) {
+
+            //If the root itself does not exist then there is no KlutterProject
+            if(!root.folder.exists()) return null
+
+            val folders = listOf(
+                project.ios,
+                project.platform,
+                project.android,
+                project.flutter,
+                project.buildSrc,
+            )
+
+            //If any of the folders does not exist return null
+            if(folders.any { !it.exists }) return null
+
+        }
+
+        return project
+
+    }
+
+    fun create(location: String, validate: Boolean = false) = create(Root(location), validate)
+
+    fun create(location: File, validate: Boolean = false) = create(Root(location), validate)
 
 }
 
@@ -343,6 +370,9 @@ abstract class KlutterFolder(
               """.trimIndent()
             )
         }
+
+    val exists = maybeFile?.absoluteFile?.exists() ?: defaultLocation.absoluteFile.exists()
+
 }
 
 /**

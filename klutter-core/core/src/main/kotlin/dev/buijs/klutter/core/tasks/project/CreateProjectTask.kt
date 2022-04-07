@@ -27,7 +27,6 @@ import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidBuildGradleGenerator
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidRootBuildGradleGenerator
 import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
@@ -231,6 +230,11 @@ class CreateProjectTask(
                 .maybeReplace("KLUTTER_APP_NAME", appId.substringAfterLast("."))
 
             File(file.path.maybeReplace("KLUTTER_APP_ID", appId.replace(".", "/"))).also {
+
+                if(!it.parentFile.exists()) {
+                    it.parentFile.mkdirs()
+                }
+
                 it.createNewFile().also { done ->
                     if(done) {
                         it.writeText(text)
@@ -239,6 +243,7 @@ class CreateProjectTask(
                         it.setExecutable(true)
                     }
                 }
+
             }
         }
 

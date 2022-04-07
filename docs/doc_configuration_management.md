@@ -99,14 +99,11 @@ and return it's information through type safe getters.
 
 ### Private
 
-Some information should be kept private like API keys for example. Environment variables are commonly used for this. 
-I'm personally not a huge fan of using environment variables for everything. I prefer to put information in files and 
-store them. Of course you should never store private information as-is in your GIT repository (not even private ones)!
-Luckily there are ways to safely store private information by encrypting it. [Git secret](https://git-secret.io/) for 
-example enables you to encrypt/decrypt files automatically when committing to GIT. 
+Use Klutter secrets utility to load private properties from the klutter.secrets file or env variables. The utility
+will load the klutter.secrets file and look for a key and if not found fallback to env variables. Key name is 
+converted to UPPER_CAMEL_CASE when looking in the env variables. 
 
-Klutter provides a little utility to read properties from a file which should be kept local only (like local.properties)
-or stored encrypted in GIT (with git secret or something similar): 
+Example:
 
 ```groovy
 import dev.buijs.klutter.core.*
@@ -121,12 +118,13 @@ signingConfigs {
         keyPassword secrets.get("key.password") ?: ""
     }
 }
-
 ```
 
-The secrets method will look for a klutter.properties file in the Gradle project and find the property values. By storing
-this klutter.properties file encrypted in your GIT repository you will always have all project information stored in one place.
+Some information should be kept private like API keys for example. Environment variables are commonly used for this. 
+I'm personally not a huge fan of using environment variables for everything. I prefer to put information in files and 
+store them. Of course you should never store private information as-is in your GIT repository (not even private ones)!
+Luckily there are ways to safely store private information by encrypting it. [Git secret](https://git-secret.io/) for 
+example enables you to encrypt/decrypt files automatically when committing to GIT. 
 
-As much as I don't like environment variables I realise it is commonly used in CI environments. Also some people might
-do prefer to use environment variables. In the future I will make the secrets method configurable to also look for environment
-variables.
+Klutter secrets gives you the option to use whichever you prefer, properties file or env variables (or both) 
+without having to change the way to access it.

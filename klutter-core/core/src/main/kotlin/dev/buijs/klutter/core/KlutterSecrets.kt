@@ -26,7 +26,7 @@ package dev.buijs.klutter.core
 import org.gradle.api.Project
 import java.io.File
 
-private const val secretname = "klutter.properties"
+private const val secretname = "klutter.secrets"
 
 /**
  * Create an instance of [Secrets] by passing a reference of a Gradle Project
@@ -49,23 +49,25 @@ fun secrets(location: String) = Secrets(keys(File(location)))
  * Wrapper class to store a key-value map of properties that are not public.
  */
 class Secrets(
-    private val properties: HashMap<String, String>,
+    private val properties: Map<String, String>,
 ) {
 
     fun get(key: String) = properties[key]
+        ?: System.getenv(key.toEnv())
+        ?: throw KlutterConfigException("No secret value found with name '$key' || '${key.toEnv()}'")
 
+    private fun String.toEnv() = uppercase().replace(".", "_")
 }
 
 /**
  * Read a key-value properties file named [secretname]] to a hashmap.
  */
-internal fun keys(location: File): HashMap<String, String> {
+internal fun keys(location: File): Map<String, String> {
 
-    val secrets = location.listFiles()
+    return location.listFiles()
         ?.firstOrNull { it.name == secretname }
-        ?: throw KlutterGradleException("File klutter.properties could not be located in $location")
-
-    return KlutterPropertiesReader(secrets).read()
+        ?.let { KlutterPropertiesReader(it).read()}
+        ?:emptyMap()
 
 }
 

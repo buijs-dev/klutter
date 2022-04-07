@@ -3,6 +3,11 @@
 ## v2022-pre-alpha-6 (NOT RELEASED)
 - Add tasks to add fastlane to the klutter project.
 - Separate AndroidManifest deserializer from the AndroidManifestVisitor.
+- Platform applicationId is changed to include 'platform'. Having the same applicationId for the platform module 
+and app module causes issues when building for Android.
+- Renamed klutter.properties to klutter.secrets to better highlight it's use.
+- Klutter secrets utility looks in env variables for a variable name if not found in klutter.secrets.
+- Add signingConfig for release build in android/app build.gradle
 
 ## v2022-pre-alpha-5
 - Extract all task functionality from the plugins module and add it to klutter-core. CLI and Gradle plugin can now both use the same functionality.

@@ -124,6 +124,7 @@ internal class AndroidBuildGradlePrinter: KlutterPrinter {
             |
             |        release {
             |            minifyEnabled true
+            |            signingConfig signingConfigs.release
             |        }
             |
             |        debug {

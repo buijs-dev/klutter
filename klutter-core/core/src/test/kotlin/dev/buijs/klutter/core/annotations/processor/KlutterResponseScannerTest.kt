@@ -1,6 +1,5 @@
 package dev.buijs.klutter.core.annotations.processor
 
-import dev.buijs.klutter.core.DartObjects
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 

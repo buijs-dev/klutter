@@ -110,6 +110,7 @@ class AndroidBuildGradleGeneratorTest: WordSpec({
                 
                         release {
                             minifyEnabled true
+                            signingConfig signingConfigs.release
                         }
                 
                         debug {

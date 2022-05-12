@@ -20,36 +20,32 @@
  *
  */
 
+package dev.buijs.klutter.core.tasks.plugin
 
-package dev.buijs.klutter.core.tasks.project
-
-import dev.buijs.klutter.core.KlutterProject
-import dev.buijs.klutter.core.KlutterTask
-import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidManifestVisitor
-import dev.buijs.klutter.core.tasks.adapter.flutter.IosAppFrameworkInfoPlistVisitor
-import dev.buijs.klutter.core.tasks.adapter.flutter.IosInfoPlistVisitor
-import dev.buijs.klutter.core.tasks.adapter.flutter.IosPodFileGenerator
-import dev.buijs.klutter.core.tasks.adapter.flutter.PupspecVisitor
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.tasks.adapter.flutter.FlutterAdapterPrinter
+import dev.buijs.klutter.core.tasks.shared.DefaultWriter
+import java.io.File
 
 /**
  * @author Gillian Buijs
  */
-class UpdateProjectTask(
-    private val project: KlutterProject,
-    private val iosVersion: String,
-): KlutterTask {
+internal class FlutterLibraryGenerator(
+    private val path: File,
+    private val methodChannelName: String,
+    private val pluginClassName: String,
+    private val methods: List<MethodCallDefinition>,
+    private val messages: DartObjects,
+): KlutterFileGenerator() {
 
-    override fun run() {
+    override fun printer() = FlutterAdapterPrinter(
+        methodChannelName = methodChannelName,
+        pluginClassName = pluginClassName,
+        definitions = methods,
+        objects = messages,
+    )
 
-        val ios = project.ios
-        val androidManifest = project.android.manifest()
-        val appName = PupspecVisitor(project.flutter.root.resolve("pubspec.yaml")).appName()
-
-        AndroidManifestVisitor(androidManifest, appName).visit()
-        IosInfoPlistVisitor(ios.file.resolve("Runner/Info.plist"), appName).visit()
-        IosAppFrameworkInfoPlistVisitor(ios.file.resolve("Flutter/AppFrameworkInfo.plist"), iosVersion).visit()
-        IosPodFileGenerator(iosVersion, ios, project.platform)
-
-    }
+    override fun writer() = DefaultWriter(path, printer().print())
 
 }

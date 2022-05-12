@@ -20,31 +20,13 @@
  *
  */
 
-package dev.buijs.klutter.core.annotations.processor
-
-
-import com.intellij.openapi.project.Project
-import dev.buijs.klutter.core.KlutterProject
-import dev.buijs.klutter.core.MethodCallDefinition
-import dev.buijs.klutter.core.toKotlinFiles
-import java.io.File
+package dev.buijs.klutter.core
 
 /**
  * @author Gillian Buijs
  */
-internal class KlutterAdapteeScanner(
-    private val source: File,
-    private val context: Project,
-) {
-
-    fun scan(): List<MethodCallDefinition> =
-        KlutterAnnotatedSourceCollector(
-            source,
-            "@KlutterAdaptee",
-        ).collect()
-            .map { it.toKotlinFiles(context) }
-            .map { it.toMethodCallDefinition() }
-            .flatten()
-
-
-}
+data class AndroidConfig(
+    val minSdk: Int,
+    val targetSdk: Int,
+    val compileSdk: Int,
+)

@@ -38,7 +38,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 
 private const val klutterVersion = "2022-pre-alpha-5"
-private const val klutterCoreVersion = "core-0.10.11"
+private const val klutterCoreVersion = "core-0.10.20"
 
 /**
  * Task to create a new Klutter project. This task is only available through the CLI distribution.
@@ -86,7 +86,7 @@ class CreateProjectTask(
         AndroidRootBuildGradleGenerator(project.android).generate()
 
         //Generate android/app gradle files
-        AndroidBuildGradleGenerator(project.android).generate()
+        AndroidBuildGradleGenerator(android = project.android).generate()
 
         //Copy the lib folder from the CLI dist to buildSrc
         File(cliDistributionLocation).resolve("lib").also { binFolder ->

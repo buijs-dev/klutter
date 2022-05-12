@@ -29,7 +29,7 @@ class FlutterAdapterPrinterTest : WordSpec({
                     returns = "List<Complex>")
             )
 
-            val actual = FlutterAdapterPrinter(definitions).print()
+            val actual = FlutterAdapterPrinter(definitions = definitions).print()
 
             actual.filter { !it.isWhitespace() } shouldBe """
                 import 'dart:convert';

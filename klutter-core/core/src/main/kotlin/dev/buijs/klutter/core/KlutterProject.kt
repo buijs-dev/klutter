@@ -255,14 +255,6 @@ class IOS(file: File? = null, root: Root) :
         "root-project/ios/Podfile")
 
     /**
-     * Function to return the location of the (optional) fastlane folder in the ios sub-module.
-     * If no custom path is given, Klutter assumes the path to the iOS folder is root-project/ios/fastlane.
-     *
-     * @return the absolute path to the ios fastlane folder.
-     */
-    fun fastlane() = file.resolve("fastlane")
-
-    /**
      * Function to return the location of the AppDelegate.swift file in the ios folder.
      * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swift is root-project/ios/Runner/AppDelegate.swift.
      *
@@ -322,13 +314,6 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
         )
     }
 
-    /**
-     * Function to return the location of the (optional) fastlane folder in the android sub-module.
-     * If no custom path is given, Klutter assumes the path to the fastlane folder is root-project/android/fastlane.
-     *
-     * @return the absolute path to the android fastlane folder.
-     */
-    fun fastlane() = file.resolve("fastlane")
 }
 
 /**
@@ -345,7 +330,7 @@ abstract class KlutterFolder(
     val root: Root,
     maybeFile: File?,
     whichFolder: String,
-    defaultLocation: File
+    defaultLocation: File,
 ) {
 
     val file: File =
@@ -358,7 +343,7 @@ abstract class KlutterFolder(
                 defaultLocation.absoluteFile
             }
 
-            else -> throw KlutterConfigException(
+            else ->  throw KlutterConfigException(
                 """
               A folder which should be present is not found.
               

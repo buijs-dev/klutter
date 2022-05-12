@@ -27,6 +27,8 @@ import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.KlutterWriter
 import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.tasks.adapter.dart.EnumerationPrinter
+import dev.buijs.klutter.core.tasks.adapter.dart.MessagePrinter
 import dev.buijs.klutter.core.tasks.adapter.dart.getCastMethod
 import org.gradle.api.logging.Logging
 import java.io.File
@@ -39,7 +41,7 @@ internal class FlutterAdapterGenerator(
     private val methods: List<MethodCallDefinition>,
     ): KlutterFileGenerator() {
 
-    override fun printer() = FlutterAdapterPrinter(methods)
+    override fun printer() = FlutterAdapterPrinter(definitions = methods)
 
     override fun writer() = FlutterAdapterWriter(flutter, printer().print())
 
@@ -49,10 +51,21 @@ internal class FlutterAdapterGenerator(
  * @author Gillian Buijs
  */
 internal class FlutterAdapterPrinter(
+    private val methodChannelName: String = "KLUTTER",
+    private val pluginClassName: String = "Adapter",
     private val definitions: List<MethodCallDefinition>,
+    private val objects: DartObjects? = null,
     ): KlutterPrinter {
 
     override fun print(): String {
+
+        val messages = objects?.messages?.joinToString("\n" + "\n") {
+            MessagePrinter(it).print()
+        }
+
+        val enumerations = objects?.enumerations?.joinToString("\n" + "\n") {
+            EnumerationPrinter(it).print()
+        }
 
         val block = definitions.joinToString("\r\n\r\n") { printFun(it) }
 
@@ -67,8 +80,8 @@ internal class FlutterAdapterPrinter(
             |/// Do net edit directly, but recommended to store in VCS.
             |/// 
             |/// Adapter class which handles communication with the KMP library.
-            |class Adapter {
-            |  static const MethodChannel _channel = MethodChannel('KLUTTER');
+            |class $pluginClassName {
+            |  static const MethodChannel _channel = MethodChannel('$methodChannelName');
             |  
             $block
             |
@@ -104,6 +117,11 @@ internal class FlutterAdapterPrinter(
             |  }
             |   
             |}
+            |
+            |$messages
+            |
+            |$enumerations
+            |
             """.trimMargin()
     }
 
@@ -162,6 +180,7 @@ internal class FlutterAdapterPrinter(
         } else "$type.fromJson(json)"
 
     }
+
 }
 
 /**

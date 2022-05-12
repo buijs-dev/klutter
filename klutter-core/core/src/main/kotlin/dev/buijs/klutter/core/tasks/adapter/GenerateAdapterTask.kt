@@ -40,15 +40,18 @@ import dev.buijs.klutter.core.tasks.adapter.flutter.IosAppDelegateGenerator
 @Suppress("unused")
 class GenerateAdapterTask(
     context: Project,
-    private val project: KlutterProject,
+    private val android: Android,
+    private val ios: IOS,
+    private val flutter: Flutter,
+    private val platform: Platform,
     private val iosVersion: String,
 )
     : KlutterTask
 {
 
-    private val androidActivity = AndroidActivityScanner(context, project.android).scan()
-    private val dartObjects = KlutterResponseProcessor(project, context).process()
-    private val methods = KlutterAdapteeScanner(project, context).scan().map {
+    private val androidActivity = AndroidActivityScanner(context, android).scan()
+    private val dartObjects = KlutterResponseProcessor(platform.source(), context).process()
+    private val methods = KlutterAdapteeScanner(platform.source(), context).scan().map {
         //MCD stores the Kotlin type so need to convert it dart type for generating the proper adapter in Dart.
         MethodCallDefinition(
             getter = it.getter,
@@ -66,21 +69,21 @@ class GenerateAdapterTask(
     }
 
     private fun createAndroidAdapter() {
-        AndroidAdapterGenerator(methods, project.android.app()).generate()
+        AndroidAdapterGenerator(methods, android.app()).generate()
         AndroidActivityVisitor(androidActivity).visit()
     }
 
     private fun createIosAdapter() {
         IosAppDelegateGenerator(
             methods,
-            project.ios,
-            project.platform.podspec().nameWithoutExtension
+            ios,
+            platform.podspec().nameWithoutExtension
         ).generate()
     }
 
     private fun createFlutterAdapter() {
-        DartGenerator(project.flutter, dartObjects).generate()
-        FlutterAdapterGenerator(project.flutter, methods).generate()
+        DartGenerator(flutter, dartObjects).generate()
+        FlutterAdapterGenerator(flutter, methods).generate()
     }
 
 }

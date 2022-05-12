@@ -5,27 +5,35 @@
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated
-by the Klutter framework. Klutter combines industry best practices
-for everything from app design to CICD into a single cohesive framework.
+by the Klutter framework.
 
 <img src="https://raw.githubusercontent.com/buijs-dev/klutter/main/docs/klutter.png" alt="klutter-overview" width="300"/>
 
 [Source of this picture and a good read](https://littlegnal.github.io/2019-07-09/kmpp_flutter_en)
 
 
-# Klutter is in PRE-ALPHA stage!
+# Klutter is moving to Alpha soon.
 Pre-alpha means the inital POC phase was successful and the concept works but nothing is set in stone yet. 
-The next stage, being alpha, is reached once all components are created. I am just one developer working
-on this project in my free time. To see what I'm working on check [here](https://github.com/users/buijs-dev/projects/1).
-For now don't use this for production or any serious project yet but feel free to ex
+The next stage, being alpha, is reached once all components are created. And that's soon! I'm finishing
+up the KMP template and will make it available as the first Alpha release soon. With this you will be able
+to create a shared KMP module and publish it as a Flutter package to pub with a single Gradle task.
 
-<b>Important:</b> Checkout the latest branch (see release notes) for stable releases. 
+<b>Important:</b> Checkout the latest branch (see release notes) for stable releases.
 The main-branch is currently used for development.
+
+## What's next?
+Initially I created Klutter as a monolithic framework to control all parts of the Flutter development process.
+Having actually build 2 apps using it I feel it would be better to separate any publishing and/or CI/CD 
+functionality to separate modules/components. That's why I started working on 'Delivery', a publishing 
+library made in Dart which can build and publish different flavours of your app to App Store, Play Store, Firebase, etc.
+Delivery is not yet public, but you can check out the [App Store Connect library](https://github.com/buijs-dev/app-store-connect-dart) 
+I'm building which is one it's major components.
 
 - [Release-notes](Release-notes.md)
 - [Documentation](https://buijs-dev.github.io/klutter/)
 - [Project Structure](docs/doc_project_structure.md)
 - [Configuration management](docs/doc_configuration_management.md)
+
 
 ## Klutter Gradle Plugin:
 Gradle plugin to manage the Klutter project: [klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)

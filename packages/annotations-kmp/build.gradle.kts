@@ -6,27 +6,28 @@ plugins {
     id("maven-publish")
 }
 
-val user = extra.has("repo.username").let {
+val libversion = extra.has("annotations.version").let {
+    if (it) extra.get("annotations.version") as String else "0.10.0"
+}
+
+val repoUsername = extra.has("repo.username").let {
     if (it) extra.get("repo.username") as String else {
+        System.getenv("KLUTTER_PRIVATE_USERNAME") ?:
         throw GradleException("missing repo.username in gradle.properties")
     }
 }
 
-val pass = extra.has("repo.password").let {
+val repoPassword = extra.has("repo.password").let {
     if (it) extra.get("repo.password") as String else {
+        System.getenv("KLUTTER_PRIVATE_PASSWORD") ?:
         throw GradleException("missing repo.password in gradle.properties")
     }
 }
 
-val endpoint = extra.has("repo.url").let {
+val repoEndpoint = extra.has("repo.url").let {
     if (it) extra.get("repo.url") as String else {
+        System.getenv("KLUTTER_PRIVATE_URL") ?:
         throw GradleException("missing repo.url in gradle.properties")
-    }
-}
-
-val libversion = extra.has("annotations.version").let {
-    if (it) extra.get("annotations.version") as String else {
-        throw GradleException("missing annotations.version in gradle.properties")
     }
 }
 
@@ -111,11 +112,11 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = user
-                password = pass
+                username = repoUsername
+                password = repoPassword
             }
 
-            url = uri(endpoint)
+            url = uri(repoEndpoint)
         }
     }
 }

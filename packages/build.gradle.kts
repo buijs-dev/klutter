@@ -10,35 +10,10 @@ subprojects {
 
 buildscript {
 
-    val user = extra.has("repo.username").let {
-        if (it) extra.get("repo.username") as String else {
-            throw GradleException("missing repo.username in gradle.properties")
-        }
-    }
-
-    val pass = extra.has("repo.password").let {
-        if (it) extra.get("repo.password") as String else {
-            throw GradleException("missing repo.password in gradle.properties")
-        }
-    }
-
-    val endpoint = extra.has("repo.url").let {
-        if (it) extra.get("repo.url") as String else {
-            throw GradleException("missing repo.url in gradle.properties")
-        }
-    }
-
     repositories {
         google()
         gradlePluginPortal()
         mavenCentral()
-        maven {
-            url = uri(endpoint)
-            credentials {
-                username = user
-                password = pass
-            }
-        }
     }
 
     dependencies {
@@ -49,20 +24,23 @@ buildscript {
 
 allprojects {
 
-    val user = extra.has("repo.username").let {
+    val repoUsername = extra.has("repo.username").let {
         if (it) extra.get("repo.username") as String else {
+            System.getenv("KLUTTER_PRIVATE_USERNAME") ?:
             throw GradleException("missing repo.username in gradle.properties")
         }
     }
 
-    val pass = extra.has("repo.password").let {
+    val repoPassword = extra.has("repo.password").let {
         if (it) extra.get("repo.password") as String else {
+            System.getenv("KLUTTER_PRIVATE_PASSWORD") ?:
             throw GradleException("missing repo.password in gradle.properties")
         }
     }
 
-    val endpoint = extra.has("repo.url").let {
+    val repoEndpoint = extra.has("repo.url").let {
         if (it) extra.get("repo.url") as String else {
+            System.getenv("KLUTTER_PRIVATE_URL") ?:
             throw GradleException("missing repo.url in gradle.properties")
         }
     }
@@ -72,10 +50,10 @@ allprojects {
         gradlePluginPortal()
         mavenCentral()
         maven {
-            url = uri(endpoint)
+            url = uri(repoEndpoint)
             credentials {
-                username = user
-                password = pass
+                username = repoUsername
+                password = repoPassword
             }
         }
     }
@@ -88,8 +66,7 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
             moduleName.set("Klutter: Core")
             includes.from("core/module.md")
             sourceLink {
-                //TODO fix uri
-                remoteUrl.set(uri("https://github.com/buijs-dev/klutter/tree/main/klutter-core/core/src/main/kotlin").toURL())
+                remoteUrl.set(uri("https://github.com/buijs-dev/klutter/tree/main/packages/core/src/main/kotlin").toURL())
                 localDirectory.set(file("core/src/main/kotlin"))
                 remoteLineSuffix.set("#L")
             }
@@ -99,8 +76,7 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
             moduleName.set("Klutter: Annotations for JVM")
             includes.from("annotations-jvm/module.md")
             sourceLink {
-                //TODO fix uri
-                remoteUrl.set(uri("https://github.com/buijs-dev/klutter/tree/main/klutter-core/core/src/main/kotlin").toURL())
+                remoteUrl.set(uri("https://github.com/buijs-dev/klutter/tree/main/packages/annotations-jvm/src/main/kotlin").toURL())
                 localDirectory.set(file("annotations-jvm/src/main/kotlin"))
                 remoteLineSuffix.set("#L")
             }

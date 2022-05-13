@@ -1,4 +1,5 @@
 # Klutter
+[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/project/overview?id=buijs-dev_klutter)
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter)](#License)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
 [![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--5-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)

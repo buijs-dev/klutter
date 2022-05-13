@@ -21,11 +21,11 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /.idea/
-/core/dev.properties
-/local.properties
-/gradlew.bat
-/gradlew
-/gradle.properties
+/packages/core/dev.properties
+/packages/local.properties
+/packages/gradlew.bat
+/packages/gradlew
+/packages/gradle.properties
 /dev.properties
 /klutter-plugins/dev.properties
 /klutter-core/local.properties
@@ -63,6 +63,11 @@ hs_err_pid*
 /publish/publish_plugins-release.sh
 /klutter-annotations/build/
 /.gradle/
-/gradle/
+/packages/gradle/
 /klutter-core/build/
 /klutter-core/.gradle/
+/packages/gradle.properties
+/packages/gradlew
+/packages/gradlew.bat
+/packages/.gradle/
+/packages/local.properties

@@ -18,29 +18,30 @@ sourceSets {
 }
 
 publishing {
-    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
 
-    if(!file.exists()) {
-        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
-    }
-
-    val properties = HashMap<String, String>()
-
-    file.forEachLine {
-        val pair = it.split("=")
-        if(pair.size == 2){
-            properties[pair[0]] = pair[1]
+    val user = extra.has("repo.username").let {
+        if (it) extra.get("repo.username") as String else {
+            throw GradleException("missing repo.username in gradle.properties")
         }
     }
 
-    val user = properties["repo.username"]
-        ?:throw GradleException("missing repo.username in .properties")
+    val pass = extra.has("repo.password").let {
+        if (it) extra.get("repo.password") as String else {
+            throw GradleException("missing repo.password in gradle.properties")
+        }
+    }
 
-    val pass = properties["repo.password"]
-        ?:throw GradleException("missing repo.password in .properties")
+    val endpoint = extra.has("repo.url").let {
+        if (it) extra.get("repo.url") as String else {
+            throw GradleException("missing repo.url in gradle.properties")
+        }
+    }
 
-    val endpoint = properties["repo.url"]
-        ?:throw GradleException("missing repo.url in .properties")
+    val libversion = extra.has("annotations.version").let {
+        if (it) extra.get("annotations.version") as String else {
+            throw GradleException("missing annotations.version in gradle.properties")
+        }
+    }
 
     repositories {
         maven {
@@ -59,7 +60,7 @@ publishing {
 
             groupId = "dev.buijs.klutter"
             artifactId = "annotations-jvm"
-            version = properties["annotations.version"]
+            version = libversion
 
             artifact("$projectDir/build/libs/annotations-jvm.jar")
 

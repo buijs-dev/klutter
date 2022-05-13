@@ -6,17 +6,32 @@ plugins {
     id("maven-publish")
 }
 
-val properties = HashMap<String, String>()
+val user = extra.has("repo.username").let {
+    if (it) extra.get("repo.username") as String else {
+        throw GradleException("missing repo.username in gradle.properties")
+    }
+}
 
-File("${rootDir.absolutePath}/../publish/_publish.properties").normalize().forEachLine {
-    val pair = it.split("=")
-    if(pair.size == 2){
-        properties[pair[0]] = pair[1]
+val pass = extra.has("repo.password").let {
+    if (it) extra.get("repo.password") as String else {
+        throw GradleException("missing repo.password in gradle.properties")
+    }
+}
+
+val endpoint = extra.has("repo.url").let {
+    if (it) extra.get("repo.url") as String else {
+        throw GradleException("missing repo.url in gradle.properties")
+    }
+}
+
+val libversion = extra.has("annotations.version").let {
+    if (it) extra.get("annotations.version") as String else {
+        throw GradleException("missing annotations.version in gradle.properties")
     }
 }
 
 group = "dev.buijs.klutter"
-version = properties["annotations.version"] ?: throw Exception("annotations.version not set in _publish.properties")
+version = libversion
 
 kotlin {
 
@@ -65,6 +80,11 @@ kotlin {
 
         val jvmTest by getting
         val androidMain by getting
+        val androidAndroidTestRelease by getting
+
+        val androidTest by getting {
+            dependsOn(androidAndroidTestRelease)
+        }
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
@@ -88,30 +108,6 @@ android {
 }
 
 publishing {
-    val file = File("${rootDir.absolutePath}/../publish/_publish.properties").normalize()
-
-    if(!file.exists()) {
-        throw GradleException("missing _publish.properties file in ${file.absolutePath}")
-    }
-
-    val properties = HashMap<String, String>()
-
-    file.forEachLine {
-        val pair = it.split("=")
-        if(pair.size == 2){
-            properties[pair[0]] = pair[1]
-        }
-    }
-
-    val user = properties["repo.username"]
-        ?:throw GradleException("missing repo.username in _publish.properties")
-
-    val pass = properties["repo.password"]
-        ?:throw GradleException("missing repo.password in _publish.properties")
-
-    val endpoint = properties["repo.url"]
-        ?:throw GradleException("missing repo.url in _publish.properties")
-
     repositories {
         maven {
             credentials {
@@ -122,5 +118,32 @@ publishing {
             url = uri(endpoint)
         }
     }
+}
 
+tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
+
+    outputDirectory.set(buildDir.resolve("dokka"))
+
+    dokkaSourceSets {
+        register("annotationsKmp4Jvm") {
+            displayName.set("JVM")
+            platform.set(org.jetbrains.dokka.Platform.jvm)
+            sourceRoots.from(kotlin.sourceSets.getByName("jvmMain").kotlin.srcDirs)
+            sourceRoots.from(kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs)
+        }
+
+        register("annotationsKmp4Android") {
+            displayName.set("Android")
+            platform.set(org.jetbrains.dokka.Platform.jvm)
+            sourceRoots.from(kotlin.sourceSets.getByName("androidMain").kotlin.srcDirs)
+            sourceRoots.from(kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs)
+        }
+
+        register("annotationsKmp4Ios") {
+            displayName.set("IOS")
+            platform.set(org.jetbrains.dokka.Platform.jvm)
+            sourceRoots.from(kotlin.sourceSets.getByName("iosMain").kotlin.srcDirs)
+            sourceRoots.from(kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs)
+        }
+    }
 }

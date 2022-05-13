@@ -26,17 +26,17 @@ jobs:
       # Build Gradle Project
       - name: Execute Gradle build
         working-directory: ./packages
-        run: ./gradlew build
+        run: gradle build
 
       # Generate the HTML documentation pages
       - name: Generate documentation
         working-directory: ./packages
-        run: ./gradlew dokkaHtmlMultiModule
+        run: gradledokkaHtmlMultiModule
 
       # Generate the XML test-coverage files
       - name: Generate test coverage
         working-directory: ./packages
-        run: ./gradlew koverMergedXmlReport -p "packages"
+        run: gradle koverMergedXmlReport -p "packages"
 
       # Deploy the HTML documentation to GitHub pages
       - uses: crazy-max/ghaction-github-pages@v2

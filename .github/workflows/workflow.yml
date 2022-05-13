@@ -9,7 +9,7 @@ jobs:
   gradle:
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -18,19 +18,37 @@ jobs:
           distribution: 'adopt'
           java-version: 11
           cache: gradle
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      # Build Gradle Project
+      - name: Execute Gradle build
+        working-directory: ./packages
+        run: ./gradlew build
+
+      # Generate the HTML documentation pages
       - name: Generate documentation
         working-directory: ./packages
         run: ./gradlew dokkaHtmlMultiModule
+
+      # Generate the XML test-coverage files
       - name: Generate test coverage
         working-directory: ./packages
         run: ./gradlew koverMergedXmlReport -p "packages"
+
+      # Deploy the HTML documentation to GitHub pages
       - uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
           build_dir: ./packages/build/dokkaSite
+
+      # Upload coverage XML files to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           file: packages/build/koverage.xml
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

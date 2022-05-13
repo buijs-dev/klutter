@@ -1,7 +1,7 @@
 # Klutter CLI release notes
 
-## v2022-pre-alpha-6 (NOT RELEASED)
-- Add tasks to add fastlane to the klutter project.
+## v2022-alpha-1 (NOT RELEASED)
+- Add option to publish a Flutter library directly from a shared KMP module.
 - Separate AndroidManifest deserializer from the AndroidManifestVisitor.
 - Platform applicationId is changed to include 'platform'. Having the same applicationId for the platform module 
 and app module causes issues when building for Android.

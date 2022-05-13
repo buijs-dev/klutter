@@ -17,12 +17,13 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+          cache: gradle
       - name: Generate documentation
-        run: dokkaHtmlMultiModule -p "packages"
+        working-directory: ./packages
+        run: ./gradlew dokkaHtmlMultiModule
       - name: Generate test coverage
-        run: koverMergedXmlReport -p "packages"
+        working-directory: ./packages
+        run: ./gradlew koverMergedXmlReport -p "packages"
       - uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages

@@ -15,15 +15,21 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
         with:
-          distribution: temurin
+          distribution: 'adopt'
           java-version: 11
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Execute Gradle build
-        run: ./gradlew dokkaHtmlMultiModule
+      - name: Generate documentation
+        run: dokkaHtmlMultiModule -p "packages"
+      - name: Generate test coverage
+        run: koverMergedXmlReport -p "packages"
       - uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
           build_dir: ./packages/build/dokkaSite
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          file: packages/build/koverage.xml
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

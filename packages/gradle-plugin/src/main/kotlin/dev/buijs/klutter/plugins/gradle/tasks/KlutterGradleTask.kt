@@ -52,7 +52,8 @@ abstract class KlutterGradleTask: DefaultTask() {
 
     fun appInfo() = ext.getAppInfo() ?: throw KlutterConfigException("App Config missing!")
 
-    fun project() = KlutterProjectFactory.create(Root(ext.root ?: throw KlutterGradleException("Invalid Klutter Project.")))
-        ?: throw KlutterGradleException("Invalid Klutter Project.")
+    fun project() = KlutterProjectFactory.create(
+        Root(ext.root ?: throw KlutterGradleException("Path to root folder is not set."))
+    ) ?: throw KlutterGradleException("Invalid Klutter Project.")
 
 }

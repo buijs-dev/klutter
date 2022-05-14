@@ -20,7 +20,6 @@
  *
  */
 
-
 package dev.buijs.klutter.plugins.gradle.tasks
 
 import com.intellij.openapi.util.Disposer

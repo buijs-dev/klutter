@@ -20,12 +20,9 @@
  *
  */
 
-
 package dev.buijs.klutter.plugins.gradle.tasks
 
 import dev.buijs.klutter.core.tasks.project.UpdateProjectTask
-import org.gradle.internal.logging.text.StyledTextOutputFactory
-import javax.inject.Inject
 
 /**
  * @author Gillian Buijs

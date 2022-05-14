@@ -27,6 +27,7 @@ import dev.buijs.klutter.core.tasks.adapter.platform.PlatformBuildGradleScanner
 import java.io.File
 import java.nio.file.Path
 
+private const val buildGradle = "build.gradle.kts"
 private const val klutterVersion = "2022-pre-alpha-5"
 private const val androidGradleVersion = "7.0.4"
 private const val kotlinVersion = "1.6.10"
@@ -55,14 +56,13 @@ class CreateFlutterPluginTask(
     private val folder = Path.of("$outputLocation/$libraryName").toFile()
     private val platformFolder = Path.of(projectFolder).toAbsolutePath().toFile()
 
-    private val scanner = PlatformBuildGradleScanner(platformFolder.resolve("build.gradle.kts"))
+    private val scanner = PlatformBuildGradleScanner(platformFolder.resolve(buildGradle))
 
     // Extract Android Config from build.gradle.kts file.
     private val androidConfig = scanner.androidConfig()
 
     // Extract IOS Version from build.gradle.kts file.
     private val iosVersion = scanner.iosVersion()
-
 
     private val readmePath = readmeLocation ?: platformFolder.resolve("flutter/README.md").absolutePath
     private val changelogPath = changelogLocation ?: platformFolder.resolve("flutter/CHANGELOG.md").absolutePath
@@ -79,7 +79,7 @@ class CreateFlutterPluginTask(
             }
 
             val platform = folder.resolve("platform").also { it.mkdirs() }
-            val filesToCopy = listOf("src", "build.gradle.kts", "platform.podspec")
+            val filesToCopy = listOf("src", buildGradle, "platform.podspec")
             module.list { location, name ->
 
                 if(filesToCopy.contains(name)) {
@@ -95,15 +95,17 @@ class CreateFlutterPluginTask(
         }
 
         // Copy root build.gradle.kts.
-        platformFolder.resolve("build.gradle.kts").copyTo(folder.resolve("build.gradle.kts"))
+        platformFolder.resolve(buildGradle).copyTo(folder.resolve(buildGradle))
 
         KlutterFlutterPlugin.generate(
             context = context,
             platformPath = platformFolder,
             outputPath = folder,
-            readmePath = File(readmePath),
-            changelogPath = File(changelogPath),
-            licensePath = File(licensePath),
+            libraryDocs = FlutterLibraryDocumentation(
+                readme = File(readmePath),
+                changelog = File(changelogPath),
+                license = File(licensePath),
+            ),
             libraryConfig = FlutterLibraryConfig(
                 libraryName = libraryName,
                 libraryVersion = libraryVersion,

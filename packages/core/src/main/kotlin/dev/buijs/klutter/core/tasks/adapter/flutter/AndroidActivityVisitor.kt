@@ -53,21 +53,67 @@ internal class AndroidActivityVisitor(
 ): KlutterVisitor {
 
     override fun visit() {
-        val source = filteredSourceLines(metaFile)
-        val output = mutableListOf<String>()
 
-        source.forEach { line -> output.add(line) }
+        val state = ProcessingState(filteredSourceLines(metaFile))
+            .process()
+            .validate()
+            .write()
 
-        var packageLine: Int? = null
-        var importsStartingLine: Int? = null
-        var configureFlutterEngineLine: Int? = null
-        var classDeclarationLine: Int? = null
-        var containsMethodChannelImport = false
-        var containsGeneratedAdapterImport = false
-        var containsFlutterActivityImport = false
-        var containsAndroidNonNullImport = false
-        var containsFlutterEngineImport = false
+        write(file = metaFile.file, classBody = state.output.joinToString("\r\n"))
+    }
 
+    private fun filteredSourceLines(metaFile: KtFileContent): List<String> {
+
+        val source = metaFile.content.reader().readLines()
+        var indexOfMethodChannelHandler = -1
+        source.forEachIndexed { index, it ->
+            if (it.filter { !it.isWhitespace() } == methodChannelFunLine2.filter { !it.isWhitespace() }) {
+                indexOfMethodChannelHandler = index
+            }
+        }
+
+        return if (indexOfMethodChannelHandler == -1) { source } else {
+            val indexRange = IntRange(indexOfMethodChannelHandler, (indexOfMethodChannelHandler + 3))
+            val temp = mutableListOf<String>()
+            source.forEachIndexed { index, it -> if (!indexRange.contains(index)) { temp.add(it) } }
+            temp
+        }
+    }
+
+    private fun write(file: File, classBody: String) {
+        if(!file.exists()){
+            throw KlutterCodeGenerationException(
+                "The given path to the MainActivity file in the android/app folder does not exist.\r\n" +
+                        "Make sure the given path in the KlutterPlugin is an absolute path pointing " +
+                        "to the android/app folder in the flutter root project.")
+
+        } else file.delete()
+
+        file.createNewFile()
+        file.writeText(classBody)
+    }
+
+}
+
+private class ProcessingState(
+    private val source: List<String>,
+) {
+
+    val output = mutableListOf<String>().also {
+        source.forEach { line -> it.add(line) }
+    }
+
+    var packageLine: Int? = null
+    var importsStartingLine: Int? = null
+    var configureFlutterEngineLine: Int? = null
+    var classDeclarationLine: Int? = null
+    var containsMethodChannelImport = false
+    var containsGeneratedAdapterImport = false
+    var containsFlutterActivityImport = false
+    var containsAndroidNonNullImport = false
+    var containsFlutterEngineImport = false
+
+    fun process(): ProcessingState {
         source.forEachIndexed { index, line ->
             when {
                 line.startsWith("package ") -> {
@@ -106,6 +152,10 @@ internal class AndroidActivityVisitor(
             }
         }
 
+        return this
+    }
+
+    fun validate(): ProcessingState {
         if(packageLine == null) {
             throw KlutterCodeGenerationException("""
                 Could not determine package name for class containing @KlutterAdaptor annotation.
@@ -137,92 +187,72 @@ internal class AndroidActivityVisitor(
                 """.trimIndent())
         }
 
+        return this
+    }
+
+    fun write(): ProcessingState {
         if(configureFlutterEngineLine == null) {
-            if(!containsMethodChannelImport){
-                output.add(importsStartingLine!!, methodChannelImportLine)
-                classDeclarationLine = classDeclarationLine!! + 1
-            }
-
-            if(!containsGeneratedAdapterImport){
-                output.add(importsStartingLine!!, generatedAdapterImportLine)
-                classDeclarationLine = classDeclarationLine!! + 1
-            }
-
-            if(!containsAndroidNonNullImport){
-                output.add(importsStartingLine!!, androidNonNullImportLine)
-                classDeclarationLine = classDeclarationLine!! + 1
-            }
-
-            if(!containsFlutterActivityImport){
-                output.add(importsStartingLine!!, flutterActivityImportLine)
-                classDeclarationLine = classDeclarationLine!! + 1
-            }
-
-            if(!containsFlutterEngineImport){
-                output.add(importsStartingLine!!, flutterEngineImportLine)
-                classDeclarationLine = classDeclarationLine!! + 1
-            }
-
-            output.add(importsStartingLine!!, generatedPluginRegImportLine)
-            classDeclarationLine = classDeclarationLine!! + 1
-
-            output.add((classDeclarationLine!! + 1), methodChannelFunLine1)
-            output.add((classDeclarationLine!! + 2), methodChannelFunLine2)
-            output.add((classDeclarationLine!! + 3), methodChannelFunLine3)
-            output.add((classDeclarationLine!! + 4), methodChannelFunLine4)
-            output.add((classDeclarationLine!! + 5), methodChannelFunLine5)
-            output.add((classDeclarationLine!! + 6), methodChannelFunLine6)
-            output.add((classDeclarationLine!! + 7), "$methodChannelFunLine7\r\n")
+            addLinesForFlutterEngine()
         } else {
 
-            if(!containsMethodChannelImport){
-                output.add(importsStartingLine!!, methodChannelImportLine)
-                configureFlutterEngineLine = configureFlutterEngineLine!! + 1
-            }
-
-            if(!containsGeneratedAdapterImport){
-                output.add(importsStartingLine!!, generatedAdapterImportLine)
-                configureFlutterEngineLine = configureFlutterEngineLine!! + 1
-            }
-
-            output.add((configureFlutterEngineLine!!), methodChannelFunLine2)
-            output.add((configureFlutterEngineLine!! + 1), methodChannelFunLine3)
-            output.add((configureFlutterEngineLine!! + 2), methodChannelFunLine4)
-            output.add((configureFlutterEngineLine!! + 3), methodChannelFunLine5)
+           addLinesForImportsOnly()
         }
 
-        write(file = metaFile.file, classBody = output.joinToString("\r\n"))
+        return this
     }
 
-    private fun filteredSourceLines(metaFile: KtFileContent): List<String> {
-
-        val source = metaFile.content.reader().readLines()
-        var indexOfMethodChannelHandler = -1
-        source.forEachIndexed { index, it ->
-            if (it.filter { !it.isWhitespace() } == methodChannelFunLine2.filter { !it.isWhitespace() }) {
-                indexOfMethodChannelHandler = index
-            }
+    private fun addLinesForFlutterEngine() {
+        if(!containsMethodChannelImport){
+            output.add(importsStartingLine!!, methodChannelImportLine)
+            classDeclarationLine = classDeclarationLine!! + 1
         }
 
-        return if (indexOfMethodChannelHandler == -1) { source } else {
-            val indexRange = IntRange(indexOfMethodChannelHandler, (indexOfMethodChannelHandler + 3))
-            val temp = mutableListOf<String>()
-            source.forEachIndexed { index, it -> if (!indexRange.contains(index)) { temp.add(it) } }
-            temp
+        if(!containsGeneratedAdapterImport){
+            output.add(importsStartingLine!!, generatedAdapterImportLine)
+            classDeclarationLine = classDeclarationLine!! + 1
         }
+
+        if(!containsAndroidNonNullImport){
+            output.add(importsStartingLine!!, androidNonNullImportLine)
+            classDeclarationLine = classDeclarationLine!! + 1
+        }
+
+        if(!containsFlutterActivityImport){
+            output.add(importsStartingLine!!, flutterActivityImportLine)
+            classDeclarationLine = classDeclarationLine!! + 1
+        }
+
+        if(!containsFlutterEngineImport){
+            output.add(importsStartingLine!!, flutterEngineImportLine)
+            classDeclarationLine = classDeclarationLine!! + 1
+        }
+
+        output.add(importsStartingLine!!, generatedPluginRegImportLine)
+        classDeclarationLine = classDeclarationLine!! + 1
+
+        output.add((classDeclarationLine!! + 1), methodChannelFunLine1)
+        output.add((classDeclarationLine!! + 2), methodChannelFunLine2)
+        output.add((classDeclarationLine!! + 3), methodChannelFunLine3)
+        output.add((classDeclarationLine!! + 4), methodChannelFunLine4)
+        output.add((classDeclarationLine!! + 5), methodChannelFunLine5)
+        output.add((classDeclarationLine!! + 6), methodChannelFunLine6)
+        output.add((classDeclarationLine!! + 7), "$methodChannelFunLine7\r\n")
     }
 
-    private fun write(file: File, classBody: String) {
-        if(!file.exists()){
-            throw KlutterCodeGenerationException(
-                "The given path to the MainActivity file in the android/app folder does not exist.\r\n" +
-                        "Make sure the given path in the KlutterPlugin is an absolute path pointing " +
-                        "to the android/app folder in the flutter root project.")
+    private fun addLinesForImportsOnly() {
+        if(!containsMethodChannelImport){
+            output.add(importsStartingLine!!, methodChannelImportLine)
+            configureFlutterEngineLine = configureFlutterEngineLine!! + 1
+        }
 
-        } else file.delete()
+        if(!containsGeneratedAdapterImport){
+            output.add(importsStartingLine!!, generatedAdapterImportLine)
+            configureFlutterEngineLine = configureFlutterEngineLine!! + 1
+        }
 
-        file.createNewFile()
-        file.writeText(classBody)
+        output.add((configureFlutterEngineLine!!), methodChannelFunLine2)
+        output.add((configureFlutterEngineLine!! + 1), methodChannelFunLine3)
+        output.add((configureFlutterEngineLine!! + 2), methodChannelFunLine4)
+        output.add((configureFlutterEngineLine!! + 3), methodChannelFunLine5)
     }
-
 }

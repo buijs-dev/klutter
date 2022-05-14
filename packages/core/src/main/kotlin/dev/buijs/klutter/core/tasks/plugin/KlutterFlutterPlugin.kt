@@ -85,19 +85,9 @@ data class KlutterFlutterPlugin(
             outputPath: File,
 
             /**
-             * Path to the README.md file which will be copied to the Flutter plugin folder.
+             * Path to README.md, CHANGELOG.md and LICENSE files.
              */
-            readmePath: File,
-
-            /**
-             * Path to the LICENSE file which will be copied to the Flutter plugin folder.
-             */
-            licensePath: File,
-
-            /**
-             * Path to the CHANGELOG.md file which will be copied to the Flutter plugin folder.
-             */
-            changelogPath: File,
+            libraryDocs: FlutterLibraryDocumentation,
 
             /**
              * [FlutterLibraryConfig] containing all the metadata from which to create the Flutter plugin.
@@ -112,9 +102,7 @@ data class KlutterFlutterPlugin(
             context = context,
             platformPath = platformPath,
             outputPath = outputPath,
-            readmePath = readmePath,
-            licensePath = licensePath,
-            changelogPath = changelogPath,
+            libraryDocs = libraryDocs,
             libraryConfig = libraryConfig,
             versions = versions,
         )
@@ -226,6 +214,27 @@ data class FlutterLibraryConfig(
     val libraryHomepage: String,
     val developerOrganisation: String,
     val pluginClassName: String,
+)
+
+/**
+ * @author Gillian Buijs
+ */
+data class FlutterLibraryDocumentation(
+
+    /**
+     * Path to the README.md file which will be copied to the Flutter plugin folder.
+     */
+    val readme: File,
+
+    /**
+     * Path to the CHANGELOG.md file which will be copied to the Flutter plugin folder.
+     */
+    val changelog: File,
+
+    /**
+     * Path to the LICENSE file which will be copied to the Flutter plugin folder.
+     */
+    val license: File,
 )
 
 /**

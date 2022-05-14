@@ -63,19 +63,9 @@ fun generateFlutterPluginFromKmpSource(
     outputPath: File,
 
     /**
-     * Path to the README.md file which will be copied to the Flutter plugin folder.
+     * Path to README.md, CHANGELOG.md and LICENSE files.
      */
-    readmePath: File,
-
-    /**
-     * Path to the LICENSE file which will be copied to the Flutter plugin folder.
-     */
-    licensePath: File,
-
-    /**
-     * Path to the CHANGELOG.md file which will be copied to the Flutter plugin folder.
-     */
-    changelogPath: File,
+    libraryDocs: FlutterLibraryDocumentation,
 
     /**
      * [FlutterLibraryConfig] containing all the metadata from which to create the Flutter plugin.
@@ -94,19 +84,19 @@ fun generateFlutterPluginFromKmpSource(
 
     val readme = copyFlutterDoc(
         outputPath = outputPath,
-        sourceFile = readmePath,
+        sourceFile = libraryDocs.readme,
         filename = "README.md",
     )
 
     val changelog = copyFlutterDoc(
         outputPath = outputPath,
-        sourceFile = changelogPath,
+        sourceFile = libraryDocs.changelog,
         filename = "CHANGELOG.md",
     )
 
     val license = copyFlutterDoc(
         outputPath = outputPath,
-        sourceFile = licensePath,
+        sourceFile = libraryDocs.license,
         filename = "LICENSE",
     )
 

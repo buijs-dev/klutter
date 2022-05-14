@@ -20,19 +20,15 @@
  *
  */
 
-
 package dev.buijs.klutter.plugins.gradle.tasks
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import com.intellij.openapi.util.Disposer
 import dev.buijs.klutter.core.tasks.adapter.GenerateAdapterTask
-
-import org.gradle.internal.logging.text.StyledTextOutputFactory
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import javax.inject.Inject
 
 /**
  * @author Gillian Buijs

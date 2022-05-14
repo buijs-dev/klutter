@@ -22,10 +22,8 @@
 
 package dev.buijs.klutter.core.annotations.processor
 
-
 import com.intellij.openapi.project.Project
 import dev.buijs.klutter.core.DartKotlinMap
-import dev.buijs.klutter.core.KlutterProject
 import dev.buijs.klutter.core.MethodCallDefinition
 import dev.buijs.klutter.core.toKotlinFiles
 import java.io.File

@@ -23,6 +23,7 @@
 package dev.buijs.klutter.core
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -68,41 +69,34 @@ internal data class KtFileContent(
     val content: String,
 ) {
 
-    internal fun toMethodCallDefinition(): List<MethodCallDefinition> {
-        val defintions = mutableListOf<MethodCallDefinition>()
-
-        ktFile.children.forEach { clazz ->
-            if (clazz is KtClass) {
-                clazz.allChildren.forEach {
-                    if(it is KtClassBody){
-                        if(it.text.contains("@KlutterAdaptee")){
-                            val scanned = clazz.toMethodCallDefinitions(it.text)
-                            defintions.addAll(scanned)
-                            if(scanned.isEmpty()){
-                                throw KlutterCodeGenerationException(
-                                    """
-                                    Scanning KtFile failed. Please check if the @KlutterAdaptee annotation is used correctly.
-                                    It should be placed on a function and have a name. 
-                                    
-                                    Example:
-                                    
-                                    @KlutterAdaptee(name = "fooBar")
-                                    fun someFoo(): NotBar {
-                                        return "foo!"
-                                    }
-                                    
-                                    """.trimIndent()
-                                )
-                            }
-                        }
+    internal fun toMethodCallDefinition() =
+        ktFile.children.filterIsInstance<KtClass>().flatMap { c ->
+            c.allChildren.mapNotNull {
+                if (it.hasAdapteeAnnotation()) {
+                    c.toMethodCallDefinitions(it.text).also { scanned ->
+                        scanned.ifEmpty { throw exception }
                     }
-                }
+                } else null
             }
+        }.flatten()
+
+    private val exception = KlutterCodeGenerationException(
+        """
+        Scanning KtFile failed. Please check if the @KlutterAdaptee annotation is used correctly.
+        It should be placed on a function and have a name. 
+        
+        Example:
+        
+        @KlutterAdaptee(name = "fooBar")
+        fun someFoo(): NotBar {
+            return "foo!"
         }
+        
+        """.trimIndent()
+    )
 
-        return defintions
-
-    }
+    private fun PsiElement.hasAdapteeAnnotation() =
+        this is KtClassBody && text.contains("@KlutterAdaptee")
 }
 
 internal fun FileContent.toKotlinFiles(context: Project): KtFileContent {

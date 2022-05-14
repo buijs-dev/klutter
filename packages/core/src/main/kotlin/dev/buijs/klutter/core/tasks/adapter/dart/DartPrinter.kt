@@ -243,8 +243,6 @@ internal class FactoryPrinter(
     private fun printField(field: DartField) =
         StringBuilder().also { sb ->
 
-            val isCustomDataType = field.customDataType != null
-            val dataType = toDataType(field)
             val isList = field.isList
             val isNullable = field.optional
             val q = if(isNullable) "?" else ""
@@ -252,28 +250,41 @@ internal class FactoryPrinter(
             sb.append("     ")
             sb.append("${field.name}: ")
 
-            if(isNullable && isList){
-                sb.append("json['${field.name}'] == null ? ${if(isList) "[]" else "null"} : ")
-            }
-
-            if(isList){
-                sb.append("List<$dataType>")
-                sb.append(".from(json['${field.name}']")
-
-                if(isCustomDataType){
-                    sb.append("$q.map((o) => $dataType.fromJson(o)))")
-                } else sb.append("$q.map((o) => o${getCastMethod(dataType)}))")
-
+            if(isList) {
+                procesAsList(
+                    sb = sb,
+                    isNullable = isNullable,
+                    field = field,
+                )
             } else {
-
-                if(isCustomDataType){
+                val dataType = toDataType(field)
+                if(field.customDataType != null){
                     sb.append("$dataType.fromJson(json['${field.name}'])")
                 } else sb.append("json['${field.name}']$q${getCastMethod(dataType)}")
-
             }
             sb.append(",")
+
         }.toString()
 
+    private fun procesAsList(
+        sb: StringBuilder,
+        isNullable: Boolean,
+        field: DartField,
+    ) {
+
+        if(isNullable) sb.append("json['${field.name}'] == null ? [] : ")
+
+        val dataType = toDataType(field)
+        sb.append("List<${dataType}>")
+        sb.append(".from(json['${field.name}']")
+
+        val q = if(isNullable) "?" else ""
+
+        if(field.customDataType != null){
+            sb.append("$q.map((o) => ${dataType}.fromJson(o)))")
+        } else sb.append("$q.map((o) => o${getCastMethod(dataType)}))")
+
+    }
 }
 
 internal fun getCastMethod(dataType: String) = when(DartKotlinMap.toMap(dataType)) {

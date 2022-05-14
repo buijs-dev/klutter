@@ -1,8 +1,8 @@
 # Klutter
-[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/project/overview?id=buijs-dev_klutter)
-[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?style=for-the-badge)](#License)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
 [![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--5-blue?style=for-the-badge)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?style=for-the-badge)](#License)
+[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/project/overview?id=buijs-dev_klutter)
 [![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter?style=for-the-badge)](https://app.codecov.io/gh/buijs-dev/kluttetr)
 
 Klutter is a framework and tool set which uses Flutter to create the frontend

@@ -9,16 +9,16 @@ plugins {
 val prod = (System.getenv("KLUTTER_ENABLE_PRODUCTION") ?: "FALSE") == "TRUE"
 
 val properties = HashMap<String, String>().also { map ->
-    val file = File("${rootDir.absolutePath}/publish/" +
+    File("${rootDir.absolutePath}/publish/" +
             "${if(prod) "_release" else "_develop"}.properties"
     ).normalize().also { file ->
-        if (!file.exists()) throw GradleException("missing properties file in ${file.absolutePath}")
-    }
-
-    file.forEachLine {
-        val pair = it.split("=")
-        if (pair.size == 2) {
-            map[pair[0]] = pair[1]
+        if (file.exists()) {
+            file.forEachLine {
+                val pair = it.split("=")
+                if (pair.size == 2) {
+                    map[pair[0]] = pair[1]
+                }
+            }
         }
     }
 }

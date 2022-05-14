@@ -27,16 +27,16 @@ allprojects {
     val prod = (System.getenv("KLUTTER_ENABLE_PRODUCTION") ?: "FALSE") == "TRUE"
 
     val properties = HashMap<String, String>().also { map ->
-        val file = File("${rootDir.absolutePath}/publish/" +
+        File("${rootDir.absolutePath}/publish/" +
                 "${if(prod) "_release" else "_develop"}.properties"
         ).normalize().also { file ->
-            if (!file.exists()) throw GradleException("missing properties file in ${file.absolutePath}")
-        }
-
-        file.forEachLine {
-            val pair = it.split("=")
-            if (pair.size == 2) {
-                map[pair[0]] = pair[1]
+            if (file.exists()) {
+                file.forEachLine {
+                    val pair = it.split("=")
+                    if (pair.size == 2) {
+                        map[pair[0]] = pair[1]
+                    }
+                }
             }
         }
     }
@@ -116,7 +116,7 @@ tasks.register("_publish_release") {
 
 tasks.register("_publish_develop_annotations") {
 
-    dependsOn(tasks["_switch_develop"])
+    dependsOn(tasks["switchDevelopment"])
 
     doLast {
         project.exec {
@@ -127,7 +127,7 @@ tasks.register("_publish_develop_annotations") {
 
 tasks.register("_publish_release_annotations") {
 
-    dependsOn(tasks["_switch_release"])
+    dependsOn(tasks["switchRelease"])
 
     doLast {
         project.exec {
@@ -138,7 +138,7 @@ tasks.register("_publish_release_annotations") {
 
 tasks.register("_publish_develop_core") {
 
-    dependsOn(tasks["_switch_develop"])
+    dependsOn(tasks["switchDevelopment"])
 
     doLast {
         project.exec {
@@ -149,7 +149,7 @@ tasks.register("_publish_develop_core") {
 
 tasks.register("_publish_release_core") {
 
-    dependsOn(tasks["_switch_release"])
+    dependsOn(tasks["switchRelease"])
 
     doLast {
         project.exec {
@@ -160,7 +160,7 @@ tasks.register("_publish_release_core") {
 
 tasks.register("_publish_develop_gradle_plugin") {
 
-    dependsOn(tasks["_switch_develop"])
+    dependsOn(tasks["switchDevelopment"])
 
     doLast {
         project.exec {
@@ -171,7 +171,7 @@ tasks.register("_publish_develop_gradle_plugin") {
 
 tasks.register("_publish_release_gradle_plugin") {
 
-    dependsOn(tasks["_switch_release"])
+    dependsOn(tasks["switchRelease"])
 
     doLast {
         project.exec {

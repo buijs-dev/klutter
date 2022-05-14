@@ -52,30 +52,37 @@ java {
 
 publishing {
 
-    val libversion = extra.has("core.version").let {
-        if (it) extra.get("core.version") as String else "0.11.7"
-    }
+    val prod = (System.getenv("KLUTTER_ENABLE_PRODUCTION") ?: "FALSE") == "TRUE"
 
-    val repoUsername = extra.has("repo.username").let {
-        if (it) extra.get("repo.username") as String else {
-            System.getenv("KLUTTER_PRIVATE_USERNAME") ?:
-            throw GradleException("missing repo.username in gradle.properties")
+    val properties = HashMap<String, String>().also { map ->
+        val file = File("${rootDir.absolutePath}/publish/" +
+                "${if(prod) "_release" else "_develop"}.properties"
+        ).normalize().also { file ->
+            if (!file.exists()) throw GradleException("missing properties file in ${file.absolutePath}")
+        }
+
+        file.forEachLine {
+            val pair = it.split("=")
+            if (pair.size == 2) {
+                map[pair[0]] = pair[1]
+            }
         }
     }
 
-    val repoPassword = extra.has("repo.password").let {
-        if (it) extra.get("repo.password") as String else {
-            System.getenv("KLUTTER_PRIVATE_PASSWORD") ?:
-            throw GradleException("missing repo.password in gradle.properties")
-        }
-    }
+    val libversion = (properties["core.version"] ?: "0.11.6")
+        .also { println("VERSION CORE ==> $it") }
 
-    val repoEndpoint = extra.has("repo.url").let {
-        if (it) extra.get("repo.url") as String else {
-            System.getenv("KLUTTER_PRIVATE_URL") ?:
-            throw GradleException("missing repo.url in gradle.properties")
-        }
-    }
+    val repoUsername = (properties["repo.username"]
+        ?: System.getenv("KLUTTER_PRIVATE_USERNAME"))
+        ?: throw GradleException("missing repo.username")
+
+    val repoPassword = (properties["repo.password"]
+        ?: System.getenv("KLUTTER_PRIVATE_PASSWORD"))
+        ?: throw GradleException("missing repo.password")
+
+    val repoEndpoint = (properties["repo.url"]
+        ?: System.getenv("KLUTTER_PRIVATE_URL"))
+        ?: throw GradleException("missing repo.url")
 
     repositories {
         maven {

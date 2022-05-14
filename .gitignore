@@ -66,8 +66,8 @@ hs_err_pid*
 /packages/gradle/
 /klutter-core/build/
 /klutter-core/.gradle/
-/packages/gradle.properties
-/packages/gradlew
-/packages/gradlew.bat
 /packages/.gradle/
-/packages/local.properties
+/gradle.properties
+/local.properties
+/gradlew
+/gradlew.bat

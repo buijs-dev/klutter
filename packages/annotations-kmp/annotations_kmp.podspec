@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'annotations_kmp'
-    spec.version                  = '2022-pre-alpha-5'
+    spec.version                  = '0.10.0'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''
@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
                 
 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':annotations-kmp',
+        'KOTLIN_PROJECT_PATH' => ':packages:annotations-kmp',
         'PRODUCT_MODULE_NAME' => 'annotations_kmp',
     }
 
@@ -32,7 +32,7 @@ Pod::Spec.new do |spec|
                 fi
                 set -ev
                 REPO_ROOT="$PODS_TARGET_SRCROOT"
-                "$REPO_ROOT/../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
+                "$REPO_ROOT/../../gradlew" -p "$REPO_ROOT" $KOTLIN_PROJECT_PATH:syncFramework \
                     -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \
                     -Pkotlin.native.cocoapods.archs="$ARCHS" \
                     -Pkotlin.native.cocoapods.configuration=$CONFIGURATION

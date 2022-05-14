@@ -27,30 +27,27 @@ jobs:
 
       # Build Gradle Project
       - name: Execute Gradle build
-        working-directory: ./packages
         run: gradle build
 
       # Generate the HTML documentation pages
       - name: Generate documentation
-        working-directory: ./packages
         run: gradle dokkaHtmlMultiModule
 
       # Generate the XML test-coverage files
       - name: Generate test coverage
-        working-directory: ./packages
         run: gradle koverMergedXmlReport
 
       # Deploy the HTML documentation to GitHub pages
       - uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: ./packages/build/dokkaSite
+          build_dir: build/dokkaSite
 
       # Upload coverage XML files to Codecov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
-          file: packages/build/koverage.xml
+          file: build/koverage.xml
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

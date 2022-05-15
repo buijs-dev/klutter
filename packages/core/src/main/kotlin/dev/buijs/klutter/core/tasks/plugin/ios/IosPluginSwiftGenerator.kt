@@ -24,6 +24,7 @@ package dev.buijs.klutter.core.tasks.plugin.ios
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.tasks.shared.DefaultWriter
+import dev.buijs.klutter.core.tasks.shared.printMethod
 import java.io.File
 
 /**
@@ -80,32 +81,6 @@ internal class IosPluginSwiftPrinter(
         "        case \"${it.getter}\":\n            self.${it.getter}(result: result)"
     }
 
-    private fun methods(): String {
-        return methods.joinToString("\n\n") { printMethod(it) }
-    }
-
-    private fun printMethod(definition: MethodCallDefinition): String {
-
-        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
-            ".toKJson()"
-        } else ""
-
-        return if(definition.async) {
-            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                    "        ${definition.call.removeSuffix("()")} { data, error in\n" +
-                    "\n" +
-                    "            if let response = data { result(response$type) }\n" +
-                    "\n" +
-                    "            if let failure = error { result(failure) }\n" +
-                    "\n" +
-                    "        }\n" +
-                    "    }\n"
-        } else {
-            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                    "        result(${definition.call}$type)\n" +
-                    "    }"
-        }
-
-    }
+    private fun methods(): String = methods.joinToString("\n\n") { printMethod(it) }
 
 }

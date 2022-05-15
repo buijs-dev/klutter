@@ -35,6 +35,7 @@ private const val androidKotlinxVersion = "1.3.2"
 
 /**
  * Task to create a Flutter plugin from a KMP platform module.
+ *
  * @author Gillian Buijs
  */
 class CreateFlutterPluginTask(
@@ -46,9 +47,7 @@ class CreateFlutterPluginTask(
     private val organisation: String,
     projectFolder: String,
     outputLocation: String,
-    readmeLocation: String? = null,
-    changelogLocation: String? = null,
-    licenseLocation: String? = null,
+    flutterDocumentation: FlutterLibraryDocumentation?
 )
     : KlutterTask
 {
@@ -64,9 +63,14 @@ class CreateFlutterPluginTask(
     // Extract IOS Version from build.gradle.kts file.
     private val iosVersion = scanner.iosVersion()
 
-    private val readmePath = readmeLocation ?: platformFolder.resolve("flutter/README.md").absolutePath
-    private val changelogPath = changelogLocation ?: platformFolder.resolve("flutter/CHANGELOG.md").absolutePath
-    private val licensePath = licenseLocation ?: platformFolder.resolve("flutter/LICENSE").absolutePath
+    private val readmePath = flutterDocumentation?.readme?.absolutePath
+        ?: platformFolder.resolve("flutter/README.md").absolutePath
+
+    private val changelogPath = flutterDocumentation?.changelog?.absolutePath
+        ?: platformFolder.resolve("flutter/CHANGELOG.md").absolutePath
+
+    private val licensePath = flutterDocumentation?.license?.absolutePath
+        ?: platformFolder.resolve("flutter/LICENSE").absolutePath
 
     override fun run() {
 

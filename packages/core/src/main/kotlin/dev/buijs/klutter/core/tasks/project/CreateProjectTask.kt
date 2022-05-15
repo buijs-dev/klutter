@@ -26,16 +26,10 @@ package dev.buijs.klutter.core.tasks.project
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidBuildGradleGenerator
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidRootBuildGradleGenerator
+import dev.buijs.klutter.core.tasks.shared.ResourceZipCopyUtil
 import java.io.File
-import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createDirectories
-import kotlin.io.path.exists
-import kotlin.io.path.name
 
 private const val klutterVersion = "2022-pre-alpha-5"
 private const val klutterCoreVersion = "core-0.10.20"
@@ -74,7 +68,22 @@ class CreateProjectTask(
 
         //Copy the unzipped project template to the given folder
         //or return PROJECT_NOT_CREATED if not successful
-        if(!copy(resource)){
+        val copymachine = ResourceZipCopyUtil(
+            folder = folder,
+            filenameSubstitutions = mapOf(
+                "KLUTTER_PROJECT_NAME" to projectName,
+                "KLUTTER_APP_ID" to appId.replace(".", "/"),
+            ),
+            filecontentSubstituions = mapOf(
+                "KLUTTER_PROJECT_NAME" to projectName,
+                "KLUTTER_VERSION" to klutterVersion,
+                "KLUTTER_CORE_VERSION" to klutterCoreVersion,
+                "KLUTTER_APP_ID" to appId,
+                "KLUTTER_APP_NAME" to appId.substringAfterLast(".")
+            ),
+        )
+
+        if(!copymachine.copy(resource)){
             throw KlutterInternalException("Failed to create project...")
         }
 
@@ -113,150 +122,6 @@ class CreateProjectTask(
 
         }
 
-    }
-
-    /**
-     * Extract the zip file and write the content to the project location.
-     */
-    private fun copy(input: InputStream): Boolean {
-
-        //Create the top level project folder or return false if not successful
-        folder.toPath().createDirectories().also {
-            if(!it.exists()) return false
-        }
-
-        //Convert the inputstream
-        val zis = ZipInputStream(input)
-
-        //Get the first entry (file or folder)
-        var entry = zis.nextEntry
-
-        //Process the entry or stop processing if it's null
-        while (entry != null) {
-            entry.copy(zis)
-            entry = zis.nextEntry
-        }
-
-        zis.close()
-
-        //Processing was a succcess, spread the word!
-        return true
-
-    }
-
-    /**
-     * Copy a file or folder entry to the project location.
-     */
-    private fun ZipEntry.copy(zis: ZipInputStream) {
-        val filename = name.maybeReplace("KLUTTER_PROJECT_NAME", projectName)
-
-        when {
-
-            filename.contains("DS_Store") || filename.contains("MACOS") -> {
-                //Do nothing because this does not have to copied
-            }
-
-            isDirectory -> {
-                //Create a directory if it does not yet exist
-                maybeCreateDirectory("$folder/$filename")
-            }
-
-            else -> {
-                //Create a file and write the content
-                createFile(File("$folder/$filename"), zis)
-            }
-
-        }
-    }
-
-    /**
-     * Replace the search term with a replacement String if found
-     * or return the original String if not.
-     */
-    private fun String.maybeReplace(search: String, replacement: String) =
-        if(contains(search)) replace(search, replacement) else this
-
-    /**
-     * Create a new directory if it does not exist or do nothing.
-     */
-    private fun maybeCreateDirectory(folder: String) =
-        Path.of(folder).also { path ->
-            if(path.name == "KLUTTER_APP_ID") {
-
-                //Split the appId because each part of the appId should be a folder
-                val splitted = appId.split(".")
-                val directories = mutableListOf<Path>()
-
-                //Created a nested folder depending on the index
-                splitted.forEachIndexed { index, _ ->
-                    var to = ""
-                    var i = - 1
-                    while(i < index) {
-                        i += 1
-                        to = "$to/${splitted[i]}"
-                    }
-
-                    directories.add(Path.of(path.absolutePathString().replace("KLUTTER_APP_ID", to)))
-
-                }
-
-                directories.forEach { it.createDirectories() }
-
-            } else {
-                if(!path.exists()) path.createDirectories()
-            }
-
-        }
-
-    /**
-     * Create a new file and write the content of the ZipInputStream instance to it.
-     * Replace KLUTTER_PROJECT_NAME and KLUTTER_VERSION tags if present in the content.
-     */
-    private fun createFile(file: File, content: ZipInputStream) {
-
-        //If not text based then it should be written as bytes
-        if(writeBytes(file)) {
-            file.createNewFile()
-            file.writeBytes(content.readAllBytes())
-        }
-
-        //Other files are processed as text and might or might not contain placeholders to be replaced
-        else {
-            val text = String(content.readAllBytes())
-                .maybeReplace("KLUTTER_PROJECT_NAME", projectName)
-                .maybeReplace("KLUTTER_VERSION", klutterVersion)
-                .maybeReplace("KLUTTER_CORE_VERSION", klutterCoreVersion)
-                .maybeReplace("KLUTTER_APP_ID", appId)
-                .maybeReplace("KLUTTER_APP_NAME", appId.substringAfterLast("."))
-
-            File(file.path.maybeReplace("KLUTTER_APP_ID", appId.replace(".", "/"))).also {
-
-                if(!it.parentFile.exists()) {
-                    it.parentFile.mkdirs()
-                }
-
-                it.createNewFile().also { done ->
-                    if(done) {
-                        it.writeText(text)
-                        it.setWritable(true)
-                        it.setReadable(true)
-                        it.setExecutable(true)
-                    }
-                }
-
-            }
-        }
-
-    }
-
-    private fun writeBytes(file: File): Boolean {
-        val excludes = listOf("png", "jar", "zip", "lproj", "pbxproj")
-        val ext = file.extension
-        return when {
-            excludes.contains(ext) -> true
-            ext.startsWith("xc") -> true
-            else -> false
-        }
     }
 
 }

@@ -178,7 +178,9 @@ class ResourceZipCopyUtil(
                         it.writeText(text)
                         it.setWritable(true)
                         it.setReadable(true)
-                        it.setExecutable(true)
+                        if(it.nameWithoutExtension != "LICENSE") {
+                            it.setExecutable(true)
+                        }
                     }
                 }
             }

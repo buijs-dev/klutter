@@ -1,63 +1,67 @@
+/* Copyright (c) 2021 - 2022 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
 package dev.buijs.klutter.core.tasks.plugin
 
-import dev.buijs.klutter.core.Klutter
 import spock.lang.Specification
-
 import java.nio.file.Files
 
+/**
+ * @author Gillian Buijs
+ */
 class CreatePluginProjectTaskSpec extends Specification {
 
-    def "Verify creating an instance of Secrets by supplying a location"() {
+    def "Verify the task creates a valid Klutter plugin module"() {
 
         given:
-        def temp = Files.createTempDirectory("buildsrc")
-        def properties = temp.resolve("klutter.secrets").toFile()
-        properties.createNewFile()
-        properties.write(
-                "store.file.uri=x\nstore.password=y\nkey.alias=me\nkey.password=pass\n"
+        def temp = Files.createTempDirectory("foo").toFile()
+        def sut = new CreatePluginProjectTask(
+                "example",
+                "dev.buijs.examples",
+                temp.absolutePath,
         )
 
         when:
-        def sut = Klutter.secrets(temp.toAbsolutePath().toFile().absolutePath)
+        sut.run()
 
         then:
-        sut["store.file.uri"] == "x"
-        sut["store.password"] == "y"
-        sut["key.alias"] == "me"
-        sut["key.password"] == "pass"
+        with(new File("${temp.absolutePath}/example/flutter")) {flutter ->
+            flutter.exists()
+            new File("${absolutePath}/README.md").exists()
+            new File("${absolutePath}/CHANGELOG.md").exists()
+            new File("${absolutePath}/LICENSE").exists()
+        }
+
+        and:
+        with(new File("${temp.absolutePath}/example/gradle/wrapper")) { gradle ->
+            gradle.exists()
+            new File("${absolutePath}/gradle-wrapper.jar").exists()
+        }
+
+        and:
+        with(new File("${temp.absolutePath}/example/gradle/wrapper/gradle-wrapper.properties")) {properties ->
+            properties.exists()
+            text.contains("services.gradle.org/distributions/gradle-7.0.4-bin.zip")
+        }
 
     }
 
-    //    "Using the CreatePluginProjectTask command" should {
-    //
-    //        "create a klutter plugin project folder in the given folder" {
-    //
-    //            //given
-    //            val temp = Files.createTempDirectory("foo").toFile()
-    //
-    //            //and
-    //            val sut = CreatePluginProjectTask(
-    //                organisation = "dev.buijs.examples",
-    //                libraryName = "example",
-    //                projectLocation = temp.absolutePath,
-    //            )
-    //
-    //            //when
-    //            sut.run()
-    //
-    //            //then
-    //            val flutter = temp.resolve("example/flutter").also { it.shouldExist() }
-    //            flutter.resolve("README.md").shouldExist()
-    //            flutter.resolve("CHANGELOG.md").shouldExist()
-    //            flutter.resolve("LICENSE").shouldExist()
-    //
-    //            val gradle = temp.resolve("example/gradle/wrapper").also { it.shouldExist() }
-    //            gradle.resolve("gradle-wrapper.jar").shouldExist()
-    //            gradle.resolve("gradle-wrapper.properties")
-    //                .also { it.shouldExist() }
-    //                .also { it.readText().shouldContain("""distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.4-bin.zip""") }
-    //
-    //        }
-    //
-    //    }
 }

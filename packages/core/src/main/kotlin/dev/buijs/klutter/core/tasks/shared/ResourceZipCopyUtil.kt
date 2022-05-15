@@ -47,14 +47,14 @@ class ResourceZipCopyUtil(
      *
      * Any key found will be substituted for the value.
      */
-    private val filenameSubstitutions: Map<String,String>,
+    private val filenameSubstitutions: Map<String, String>,
 
     /**
      * Map of placeholders to replace in any file content.
      *
      * Any key found will be substituted for the value.
      */
-    private val filecontentSubstituions: Map<String,String>,
+    private val filecontentSubstituions: Map<String, String>,
 ) {
 
     /**
@@ -64,7 +64,7 @@ class ResourceZipCopyUtil(
 
         //Create the top level project folder or return false if not successful
         folder.toPath().createDirectories().also {
-            if(!it.exists()) return false
+            if (!it.exists()) return false
         }
 
         //Convert the inputstream
@@ -93,7 +93,7 @@ class ResourceZipCopyUtil(
         var filename = name
 
         filenameSubstitutions.forEach { (placeholder, replacement) ->
-            if(filename.contains(placeholder)) {
+            if (filename.contains(placeholder)) {
                 filename = filename.replace(placeholder, replacement)
             }
         }
@@ -126,13 +126,13 @@ class ResourceZipCopyUtil(
             var newPath = path.absolutePathString()
 
             filenameSubstitutions.forEach { (placeholder, replacement) ->
-                if(newPath.contains(placeholder)) {
+                if (newPath.contains(placeholder)) {
                     newPath = newPath.replace(placeholder, replacement)
                 }
             }
 
             File(newPath).let {
-                if(!it.exists()) it.mkdirs()
+                if (!it.exists()) it.mkdirs()
             }
 
         }
@@ -144,44 +144,27 @@ class ResourceZipCopyUtil(
     private fun createFile(file: File, content: ZipInputStream) {
 
         //If not text based then it should be written as bytes
-        if(writeBytes(file)) {
+        if (writeBytes(file)) {
             file.createNewFile()
             file.writeBytes(content.readAllBytes())
         }
 
         //Other files are processed as text and might or might not contain placeholders to be replaced
-        else {
-            var text = String(content.readAllBytes())
+        else createTextFile(file, content)
 
-            filecontentSubstituions.forEach { (placeholder, replacement) ->
-                if (text.contains(placeholder)) {
-                    text = text.replace(placeholder, replacement)
-                }
-            }
+    }
 
-            var newPath = file.path
+    private fun createTextFile(path: File, content: ZipInputStream) {
+        File(filenameSubstitutions.substitute(path.path)).also { file ->
+            if (!file.parentFile.exists()) file.parentFile.mkdirs()
 
-            filenameSubstitutions.forEach { (placeholder, replacement) ->
-                if (newPath.contains(placeholder)) {
-                    newPath = newPath.replace(placeholder, replacement)
-                }
-            }
-
-            File(newPath).let {
-
-                if (!it.parentFile.exists()) {
-                    it.parentFile.mkdirs()
-                }
-
-                it.createNewFile().also { done ->
-                    if (done) {
-                        it.writeText(text)
-                        it.setWritable(true)
-                        it.setReadable(true)
-                        if(it.nameWithoutExtension != "LICENSE") {
-                            it.setExecutable(true)
-                        }
-                    }
+            if(file.createNewFile()){
+                val text = filecontentSubstituions.substitute(String(content.readAllBytes()))
+                file.writeText(text)
+                file.setWritable(true)
+                file.setReadable(true)
+                if (file.nameWithoutExtension != "LICENSE") {
+                    file.setExecutable(true)
                 }
             }
 
@@ -199,5 +182,18 @@ class ResourceZipCopyUtil(
         }
     }
 
+    /**
+     * Replace placeholders in text content.
+     */
+    private fun Map<String, String>.substitute(text: String): String {
+        var output = text
 
+        forEach { (placeholder, replacement) ->
+            if (output.contains(placeholder)) {
+                output = output.replace(placeholder, replacement)
+            }
+        }
+
+        return output
+    }
 }

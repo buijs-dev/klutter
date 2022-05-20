@@ -1,4 +1,4 @@
-name: Codecov
+name: Publish Dart to Codecov
 on: [push]
 jobs:
   build:

@@ -1,4 +1,4 @@
-name: Publish to Codecov
+name: Publish Kotlin to Codecov
 
 on:
   push:

@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install dependencies
-        run: pub get
+        run: flutter pub get
         working-directory: ./packages/plugin-flutter
       - name: Run tests with coverage
         run: flutter pub run test --coverage="coverage"

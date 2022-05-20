@@ -26,33 +26,34 @@ import 'package:klutter/src/plugins_gradle_generator.dart';
 import 'package:klutter/src/registry_writer.dart';
 import 'package:klutter/src/settings_gradle_visitor.dart';
 
-final _s = Platform.pathSeparator;
-
-const _red = "\x1B[31m";
-const _green = "\x1B[32m";
-
 /// Generate a new apple_keys.json template in the working directory.
 ///
 ///[Author] Gillian Buijs.
 Future<void> main(List<String> args) async {
-
-  print('''$_green
+  '''
   ════════════════════════════════════════════
      KLUTTER (v0.1.0)                               
   ════════════════════════════════════════════
-  ''');
+  '''
+      .ok;
 
   final root = Directory.current.absolutePath;
-  final android = "$root${_s}android";
+  final android = "$root${Platform.pathSeparator}android";
   final sdk = flutterSDK(android);
 
   try {
     writePluginLoaderGradleFile(sdk);
     createRegistry(root);
     applyPluginLoader(android);
-  } on KlutterException catch(e) {
-    return print('${_red}KLUTTER: $e.cause'.format);
+  } on KlutterException catch (e) {
+    return "KLUTTER: $e.cause".format.nok;
   }
 
-  print('${_green}KLUTTER: Android setup complete! Project is ready to use Klutter plugins.'.format);
+  "KLUTTER: Android setup complete! Project is ready to use Klutter plugins."
+      .ok;
+}
+
+extension on String {
+  void get ok => print('"\x1B[32m"${this}');
+  void get nok => print('"\x1B[31m"${this}');
 }

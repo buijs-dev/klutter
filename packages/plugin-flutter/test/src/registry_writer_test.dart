@@ -19,7 +19,7 @@
 
 import 'dart:io';
 
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:klutter/src/klutter_exception.dart';
 import 'package:klutter/src/registry_writer.dart';
 

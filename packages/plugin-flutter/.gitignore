@@ -29,3 +29,4 @@
 build/
 /format.sh
 /checklist.txt
+/coverage/

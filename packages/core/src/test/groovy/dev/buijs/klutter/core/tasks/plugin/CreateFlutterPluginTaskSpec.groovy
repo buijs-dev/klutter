@@ -23,6 +23,7 @@
 package dev.buijs.klutter.core.tasks.plugin
 
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import dev.buijs.klutter.core.KlutterTestProject
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,6 +35,19 @@ import com.intellij.openapi.project.Project
  * @author Gillian Buijs
  */
 class CreateFlutterPluginTaskSpec extends Specification {
+
+    def "Verify toCamelCase"() {
+
+        given:
+        def packageName = "some_pub_package"
+
+        when:
+        def className = CreateFlutterPluginTaskKt.toCamelCase(packageName)
+
+        then:
+        className == "SomePubPackage"
+
+    }
 
     def "Verify the task creates a valid Flutter plugin"() {
 
@@ -49,6 +63,13 @@ class CreateFlutterPluginTaskSpec extends Specification {
         buildGradle.createNewFile()
         buildGradle.write(buildGradleText)
 
+        def sourceFolder = new File("${project.platformSourceDir}/kotlin/dev/buijs/buijs/klutter/example")
+        sourceFolder.mkdirs()
+
+        def sourceFile = new File("${sourceFolder.absolutePath}/Greeting.kt")
+        sourceFile.createNewFile()
+        sourceFile.write(platformSourceCode)
+
         and: "flutter documentation files to be copied"
         def flutter = new File("${project.projectDir.toFile().absolutePath}/flutter")
         flutter.mkdirs()
@@ -63,10 +84,19 @@ class CreateFlutterPluginTaskSpec extends Specification {
         license.createNewFile()
 
         and: "mocked scanning behaviour"
-        def ktFileMock = GroovyMock(KtFile)
+        def psiElementMock = GroovyMock(PsiElement) {
+
+        }
+
+        def ktFileMock = GroovyMock(KtFile) {
+            it.text >> platformSourceCode
+            it.children >> [psiElementMock]
+        }
+
         def psiManagerMock = GroovyMock(PsiManager) {
             findFile(_ as VirtualFile) >> ktFileMock
         }
+
         def contextMock = GroovyMock(Project) {
             getService(PsiManager.class) >> psiManagerMock
         }
@@ -182,6 +212,20 @@ class CreateFlutterPluginTaskSpec extends Specification {
 
                     }'''
 
+        platformSourceCode = '''
+            package dev.buijs.klutter.example
+
+            import dev.buijs.klutter.annotations.kmp.KlutterAdaptee
+            
+            class Greeting {
+            
+                @KlutterAdaptee(name = "greeting")
+                fun greeting(): String {
+                    return "Hello, ${Platform().platform}!"
+                }
+            
+            }
+            '''
 
 
 

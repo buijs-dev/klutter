@@ -28,7 +28,7 @@ import java.io.File
 import java.nio.file.Path
 
 private const val buildGradle = "build.gradle.kts"
-private const val klutterVersion = "2022-pre-alpha-5"
+private const val klutterVersion = "2022-alpha-1"
 private const val androidGradleVersion = "7.0.4"
 private const val kotlinVersion = "1.6.10"
 private const val androidKotlinxVersion = "1.3.2"
@@ -53,9 +53,9 @@ class CreateFlutterPluginTask(
 {
 
     private val folder = Path.of("$outputLocation/$libraryName").toFile()
-    private val platformFolder = Path.of(projectFolder).toAbsolutePath().toFile()
+    private val copyFrom = Path.of(projectFolder).toAbsolutePath().toFile()
 
-    private val scanner = PlatformBuildGradleScanner(platformFolder.resolve(buildGradle))
+    private val scanner = PlatformBuildGradleScanner(copyFrom.resolve(buildGradle))
 
     // Extract Android Config from build.gradle.kts file.
     private val androidConfig = scanner.androidConfig()
@@ -64,18 +64,18 @@ class CreateFlutterPluginTask(
     private val iosVersion = scanner.iosVersion()
 
     private val readmePath = flutterDocumentation?.readme?.absolutePath
-        ?: platformFolder.resolve("flutter/README.md").absolutePath
+        ?: copyFrom.resolve("flutter/README.md").absolutePath
 
     private val changelogPath = flutterDocumentation?.changelog?.absolutePath
-        ?: platformFolder.resolve("flutter/CHANGELOG.md").absolutePath
+        ?: copyFrom.resolve("flutter/CHANGELOG.md").absolutePath
 
     private val licensePath = flutterDocumentation?.license?.absolutePath
-        ?: platformFolder.resolve("flutter/LICENSE").absolutePath
+        ?: copyFrom.resolve("flutter/LICENSE").absolutePath
 
     override fun run() {
 
         // Copy the Platform Module to the generated Flutter project.
-        platformFolder.resolve("platform").let { module ->
+        copyFrom.resolve("platform").let { module ->
             if(!module.exists()) {
                 throw KlutterConfigException("Folder not found: '${module.absolutePath}'. " +
                         "Make sure the configured 'projectFolder' " +
@@ -89,7 +89,6 @@ class CreateFlutterPluginTask(
                 if(filesToCopy.contains(name)) {
                     val fqn = location.resolve(name)
                     fqn.copyRecursively(platform.resolve(name))
-                    //fqn.copyRecursively(platform, overwrite = true)
                 }
 
                 true
@@ -99,11 +98,11 @@ class CreateFlutterPluginTask(
         }
 
         // Copy root build.gradle.kts.
-        platformFolder.resolve(buildGradle).copyTo(folder.resolve(buildGradle))
+        copyFrom.resolve(buildGradle).copyTo(folder.resolve(buildGradle))
 
         KlutterFlutterPlugin.generate(
             context = context,
-            platformPath = platformFolder,
+            platformPath = folder.resolve("platform"),
             outputPath = folder,
             libraryDocs = FlutterLibraryDocumentation(
                 readme = File(readmePath),
@@ -116,10 +115,7 @@ class CreateFlutterPluginTask(
                 libraryHomepage = homepageLink,
                 libraryDescription = libraryDescription,
                 developerOrganisation = organisation,
-                pluginClassName = libraryName
-                    .split("_")
-                    .map { it.replaceFirstChar { char -> char.uppercase()} }
-                    .joinToString { it },
+                pluginClassName = libraryName.toCamelCase(),
             ),
             versions = DependencyVersions(
                 androidGradleVersion = androidGradleVersion,
@@ -135,3 +131,7 @@ class CreateFlutterPluginTask(
     }
 
 }
+
+internal fun String.toCamelCase() = split("_")
+    .map { it.replaceFirstChar { char -> char.uppercase()} }
+    .joinToString("") { it }

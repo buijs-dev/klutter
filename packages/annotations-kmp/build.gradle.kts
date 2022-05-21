@@ -6,11 +6,8 @@ plugins {
     id("maven-publish")
 }
 
-val prod = (System.getenv("KLUTTER_ENABLE_PRODUCTION") ?: "FALSE") == "TRUE"
-
 val properties = HashMap<String, String>().also { map ->
-    File("${rootDir.absolutePath}/publish/" +
-            "${if(prod) "_release" else "_develop"}.properties"
+    File("${rootDir.absolutePath}/publish/_publish.properties"
     ).normalize().also { file ->
         if (file.exists()) {
             file.forEachLine {

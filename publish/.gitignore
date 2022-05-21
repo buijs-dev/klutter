@@ -7,3 +7,7 @@
 /_publish.properties
 /_release.properties
 /publish_all_release.sh
+/gradle.properties
+/gradlew
+/gradlew.bat
+/gradle/wrapper/gradle-wrapper.properties

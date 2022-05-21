@@ -24,11 +24,8 @@ buildscript {
 
 allprojects {
 
-    val prod = (System.getenv("KLUTTER_ENABLE_PRODUCTION") ?: "FALSE") == "TRUE"
-
     val properties = HashMap<String, String>().also { map ->
-        File("${rootDir.absolutePath}/publish/" +
-                "${if(prod) "_release" else "_develop"}.properties"
+        File("${rootDir.absolutePath}/publish/_publish.properties"
         ).normalize().also { file ->
             if (file.exists()) {
                 file.forEachLine {
@@ -100,56 +97,4 @@ tasks.dokkaHtmlMultiModule.configure {
 tasks.koverMergedXmlReport {
     isEnabled = true
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
-}
-
-tasks.register("_publish_develop") {
-    dependsOn(tasks["_publish_develop_annotations"])
-    dependsOn(tasks["_publish_develop_core"])
-    dependsOn(tasks["_publish_develop_gradle_plugin"])
-}
-
-tasks.register("_publish_release") {
-    dependsOn(tasks["_publish_release_annotations"])
-    dependsOn(tasks["_publish_release_core"])
-    dependsOn(tasks["_publish_release_gradle_plugin"])
-}
-
-tasks.register("_publish_develop_annotations", Exec::class) {
-    dependsOn(tasks["switchDevelopment"])
-    commandLine("bash", "./publish/publish_annotations.sh")
-}
-
-tasks.register("_publish_release_annotations", Exec::class) {
-    dependsOn(tasks["switchRelease"])
-    commandLine("bash", "./publish/publish_annotations.sh")
-}
-
-tasks.register("_publish_develop_core", Exec::class) {
-    dependsOn(tasks["switchDevelopment"])
-    commandLine("bash", "./publish/publish_core.sh")
-}
-
-tasks.register("_publish_release_core", Exec::class) {
-    dependsOn(tasks["switchRelease"])
-    commandLine("bash", "./publish/publish_release.sh")
-}
-
-tasks.register("_publish_develop_gradle_plugin", Exec::class) {
-    dependsOn(tasks["switchDevelopment"])
-    commandLine("bash", "./publish/publish_gradle_plugin.sh")
-}
-
-tasks.register("_publish_release_gradle_plugin", Exec::class) {
-    dependsOn(tasks["switchRelease"])
-    commandLine("bash", "./publish/publish_gradle_plugin_release.sh")
-}
-
-tasks.register("switchDevelopment", Exec::class) {
-    environment("KLUTTER_ENABLE_PRODUCTION","FALSE")
-    commandLine("echo", "DEVELOPMENT")
-}
-
-tasks.register("switchRelease", Exec::class) {
-    environment("KLUTTER_ENABLE_PRODUCTION","TRUE")
-    commandLine("echo", "PRODUCTION")
 }

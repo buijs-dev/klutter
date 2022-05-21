@@ -2,6 +2,8 @@
 #stop script on failure
 set -e
 
+cd ".."
+
 echo " ____________
 < Publishing Klutter Annotations modules >
  ------------

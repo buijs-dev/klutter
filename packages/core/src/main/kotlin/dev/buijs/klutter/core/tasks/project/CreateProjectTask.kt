@@ -31,7 +31,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
-private const val klutterVersion = "2022-pre-alpha-5"
+private const val klutterVersion = "2022-alpha-1"
 private const val klutterCoreVersion = "core-0.10.20"
 
 /**

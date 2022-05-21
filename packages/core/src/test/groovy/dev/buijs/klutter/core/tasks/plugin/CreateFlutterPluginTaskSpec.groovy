@@ -170,7 +170,7 @@ class CreateFlutterPluginTaskSpec extends Specification {
                                 val commonMain by getting {
                                     dependencies {
                                         api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                                        api("dev.buijs.klutter:annotations-kmp:2022-pre-alpha-5")
+                                        api("dev.buijs.klutter:annotations-kmp:2022-alpha-1")
                                         implementation("io.ktor:ktor-client-core:1.6.7")
                                         implementation("io.ktor:ktor-client-auth:1.6.7")
                                     }

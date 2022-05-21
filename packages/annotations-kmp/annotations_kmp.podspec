@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'annotations_kmp'
-    spec.version                  = '0.10.0'
+    spec.version                  = '2022-alpha-1'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''

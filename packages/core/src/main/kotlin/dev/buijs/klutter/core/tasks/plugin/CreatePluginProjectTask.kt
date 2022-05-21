@@ -54,7 +54,7 @@ class CreatePluginProjectTask(
             filecontentSubstituions = mapOf(
                 "KOTLIN_VERSION" to "1.6.10",
                 "ANDROID_GRADLE_VERSION" to "7.0.4",
-                "KLUTTER_VERSION" to "0.11.7",
+                "KLUTTER_VERSION" to "0.12.0",
                 "KOTLINX_VERSION" to "1.3.3",
                 "LIBRARY_NAME" to libraryName,
                 "DEVELOPER_ORGANISATION" to organisation,

@@ -88,7 +88,7 @@ publishing {
             artifactId = pluginArtifactId
             version = libversion
 
-            artifact("$projectDir/build/libs/gradle-plugin-$libversion.jar")
+            artifact("$projectDir/build/libs/plugin-gradle-$libversion.jar")
 
             pom {
                 name.set("Klutter: Gradle Plugin")

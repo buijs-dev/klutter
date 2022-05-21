@@ -1,7 +1,7 @@
 # Klutter
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
-[![Repsy maven](https://img.shields.io/badge/maven-2022--pre--alpha--5-blue?style=for-the-badge)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
-[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?style=for-the-badge)](#License)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-1)
+[![Repsy maven](https://img.shields.io/badge/maven-2022--alpha--1-blue?style=for-the-badge)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
 [![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
 [![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter?style=for-the-badge)](https://app.codecov.io/gh/buijs-dev/klutter)
 
@@ -19,6 +19,8 @@ Pre-alpha means the inital POC phase was successful and the concept works but no
 The next stage, being alpha, is reached once all components are created. And that's soon! I'm finishing
 up the KMP template and will make it available as the first Alpha release soon. With this you will be able
 to create a shared KMP module and publish it as a Flutter package to pub with a single Gradle task.
+
+Also check the Klutter [pub plugin](https://github.com/buijs-dev/klutter-dart).
 
 <b>Important:</b> Checkout the latest branch (see release notes) for stable releases.
 The main-branch is currently used for development.
@@ -38,10 +40,13 @@ I'm building which is one it's major components.
 
 
 ## Klutter Gradle Plugin:
-Gradle plugin to manage the Klutter project: [klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)
+Gradle plugin to manage the Klutter project: [Klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)
 
 ## Klutter CLI:
-Command line to create and manage a Klutter project: [klutter CLI](https://github.com/buijs-dev/klutter-cli)
+Command line to create and manage a Klutter project: [Klutter CLI](https://github.com/buijs-dev/klutter-cli)
+
+## Klutter Pub Plugin:
+Dart plugin to create Flutter plugins from KMP source: [Klutter Pub Plugin](https://github.com/buijs-dev/klutter-dart)
 
 # Gettings started
 

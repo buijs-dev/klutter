@@ -29,13 +29,4 @@ echo "------------------"
 
 echo "\0/ Klutter: step: publish annotations-kmp modules"
 echo "------------------"
-./gradlew publish -p "annotations-kmp"
-
-echo "\0/ Klutter: step: build annotations-processor modules"
-echo "------------------"
-./gradlew clean -p "annotations-processor"
-./gradlew build -p "annotations-processor"
-
-echo "\0/ Klutter: step: publish annotations-processor modules"
-echo "------------------"
-./gradlew publish -p "annotations-processor"
+./gradlew publish -p "packages/annotations-kmp"

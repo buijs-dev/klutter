@@ -114,76 +114,42 @@ tasks.register("_publish_release") {
     dependsOn(tasks["_publish_release_gradle_plugin"])
 }
 
-tasks.register("_publish_develop_annotations") {
-
+tasks.register("_publish_develop_annotations", Exec::class) {
     dependsOn(tasks["switchDevelopment"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_annotations.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_annotations.sh")
 }
 
-tasks.register("_publish_release_annotations") {
-
+tasks.register("_publish_release_annotations", Exec::class) {
     dependsOn(tasks["switchRelease"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_annotations.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_annotations.sh")
 }
 
-tasks.register("_publish_develop_core") {
-
+tasks.register("_publish_develop_core", Exec::class) {
     dependsOn(tasks["switchDevelopment"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_core.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_core.sh")
 }
 
-tasks.register("_publish_release_core") {
-
+tasks.register("_publish_release_core", Exec::class) {
     dependsOn(tasks["switchRelease"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_release.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_release.sh")
 }
 
-tasks.register("_publish_develop_gradle_plugin") {
-
+tasks.register("_publish_develop_gradle_plugin", Exec::class) {
     dependsOn(tasks["switchDevelopment"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_gradle_plugin.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_gradle_plugin.sh")
 }
 
-tasks.register("_publish_release_gradle_plugin") {
-
+tasks.register("_publish_release_gradle_plugin", Exec::class) {
     dependsOn(tasks["switchRelease"])
-
-    doLast {
-        project.exec {
-            commandLine("bash", "./publish/publish_gradle_plugin_release.sh")
-        }
-    }
+    commandLine("bash", "./publish/publish_gradle_plugin_release.sh")
 }
 
-tasks.register("switchDevelopment", JavaExec::class) {
+tasks.register("switchDevelopment", Exec::class) {
     environment("KLUTTER_ENABLE_PRODUCTION","FALSE")
+    commandLine("echo", "DEVELOPMENT")
 }
 
-tasks.register("switchRelease", JavaExec::class) {
+tasks.register("switchRelease", Exec::class) {
     environment("KLUTTER_ENABLE_PRODUCTION","TRUE")
+    commandLine("echo", "PRODUCTION")
 }

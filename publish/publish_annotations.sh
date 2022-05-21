@@ -11,21 +11,19 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-cd "klutter-annotations"
-
 echo "\0/ Klutter: step: build annotations-jvm modules"
 echo "------------------"
-./gradlew clean -p "annotations-jvm"
-./gradlew build -p "annotations-jvm"
+./gradlew clean -p "packages/annotations-jvm"
+./gradlew build -p "packages/annotations-jvm"
 
 echo "\0/ Klutter: step: publish annotations-jvm modules"
 echo "------------------"
-./gradlew publish -p "annotations-jvm"
+./gradlew publish -p "packages/annotations-jvm"
 
 echo "\0/ Klutter: step: build annotations-kmp modules"
 echo "------------------"
-./gradlew clean -p "annotations-kmp"
-./gradlew build -p "annotations-kmp"
+./gradlew clean -p "packages/annotations-kmp"
+./gradlew build -p "packages/annotations-kmp"
 
 echo "\0/ Klutter: step: publish annotations-kmp modules"
 echo "------------------"

@@ -11,14 +11,11 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-cd ".."
-cd "klutter-core"
-
 echo "\0/ Klutter: step: build core modules"
 echo "------------------"
-./gradlew clean -p "core"
-./gradlew build -p "core"
+./gradlew clean -p "packages/core"
+./gradlew build -p "packages/core"
 
 echo "\0/ Klutter: step: publish core modules"
 echo "------------------"
-./gradlew publish -p "core"
+./gradlew publish -p "packages/core"

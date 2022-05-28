@@ -1,9 +1,10 @@
 # Klutter
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-1)
-[![Repsy maven](https://img.shields.io/badge/maven-2022--alpha--1-blue?style=for-the-badge)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
-[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?style=for-the-badge)](https://github.com/buijs-dev/klutter-dart/blob/main/LICENSE)
-[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
-[![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter?style=for-the-badge)](https://app.codecov.io/gh/buijs-dev/klutter)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-3)
+[![Repsy maven](https://img.shields.io/badge/maven-2022--alpha--3-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
+[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
+[![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter)
+[![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?color=black&logoColor=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
+
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated

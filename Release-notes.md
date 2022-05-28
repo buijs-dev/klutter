@@ -1,7 +1,7 @@
 # Klutter CLI release notes
 
-## v2022-alpha-1 (NOT RELEASED)
-- Add option to publish a Flutter library directly from a shared KMP module.
+## v2022-alpha-3
+- Add support for generating boilerplate code in a Flutter project.
 - Separate AndroidManifest deserializer from the AndroidManifestVisitor.
 - Platform applicationId is changed to include 'platform'. Having the same applicationId for the platform module 
 and app module causes issues when building for Android.

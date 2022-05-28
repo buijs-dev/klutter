@@ -23,7 +23,6 @@
 package dev.buijs.klutter.core.test
 
 import java.io.File
-import java.io.InputStream
 import java.nio.file.Path
 
 /**

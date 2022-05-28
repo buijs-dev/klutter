@@ -5,6 +5,9 @@ import spock.lang.Specification
 
 import java.nio.file.Files
 
+/**
+ * @author Gillian Buijs
+ */
 class FlutterPubspecScannerSpec extends Specification {
 
     def static resources = new TestResource()
@@ -15,13 +18,14 @@ class FlutterPubspecScannerSpec extends Specification {
         def yaml = Files.createTempFile("","pubspec.yaml").toFile()
 
         and:
-        resources.copy("plugin_pubspec.yaml", yaml)
+        resources.copy("plugin_pubspec", yaml)
 
         when:
         def dto = new FlutterPubspecScanner(yaml).scan()
 
         then:
         dto.libraryName == "super_awesome"
+        dto.packageName == "foo.bar.super_awesome"
         dto.pluginClassName == "SuperAwesomePlugin"
 
     }

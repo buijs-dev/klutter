@@ -22,25 +22,13 @@
 
 package dev.buijs.klutter.plugins.gradle.tasks
 
-import com.intellij.openapi.util.Disposer
 import dev.buijs.klutter.core.tasks.plugin.CreateFlutterPluginTask
 import dev.buijs.klutter.plugins.gradle.dsl.KlutterAppInfoDTO
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
 
 /**
  * @author Gillian Buijs
  */
 open class CreatePublishPackageGradleTask: KlutterGradleTask() {
-
-    private val context by lazy {
-        val config = CompilerConfiguration()
-        config.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        KotlinCoreEnvironment.createForProduction(Disposer.newDisposable(), config, EnvironmentConfigFiles.JVM_CONFIG_FILES).project
-    }
 
     override fun describe() = createModule(appInfo())
 
@@ -49,7 +37,6 @@ open class CreatePublishPackageGradleTask: KlutterGradleTask() {
      */
     private fun createModule(info: KlutterAppInfoDTO) {
        CreateFlutterPluginTask(
-           context = context,
            libraryName = info.name,
            libraryDescription = info.description,
            homepageLink = "your homepage url",

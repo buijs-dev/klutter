@@ -1,5 +1,5 @@
 # Klutter
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=blueviolet)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-3)
+[![Gradle Plugin Portal](https://img.shields.io/badge/plugin%20portal-v2022--alpha--3-blue)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-3)
 [![Repsy maven](https://img.shields.io/badge/maven-2022--alpha--3-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
 [![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
 [![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter)

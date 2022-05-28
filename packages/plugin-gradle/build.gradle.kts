@@ -33,6 +33,7 @@ val pluginGroupId = "dev.buijs.klutter"
 val pluginArtifactId = "plugin"
 
 plugins {
+    id("groovy")
     id("java-gradle-plugin")
     id("maven-publish")
     id("com.gradle.plugin-publish") version "0.16.0"
@@ -159,6 +160,10 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
+    //Spock
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
+    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
+
     //Gradle Testing
     testImplementation(gradleTestKit())
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
@@ -166,6 +171,8 @@ dependencies {
     //Mocking
     testImplementation("org.mockito:mockito-core:4.2.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    testImplementation(project(":packages:core-test"))
 }
 
 tasks.test {

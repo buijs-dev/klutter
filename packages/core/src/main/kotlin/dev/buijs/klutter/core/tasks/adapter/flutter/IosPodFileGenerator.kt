@@ -34,12 +34,17 @@ internal class IosPodFileGenerator(
     private val iosVersion: String,
     private val ios: IOS,
     private val platform: Platform,
-    private val podName: String? = null
+    private val podName: String,
 ) : KlutterFileGenerator() {
 
     override fun generate() = writer().write()
 
-    override fun printer() = IosPodFilePrinter(iosVersion, ios.file, platform.file, podName ?: platform.podspec().nameWithoutExtension)
+    override fun printer() = IosPodFilePrinter(
+        iosVersion,
+        ios.file,
+        platform.file,
+        podName,
+    )
 
     override fun writer() = IosPodFileWriter(ios.file, printer().print())
 

@@ -1,0 +1,19 @@
+package foo.bar.baz.appz
+
+import dev.buijs.klutter.adapter.GeneratedKlutterAdapter
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.embedding.android.FlutterActivity
+import androidx.annotation.NonNull
+import io.flutter.embedding.engine.FlutterEngine
+
+@KlutterAdapter
+class MainActivity: FlutterActivity() {
+
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+         MethodChannel(flutterEngine.dartExecutor,"KLUTTER")
+            .setMethodCallHandler{ call, result ->
+                GeneratedKlutterAdapter().handleMethodCalls(call, result)
+         }
+         GeneratedPluginRegistrant.registerWith(flutterEngine)
+    }
+}

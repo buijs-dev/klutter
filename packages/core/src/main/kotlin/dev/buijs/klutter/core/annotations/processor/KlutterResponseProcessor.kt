@@ -22,7 +22,6 @@
 
 package dev.buijs.klutter.core.annotations.processor
 
-import com.intellij.openapi.project.Project
 import dev.buijs.klutter.core.*
 import java.io.File
 
@@ -34,7 +33,6 @@ private val bodiesRegex = """(open class ([^(]+?)\([^)]+\))""".toRegex()
  */
 internal class KlutterResponseProcessor(
     private val source: File,
-    private val context: Project,
 ) {
 
     internal fun process(): DartObjects {
@@ -44,10 +42,9 @@ internal class KlutterResponseProcessor(
 
         KlutterAnnotatedSourceCollector(source, "@KlutterResponse")
             .collect()
-            .map { it.toKotlinFiles(context) }
             .forEach {
-                enumerations.addAll(EnumScanner(it.content).scan())
-                messages.addAll(MessageScanner(it.content).scan())
+                enumerations.addAll(EnumScanner(it.readText()).scan())
+                messages.addAll(MessageScanner(it.readText()).scan())
             }
 
         val customDataTypes = mutableListOf<String>()

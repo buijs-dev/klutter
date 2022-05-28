@@ -23,7 +23,6 @@
 package dev.buijs.klutter.core.tasks.adapter
 
 
-import com.intellij.openapi.project.Project
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.annotations.processor.AndroidActivityScanner
 import dev.buijs.klutter.core.annotations.processor.KlutterAdapteeScanner
@@ -34,48 +33,95 @@ import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidActivityVisitor
 import dev.buijs.klutter.core.tasks.adapter.flutter.AndroidAdapterGenerator
 import dev.buijs.klutter.core.tasks.adapter.flutter.FlutterAdapterGenerator
 import dev.buijs.klutter.core.tasks.adapter.flutter.IosAppDelegateGenerator
+import dev.buijs.klutter.core.tasks.plugin.android.AndroidPluginGenerator
+import dev.buijs.klutter.core.tasks.plugin.flutter.FlutterLibraryGenerator
+import dev.buijs.klutter.core.tasks.plugin.flutter.FlutterPubspecScanner
 
 /**
  * @author Gillian Buijs
  */
-@Suppress("unused")
 class GenerateAdapterTask(
-    context: Project,
     private val android: Android,
     private val ios: IOS,
     private val flutter: Flutter,
     private val platform: Platform,
-    private val iosVersion: String,
+    private val libName: String = "main",
+    private val isPlugin: Boolean = false,
 )
     : KlutterTask
 {
 
-    private val androidActivity = AndroidActivityScanner(context, android).scan()
-    private val dartObjects = KlutterResponseProcessor(platform.source(), context).process()
-    private val methods = KlutterAdapteeScanner(platform.source(), context).scan(language = ReturnTypeLanguage.DART)
+    private val androidActivity = AndroidActivityScanner(android).scan()
+    private var dartObjects: DartObjects? = null
+    private var methods: List<MethodData>? = null
 
     override fun run() {
-        createAndroidAdapter()
-        createIosAdapter()
-        createFlutterAdapter()
+        platform.source()?.let {
+            dartObjects = KlutterResponseProcessor(it).process()
+            methods =  KlutterAdapteeScanner(it).scan(language = ReturnTypeLanguage.DART)
+        }
+
+        if(isPlugin) {
+            processPlugin()
+        } else {
+            processProject()
+        }
     }
 
-    private fun createAndroidAdapter() {
-        AndroidAdapterGenerator(methods, android.app()).generate()
-        AndroidActivityVisitor(androidActivity).visit()
+    private fun processPlugin() {
+
+        val pubspec = FlutterPubspecScanner(flutter
+            .root
+            .folder
+            .resolve("pubspec.yaml")).scan()
+
+        val pluginName = pubspec.libraryName
+        val packageName = pubspec.packageName
+        val pluginPath = packageName?.replace(".", "/") ?: ""
+        val pluginClassName = pubspec.pluginClassName
+        val methodChannelName = packageName ?: "KLUTTER"
+        methods?.let { methods ->
+            FlutterLibraryGenerator(
+                path = flutter.file.resolve("$pluginName.dart"),
+                methodChannelName = methodChannelName,
+                pluginClassName = pluginClassName,
+                methods = methods,
+                messages = dartObjects ?: DartObjects(
+                    messages = emptyList(),
+                    enumerations = emptyList(),
+                ),
+            ).generate()
+
+            AndroidPluginGenerator(
+                path = android.file.resolve("src/main/kotlin/$pluginPath/$pluginClassName.kt"),
+                methodChannelName = methodChannelName,
+                pluginClassName = pluginClassName,
+                libraryPackage = packageName,
+                methods = methods,
+            ).generate()
+
+        }
+
     }
 
-    private fun createIosAdapter() {
-        IosAppDelegateGenerator(
-            methods,
-            ios,
-            platform.podspec().nameWithoutExtension
-        ).generate()
-    }
+    private fun processProject() {
+        android.app()?.let {
+            AndroidAdapterGenerator(methods ?: emptyList(), it).generate()
+            androidActivity?.let {
+                    activity -> AndroidActivityVisitor(activity).visit()
+            }
+        }
 
-    private fun createFlutterAdapter() {
-        DartGenerator(flutter, dartObjects).generate()
-        FlutterAdapterGenerator(flutter, methods).generate()
+        platform.podspec()?.let {
+            IosAppDelegateGenerator(
+                methods ?: emptyList(),
+                ios,
+                it.nameWithoutExtension
+            ).generate()
+        }
+
+        dartObjects?.let { DartGenerator(flutter, it).generate() }
+        methods?.let { FlutterAdapterGenerator(flutter, it, libName).generate() }
     }
 
 }

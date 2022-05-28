@@ -37,7 +37,9 @@ class UpdatePlatformPodspecTask(
 {
 
     override fun run() {
-        IosPodspecVisitor(project.platform.podspec()).visit()
+        project.platform.podspec()?.let {
+            IosPodspecVisitor(it).visit()
+        }
     }
 
 }

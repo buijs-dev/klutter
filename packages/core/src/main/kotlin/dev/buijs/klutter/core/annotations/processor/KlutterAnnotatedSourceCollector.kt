@@ -22,7 +22,6 @@
 
 package dev.buijs.klutter.core.annotations.processor
 
-import dev.buijs.klutter.core.*
 import java.io.File
 
 /**
@@ -33,7 +32,7 @@ internal class KlutterAnnotatedSourceCollector(
     private val annotationName: String,
 ){
 
-    fun collect():  List<FileContent> {
+    fun collect():  List<File> {
 
         var annotation = annotationName
         if(!annotation.startsWith("@")) {
@@ -41,17 +40,17 @@ internal class KlutterAnnotatedSourceCollector(
         }
 
         return search(source)
-            .filter { it.content.contains(annotation) }
+            .filter { it.readText().contains(annotation) }
 
     }
 
-    private fun search(directory: File): List<FileContent> {
-        val classes = mutableListOf<FileContent>()
+    private fun search(directory: File): List<File> {
+        val classes = mutableListOf<File>()
 
         if (directory.exists()) {
             directory.walkTopDown().forEach { f ->
                 if(f.isFile) {
-                    classes.add(FileContent(file = f, content = f.readText()))
+                    classes.add(f)
                 }
             }
         }

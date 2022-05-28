@@ -23,7 +23,7 @@
 package dev.buijs.klutter.core.tasks.plugin.flutter
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 import dev.buijs.klutter.core.tasks.adapter.flutter.FlutterAdapterPrinter
 import dev.buijs.klutter.core.tasks.shared.DefaultWriter
 import java.io.File
@@ -35,7 +35,7 @@ internal class FlutterLibraryGenerator(
     private val path: File,
     private val methodChannelName: String,
     private val pluginClassName: String,
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
     private val messages: DartObjects,
 ): KlutterFileGenerator() {
 

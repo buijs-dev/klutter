@@ -22,10 +22,9 @@
 
 package dev.buijs.klutter.core.annotations.processor
 
-import com.intellij.openapi.project.Project
 import dev.buijs.klutter.core.DartKotlinMap
-import dev.buijs.klutter.core.MethodCallDefinition
-import dev.buijs.klutter.core.toKotlinFiles
+import dev.buijs.klutter.core.MethodData
+import dev.buijs.klutter.core.toMethodData
 import java.io.File
 
 /**
@@ -33,23 +32,19 @@ import java.io.File
  */
 internal class KlutterAdapteeScanner(
     private val source: File,
-    private val context: Project,
 ) {
 
-    fun scan(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<MethodCallDefinition> =
-        KlutterAnnotatedSourceCollector(
-            source,
-            "@KlutterAdaptee",
-        ).collect()
-            .map { it.toKotlinFiles(context) }
-            .map { it.toMethodCallDefinition() }
+    fun scan(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<MethodData> =
+        KlutterAnnotatedSourceCollector(source, "@KlutterAdaptee")
+            .collect()
+            .map { it.toMethodData() }
             .flatten()
             .map { mcd ->
                 val returnType = DartKotlinMap.toMapOrNull(mcd.returns)?.let {
                     if(language == ReturnTypeLanguage.DART) it.dartType else it.kotlinType
                 } ?: mcd.returns
 
-                MethodCallDefinition(
+                MethodData(
                     getter = mcd.getter,
                     import = mcd.import,
                     call = mcd.call,

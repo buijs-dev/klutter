@@ -21,10 +21,9 @@
  */
 package dev.buijs.klutter.core.tasks.plugin
 
-import com.intellij.openapi.project.Project
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterFileGenerator
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 import dev.buijs.klutter.core.annotations.processor.KlutterAdapteeScanner
 import dev.buijs.klutter.core.annotations.processor.KlutterResponseProcessor
 import dev.buijs.klutter.core.annotations.processor.ReturnTypeLanguage
@@ -44,13 +43,6 @@ import java.io.File
  * @author Gillian Buijs
  */
 fun generateFlutterPluginFromKmpSource(
-
-    /**
-     * Reference to the Kotlin project which is
-     * used to scan the Kotlin Multiplatform
-     * commonMain folder for @Klutter annotations.
-     */
-    context: Project,
 
     /**
      * Path to the Kotlin Multiplatform module.
@@ -78,7 +70,7 @@ fun generateFlutterPluginFromKmpSource(
     versions: DependencyVersions,
 ): KlutterFlutterPlugin {
 
-    val pubspec = outputPath.resolve("pubspec.yaml").also { file ->
+    val pubspec = outputPath.resolve("plugin_pubspec").also { file ->
         FlutterPubspecGenerator(path = file, config = libraryConfig).generate()
     }
 
@@ -101,8 +93,8 @@ fun generateFlutterPluginFromKmpSource(
     )
 
     val source = platformPath.resolve("src/commonMain")
-    val methods = KlutterAdapteeScanner(source, context).scan(language = ReturnTypeLanguage.DART)
-    val messages = KlutterResponseProcessor(source, context).process()
+    val methods = KlutterAdapteeScanner(source).scan(language = ReturnTypeLanguage.DART)
+    val messages = KlutterResponseProcessor(source).process()
     val libPath = outputPath.resolve("lib").create()
     val library =
         libPath.resolve("${libraryConfig.libraryName}.dart").create(clear = true) { file ->
@@ -143,7 +135,7 @@ internal fun createIosFolder(
     outputPath: File,
     libraryConfig: FlutterLibraryConfig,
     versions: DependencyVersions,
-    methods: List<MethodCallDefinition>,
+    methods: List<MethodData>,
 ): IosFolder {
 
     val iosPath = outputPath.resolve("ios").create(clear = true)
@@ -199,7 +191,7 @@ internal fun createAndroidFolder(
     outputPath: File,
     libraryConfig: FlutterLibraryConfig,
     versions: DependencyVersions,
-    methods: List<MethodCallDefinition>,
+    methods: List<MethodData>,
 ): AndroidFolder {
 
     val androidPath = outputPath.resolve("android").create(clear = true)

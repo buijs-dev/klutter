@@ -2,7 +2,7 @@ package dev.buijs.klutter.core.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.IOS
 import dev.buijs.klutter.core.KlutterTestProject
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 import dev.buijs.klutter.core.Root
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
@@ -19,14 +19,14 @@ internal class IosAppDelegateGeneratorTest: WordSpec({
 
         IosAppDelegateGenerator(
             methods = listOf(
-                MethodCallDefinition(
+                MethodData(
                     getter = "hasUpdate",
                     import = "blabla",
                     call = "MonsterdexService().hasUpdate()",
                     returns = "Boolean",
                     async = false
                 ),
-                MethodCallDefinition(
+                MethodData(
                     getter = "getMonsters",
                     import = "blabla",
                     call = "MonsterdexService().getMonsters()",

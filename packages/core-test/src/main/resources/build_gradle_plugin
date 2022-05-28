@@ -1,0 +1,9 @@
+plugins {
+  id("dev.buijs.klutter.gradle")
+}
+
+klutter {
+    plugin {
+        name = "some_plugin"
+    }
+}

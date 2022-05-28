@@ -12,7 +12,7 @@ class PubspecVisitorTest: WordSpec({
     "Using the IosInfoPlistVisitor" should {
 
         val projectDir = Files.createTempDirectory("")
-        val pubspec = projectDir.resolve("pubspec.yaml").toFile()
+        val pubspec = projectDir.resolve("plugin_pubspec").toFile()
 
         pubspec.createNewFile()
 

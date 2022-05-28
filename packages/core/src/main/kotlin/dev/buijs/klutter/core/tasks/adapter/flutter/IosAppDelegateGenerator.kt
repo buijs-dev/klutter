@@ -32,7 +32,7 @@ import java.io.File
  * @author Gillian Buijs
  */
 internal class IosAppDelegateGenerator(
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
     private val ios: IOS,
     private val podName: String
 ) : KlutterFileGenerator() {
@@ -49,7 +49,7 @@ internal class IosAppDelegateGenerator(
  * @author Gillian Buijs
  */
 internal class IosAppDelegatePrinter(
-    private val definitions: List<MethodCallDefinition>,
+    private val definitions: List<MethodData>,
     private val podName: String,
 ): KlutterPrinter {
 
@@ -106,11 +106,15 @@ internal class IosAppDelegatePrinter(
 /**
  * @author Gillian Buijs
  */
-internal class IosAppDelegateWriter(val file: File, val content: String): KlutterWriter {
+internal class IosAppDelegateWriter(val file: File?, val content: String): KlutterWriter {
 
     private val log = Logging.getLogger(IosAppDelegateWriter::class.java)
 
     override fun write() {
+
+        if(file == null) {
+            throw KlutterCodeGenerationException("Unable to create file: $file.")
+        }
 
         if(file.exists()){
             file.delete()

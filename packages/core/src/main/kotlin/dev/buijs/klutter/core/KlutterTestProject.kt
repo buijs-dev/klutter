@@ -85,7 +85,7 @@ internal data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.createNewFile() },
-    val flutterPubspec: File = projectDir.resolve("pubspec.yaml")
+    val flutterPubspec: File = projectDir.resolve("plugin_pubspec")
         .toAbsolutePath()
         .toFile()
         .also { it.createNewFile() },

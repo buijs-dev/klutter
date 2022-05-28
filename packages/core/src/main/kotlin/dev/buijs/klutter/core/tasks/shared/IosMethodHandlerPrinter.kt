@@ -22,12 +22,12 @@
 package dev.buijs.klutter.core.tasks.shared
 
 import dev.buijs.klutter.core.DartKotlinMap
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 
 /**
  * @author Gillian Buijs
  */
-internal fun printMethod(definition: MethodCallDefinition): String {
+internal fun printMethod(definition: MethodData): String {
 
     val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
         ".toKJson()"

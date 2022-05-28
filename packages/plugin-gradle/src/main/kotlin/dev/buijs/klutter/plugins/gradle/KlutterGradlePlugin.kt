@@ -4,14 +4,15 @@ import dev.buijs.klutter.plugins.gradle.dsl.*
 import dev.buijs.klutter.plugins.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.Internal
 import java.io.File
+import java.nio.file.Path
 
 
 /**
  * @author Gillian Buijs
  */
 private const val EXTENSION_NAME = "klutter"
-private const val KLUTTER_VERSION = "2022-alpha-1"
 
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
@@ -32,13 +33,18 @@ open class KlutterGradleExtension {
 
     var root: File? = null
 
-    private var appInfo: KlutterAppInfoDTO? = null
+    @Internal
+    internal var appInfo: KlutterAppInfoDTO? = null
+
+    @Internal
+    internal var plugin: KlutterPluginDTO? = null
 
     fun app(lambda: KlutterAppInfoBuilder.() -> Unit) {
         appInfo = KlutterAppInfoBuilder().apply(lambda).build()
     }
 
-    internal fun getAppInfo() = appInfo
+    fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
+        plugin = KlutterPluginBuilder().apply(lambda).build()
+    }
 
-    internal fun getKlutterVersion() = KLUTTER_VERSION
 }

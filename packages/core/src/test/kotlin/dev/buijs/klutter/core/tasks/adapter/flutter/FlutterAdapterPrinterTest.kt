@@ -1,5 +1,5 @@
 package dev.buijs.klutter.core.tasks.adapter.flutter
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
@@ -12,17 +12,17 @@ class FlutterAdapterPrinterTest : WordSpec({
         "Create the body GeneratedAdapter body with a branch for each KlutterAdaptee annotation" {
 
             val definitions = listOf(
-                MethodCallDefinition(
+                MethodData(
                     call = "FooBar().zeta()",
                     getter = "doFooBar",
                     import = "io.foo.bar.FooBar",
                     returns = "String"),
-                MethodCallDefinition(
+                MethodData(
                     call = "FooBar().beta()",
                     getter = "notDoFooBar",
                     import = "io.foo.bar.FooBar",
                     returns = "int"),
-                MethodCallDefinition(
+                MethodData(
                     call = "ComplexFoo().bar()",
                     getter = "complexityGetter",
                     import = "io.foo.bar.ComplexFoor",

@@ -22,7 +22,10 @@
 
 package dev.buijs.klutter.core
 
+import org.gradle.api.logging.Logging
 import java.io.File
+
+private val log = Logging.getLogger(KlutterProject::class.java)
 
 /**
  * A representation of the structure of a project made with the Klutter Framework.
@@ -105,41 +108,43 @@ object KlutterProjectFactory {
  *
  * @author Gillian Buijs
  */
-class Root(file: File) {
+class Root(file: File, validate: Boolean = true) {
 
-    constructor(location: String) : this(File(location))
+    constructor(
+        location: String,
+        validate: Boolean = true,
+    ) : this(File(location), validate)
 
     @Suppress("private")
-    val folder: File = if (file.exists()) {
+    val folder: File = if (!file.exists() && validate) {
+        throw KlutterConfigException("""
+          The root folder does not exist: ${file.absolutePath}.
+                
+          If no location is provided, Klutter determines the root folder by getting the rootProject.projectDir
+          from the build.gradle.kts where the Klutter Plugin is applied. For a standard Klutter project 
+          this means the root folder has a settings.gradle.kts which includes the :klutter module. 
+          The klutter module build.gradle.kts applies the Klutter Plugin which will return the correct root folder.
+          
+          This behaviour can be overwritten by configuring the root folder directly in the Klutter Plugin.
+          If this is done, check the configuration in Klutter Plugin to see if the root folder is correct.
+          
+          IMPORTANT: Setting the root is done with a path relative to your current directory, e.g. relative to 
+          where the build.gradle.kts containing the Klutter Plugin is placed.
+          
+          Example for setting the root manually: 
+          
+          klutter {
+                root("/../../my-root")
+          }
+          
+          If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
+          """.trimIndent())
+    } else {
         file.absoluteFile
-    } else throw KlutterConfigException(
-        """
-      The root folder does not exist.
-            
-      If no location is provided, Klutter determines the root folder by getting the rootProject.projectDir
-      from the build.gradle.kts where the Klutter Plugin is applied. For a standard Klutter project 
-      this means the root folder has a settings.gradle.kts which includes the :klutter module. 
-      The klutter module build.gradle.kts applies the Klutter Plugin which will return the correct root folder.
-      
-      This behaviour can be overwritten by configuring the root folder directly in the Klutter Plugin.
-      If this is done, check the configuration in Klutter Plugin to see if the root folder is correct.
-      
-      IMPORTANT: Setting the root is done with a path relative to your current directory, e.g. relative to 
-      where the build.gradle.kts containing the Klutter Plugin is placed.
-      
-      Example for setting the root manually: 
-      
-      klutter {
-            root("/../../my-root")
-      }
-      
-      If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
-      """.trimIndent()
-    )
+    }
 
     fun resolve(to: String): File = folder.resolve(to).normalize().absoluteFile
 }
-
 
 /**
  * Wrapper class with a file instance pointing to the buildSrc sub-module.
@@ -261,14 +266,14 @@ class IOS(file: File? = null, root: Root) :
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the ios AppDelegate.
      */
-    fun appDelegate(): File {
+    fun appDelegate(): File? {
         val runner = getFileSafely(
             file.resolve("Runner"),
             file.absolutePath,
             "root-project/ios/Runner")
         return getFileSafely(
-            runner.resolve("AppDelegate.swift"),
-            runner.absolutePath,
+            runner?.resolve("AppDelegate.swift"),
+            runner?.absolutePath,
             "root-project/ios/Runner/AppDelegate.swift"
         )
     }
@@ -301,15 +306,15 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
      * @throws KlutterConfigException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
-    fun manifest(): File {
+    fun manifest(): File? {
         val mainFolder = getFileSafely(
-            app().resolve("src/main"),
+            app()?.resolve("src/main"),
             file.absolutePath,
             "root-project/android/app/src/main"
         )
         return getFileSafely(
-            mainFolder.resolve("AndroidManifest.xml"),
-            mainFolder.absolutePath,
+            mainFolder?.resolve("AndroidManifest.xml"),
+            mainFolder?.absolutePath,
             "root-project/android/app/src/main/AndroidManifest.xml"
         )
     }
@@ -366,9 +371,9 @@ abstract class KlutterFolder(
  *
  * @author Gillian Buijs
  */
-internal fun getFileSafely(file: File?, whichFolder: String, defaultLocation: String): File {
+internal fun getFileSafely(file: File?, whichFolder: String?, defaultLocation: String): File? {
     if (file == null) {
-        throw KlutterConfigException(
+        log.error(
             """
             A file which should be present is null.
             
@@ -379,10 +384,11 @@ internal fun getFileSafely(file: File?, whichFolder: String, defaultLocation: St
             If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
             """.trimIndent()
         )
-    }
 
-    if (!file.exists()) {
-        throw KlutterConfigException(
+        return null
+
+    } else if (!file.exists()) {
+        log.error(
             """
             A file which should be present does not exist:
             
@@ -395,7 +401,10 @@ internal fun getFileSafely(file: File?, whichFolder: String, defaultLocation: St
             If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
             """.trimIndent()
         )
-    }
 
-    return file.absoluteFile
+        return null
+
+    } else {
+        return file.absoluteFile
+    }
 }

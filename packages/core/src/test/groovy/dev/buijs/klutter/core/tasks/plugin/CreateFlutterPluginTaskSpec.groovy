@@ -83,27 +83,8 @@ class CreateFlutterPluginTaskSpec extends Specification {
         def license = new File("${flutter.absolutePath}/LICENSE")
         license.createNewFile()
 
-        and: "mocked scanning behaviour"
-        def psiElementMock = GroovyMock(PsiElement) {
-
-        }
-
-        def ktFileMock = GroovyMock(KtFile) {
-            it.text >> platformSourceCode
-            it.children >> [psiElementMock]
-        }
-
-        def psiManagerMock = GroovyMock(PsiManager) {
-            findFile(_ as VirtualFile) >> ktFileMock
-        }
-
-        def contextMock = GroovyMock(Project) {
-            getService(PsiManager.class) >> psiManagerMock
-        }
-
         and: "a task instance to test"
         def sut = new CreateFlutterPluginTask(
-                contextMock,
                 "example",
                 "blablalbalbalalablalbalbalbala",
                 "1.0.0",

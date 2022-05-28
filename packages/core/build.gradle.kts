@@ -20,10 +20,25 @@ sourceSets {
 
 dependencies {
 
+    val properties = HashMap<String, String>().also { map ->
+        File("${rootDir.absolutePath}/publish/_publish.properties"
+        ).normalize().also { file ->
+            if (file.exists()) {
+                file.forEachLine {
+                    val pair = it.split("=")
+                    if (pair.size == 2) {
+                        map[pair[0]] = pair[1]
+                    }
+                }
+            }
+        }
+    }
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.21")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
 
     //JUnit
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
@@ -42,6 +57,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.2.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
+    testImplementation(project(":packages:core-test"))
 }
 
 java {

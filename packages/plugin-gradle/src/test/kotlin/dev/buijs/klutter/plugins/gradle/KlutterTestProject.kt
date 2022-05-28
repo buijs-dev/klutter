@@ -3,8 +3,6 @@ package dev.buijs.klutter.plugins.gradle
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createDirectory
 
 data class KlutterTestProject(
     val projectDir: Path = Files.createTempDirectory(""),
@@ -52,7 +50,7 @@ data class KlutterTestProject(
         .toAbsolutePath()
         .toFile()
         .also { it.createNewFile() },
-    val flutterPubspec: File = projectDir.resolve("pubspec.yaml")
+    val flutterPubspec: File = projectDir.resolve("plugin_pubspec")
         .toAbsolutePath()
         .toFile()
         .also { it.createNewFile() },

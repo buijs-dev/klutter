@@ -1,10 +1,8 @@
 package dev.buijs.klutter.core.tasks.adapter.flutter
 
-import dev.buijs.klutter.core.KtFileContent
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
-import org.mockito.kotlin.mock
 import java.nio.file.Files
 
 /**
@@ -40,14 +38,7 @@ class AndroidActivityVisitorTest : WordSpec({
             """.trimIndent()
             )
 
-
-            val content = KtFileContent(
-                file = mainActivity,
-                ktFile = mock(),
-                content = mainActivity.readText()
-            )
-
-            AndroidActivityVisitor(content).visit()
+            AndroidActivityVisitor(mainActivity).visit()
 
             mainActivity shouldNotBe null
             mainActivity.readText().filter { !it.isWhitespace() } shouldBe """
@@ -102,13 +93,7 @@ class AndroidActivityVisitorTest : WordSpec({
             """.trimIndent()
             )
 
-            val content = KtFileContent(
-                file = mainActivity,
-                ktFile = mock(),
-                content = mainActivity.readText()
-            )
-
-            AndroidActivityVisitor(content).visit()
+            AndroidActivityVisitor(mainActivity).visit()
 
             mainActivity shouldNotBe null
             mainActivity.readText().filter { !it.isWhitespace() } shouldBe """
@@ -153,13 +138,7 @@ class AndroidActivityVisitorTest : WordSpec({
             }
         """.trimIndent())
 
-            val content = KtFileContent(
-                file = mainActivity,
-                ktFile = mock(),
-                content = mainActivity.readText()
-            )
-
-            AndroidActivityVisitor(content).visit()
+            AndroidActivityVisitor(mainActivity).visit()
 
             mainActivity shouldNotBe null
             mainActivity.readText().filter { !it.isWhitespace() } shouldBe """

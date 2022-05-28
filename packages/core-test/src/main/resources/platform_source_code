@@ -1,0 +1,31 @@
+package foo.bar.baz
+
+import dev.buijs.klutter.annotations.Annotations
+
+class FakeClass {
+    @KlutterAdaptee(name = "DartMaul")
+    fun foo(): String {
+        return "Maul"
+    }
+
+    @KlutterAdaptee(name = "BabyYoda")
+    fun fooBar(): List<String> {
+        return listOf("baz")
+    }
+
+    @KlutterAdaptee(name = "ObiWan")
+    fun zeta(): List<String> =
+        listOf(foo()).map { str ->
+            "str = str                "
+        }.filter { baz ->
+            baz != ""
+        }
+
+}
+
+@Serializable
+@KlutterResponse
+enum class {
+    @SerialName("boom") BOOM,
+    @SerialName("boom boom") BOOM_BOOM,
+}

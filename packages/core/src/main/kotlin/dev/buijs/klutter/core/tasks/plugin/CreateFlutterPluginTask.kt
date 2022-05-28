@@ -39,7 +39,6 @@ private const val androidKotlinxVersion = "1.3.2"
  * @author Gillian Buijs
  */
 class CreateFlutterPluginTask(
-    private val context: Project,
     private val libraryName: String,
     private val libraryDescription: String,
     private val libraryVersion: String,
@@ -101,7 +100,6 @@ class CreateFlutterPluginTask(
         copyFrom.resolve(buildGradle).copyTo(folder.resolve(buildGradle))
 
         KlutterFlutterPlugin.generate(
-            context = context,
             platformPath = folder.resolve("platform"),
             outputPath = folder,
             libraryDocs = FlutterLibraryDocumentation(

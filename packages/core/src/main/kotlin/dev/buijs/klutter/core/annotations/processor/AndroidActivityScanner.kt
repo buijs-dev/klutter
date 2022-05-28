@@ -22,46 +22,26 @@
 
 package dev.buijs.klutter.core.annotations.processor
 
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightVirtualFile
 import dev.buijs.klutter.core.*
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.psi.KtFile
-import com.intellij.openapi.project.Project
 
 internal class AndroidActivityScanner(
-    private val context: Project,
     private val android: Android,
 ) {
 
-    internal fun scan(): KtFileContent {
-        val activityFile = KlutterAnnotatedSourceCollector(android.app(), "@KlutterAdapter").collect()
+    internal fun scan() = android.app()?.let { app ->
+            val activityFile = KlutterAnnotatedSourceCollector(app, "@KlutterAdapter").collect()
 
-        if(activityFile.isEmpty()){
-            throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder ${android.app()}.")
-        }
+            if(activityFile.isEmpty()){
+                throw KlutterCodeGenerationException("MainActivity not found or  the @KlutterAdapter is missing in folder ${android.app()}.")
+            }
 
-        if(activityFile.size > 1) {
-            throw KlutterCodeGenerationException(
-                "Expected to find one @KlutterAdapter annotation in the MainActivity file but found ${activityFile.size} files."
-            )
-        }
+            if(activityFile.size > 1) {
+                throw KlutterCodeGenerationException(
+                    "Expected to find one @KlutterAdapter annotation in the MainActivity file but found ${activityFile.size} files."
+                )
+            }
 
-        return convertToKotlinFiles(activityFile[0])
-    }
-
-    private fun convertToKotlinFiles(source: FileContent): KtFileContent {
-        val psi = PsiManager.getInstance(context)
-
-        if(!source.file.exists()){
-            throw KlutterCodeGenerationException("Source file does not exist: ${source.file.absolutePath}")
-        }
-
-        val ktFile = psi.findFile(
-            LightVirtualFile(source.file.name, KotlinFileType.INSTANCE, source.content)
-        ) as KtFile
-
-        return KtFileContent(file = source.file, ktFile = ktFile, content = ktFile.text)
+        activityFile[0]
     }
 
 }

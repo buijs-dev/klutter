@@ -21,7 +21,6 @@
  */
 package dev.buijs.klutter.core.tasks.plugin
 
-import com.intellij.openapi.project.Project
 import java.io.File
 
 /**
@@ -67,12 +66,6 @@ data class KlutterFlutterPlugin(
 ) {
     companion object {
         fun generate(
-            /**
-             * Reference to the Kotlin project which is
-             * used to scan the Kotlin Multiplatform
-             * commonMain folder for @Klutter annotations.
-             */
-            context: Project,
 
             /**
              * Path to the Kotlin Multiplatform module.
@@ -99,7 +92,6 @@ data class KlutterFlutterPlugin(
              */
             versions: DependencyVersions,
         ) = generateFlutterPluginFromKmpSource(
-            context = context,
             platformPath = platformPath,
             outputPath = outputPath,
             libraryDocs = libraryDocs,

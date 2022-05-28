@@ -34,12 +34,17 @@ import java.io.File
 internal class AndroidPluginGenerator(
     private val path: File,
     private val methodChannelName: String,
-    private val libraryConfig: FlutterLibraryConfig,
-    private val methods: List<MethodCallDefinition>,
+    private val libraryConfig: FlutterLibraryConfig? = null,
+    private val pluginClassName: String? = null,
+    private val libraryPackage: String? = null,
+    private val methods: List<MethodData>,
 ): KlutterFileGenerator() {
 
     override fun printer() = AndroidPluginPrinter(
-        libraryConfig = libraryConfig,
+        pluginClassName = libraryConfig?.pluginClassName ?: pluginClassName ?: "",
+        libraryPackage = libraryConfig
+            ?.let { "${libraryConfig.developerOrganisation}.${libraryConfig.libraryName}" }
+            ?:libraryPackage ?: "",
         methodChannelName = methodChannelName,
         methods = methods,
     )
@@ -49,15 +54,16 @@ internal class AndroidPluginGenerator(
 }
 
 internal class AndroidPluginPrinter(
-    private val libraryConfig: FlutterLibraryConfig,
+    private val libraryPackage: String,
+    private val pluginClassName: String,
     private val methodChannelName: String,
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
 ): KlutterPrinter {
 
     override fun print(): String {
 
         val block = if (methods.isEmpty()) {
-            "return result.notImplemented()"
+            "             return result.notImplemented()"
         } else {
             val defs = methods.joinToString("\n") { printFun(it) }
             "$defs \n                else -> result.notImplemented()"
@@ -69,7 +75,7 @@ internal class AndroidPluginPrinter(
             .joinToString("\n") { "import $it" }
 
         return """
-            |package ${libraryConfig.developerOrganisation}.${libraryConfig.libraryName}
+            |package $libraryPackage
             |
             |$imports
             |import androidx.annotation.NonNull
@@ -83,8 +89,8 @@ internal class AndroidPluginPrinter(
             |import kotlinx.coroutines.Dispatchers
             |import kotlinx.coroutines.launch
             |
-            |/** ${libraryConfig.pluginClassName} */
-            |class ${libraryConfig.pluginClassName}: FlutterPlugin, MethodCallHandler {
+            |/** $pluginClassName */
+            |class ${pluginClassName}: FlutterPlugin, MethodCallHandler {
             |  /// The MethodChannel that will the communication between Flutter and native Android
             |  ///
             |  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -113,7 +119,7 @@ internal class AndroidPluginPrinter(
             |""".trimMargin()
     }
 
-    private fun printFun(definition: MethodCallDefinition): String {
+    private fun printFun(definition: MethodData): String {
         val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
             ".toKJson()"
         } else ""

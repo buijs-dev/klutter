@@ -1,0 +1,33 @@
+package dev.buijs.klutter.adapter
+
+import foo.bar.baz.FakeClass
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodCall
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+/**
+ * Generated code by the Klutter Framework
+ */
+class GeneratedKlutterAdapter {
+
+    private val mainScope = CoroutineScope(Dispatchers.Main)
+
+    fun handleMethodCalls(call: MethodCall, result: MethodChannel.Result) {
+        mainScope.launch {
+           when (call.method) {
+                "DartMaul" -> {
+                    result.success(FakeClass().foo())
+                }
+                "BabyYoda" -> {
+                    result.success(FakeClass().fooBar().toKJson())
+                }
+                "ObiWan" -> {
+                    result.success(FakeClass().zeta().toKJson())
+                }
+                else -> result.notImplemented()
+           }
+        }
+    }
+}

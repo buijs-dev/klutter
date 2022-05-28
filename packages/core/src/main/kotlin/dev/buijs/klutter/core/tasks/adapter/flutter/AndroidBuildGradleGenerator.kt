@@ -38,9 +38,9 @@ internal class AndroidBuildGradleGenerator(
 
     override fun printer() = AndroidBuildGradlePrinter()
 
-    override fun writer() = AndroidBuildGradleWriter(app().resolve("build.gradle"), printer().print())
+    override fun writer() = AndroidBuildGradleWriter(app()?.resolve("build.gradle"), printer().print())
 
-    private fun app() = android.app().absoluteFile
+    private fun app() = android.app()?.absoluteFile
 
 }
 
@@ -149,13 +149,18 @@ internal class AndroidBuildGradlePrinter: KlutterPrinter {
 }
 
 internal class AndroidBuildGradleWriter(
-    val file: File,
+    val file: File?,
     val content: String,
 ): KlutterWriter {
 
     private val log = Logging.getLogger(AndroidBuildGradleWriter::class.java)
 
     override fun write() {
+
+        if(file == null) {
+            log.error("Path to Build.gradle file in android folder is null. Failed to generate build.gradle.")
+            return
+        }
 
         if(file.exists()) {
             file.delete().also {

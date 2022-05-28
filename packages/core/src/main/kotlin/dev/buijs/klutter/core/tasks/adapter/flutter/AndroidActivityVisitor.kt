@@ -24,7 +24,6 @@ package dev.buijs.klutter.core.tasks.adapter.flutter
 
 import dev.buijs.klutter.core.KlutterCodeGenerationException
 import dev.buijs.klutter.core.KlutterVisitor
-import dev.buijs.klutter.core.KtFileContent
 import java.io.File
 
 private const val generatedAdapterImportLine = "import dev.buijs.klutter.adapter.GeneratedKlutterAdapter"
@@ -49,22 +48,22 @@ private const val methodChannelFunLine7 = """    }"""
  * @author Gillian Buijs
  */
 internal class AndroidActivityVisitor(
-    private val metaFile: KtFileContent
+    private val file: File
 ): KlutterVisitor {
 
     override fun visit() {
 
-        val state = ProcessingState(filteredSourceLines(metaFile))
+        val state = ProcessingState(filteredSourceLines())
             .process()
             .validate()
             .write()
 
-        write(file = metaFile.file, classBody = state.output.joinToString("\r\n"))
+        write(file = file, classBody = state.output.joinToString("\r\n"))
     }
 
-    private fun filteredSourceLines(metaFile: KtFileContent): List<String> {
+    private fun filteredSourceLines(): List<String> {
 
-        val source = metaFile.content.reader().readLines()
+        val source = file.readText().reader().readLines()
         var indexOfMethodChannelHandler = -1
         source.forEachIndexed { index, it ->
             if (it.filter { !it.isWhitespace() } == methodChannelFunLine2.filter { !it.isWhitespace() }) {

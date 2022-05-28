@@ -26,7 +26,7 @@ package dev.buijs.klutter.core.tasks.adapter.flutter
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.KlutterWriter
-import dev.buijs.klutter.core.MethodCallDefinition
+import dev.buijs.klutter.core.MethodData
 import dev.buijs.klutter.core.tasks.adapter.dart.EnumerationPrinter
 import dev.buijs.klutter.core.tasks.adapter.dart.MessagePrinter
 import dev.buijs.klutter.core.tasks.adapter.dart.getCastMethod
@@ -38,12 +38,13 @@ import java.io.File
  */
 internal class FlutterAdapterGenerator(
     private val flutter: Flutter,
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
+    private val libName: String,
     ): KlutterFileGenerator() {
 
     override fun printer() = FlutterAdapterPrinter(definitions = methods)
 
-    override fun writer() = FlutterAdapterWriter(flutter, printer().print())
+    override fun writer() = FlutterAdapterWriter(flutter, printer().print(), libName)
 
 }
 
@@ -53,7 +54,7 @@ internal class FlutterAdapterGenerator(
 internal class FlutterAdapterPrinter(
     private val methodChannelName: String = "KLUTTER",
     private val pluginClassName: String = "Adapter",
-    private val definitions: List<MethodCallDefinition>,
+    private val definitions: List<MethodData>,
     private val objects: DartObjects? = null,
     ): KlutterPrinter {
 
@@ -125,7 +126,7 @@ internal class FlutterAdapterPrinter(
             """.trimMargin()
     }
 
-    private fun printFun(definition: MethodCallDefinition) =
+    private fun printFun(definition: MethodData) =
         if(DartKotlinMap.toMapOrNull(definition.returns) == null) {
             """|  static Future<AdapterResponse<${definition.returns}>> get ${definition.getter} async {
            |    try {
@@ -152,7 +153,7 @@ internal class FlutterAdapterPrinter(
         }
 
 
-    private fun serializer(definition: MethodCallDefinition): String {
+    private fun serializer(definition: MethodData): String {
 
         val listRegex = """List<([^>]+?)>""".toRegex()
 
@@ -188,7 +189,9 @@ internal class FlutterAdapterPrinter(
  */
 internal class FlutterAdapterWriter(
     private val path: Flutter,
-    private val classBody: String)
+    private val classBody: String,
+    private val libName: String,
+)
     : KlutterWriter {
 
     private val log = Logging.getLogger(FlutterAdapterWriter::class.java)
@@ -214,7 +217,7 @@ internal class FlutterAdapterWriter(
             } else log.info("Created new file: $classFile")
         }
 
-        val dartFile = findMainDartFile(libFolder)
+        val dartFile = findMainDartFile(libFolder, libName)
 
         if(!dartFile.exists()){
             throw KlutterCodeGenerationException("File does not exist: $dartFile")
@@ -243,18 +246,18 @@ internal class FlutterAdapterWriter(
 
     }
 
-    private fun findMainDartFile(directory: File): File {
-        log.debug("Scanning for main.dart in directory '$directory'")
+    private fun findMainDartFile(directory: File, libName: String): File {
+        log.debug("Scanning for $libName.dart in directory '$directory'")
         if (directory.exists()) {
             directory.walkTopDown().forEach { f ->
                 log.debug("Found file '$f' with name ${f.name} and extenions ${f.extension}")
-                if(f.isFile && f.name == "main.dart"){
-                    log.debug("Found main.dart file in directory '$f''")
+                if(f.isFile && f.name == "$libName.dart"){
+                    log.debug("Found $libName.dart file in directory '$f''")
                     return f
                 }
             }
-            throw KlutterCodeGenerationException("Could not find main.dart in directory: '$directory'")
+            throw KlutterCodeGenerationException("Could not find $libName.dart in directory: '$directory'")
         }
-        throw KlutterCodeGenerationException("Could not find main.dart because directory does not exist: '$directory'")
+        throw KlutterCodeGenerationException("Could not find $libName.dart because directory does not exist: '$directory'")
     }
 }

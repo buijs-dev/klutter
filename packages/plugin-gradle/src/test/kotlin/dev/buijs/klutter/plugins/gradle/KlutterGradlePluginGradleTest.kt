@@ -12,7 +12,7 @@ import kotlin.io.path.*
  */
 class KlutterGradlePluginGradleTest : WordSpec({
 
-    "A configured Kotlin DSL builscript" should {
+    "A configured Kotlin DSL buildscript" should {
         "Lead to a successful build" {
             val project = KlutterTestProject()
             val klutterDir = project.projectDir.resolve(".klutter").also { it.createDirectory()}

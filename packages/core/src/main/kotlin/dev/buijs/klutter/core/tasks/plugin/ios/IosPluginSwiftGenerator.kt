@@ -34,7 +34,7 @@ internal class IosPluginSwiftGenerator(
     private val path: File,
     private val methodChannelName: String,
     private val pluginClassName: String,
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
 ): KlutterFileGenerator() {
 
     override fun printer() = IosPluginSwiftPrinter(
@@ -50,7 +50,7 @@ internal class IosPluginSwiftGenerator(
 internal class IosPluginSwiftPrinter(
     private val pluginClassName: String,
     private val methodChannelName: String,
-    private val methods: List<MethodCallDefinition>,
+    private val methods: List<MethodData>,
 ): KlutterPrinter {
 
     override fun print() = """

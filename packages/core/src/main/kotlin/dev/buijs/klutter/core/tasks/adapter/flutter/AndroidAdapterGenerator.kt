@@ -10,7 +10,7 @@ import java.nio.file.Path
  * @author Gillian Buijs
  */
 internal class AndroidAdapterGenerator(
-    private val definitions: List<MethodCallDefinition>,
+    private val definitions: List<MethodData>,
     private val path: File
 ): KlutterFileGenerator() {
 
@@ -21,14 +21,14 @@ internal class AndroidAdapterGenerator(
 }
 
 internal class AndroidAdapterPrinter(
-    private val definitions: List<MethodCallDefinition>
+    private val definitions: List<MethodData>
     ): KlutterPrinter
 {
 
     override fun print(): String {
 
         val block = if (definitions.isEmpty()) {
-            "return result.notImplemented()"
+            "             return result.notImplemented()"
         } else {
             val defs = definitions.joinToString("\r\n") { printFun(it) }
             "$defs \r\n                else -> result.notImplemented()"
@@ -67,7 +67,7 @@ internal class AndroidAdapterPrinter(
             """.trimMargin()
     }
 
-    private fun printFun(definition: MethodCallDefinition): String {
+    private fun printFun(definition: MethodData): String {
         val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
             ".toKJson()"
         } else ""

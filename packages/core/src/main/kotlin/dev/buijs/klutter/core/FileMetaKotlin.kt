@@ -22,21 +22,13 @@
 
 package dev.buijs.klutter.core
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 
 /**
  * @author Gillian Buijs
  */
-internal data class MethodCallDefinition(
+internal data class MethodData(
     val getter: String,
     val import: String,
     val call: String,
@@ -44,87 +36,18 @@ internal data class MethodCallDefinition(
     val returns: String,
 )
 
-/**
- * @author Gillian Buijs
- */
-internal data class MethodData(
-    val getter: String,
-    val methodCall: String,
-)
+internal fun File.toMethodData(): List<MethodData> {
 
-/**
- * @author Gillian Buijs
- */
-internal data class FileContent(
-    val file: File,
-    val content: String,
-)
-
-/**
- * @author Gillian Buijs
- */
-internal data class KtFileContent(
-    val file: File,
-    val ktFile: KtFile,
-    val content: String,
-) {
-
-    internal fun toMethodCallDefinition() =
-        ktFile.children.filterIsInstance<KtClass>().flatMap { c ->
-            c.allChildren.mapNotNull {
-                if (it.hasAdapteeAnnotation()) {
-                    c.toMethodCallDefinitions(it.text).also { scanned ->
-                        scanned.ifEmpty { throw exception }
-                    }
-                } else null
-            }
-        }.flatten()
-
-    private val exception = KlutterCodeGenerationException(
-        """
-        Scanning KtFile failed. Please check if the @KlutterAdaptee annotation is used correctly.
-        It should be placed on a function and have a name. 
-        
-        Example:
-        
-        @KlutterAdaptee(name = "fooBar")
-        fun someFoo(): NotBar {
-            return "foo!"
-        }
-        
-        """.trimIndent()
-    )
-
-    private fun PsiElement.hasAdapteeAnnotation() =
-        this is KtClassBody && text.contains("@KlutterAdaptee")
-}
-
-internal fun FileContent.toKotlinFiles(context: Project): KtFileContent {
-    val psi = PsiManager.getInstance(context)
-
-    if(!file.exists()){
-        throw KlutterCodeGenerationException("Source file does not exist: ${file.absolutePath}")
-    }
-
-    val ktFile = psi.findFile(
-        LightVirtualFile(file.name, KotlinFileType.INSTANCE, content)
-    ) as KtFile
-
-    return KtFileContent(file = file, ktFile = ktFile, content = ktFile.text)
-}
-
-
-private fun KtClass.toMethodCallDefinitions(ktFileBody: String): List<MethodCallDefinition> {
-
-    val fqdn = this.fqName?.asString()
-    val className = this.name?:""
+    val content = readText()
+    val className = name.removeSuffixIfPresent(".kt")
     val packagename = """package(.*)""".toRegex()
-        .find(ktFileBody)
-        ?.value
+        .find(content)
+        ?.groupValues
+        ?.get(1)
         ?.filter { !it.isWhitespace() }
         ?:""
 
-    val trimmedBody = ktFileBody.filter { !it.isWhitespace() }
+    val trimmedBody = content.filter { !it.isWhitespace() }
 
     return """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{""".toRegex()
         .findAll(trimmedBody).map { match ->
@@ -143,8 +66,8 @@ private fun KtClass.toMethodCallDefinitions(ktFileBody: String): List<MethodCall
                     The method signature should be as follows: fun foo(): Bar { //your implementation }
                    """.trim())
 
-            MethodCallDefinition(
-                import = fqdn?:packagename,
+            MethodData(
+                import = "$packagename.$className",
                 getter = getter,
                 call = "$className().$caller",
                 async = match.groups[3]?.value?.trim()?.isNotBlank()?:false,

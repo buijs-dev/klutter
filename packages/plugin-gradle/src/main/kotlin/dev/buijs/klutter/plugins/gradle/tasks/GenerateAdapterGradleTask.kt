@@ -24,6 +24,7 @@ package dev.buijs.klutter.plugins.gradle.tasks
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.tasks.adapter.GenerateAdapterTask
+import java.io.File
 
 /**
  * @author Gillian Buijs
@@ -50,21 +51,21 @@ open class GenerateAdapterGradleTask: KlutterGradleTask() {
                 """.trimMargin())
 
             Root(
-                location = ext.root?.absolutePath ?: project.rootDir.absolutePath,
+                location = ext.root?.absolutePath ?: project.rootDir.path,
                 validate = false,
             ).let { root ->
+
                 GenerateAdapterTask(
+                    isPlugin = true,
+                    libName = pluginName,
                     android = Android(root = root),
                     ios = IOS(root = root),
                     flutter = Flutter(root = root),
                     platform = Platform(
                         root = root,
-                        file = root
-                            .resolve("klutter/$pluginName")
-                            .normalize()
-                            .absoluteFile,
+                        file = File("${root.folder.absolutePath}/klutter/$pluginName"),
                     ),
-                )
+                ).run()
             }
         } else {
             project().let { project ->

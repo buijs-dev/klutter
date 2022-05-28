@@ -22,9 +22,9 @@ class GenerateAdapterTaskSpec extends Specification {
         PluginProject sut = plugin { project, resources ->
             resources.copyAll([
                     "platform_source_code"    : project.platformSourceClass,
-                    "android_app_manifest": project.androidManifest,
+                    "android_app_manifest"    : project.androidManifest,
                     "build_gradle_plugin"     : project.buildGradle,
-                    "plugin_pubspec"     : project.pubspecYaml,
+                    "plugin_pubspec"          : project.pubspecYaml,
             ])
         }
 

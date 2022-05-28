@@ -65,8 +65,8 @@ data class PluginProject (
         GradleRunner.create()
             .withProjectDir(root)
             .withPluginClasspath()
-            .withArguments(args.toMutableList()
-                .also { list -> list.add("--stacktrace") })
+            .withArguments(args.toMutableList().also { list -> list.add("--stacktrace") })
+            .build()
     }
 
     private fun hasChild(

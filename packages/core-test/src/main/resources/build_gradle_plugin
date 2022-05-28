@@ -4,6 +4,6 @@ plugins {
 
 klutter {
     plugin {
-        name = "some_plugin"
+        name = "super_awesome"
     }
 }

@@ -36,6 +36,7 @@ import dev.buijs.klutter.core.tasks.adapter.flutter.IosAppDelegateGenerator
 import dev.buijs.klutter.core.tasks.plugin.android.AndroidPluginGenerator
 import dev.buijs.klutter.core.tasks.plugin.flutter.FlutterLibraryGenerator
 import dev.buijs.klutter.core.tasks.plugin.flutter.FlutterPubspecScanner
+import dev.buijs.klutter.core.tasks.plugin.ios.IosPluginSwiftGenerator
 
 /**
  * @author Gillian Buijs
@@ -100,6 +101,12 @@ class GenerateAdapterTask(
                 methods = methods,
             ).generate()
 
+            IosPluginSwiftGenerator(
+                path = ios.file.resolve("Classes/Swift$pluginClassName.swift"),
+                methodChannelName = methodChannelName,
+                pluginClassName = pluginClassName,
+                methods = methods,
+            ).generate()
         }
 
     }

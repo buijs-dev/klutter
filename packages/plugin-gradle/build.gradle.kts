@@ -141,7 +141,7 @@ dependencies {
     val annotationsVersion = (properties["annotations.version"] ?: "0.12.0")
         .also { println("VERSION ANNOTATIONS (GRADLE) ==> $it") }
 
-    val coreVersion = (properties["core.version"] ?: "0.12.3")
+    val coreVersion = (properties["core.version"] ?: "0.12.4")
         .also { println("VERSION CORE (GRADLE) ==> $it") }
 
     //Klutter

@@ -36,18 +36,20 @@ data class PluginProject (
     val pluginName: String = "super_awesome",
     val root: File = Files.createTempDirectory("").toFile(),
     val ios: File = root.createFolder("ios"),
+    val iosClasses: File = ios.createFolder("Classes"),
     val android: File = root.createFolder("android"),
     val androidMain: File = root.createFolder("android/src/main").also {
         it.createFolder("kotlin/foo/bar/super_awesome")
     },
     val androidManifest: File = androidMain.createFile("AndroidManifest.xml"),
     val platform: File = root.createFolder("klutter/$pluginName"),
+    val platformBuildGradle: File = platform.createFile("build.gradle.kts"),
     val platformSource: File = root.createFolder("${platform.path}/src/commonMain"),
     val platformSourceClass: File = platformSource.createFile("FakeClass.kt"),
     val flutter: File = root.createFolder("lib"),
     val flutterMainClass: File = flutter.createFile("${pluginName}.dart"),
-    val buildGradle: File = root.createFile("build.gradle.kts"),
-    val settingsGradle: File = root.createFile("settings.gradle.kts"),
+    val rootBuildGradle: File = root.createFile("build.gradle.kts"),
+    val rootSettingsGradle: File = root.createFile("settings.gradle.kts"),
     val pubspecYaml: File = root.createFile("pubspec.yaml")
 ) {
 
@@ -60,10 +62,11 @@ data class PluginProject (
     }
 
     fun test(
+        projectDir: File = root,
         vararg args: String,
     ) {
         GradleRunner.create()
-            .withProjectDir(root)
+            .withProjectDir(projectDir)
             .withPluginClasspath()
             .withArguments(args.toMutableList().also { list -> list.add("--stacktrace") })
             .build()

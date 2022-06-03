@@ -49,24 +49,7 @@ open class GenerateAdapterGradleTask: KlutterGradleTask() {
                     |}
                     |```
                 """.trimMargin())
-
-            Root(
-                location = ext.root?.absolutePath ?: project.rootDir.path,
-                validate = false,
-            ).let { root ->
-
-                GenerateAdapterTask(
-                    isPlugin = true,
-                    libName = pluginName,
-                    android = Android(root = root),
-                    ios = IOS(root = root),
-                    flutter = Flutter(root = root),
-                    platform = Platform(
-                        root = root,
-                        file = File("${root.folder.absolutePath}/klutter/$pluginName"),
-                    ),
-                ).run()
-            }
+           asPlugin(pluginName, ext.root?.absolutePath ?: project.rootDir.path)
         } else {
             project().let { project ->
                 GenerateAdapterTask(
@@ -80,4 +63,25 @@ open class GenerateAdapterGradleTask: KlutterGradleTask() {
 
     }
 
+}
+
+internal fun asPlugin(pluginName: String, pathToRoot: String) {
+
+    Root(
+        location = pathToRoot,
+        validate = false,
+    ).let { root ->
+
+        GenerateAdapterTask(
+            isPlugin = true,
+            libName = pluginName,
+            android = Android(root = root),
+            ios = IOS(root = root),
+            flutter = Flutter(root = root),
+            platform = Platform(
+                root = root,
+                file = File("${root.folder.absolutePath}/klutter/$pluginName"),
+            ),
+        ).run()
+    }
 }

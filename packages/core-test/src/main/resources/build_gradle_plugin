@@ -3,7 +3,6 @@ plugins {
 }
 
 klutter {
-    plugin {
-        name = "super_awesome"
-    }
+    root = rootProject.rootDir
+    plugin { }
 }

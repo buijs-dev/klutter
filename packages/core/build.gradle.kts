@@ -20,20 +20,6 @@ sourceSets {
 
 dependencies {
 
-    val properties = HashMap<String, String>().also { map ->
-        File("${rootDir.absolutePath}/publish/_publish.properties"
-        ).normalize().also { file ->
-            if (file.exists()) {
-                file.forEachLine {
-                    val pair = it.split("=")
-                    if (pair.size == 2) {
-                        map[pair[0]] = pair[1]
-                    }
-                }
-            }
-        }
-    }
-
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.6.21")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
@@ -82,7 +68,7 @@ publishing {
         }
     }
 
-    val libversion = (properties["core.version"] ?: "0.12.3")
+    val libversion = (properties["core.version"] ?: "0.12.4")
         .also { println("VERSION CORE ==> $it") }
 
     val repoUsername = (properties["repo.username"]

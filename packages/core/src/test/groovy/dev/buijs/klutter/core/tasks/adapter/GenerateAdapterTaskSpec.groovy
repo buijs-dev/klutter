@@ -23,7 +23,8 @@ class GenerateAdapterTaskSpec extends Specification {
             resources.copyAll([
                     "platform_source_code"    : project.platformSourceClass,
                     "android_app_manifest"    : project.androidManifest,
-                    "build_gradle_plugin"     : project.buildGradle,
+                    "build_gradle_plugin"     : project.platformBuildGradle,
+                    "settings_gradle_plugin"  : project.rootSettingsGradle,
                     "plugin_pubspec"          : project.pubspecYaml,
             ])
         }
@@ -49,12 +50,21 @@ class GenerateAdapterTaskSpec extends Specification {
             )
         }
 
-        sut.verify("method handler boilerplate should be added") { project, resources ->
+        sut.verify("method handler boilerplate should be added to android") { project, resources ->
             project.hasChild(
                     "${sut.androidMain.absolutePath}/kotlin/foo/bar/super_awesome",
                    "SuperAwesomePlugin.kt",
                      "android_plugin_class",
                    CompareMode.IGNORE_SPACES
+            )
+        }
+
+        sut.verify("method handler boilerplate should be added to ios") { project, resources ->
+            project.hasChild(
+                    sut.iosClasses.absolutePath,
+                    "SwiftSuperAwesomePlugin.swift",
+                    "ios_swift_plugin",
+                    CompareMode.IGNORE_SPACES
             )
         }
 

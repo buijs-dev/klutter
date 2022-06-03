@@ -1,4 +1,4 @@
-#!/bin/sh
+GenerateAdapterGradleTaskSpec.#!/bin/sh
 #stop script on failure
 set -e
 

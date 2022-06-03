@@ -72,9 +72,9 @@ internal class IosPluginSwiftPrinter(
             |            result(FlutterMethodNotImplemented)
             |        }
             |  }
-            |}
             |
             |${methods()}  
+            |}
             |""".trimMargin()
 
     private fun blocks() = methods.joinToString("\n") {

@@ -1,0 +1,36 @@
+import Flutter
+import UIKit
+import platform
+
+public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    let channel = FlutterMethodChannel(name: "foo.bar.super_awesome", binaryMessenger: registrar.messenger())
+    let instance = SwiftSuperAwesomePlugin()
+    registrar.addMethodCallDelegate(instance, channel: channel)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    switch call.method {
+        case "DartMaul":
+            self.DartMaul(result: result)
+        case "BabyYoda":
+            self.BabyYoda(result: result)
+        case "ObiWan":
+            self.ObiWan(result: result)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
+  }
+
+    func DartMaul(result: @escaping FlutterResult) {
+        result(FakeClass().foo())
+    }
+
+    func BabyYoda(result: @escaping FlutterResult) {
+        result(FakeClass().fooBar().toKJson())
+    }
+
+    func ObiWan(result: @escaping FlutterResult) {
+        result(FakeClass().zeta().toKJson())
+    }
+}

@@ -22,8 +22,7 @@
 
 package dev.buijs.klutter.core.shared
 
-
-import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterVisitor
 import org.gradle.api.logging.Logging
 import java.io.File
@@ -45,7 +44,7 @@ internal class IosAppFrameworkInfoPlistVisitor(
 
     override fun visit() {
         if(!appFrameworkInfo.exists()) {
-            throw KlutterCodeGenerationException("Could not locate AppFrameworkInfo.plist file at path: ${appFrameworkInfo.absolutePath}")
+            throw KlutterException("Could not locate AppFrameworkInfo.plist file at path: ${appFrameworkInfo.absolutePath}")
         }
 
         val rawContent = appFrameworkInfo.readText().filter { !it.isWhitespace() }

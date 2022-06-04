@@ -22,7 +22,7 @@
 
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterVisitor
 import java.io.File
 
@@ -41,13 +41,13 @@ internal class PupspecVisitor(
             visit()
         }
 
-        return appName ?: throw KlutterCodeGenerationException("App Name not found in pubspec.yaml")
+        return appName ?: throw KlutterException("App Name not found in pubspec.yaml")
     }
 
     override fun visit() {
 
         if(!pubspec.exists()) {
-            throw KlutterCodeGenerationException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
+            throw KlutterException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
         }
 
         val lines = pubspec.readLines()

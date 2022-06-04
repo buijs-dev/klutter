@@ -23,7 +23,7 @@
 package dev.buijs.klutter.core.shared
 
 
-import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterVisitor
 import java.io.File
 
@@ -44,7 +44,7 @@ internal class IosInfoPlistVisitor(
     override fun visit() {
 
         if(!infoPlist.exists()) {
-            throw KlutterCodeGenerationException("Could not locate Info.plist file at path: ${infoPlist.absolutePath}")
+            throw KlutterException("Could not locate Info.plist file at path: ${infoPlist.absolutePath}")
         }
 
         val lines = infoPlist.readLines()

@@ -52,17 +52,17 @@ internal fun File.toMethodData(language: ReturnTypeLanguage = ReturnTypeLanguage
 
     return """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{""".toRegex()
         .findAll(trimmedBody).map { match ->
-            val getter = match.groups[2]?.value?:throw KotlinFileScanningException("""
+            val getter = match.groups[2]?.value?:throw KlutterException("""
                    Unable to process KlutterAdaptee annotation.
                    Please make sure the annotation is as follows: 'klutterAdaptee(name = "foo")'
                    """.trim())
 
-            val caller = match.groups[4]?.value?:throw KotlinFileScanningException("""
+            val caller = match.groups[4]?.value?:throw KlutterException("""
                    Unable to process KlutterAdaptee annotation.
                    Please make sure the annotation is as follows: 'klutterAdaptee(name = "foo")'
                    """.trim())
 
-            val returns = match.groups[5]?.value?.trim()?:throw KotlinFileScanningException("""
+            val returns = match.groups[5]?.value?.trim()?:throw KlutterException("""
                     Unable to determine return type of function annotated with @KlutterAdaptee.
                     The method signature should be as follows: fun foo(): Bar { //your implementation }
                    """.trim())

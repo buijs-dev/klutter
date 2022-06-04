@@ -128,7 +128,7 @@ internal class IosPodFileWriter(
     override fun write() {
 
         if(!file.exists()){
-            throw KlutterCodeGenerationException("Path does not exist: $file")
+            throw KlutterException("Path does not exist: $file")
         }
 
         val podFile = file.resolve("PodFile")
@@ -141,7 +141,7 @@ internal class IosPodFileWriter(
 
         podFile.createNewFile().also {
             if(!podFile.exists()){
-                throw KlutterCodeGenerationException("Unable to create file: $podFile.")
+                throw KlutterException("Unable to create file: $podFile.")
             } else log.info("Created new PodFile: $podFile")
         }
 

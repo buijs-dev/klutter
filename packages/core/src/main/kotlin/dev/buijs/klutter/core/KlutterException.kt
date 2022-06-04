@@ -23,24 +23,3 @@
 package dev.buijs.klutter.core
 
 class KlutterException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals that an exception has occurred while processing a .kt file.
- *
- * @author Gillian Buijs
- */
-class KotlinFileScanningException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals that a failure occurred when creating and/or writing file content.
- *
- * @author Gillian Buijs
- */
-class KlutterCodeGenerationException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals that a failure has occurred which is caused by missing or faulty configuration of a Klutter project.
- *
- * @author Gillian Buijs
- */
-class KlutterConfigException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))

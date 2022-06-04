@@ -29,7 +29,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import com.fasterxml.jackson.module.kotlin.readValue
-import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterVisitor
 import org.gradle.api.logging.Logging
 import java.io.File
@@ -47,7 +47,7 @@ internal class AndroidManifestVisitor(
     override fun visit() {
 
         if(!manifestFile.exists()) {
-            throw KlutterCodeGenerationException("Could not locate AndroidManifest file at path: ${manifestFile.absolutePath}")
+            throw KlutterException("Could not locate AndroidManifest file at path: ${manifestFile.absolutePath}")
         }
 
         val parsedXml: AndroidManifestXML =
@@ -74,7 +74,6 @@ internal class AndroidManifestVisitor(
         manifestFile.writeText(output.joinToString("\r\n"))
 
     }
-
 
 }
 

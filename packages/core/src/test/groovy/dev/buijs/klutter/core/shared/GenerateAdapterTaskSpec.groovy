@@ -1,7 +1,6 @@
 package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.Android
-import dev.buijs.klutter.core.Flutter
 import dev.buijs.klutter.core.IOS
 import dev.buijs.klutter.core.Platform
 import dev.buijs.klutter.core.Root
@@ -32,11 +31,11 @@ class GenerateAdapterTaskSpec extends Specification {
         }
 
         when:
-        def root = new Root(sut.root.absolutePath, false)
+        def root = new Root(sut.root)
         new GenerateAdapterTask(
                 new Android(sut.android, root),
                 new IOS(sut.ios, root),
-                new Flutter(sut.flutter, root),
+                root,
                 new Platform(root, new File("${sut.root}/klutter/${sut.pluginName}"), "", ""),
         ).run()
 

@@ -22,10 +22,11 @@
 
 package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.DartKotlinMap
 import dev.buijs.klutter.core.KlutterFileGenerator
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.MethodData
-import dev.buijs.klutter.core.utils.DefaultWriter
+import dev.buijs.klutter.core.DefaultWriter
 import java.io.File
 
 /**
@@ -87,4 +88,27 @@ internal class IosPluginPrinter(
 
     private fun methods(): String = methods.joinToString("\n\n") { printMethod(it) }
 
+    private fun printMethod(definition: MethodData): String {
+
+        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+            ".toKJson()"
+        } else ""
+
+        return if(definition.async) {
+            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                    "        ${definition.call.removeSuffix("()")} { data, error in\n" +
+                    "\n" +
+                    "            if let response = data { result(response$type) }\n" +
+                    "\n" +
+                    "            if let failure = error { result(failure) }\n" +
+                    "\n" +
+                    "        }\n" +
+                    "    }\n"
+        } else {
+            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                    "        result(${definition.call}$type)\n" +
+                    "    }"
+        }
+
+    }
 }

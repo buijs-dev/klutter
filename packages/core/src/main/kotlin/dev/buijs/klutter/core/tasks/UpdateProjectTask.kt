@@ -41,7 +41,7 @@ class UpdateProjectTask(
 
         val ios = project.ios
         val androidManifest = project.android.manifest()
-        val appName = PupspecVisitor(project.flutter.root.resolve("plugin_pubspec")).appName()
+        val appName = PupspecVisitor(project.root.resolve("pubspec.yaml")).appName()
 
         androidManifest?.let { AndroidManifestVisitor(it, appName).visit() }
         IosInfoPlistVisitor(ios.file.resolve("Runner/Info.plist"), appName).visit()

@@ -22,41 +22,39 @@
 
 package dev.buijs.klutter.core.shared
 
-
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.KlutterWriter
 import dev.buijs.klutter.core.MethodData
-import dev.buijs.klutter.core.EnumerationPrinter
-import dev.buijs.klutter.core.MessagePrinter
-import dev.buijs.klutter.core.getCastMethod
-import org.gradle.api.logging.Logging
+import dev.buijs.klutter.core.DefaultWriter
 import java.io.File
 
 /**
  * @author Gillian Buijs
  */
-internal class FlutterAdapterGenerator(
-    private val flutter: File,
+internal class FlutterLibraryGenerator(
+    private val path: File,
+    private val methodChannelName: String,
+    private val pluginClassName: String,
     private val methods: List<MethodData>,
-    private val libName: String,
-    ): KlutterFileGenerator() {
+    private val messages: DartObjects,
+): KlutterFileGenerator() {
 
-    override fun printer() = FlutterAdapterPrinter(definitions = methods)
+    override fun printer() = FlutterAdapterPrinter(
+        methodChannelName = methodChannelName,
+        pluginClassName = pluginClassName,
+        definitions = methods,
+        objects = messages,
+    )
 
-    override fun writer() = FlutterAdapterWriter(flutter, printer().print(), libName)
+    override fun writer() = DefaultWriter(path, printer().print())
 
 }
 
-/**
- * @author Gillian Buijs
- */
 internal class FlutterAdapterPrinter(
     private val methodChannelName: String = "KLUTTER",
     private val pluginClassName: String = "Adapter",
     private val definitions: List<MethodData>,
     private val objects: DartObjects? = null,
-    ): KlutterPrinter {
+): KlutterPrinter {
 
     override fun print(): String {
 
@@ -182,80 +180,4 @@ internal class FlutterAdapterPrinter(
 
     }
 
-}
-
-/**
- * @author Gillian Buijs
- */
-internal class FlutterAdapterWriter(
-    private val libFolder: File,
-    private val classBody: String,
-    private val libName: String,
-)
-    : KlutterWriter {
-
-    private val log = Logging.getLogger(FlutterAdapterWriter::class.java)
-
-    override fun write() {
-
-        val generatedFolder = libFolder.resolve("generated").also {
-            if(!it.exists()) it.mkdir()
-        }
-
-        val classFile = generatedFolder.resolve( "adapter.dart").also { file ->
-            if(file.exists()) {
-                file.delete()
-                log.info("Deleted existing file: $file")
-            }
-        }
-
-        classFile.createNewFile().also { exists ->
-            if(!exists){
-                throw KlutterCodeGenerationException("Unable to create adapter file in the given path $libFolder")
-            } else log.info("Created new file: $classFile")
-        }
-
-        val dartFile = findMainDartFile(libFolder, libName)
-
-        if(!dartFile.exists()){
-            throw KlutterCodeGenerationException("File does not exist: $dartFile")
-        }
-
-        val mainLines = dartFile.readLines()
-
-        val hasAdapterImport = mainLines.any {
-            it.contains("import 'generated/adapter.dart'")
-        }
-
-        val mainBody = if(hasAdapterImport) {
-            mainLines.joinToString("\r\n")
-        } else {
-            log.debug("Added import to main.dart file: $dartFile")
-            "import 'generated/adapter.dart';\r\n" + mainLines.joinToString("\r\n")
-        }
-
-        dartFile.writeText(mainBody).also {
-            log.debug("Written content to file $dartFile:\r\n$mainBody")
-        }
-
-        classFile.writeText(classBody).also {
-            log.debug("Written content to file $classFile:\r\n$classBody")
-        }
-
-    }
-
-    private fun findMainDartFile(directory: File, libName: String): File {
-        log.debug("Scanning for $libName.dart in directory '$directory'")
-        if (directory.exists()) {
-            directory.walkTopDown().forEach { f ->
-                log.debug("Found file '$f' with name ${f.name} and extenions ${f.extension}")
-                if(f.isFile && f.name == "$libName.dart"){
-                    log.debug("Found $libName.dart file in directory '$f''")
-                    return f
-                }
-            }
-            throw KlutterCodeGenerationException("Could not find $libName.dart in directory: '$directory'")
-        }
-        throw KlutterCodeGenerationException("Could not find $libName.dart because directory does not exist: '$directory'")
-    }
 }

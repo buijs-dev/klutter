@@ -36,18 +36,13 @@ private val log = Logging.getLogger(KlutterProject::class.java)
  * @property ios is the folder containing the iOS frontend code, basically the iOS folder from a standard Flutter project.
  * @property android is the folder containing the Android frontend code, basically the iOS folder from a standard Flutter project.
  * @property platform is the folder containing the native backend code, basically a Kotlin Multiplatform library module.
- * @property flutter is the lib folder containing the main.dart, the starting point of the Android/iOS application.
- * @property buildSrc is the folder containing all Klutter configuration and the configured Klutter Plugin.
- *
  * @author Gillian Buijs
  */
 data class KlutterProject(
     val root: Root,
     val ios: IOS,
     val android: Android,
-    val flutter: Flutter,
     val platform: Platform,
-    val buildSrc: BuildSrc,
 )
 
 /**
@@ -59,47 +54,21 @@ object KlutterProjectFactory {
 
     /**
      * @param validate check if all required folders are present and return null if not.
-     * If validate is false then validation is skipped and a [KlutterConfigException] is thrown
+     * If validate is false then validation is skipped and a [KlutterException] is thrown
      * when a folder that should be present is not.
      *
      * @return a KlutterProject basing all module paths from the given root.
      */
-    fun create(root: Root, validate: Boolean = false): KlutterProject? {
+    fun create(root: Root) = KlutterProject(
+        root = root,
+        ios = IOS(root = root),
+        platform = Platform(root = root),
+        android = Android(root = root),
+    )
 
-        val project = KlutterProject(
-            root = root,
-            ios = IOS(root = root),
-            platform = Platform(root = root),
-            android = Android(root = root),
-            flutter = Flutter(root = root),
-            buildSrc = BuildSrc(root = root),
-        )
+    fun create(location: String) = create(Root(File(location)))
 
-        if(validate) {
-
-            //If the root itself does not exist then there is no KlutterProject
-            if(!root.folder.exists()) return null
-
-            val folders = listOf(
-                project.ios,
-                project.platform,
-                project.android,
-                project.flutter,
-                project.buildSrc,
-            )
-
-            //If any of the folders does not exist return null
-            if(folders.any { !it.exists }) return null
-
-        }
-
-        return project
-
-    }
-
-    fun create(location: String, validate: Boolean = false) = create(Root(location), validate)
-
-    fun create(location: File, validate: Boolean = false) = create(Root(location), validate)
+    fun create(location: File) = create(Root(location))
 
 }
 
@@ -108,76 +77,18 @@ object KlutterProjectFactory {
  *
  * @author Gillian Buijs
  */
-class Root(file: File, validate: Boolean = true) {
-
-    constructor(
-        location: String,
-        validate: Boolean = true,
-    ) : this(File(location), validate)
+class Root(file: File) {
 
     @Suppress("private")
-    val folder: File = if (!file.exists() && validate) {
-        throw KlutterConfigException("""
+    val folder: File = if (!file.exists()) {
+        throw KlutterException("""
           The root folder does not exist: ${file.absolutePath}.
-                
-          If no location is provided, Klutter determines the root folder by getting the rootProject.projectDir
-          from the build.gradle.kts where the Klutter Plugin is applied. For a standard Klutter project 
-          this means the root folder has a settings.gradle.kts which includes the :klutter module. 
-          The klutter module build.gradle.kts applies the Klutter Plugin which will return the correct root folder.
-          
-          This behaviour can be overwritten by configuring the root folder directly in the Klutter Plugin.
-          If this is done, check the configuration in Klutter Plugin to see if the root folder is correct.
-          
-          IMPORTANT: Setting the root is done with a path relative to your current directory, e.g. relative to 
-          where the build.gradle.kts containing the Klutter Plugin is placed.
-          
-          Example for setting the root manually: 
-          
-          klutter {
-                root("/../../my-root")
-          }
-          
-          If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
           """.trimIndent())
     } else {
         file.absoluteFile
     }
 
     fun resolve(to: String): File = folder.resolve(to).normalize().absoluteFile
-}
-
-/**
- * Wrapper class with a file instance pointing to the buildSrc sub-module.
- * If no custom path is given, Klutter assumes the path to the buildSrc folder is [root]/buildSrc.
- *
- * @property file path to the buildSrc folder.
- *
- * @author Gillian Buijs
- */
-class BuildSrc(file: File? = null, root: Root) : KlutterFolder(
-    root, file, "BuildSrc directory", root.resolve("buildSrc")
-)
-
-/**
- * Wrapper class with a file instance pointing to the flutter/lib sub-module.
- * If no custom path is given, Klutter assumes the path to the flutter lib folder is [root]/lib.
- *
- * @property file path to the (flutter) lib folder.
- *
- * @author Gillian Buijs
- */
-class Flutter(file: File? = null, root: Root) :
-    KlutterFolder(root, file, "Flutter lib directory", root.resolve("lib")) {
-
-    /**
-     * @throws KlutterConfigException if file(s) do not exist.
-     * @return the absolute path to the flutter main.dart file.
-     */
-    fun mainDartFile() = getFileSafely(
-        file.resolve("main.dart"),
-        file.absolutePath,
-        "root-project/lib/main.dart")
-
 }
 
 /**
@@ -199,7 +110,7 @@ class Platform(
      * Function to return the location of the src module containing the common/shared platform code.
      * If no custom path is given, Klutter assumes the path to the KMP sourcecode is root-project/kmp/common/src/commonMain.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
     fun source() = getFileSafely(
@@ -211,7 +122,7 @@ class Platform(
      * Function to return the location of the podspec file in the kmp sub-module.
      * If no custom path is given, Klutter assumes the path to the Platform sourcecode is root-project/platform/platform.podspec.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the podspec file.
      */
     fun podspec() = getFileSafely(
@@ -223,7 +134,7 @@ class Platform(
      * Function to return the location of build folder in the Platform module.
      * If no custom path is given, Klutter assumes the path to the Platform build folder is root-project/platform/build.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
     fun build() = getFileSafely(
@@ -231,8 +142,6 @@ class Platform(
         file.absolutePath,
         "root-project/platform/build"
     )
-
-    fun moduleName() = moduleName
 
 }
 
@@ -251,7 +160,7 @@ class IOS(file: File? = null, root: Root) :
      * Function to return the location of the PodFile in the ios sub-module.
      * If no custom path is given, Klutter assumes the path to the iOS Podfile is root-project/ios/PodFile.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
     fun podfile() = getFileSafely(
@@ -263,7 +172,7 @@ class IOS(file: File? = null, root: Root) :
      * Function to return the location of the AppDelegate.swift file in the ios folder.
      * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swift is root-project/ios/Runner/AppDelegate.swift.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios AppDelegate.
      */
     fun appDelegate(): File? {
@@ -293,7 +202,7 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
      * Function to return the location of the app sub-module in the android folder.
      * If no custom path is given, Klutter assumes the path to the android app folder is root-project/android/app.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
     @Suppress("private")
@@ -303,7 +212,7 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
      * Function to return the location of the AndroidManifest.xml file in the android/app sub-module.
      * If no custom path is given, Klutter assumes the path to the android app manifest file is root-project/android/app/src/main/AndroidManifest.xml.
      *
-     * @throws KlutterConfigException if file(s) do not exist.
+     * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
     fun manifest(): File? {
@@ -327,7 +236,7 @@ class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Andro
  * These defaults can be overwritten with custom values and when those do not exist the KlutterFolder
  * falls back to the default value.
  *
- * @throws KlutterConfigException if both given <b>maybeFile</b> and <b>defaultLocation</b> do not exist.
+ * @throws KlutterException if both given <b>maybeFile</b> and <b>defaultLocation</b> do not exist.
  *
  * @author Gillian Buijs
  */
@@ -348,7 +257,7 @@ abstract class KlutterFolder(
                 defaultLocation.absoluteFile
             }
 
-            else ->  throw KlutterConfigException(
+            else ->  throw KlutterException(
                 """
               A folder which should be present is not found.
               
@@ -367,7 +276,7 @@ abstract class KlutterFolder(
 
 /**
  * Helper method to get a file safely.
- * @throws KlutterConfigException if [file] is null or does not exists.
+ * @throws KlutterException if [file] is null or does not exists.
  *
  * @author Gillian Buijs
  */

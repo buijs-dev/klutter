@@ -53,7 +53,7 @@ internal data class PubspecData(
     val libraryName: String,
 
     @JsonProperty("flutter")
-    internal val flutter: Flutter,
+    internal val flutter: PubFlutter,
 
     ) {
 
@@ -61,7 +61,7 @@ internal data class PubspecData(
     val packageName: String? = flutter.plugin.platforms.android.pluginPackage
 }
 
-internal data class Flutter(
+internal data class PubFlutter(
     @JsonProperty("plugin")
     internal val plugin: Plugin,
 )

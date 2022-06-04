@@ -23,7 +23,7 @@
 package dev.buijs.klutter.core.annotations
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.utils.verifyExists
+import dev.buijs.klutter.core.verifyExists
 import java.io.File
 
 private typealias Collector = KlutterAnnotatedSourceCollector

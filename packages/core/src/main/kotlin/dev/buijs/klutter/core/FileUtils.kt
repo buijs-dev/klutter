@@ -19,32 +19,16 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.core.utils
 
-import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.KlutterWriter
+package dev.buijs.klutter.core
+
 import java.io.File
 
-internal class DefaultWriter(
-    private val path: File,
-    private val content: String,
-)
-    : KlutterWriter
-{
-
-    override fun write() {
-
-        if(path.exists()) path.delete()
-
-        path.createNewFile().also { created ->
-            if(!created) {
-                throw KlutterException(
-                    "Unable to create folder in the given path $path."
-                )
-            }
-        }
-
-        path.writeText(content)
-
-    }
+/**
+ * Return the [File] or throw a [KlutterException] if it does not exists.
+ */
+internal fun File.verifyExists(): File {
+    if(exists()) {
+        return this
+    } else throw KlutterException("Path does not exist: $absolutePath")
 }

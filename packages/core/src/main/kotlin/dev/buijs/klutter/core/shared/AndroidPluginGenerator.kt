@@ -24,7 +24,7 @@ package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.utils.DefaultWriter
+import dev.buijs.klutter.core.DefaultWriter
 import java.io.File
 
 /**

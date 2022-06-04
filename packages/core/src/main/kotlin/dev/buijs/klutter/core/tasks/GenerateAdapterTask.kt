@@ -39,7 +39,7 @@ import dev.buijs.klutter.core.shared.IosPluginGenerator
 class GenerateAdapterTask(
     private val android: Android,
     private val ios: IOS,
-    private val flutter: Flutter,
+    private val root: Root,
     private val platform: Platform,
 )
     : KlutterTask
@@ -60,10 +60,7 @@ class GenerateAdapterTask(
 
     private fun processPlugin() {
 
-        val pubspec = FlutterPubspecScanner(flutter
-            .root
-            .folder
-            .resolve("pubspec.yaml")).scan()
+        val pubspec = FlutterPubspecScanner(root.folder.resolve("pubspec.yaml")).scan()
 
         val pluginName = pubspec.libraryName
         val packageName = pubspec.packageName
@@ -72,7 +69,7 @@ class GenerateAdapterTask(
         val methodChannelName = packageName ?: "KLUTTER"
         methods?.let { methods ->
             FlutterLibraryGenerator(
-                path = flutter.file.resolve("$pluginName.dart"),
+                path = root.resolve("lib/$pluginName.dart"),
                 methodChannelName = methodChannelName,
                 pluginClassName = pluginClassName,
                 methods = methods,

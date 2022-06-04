@@ -40,13 +40,13 @@ internal enum class DartKotlinMap(val kotlinType: String, val dartType: String) 
     companion object {
 
         fun toKotlinType(type: String) = values().firstOrNull { it.dartType == type } ?.kotlinType
-            ?: throw KlutterCodeGenerationException("No such kotlinType in KotlinDartMap: $type")
+            ?: throw KlutterException("No such kotlinType in KotlinDartMap: $type")
 
         fun toDartType(type: String) = values().firstOrNull { it.kotlinType == type } ?.dartType
-            ?: throw KlutterCodeGenerationException("No such dartType in KotlinDartMap: $type")
+            ?: throw KlutterException("No such dartType in KotlinDartMap: $type")
 
         fun toMap(type: String) = values().firstOrNull { it.dartType == type || it.kotlinType == type}
-            ?: throw KlutterCodeGenerationException("No such dartType or kotlinType in KotlinDartMap: $type")
+            ?: throw KlutterException("No such dartType or kotlinType in KotlinDartMap: $type")
 
         fun toMapOrNull(type: String) = values().firstOrNull { it.dartType == type || it.kotlinType == type}
 

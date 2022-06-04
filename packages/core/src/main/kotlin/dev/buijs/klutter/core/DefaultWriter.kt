@@ -19,34 +19,30 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.DartKotlinMap
-import dev.buijs.klutter.core.MethodData
+import java.io.File
 
-/**
- * @author Gillian Buijs
- */
-internal fun printMethod(definition: MethodData): String {
+internal class DefaultWriter(
+    private val path: File,
+    private val content: String,
+)
+    : KlutterWriter
+{
 
-    val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
-        ".toKJson()"
-    } else ""
+    override fun write() {
 
-    return if(definition.async) {
-        "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                "        ${definition.call.removeSuffix("()")} { data, error in\n" +
-                "\n" +
-                "            if let response = data { result(response$type) }\n" +
-                "\n" +
-                "            if let failure = error { result(failure) }\n" +
-                "\n" +
-                "        }\n" +
-                "    }\n"
-    } else {
-        "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                "        result(${definition.call}$type)\n" +
-                "    }"
+        if(path.exists()) path.delete()
+
+        path.createNewFile().also { created ->
+            if(!created) {
+                throw KlutterException(
+                    "Unable to create folder in the given path $path."
+                )
+            }
+        }
+
+        path.writeText(content)
+
     }
-
 }

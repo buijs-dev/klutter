@@ -70,7 +70,7 @@ internal class KlutterResponseProcessor(
         }
 
         if(customDataTypes.isNotEmpty()) {
-            throw KlutterCodeGenerationException(
+            throw KlutterException(
                 """ |Processing annotation '@KlutterResponse' failed, caused by:
                     |
                     |Could not resolve the following classes:
@@ -105,7 +105,7 @@ internal class EnumScanner(private val content: String) {
 
         DartEnum(
             name = match.groups[2]?.value?.filter { !it.isWhitespace() }
-                ?: throw KotlinFileScanningException("Failed to process an enum class."),
+                ?: throw KlutterException("Failed to process an enum class."),
             values = values.constants,
             jsonValues = values.jsonValues
         )
@@ -121,7 +121,7 @@ internal class MessageScanner(private val content: String) {
     fun scan() = bodiesRegex.findAll(content).map { match ->
         DartMessage(
             name = match.groups[2]?.value?.filter { !it.isWhitespace() }
-                ?: throw KotlinFileScanningException("Failed to process an open class."),
+                ?: throw KlutterException("Failed to process an open class."),
             fields = match.value.lines().mapNotNull { DartFieldBuilder(it).build() }
         )
     }.toList()

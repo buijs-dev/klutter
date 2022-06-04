@@ -53,14 +53,13 @@ open class GenerateAdapterGradleTask: KlutterGradleTask() {
 internal fun asPlugin(pluginName: String, pathToRoot: String) {
 
     Root(
-        location = pathToRoot,
-        validate = false,
+      File(pathToRoot)
     ).let { root ->
 
         GenerateAdapterTask(
             android = Android(root = root),
             ios = IOS(root = root),
-            flutter = Flutter(root = root),
+            root = root,
             platform = Platform(
                 root = root,
                 file = File("${root.folder.absolutePath}/klutter/$pluginName"),

@@ -37,6 +37,7 @@ data class PluginProject (
     val root: File = Files.createTempDirectory("").toFile(),
     val ios: File = root.createFolder("ios"),
     val iosClasses: File = ios.createFolder("Classes"),
+    val iosPodspec: File = ios.createFile("super_awesome.podspec"),
     val android: File = root.createFolder("android"),
     val androidMain: File = root.createFolder("android/src/main").also {
         it.createFolder("kotlin/foo/bar/super_awesome")
@@ -79,7 +80,7 @@ data class PluginProject (
     ): Boolean {
 
         if(!file.exists()) {
-            return false
+            assert(false) { "File does not exist: $file" }
         }
 
         if(compareToResource != "") {

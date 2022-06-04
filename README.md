@@ -14,55 +14,12 @@ by the Klutter framework.
 
 [Source of this picture and a good read](https://littlegnal.github.io/2019-07-09/kmpp_flutter_en)
 
+# Klutter ALPHA.
+Klutter is in ALPHA. Flutter plugins can be made and used with the [PUB Plugin](https://github.com/buijs-dev/klutter-dart)
+which will be published soon.
 
-# Klutter is moving to Alpha soon.
-Pre-alpha means the inital POC phase was successful and the concept works but nothing is set in stone yet. 
-The next stage, being alpha, is reached once all components are created. And that's soon! I'm finishing
-up the KMP template and will make it available as the first Alpha release soon. With this you will be able
-to create a shared KMP module and publish it as a Flutter package to pub with a single Gradle task.
-
-Also check the Klutter [pub plugin](https://github.com/buijs-dev/klutter-dart).
-
-<b>Important:</b> Checkout the latest branch (see release notes) for stable releases.
-The main-branch is currently used for development.
-
-## What's next?
-Initially I created Klutter as a monolithic framework to control all parts of the Flutter development process.
-Having actually build 2 apps using it I feel it would be better to separate any publishing and/or CI/CD 
-functionality to separate modules/components. That's why I started working on 'Delivery', a publishing 
-library made in Dart which can build and publish different flavours of your app to App Store, Play Store, Firebase, etc.
-Delivery is not yet public, but you can check out the [App Store Connect library](https://github.com/buijs-dev/app-store-connect-dart) 
-I'm building which is one it's major components.
-
-- [Release-notes](Release-notes.md)
-- [Documentation](https://buijs-dev.github.io/klutter/)
-- [Project Structure](docs/doc_project_structure.md)
-- [Configuration management](docs/doc_configuration_management.md)
-
-
-## Klutter Gradle Plugin:
-Gradle plugin to manage the Klutter project: [Klutter Gradle Plugin](https://github.com/buijs-dev/klutter-gradle)
-
-## Klutter CLI:
-Command line to create and manage a Klutter project: [Klutter CLI](https://github.com/buijs-dev/klutter-cli)
-
-## Klutter Pub Plugin:
-Dart plugin to create Flutter plugins from KMP source: [Klutter Pub Plugin](https://github.com/buijs-dev/klutter-dart)
-
-# Gettings started
-
-[Download](https://www.dropbox.com/s/zc1ctg5tdcvu177/klutter-cli-pre-alpha-5.zip) the tool.
-
-Unzip the file. Move to folder cli/bin. Run:
-
-```shell
-./klutter create
-```
-
-This generates a Klutter project in the folder where the CLI tool is unzipped.
-
-## Contributing
-Pull requests are welcome. Contact me at info@buijs.dev
+# Getting started
+The preferred way to use Klutter as of ALPHA is by using the [Klutter Pub Plugin](https://github.com/buijs-dev/klutter-dart)
 
 ## License
 MIT License

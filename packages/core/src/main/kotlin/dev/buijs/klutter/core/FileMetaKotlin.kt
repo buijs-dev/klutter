@@ -22,6 +22,7 @@
 
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 
@@ -36,7 +37,7 @@ internal data class MethodData(
     val returns: String,
 )
 
-internal fun File.toMethodData(): List<MethodData> {
+internal fun File.toMethodData(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<MethodData> {
 
     val content = readText()
     val className = name.removeSuffixIfPresent(".kt")
@@ -66,12 +67,16 @@ internal fun File.toMethodData(): List<MethodData> {
                     The method signature should be as follows: fun foo(): Bar { //your implementation }
                    """.trim())
 
+            val returnType = DartKotlinMap.toMapOrNull(returns)?.let {
+                                if(language == ReturnTypeLanguage.DART) it.dartType else it.kotlinType
+                            } ?: returns
+
             MethodData(
                 import = "$packagename.$className",
                 getter = getter,
                 call = "$className().$caller",
                 async = match.groups[3]?.value?.trim()?.isNotBlank()?:false,
-                returns = returns)
+                returns = returnType)
 
         }.toList()
 }

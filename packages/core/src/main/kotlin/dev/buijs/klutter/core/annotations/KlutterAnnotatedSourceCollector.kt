@@ -20,15 +20,42 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.annotations
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+import java.io.File
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+/**
+ * @author Gillian Buijs
+ */
+internal class KlutterAnnotatedSourceCollector(
+    private val source: File,
+    private val annotationName: String,
+){
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
+    fun collect():  List<File> {
+
+        var annotation = annotationName
+        if(!annotation.startsWith("@")) {
+            annotation = "@$annotationName"
+        }
+
+        return search(source)
+            .filter { it.readText().contains(annotation) }
+
+    }
+
+    private fun search(directory: File): List<File> {
+        val classes = mutableListOf<File>()
+
+        if (directory.exists()) {
+            directory.walkTopDown().forEach { f ->
+                if(f.isFile) {
+                    classes.add(f)
+                }
+            }
+        }
+
+        return classes
     }
 
 }
-

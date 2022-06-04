@@ -23,7 +23,7 @@
 package dev.buijs.klutter.plugins.gradle.tasks
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.tasks.adapter.GenerateAdapterTask
+import dev.buijs.klutter.core.tasks.GenerateAdapterTask
 import java.io.File
 
 /**
@@ -32,35 +32,20 @@ import java.io.File
 open class GenerateAdapterGradleTask: KlutterGradleTask() {
 
     override fun describe() {
-
-        // A plugin project does not have all klutter modules
-        // and the platform module has a different name/location.
-        if(isPlugin()) {
-            val pluginName = ext.plugin?.name
-                ?: throw KlutterGradleException("""
-                    |Missing plugin-name. Specify plugin-name in klutter plugin DSL:
-                    |
-                    |Example:
-                    |```
-                    |klutter {
-                    |   plugin {
-                    |       name = "your_plugin_name"
-                    |   }
-                    |}
-                    |```
-                """.trimMargin())
+        val pluginName = ext.plugin?.name
+            ?: throw KlutterException("""
+                |Missing plugin-name. Specify plugin-name in klutter plugin DSL:
+                |
+                |Example:
+                |```
+                |klutter {
+                |   plugin {
+                |       name = "your_plugin_name"
+                |   }
+                |}
+                |```
+            """.trimMargin())
            asPlugin(pluginName, ext.root?.absolutePath ?: project.rootDir.path)
-        } else {
-            project().let { project ->
-                GenerateAdapterTask(
-                    android = project.android,
-                    ios = project.ios,
-                    flutter = project.flutter,
-                    platform = project.platform,
-                ).run()
-            }
-        }
-
     }
 
 }
@@ -73,8 +58,6 @@ internal fun asPlugin(pluginName: String, pathToRoot: String) {
     ).let { root ->
 
         GenerateAdapterTask(
-            isPlugin = true,
-            libName = pluginName,
             android = Android(root = root),
             ios = IOS(root = root),
             flutter = Flutter(root = root),

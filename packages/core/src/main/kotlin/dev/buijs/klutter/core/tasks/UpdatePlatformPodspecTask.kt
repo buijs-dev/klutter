@@ -20,15 +20,26 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.tasks
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.shared.IosPodspecVisitor
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
+/**
+ * @author Gillian Buijs
+ */
+@Suppress("unused")
+class UpdatePlatformPodspecTask(
+    private val project: KlutterProject,
+)
+    : KlutterTask
+{
+
+    override fun run() {
+        project.platform.podspec()?.let {
+            IosPodspecVisitor(it).visit()
+        }
     }
 
 }
-

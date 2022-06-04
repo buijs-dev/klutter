@@ -31,8 +31,6 @@ import org.gradle.api.tasks.TaskAction
 /**
  * Parent of all Gradle Tasks.
  * This class groups all implementing class under the <b>klutter</> group and gives access to the klutter configuration.
- *
- * @author Gillian Buijs
  */
 abstract class KlutterGradleTask: DefaultTask() {
     init { group = "klutter" }
@@ -48,12 +46,8 @@ abstract class KlutterGradleTask: DefaultTask() {
     @TaskAction
     fun execute() = describe()
 
-    fun appInfo() = ext.appInfo ?: throw KlutterConfigException("App Config missing!")
-
     fun project() = KlutterProjectFactory.create(
-        Root(ext.root ?: throw KlutterGradleException("Path to root folder is not set."))
-    ) ?: throw KlutterGradleException("Invalid Klutter Project.")
+        Root(ext.root ?: throw KlutterException("Path to root folder is not set."))
+    ) ?: throw KlutterException("Invalid Klutter Project.")
 
-    @Internal
-    fun isPlugin() = ext.plugin != null
 }

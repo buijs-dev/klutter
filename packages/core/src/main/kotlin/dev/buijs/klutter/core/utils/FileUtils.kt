@@ -20,15 +20,16 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.utils
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+import dev.buijs.klutter.core.KlutterException
+import java.io.File
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
-
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
-    }
-
+/**
+ * Return the [File] or throw a [KlutterException] if it does not exists.
+ */
+internal fun File.verifyExists(): File {
+    if(exists()) {
+        return this
+    } else throw KlutterException("Path does not exist: $absolutePath")
 }
-

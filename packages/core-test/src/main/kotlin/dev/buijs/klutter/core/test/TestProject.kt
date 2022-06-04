@@ -30,7 +30,7 @@ import kotlin.io.path.createDirectories
 /**
  * @author Gillian Buijs
  */
-internal data class TestProject(
+data class TestProject(
     val projectDir: Path = Files.createTempDirectory(""),
     val buildSrc: File = projectDir.resolve("buildSrc")
         .toAbsolutePath()

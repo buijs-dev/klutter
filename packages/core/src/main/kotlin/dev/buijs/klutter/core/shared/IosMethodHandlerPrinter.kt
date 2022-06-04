@@ -19,16 +19,34 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.core.shared
 
-package dev.buijs.klutter.plugins.gradle.tasks
+import dev.buijs.klutter.core.DartKotlinMap
+import dev.buijs.klutter.core.MethodData
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+/**
+ * @author Gillian Buijs
+ */
+internal fun printMethod(definition: MethodData): String {
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+    val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+        ".toKJson()"
+    } else ""
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
+    return if(definition.async) {
+        "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                "        ${definition.call.removeSuffix("()")} { data, error in\n" +
+                "\n" +
+                "            if let response = data { result(response$type) }\n" +
+                "\n" +
+                "            if let failure = error { result(failure) }\n" +
+                "\n" +
+                "        }\n" +
+                "    }\n"
+    } else {
+        "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
+                "        result(${definition.call}$type)\n" +
+                "    }"
     }
 
 }
-

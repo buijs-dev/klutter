@@ -20,15 +20,45 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+import dev.buijs.klutter.core.KlutterCodeGenerationException
+import dev.buijs.klutter.core.KlutterVisitor
+import java.io.File
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+/**
+ * @author Gillian Buijs
+ */
+internal class PupspecVisitor(
+    private val pubspec: File,
+): KlutterVisitor {
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
+    private var appName: String? = null
+
+    fun appName(): String {
+
+        if(appName == null) {
+            visit()
+        }
+
+        return appName ?: throw KlutterCodeGenerationException("App Name not found in pubspec.yaml")
+    }
+
+    override fun visit() {
+
+        if(!pubspec.exists()) {
+            throw KlutterCodeGenerationException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
+        }
+
+        val lines = pubspec.readLines()
+
+        for (line in lines) {
+            if (line.startsWith("name:")) {
+                appName = line.substringAfter("name:").removePrefix(" ")
+                return
+            }
+        }
+
     }
 
 }
-

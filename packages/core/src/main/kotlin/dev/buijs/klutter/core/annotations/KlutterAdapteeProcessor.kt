@@ -20,15 +20,26 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.annotations
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+import dev.buijs.klutter.core.MethodData
+import dev.buijs.klutter.core.toMethodData
+import java.io.File
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+/**
+ * @author Gillian Buijs
+ */
+internal class KlutterAdapteeScanner(
+    private val source: File,
+) {
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
-    }
-
+    fun scan(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<MethodData> =
+        KlutterAnnotatedSourceCollector(source, "@KlutterAdaptee")
+            .collect()
+            .map { it.toMethodData(language) }
+            .flatten()
 }
 
+internal enum class ReturnTypeLanguage {
+    DART, KOTLIN
+}

@@ -20,15 +20,31 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.MethodData
+import dev.buijs.klutter.core.utils.DefaultWriter
+import java.io.File
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+/**
+ * @author Gillian Buijs
+ */
+internal class FlutterLibraryGenerator(
+    private val path: File,
+    private val methodChannelName: String,
+    private val pluginClassName: String,
+    private val methods: List<MethodData>,
+    private val messages: DartObjects,
+): KlutterFileGenerator() {
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
-    }
+    override fun printer() = FlutterAdapterPrinter(
+        methodChannelName = methodChannelName,
+        pluginClassName = pluginClassName,
+        definitions = methods,
+        objects = messages,
+    )
+
+    override fun writer() = DefaultWriter(path, printer().print())
 
 }
-

@@ -68,7 +68,7 @@ publishing {
         }
     }
 
-    val libversion = (properties["core.version"] ?: "0.12.4")
+    val libversion = (properties["core.version"] ?: "0.12.5")
         .also { println("VERSION CORE ==> $it") }
 
     val repoUsername = (properties["repo.username"]

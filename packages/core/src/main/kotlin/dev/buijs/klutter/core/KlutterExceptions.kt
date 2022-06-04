@@ -22,12 +22,13 @@
 
 package dev.buijs.klutter.core
 
+class KlutterException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
+
 /**
  * Signals that an exception has occurred while processing a .kt file.
  *
  * @author Gillian Buijs
  */
-@Suppress("unused")
 class KotlinFileScanningException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
 /**
@@ -35,7 +36,6 @@ class KotlinFileScanningException(msg: String, cause: String = ""): Exception(ms
  *
  * @author Gillian Buijs
  */
-@Suppress("unused")
 class KlutterCodeGenerationException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
 
 /**
@@ -43,29 +43,4 @@ class KlutterCodeGenerationException(msg: String, cause: String = ""): Exception
  *
  * @author Gillian Buijs
  */
-@Suppress("unused")
 class KlutterConfigException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals that a Gradle operation has failed which may indicate a Gradle configuration issue.
- *
- * @author Gillian Buijs
- */
-@Suppress("unused")
-class KlutterGradleException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals that a failure has occurred which is caused by missing or faulty configuration of the Kotlin Multiplatform library in a Klutter project.
- *
- * @author Gillian Buijs
- */
-@Suppress("unused")
-class KlutterMultiplatformException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))
-
-/**
- * Signals a failure internally which likely points to a coding issue or bug.
- *
- * @author Gillian Buijs
- */
-@Suppress("unused")
-class KlutterInternalException(msg: String, cause: String = ""): Exception(msg, Throwable(cause))

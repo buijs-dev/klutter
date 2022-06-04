@@ -1,6 +1,6 @@
 import Flutter
 import UIKit
-import platform
+import Platform
 
 public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {

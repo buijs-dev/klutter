@@ -19,16 +19,32 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.core.utils
 
-package dev.buijs.klutter.plugins.gradle.tasks
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.core.KlutterWriter
+import java.io.File
 
-import dev.buijs.klutter.core.tasks.UpdateProjectTask
+internal class DefaultWriter(
+    private val path: File,
+    private val content: String,
+)
+    : KlutterWriter
+{
 
-open class UpdateProjectGradleTask: KlutterGradleTask() {
+    override fun write() {
 
-    override fun describe() {
-        UpdateProjectTask(project(), "13.0").run()
+        if(path.exists()) path.delete()
+
+        path.createNewFile().also { created ->
+            if(!created) {
+                throw KlutterException(
+                    "Unable to create folder in the given path $path."
+                )
+            }
+        }
+
+        path.writeText(content)
+
     }
-
 }
-

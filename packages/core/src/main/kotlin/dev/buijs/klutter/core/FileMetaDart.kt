@@ -23,16 +23,6 @@
 package dev.buijs.klutter.core
 
 /**
- * Type of Dart object being either a message or an enum.
- *
- * @author Gillian Buijs
- */
-internal enum class DartObjectType(val type: String) {
-    MESSAGE("message"),
-    ENUM("enum")
-}
-
-/**
  * @author Gillian Buijs
  *
  * This is not an exhaustive mapping but a

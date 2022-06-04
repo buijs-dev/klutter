@@ -7,9 +7,6 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import java.io.File
 
-/**
- * @author Gillian Buijs
- */
 private const val EXTENSION_NAME = "klutter"
 
 class KlutterGradlePlugin: Plugin<Project> {
@@ -18,8 +15,6 @@ class KlutterGradlePlugin: Plugin<Project> {
         project.tasks.register("generateAdapters", GenerateAdapterGradleTask::class.java)
         project.tasks.register("updateProject", UpdateProjectGradleTask::class.java)
         project.tasks.register("updatePlatformPodspec", UpdatePlatformPodspecGradleTask::class.java)
-        project.tasks.register("buildFlutterPackage", CreatePublishPackageGradleTask::class.java)
-        project.tasks.register("buildKlutterPlugin", CreatePluginProjectGradleTask::class.java)
     }
 }
 
@@ -32,14 +27,7 @@ open class KlutterGradleExtension {
     var root: File? = null
 
     @Internal
-    internal var appInfo: KlutterAppInfoDTO? = null
-
-    @Internal
     internal var plugin: KlutterPluginDTO? = null
-
-    fun app(lambda: KlutterAppInfoBuilder.() -> Unit) {
-        appInfo = KlutterAppInfoBuilder().apply(lambda).build()
-    }
 
     fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
         plugin = KlutterPluginBuilder().apply(lambda).build()

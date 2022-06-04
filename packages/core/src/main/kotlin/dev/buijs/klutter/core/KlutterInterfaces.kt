@@ -86,18 +86,6 @@ interface KlutterPrinter {
 }
 
 /**
- * The purpose of a KlutterProducer is to produce a set of files.
- */
-interface KlutterProducer {
-
- /**
-  * Creates one or more files.
-  */
- fun produce()
-
-}
-
-/**
  * Utility interface which processes a given file and may or may not change it's content.
  */
 interface KlutterVisitor {

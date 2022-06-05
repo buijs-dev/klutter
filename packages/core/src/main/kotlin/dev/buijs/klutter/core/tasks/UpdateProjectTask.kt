@@ -29,7 +29,7 @@ import dev.buijs.klutter.core.shared.AndroidManifestVisitor
 import dev.buijs.klutter.core.shared.IosAppFrameworkInfoPlistVisitor
 import dev.buijs.klutter.core.shared.IosInfoPlistVisitor
 import dev.buijs.klutter.core.shared.IosPodFileGenerator
-import dev.buijs.klutter.core.shared.PupspecVisitor
+import dev.buijs.klutter.core.shared.PubspecVisitor
 
 @Suppress("unused")
 class UpdateProjectTask(
@@ -41,12 +41,12 @@ class UpdateProjectTask(
 
         val ios = project.ios
         val androidManifest = project.android.manifest()
-        val appName = PupspecVisitor(project.root.resolve("pubspec.yaml")).appName()
+        val appName = PubspecVisitor(project.root.resolve("pubspec.yaml")).appName()
 
-        androidManifest?.let { AndroidManifestVisitor(it, appName).visit() }
+        androidManifest.let { AndroidManifestVisitor(it, appName).visit() }
         IosInfoPlistVisitor(ios.file.resolve("Runner/Info.plist"), appName).visit()
         IosAppFrameworkInfoPlistVisitor(ios.file.resolve("Flutter/AppFrameworkInfo.plist"), iosVersion).visit()
-        project.platform.podspec()?.let { IosPodFileGenerator(iosVersion, ios, project.platform, it.nameWithoutExtension) }
+        project.platform.podspec().let { IosPodFileGenerator(iosVersion, ios, project.platform, it.nameWithoutExtension) }
 
     }
 

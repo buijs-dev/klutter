@@ -25,7 +25,7 @@ class PubspecVisitorTest: WordSpec({
             """.trimIndent()
             )
 
-            PupspecVisitor(pubspec).appName() shouldBe "my app"
+            PubspecVisitor(pubspec).appName() shouldBe "my app"
 
         }
 

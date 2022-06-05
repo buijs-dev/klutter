@@ -33,10 +33,10 @@ class GenerateAdapterTaskSpec extends Specification {
         when:
         def root = new Root(sut.root)
         new GenerateAdapterTask(
-                new Android(sut.android, root),
-                new IOS(sut.ios, root),
+                new Android(sut.android),
+                new IOS(sut.ios, sut.pluginName),
                 root,
-                new Platform(root, new File("${sut.root}/klutter/${sut.pluginName}"), "", ""),
+                new Platform(sut.platform, sut.pluginName),
         ).run()
 
         then:

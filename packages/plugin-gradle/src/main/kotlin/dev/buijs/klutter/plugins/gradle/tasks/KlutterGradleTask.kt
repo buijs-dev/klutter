@@ -46,8 +46,8 @@ abstract class KlutterGradleTask: DefaultTask() {
     @TaskAction
     fun execute() = describe()
 
-    fun project() = KlutterProjectFactory.create(
+    fun project() = KlutterProject.create(
         Root(ext.root ?: throw KlutterException("Path to root folder is not set."))
-    ) ?: throw KlutterException("Invalid Klutter Project.")
+    )
 
 }

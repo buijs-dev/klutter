@@ -25,9 +25,6 @@ package dev.buijs.klutter.plugins.gradle.tasks
 
 import dev.buijs.klutter.core.tasks.UpdatePlatformPodspecTask
 
-/**
- * @author Gillian Buijs
- */
 open class UpdatePlatformPodspecGradleTask: KlutterGradleTask() {
 
     override fun describe() {

@@ -29,9 +29,6 @@ import java.nio.file.Files
 
 private val resources = TestResource()
 
-/**
- * @author Gillian Buijs
- */
 data class PluginProject (
     val pluginName: String = "super_awesome",
     val root: File = Files.createTempDirectory("").toFile(),
@@ -43,7 +40,7 @@ data class PluginProject (
         it.createFolder("kotlin/foo/bar/super_awesome")
     },
     val androidManifest: File = androidMain.createFile("AndroidManifest.xml"),
-    val platform: File = root.createFolder("klutter/$pluginName"),
+    val platform: File = root.createFolder("platform"),
     val platformBuildGradle: File = platform.createFile("build.gradle.kts"),
     val platformSource: File = root.createFolder("${platform.path}/src/commonMain"),
     val platformSourceClass: File = platformSource.createFile("FakeClass.kt"),

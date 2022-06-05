@@ -5,9 +5,6 @@ import spock.lang.Specification
 
 import static dev.buijs.klutter.core.test.KlutterTest.plugin
 
-/**
- * @author Gillian Buijs
- */
 class GenerateAdapterGradleTaskSpec extends Specification {
 
     def "Verify adapters are generated correctly for a plugin project"() {
@@ -24,7 +21,7 @@ class GenerateAdapterGradleTaskSpec extends Specification {
         }
 
         when:
-        GenerateAdapterGradleTaskKt.asPlugin(plugin.pluginName, plugin.root.path)
+        plugin.test(plugin.platform, "generateAdapters")
 
         then:
         plugin.verify("flutter library dart class is generated") { project, resources ->

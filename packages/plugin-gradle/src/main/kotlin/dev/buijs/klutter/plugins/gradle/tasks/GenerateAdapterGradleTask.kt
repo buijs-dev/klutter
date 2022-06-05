@@ -22,48 +22,15 @@
 
 package dev.buijs.klutter.plugins.gradle.tasks
 
-import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.tasks.GenerateAdapterTask
-import java.io.File
 
-/**
- * @author Gillian Buijs
- */
 open class GenerateAdapterGradleTask: KlutterGradleTask() {
 
     override fun describe() {
-        val pluginName = ext.plugin?.name
-            ?: throw KlutterException("""
-                |Missing plugin-name. Specify plugin-name in klutter plugin DSL:
-                |
-                |Example:
-                |```
-                |klutter {
-                |   plugin {
-                |       name = "your_plugin_name"
-                |   }
-                |}
-                |```
-            """.trimMargin())
-           asPlugin(pluginName, ext.root?.absolutePath ?: project.rootDir.path)
-    }
-
-}
-
-internal fun asPlugin(pluginName: String, pathToRoot: String) {
-
-    Root(
-      File(pathToRoot)
-    ).let { root ->
-
-        GenerateAdapterTask(
-            android = Android(root = root),
-            ios = IOS(root = root),
-            root = root,
-            platform = Platform(
-                root = root,
-                file = File("${root.folder.absolutePath}/klutter/$pluginName"),
-            ),
+        GenerateAdapterTask.create(
+            ext.root?.absolutePath ?: project.rootDir.path,
+            ext.plugin?.name,
         ).run()
     }
+
 }

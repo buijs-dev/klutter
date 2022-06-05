@@ -29,7 +29,7 @@ import java.io.File
 /**
  * @author Gillian Buijs
  */
-internal class PupspecVisitor(
+internal class PubspecVisitor(
     private val pubspec: File,
 ): KlutterVisitor {
 

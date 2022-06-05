@@ -27,15 +27,12 @@ import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.annotations.KlutterAdapteeScanner
 import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
-import dev.buijs.klutter.core.shared.IosPodspecVisitor
 import dev.buijs.klutter.core.shared.AndroidPluginGenerator
 import dev.buijs.klutter.core.shared.FlutterLibraryGenerator
 import dev.buijs.klutter.core.shared.FlutterPubspecScanner
 import dev.buijs.klutter.core.shared.IosPluginGenerator
+import dev.buijs.klutter.core.shared.IosPodspecVisitor
 
-/**
- * @author Gillian Buijs
- */
 class GenerateAdapterTask(
     private val android: Android,
     private val ios: IOS,
@@ -49,7 +46,7 @@ class GenerateAdapterTask(
     private var methods: List<MethodData>? = null
 
     override fun run() {
-        platform.source()?.let {
+        platform.source().let {
             dartObjects = KlutterResponseProcessor(it).process()
             methods =  KlutterAdapteeScanner(it).scan(language = ReturnTypeLanguage.DART)
         }
@@ -102,4 +99,15 @@ class GenerateAdapterTask(
 
     }
 
+    companion object {
+        fun create(pathToRoot: String, pluginName: String? = null): GenerateAdapterTask {
+            val project = KlutterProject.create(pathToRoot, pluginName)
+            return GenerateAdapterTask(
+                root = project.root,
+                android = project.android,
+                ios = project.ios,
+                platform = project.platform,
+            )
+        }
+    }
 }

@@ -22,7 +22,7 @@ class KlutterGradlePlugin: Plugin<Project> {
 
         project.tasks.register("generateAdapters", GenerateAdapters::class.java)
 
-        project.tasks.register("updatePlatformPodspec", updatePlatformPodspec::class.java)
+        project.tasks.register("updatePlatformPodspec", UpdatePlatformPodspec::class.java)
     }
 }
 
@@ -41,7 +41,7 @@ internal open class GenerateAdapters: KlutterGradleTask() {
 /**
  * Task to edit the podspec file in the root/platform folder.
  */
-internal open class updatePlatformPodspec: KlutterGradleTask() {
+internal open class UpdatePlatformPodspec: KlutterGradleTask() {
     override fun describe() {
         UpdatePlatformPodspecTask(project()).run()
     }

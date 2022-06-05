@@ -105,6 +105,9 @@ tasks.koverMergedXmlReport {
         "dev.buijs.klutter.annotations.kmp.*",
 
         //contains only annotations
-        "dev.buijs.klutter.annotations.jvm.*"
+        "dev.buijs.klutter.annotations.jvm.*",
+
+        //can only be tested with GradleRunner which is not registered for coverage
+        "dev.buijs.klutter.plugins.gradle.KlutterGradlePlugin",
     )
 }

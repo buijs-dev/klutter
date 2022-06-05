@@ -20,12 +20,12 @@
  *
  */
 
+@file:Suppress("unused")
 package dev.buijs.klutter.core
 
-import org.gradle.api.logging.Logging
+import dev.buijs.klutter.core.shared.PubspecVisitor
 import java.io.File
 
-private val log = Logging.getLogger(KlutterProject::class.java)
 
 /**
  * A representation of the structure of a project made with the Klutter Framework.
@@ -43,43 +43,47 @@ data class KlutterProject(
     val ios: IOS,
     val android: Android,
     val platform: Platform,
-)
+) {
 
-/**
- * Factory to create a KlutterProject.
- *
- * @author Gillian Buijs
- */
-object KlutterProjectFactory {
+    companion object {
 
-    /**
-     * @param validate check if all required folders are present and return null if not.
-     * If validate is false then validation is skipped and a [KlutterException] is thrown
-     * when a folder that should be present is not.
-     *
-     * @return a KlutterProject basing all module paths from the given root.
-     */
-    fun create(root: Root) = KlutterProject(
-        root = root,
-        ios = IOS(root = root),
-        platform = Platform(root = root),
-        android = Android(root = root),
-    )
+        fun create(
+            location: String,
+            pluginName: String? = null,
+        ) = create(Root(File(location)), pluginName)
 
-    fun create(location: String) = create(Root(File(location)))
+        fun create(
+            location: File,
+            pluginName: String? = null,
+        ) = create(Root(location), pluginName)
 
-    fun create(location: File) = create(Root(location))
+        fun create(
+            root: Root,
+            pluginName: String? = null,
+        ): KlutterProject = build(
+            root, pluginName ?: PubspecVisitor(root.folder).appName()
+        )
+
+        private fun build(
+            root: Root,
+            pluginName: String,
+        ): KlutterProject {
+            return KlutterProject(
+                root = root,
+                ios = IOS(root.resolve("ios"), pluginName),
+                platform = Platform(root.resolve("platform"), pluginName),
+                android = Android(root.resolve("android")),
+            )
+        }
+    }
 
 }
 
 /**
  * @property folder path to the top level of the project.
- *
- * @author Gillian Buijs
  */
 class Root(file: File) {
 
-    @Suppress("private")
     val folder: File = if (!file.exists()) {
         throw KlutterException("""
           The root folder does not exist: ${file.absolutePath}.
@@ -92,69 +96,47 @@ class Root(file: File) {
 }
 
 /**
- * Wrapper class with a file instance pointing to the kmp sub-module.
- * If no custom path is given, Klutter assumes the path to the Platform module is [root]/platform.
+ * Wrapper class with a file instance pointing to the kmp sub-module in root/platform.
  *
  * @property file path to the Platform folder.
- *
- * @author Gillian Buijs
  */
 class Platform(
-    root: Root,
-    file: File? = null,
-    private val podspecName: String = "platform.podspec",
-    private val moduleName: String = "commonMain",
-) : KlutterFolder(root, file, "Platform directory", root.resolve("platform")) {
+    val file: File,
+    private val pluginName: String,
+) {
 
     /**
      * Function to return the location of the src module containing the common/shared platform code.
-     * If no custom path is given, Klutter assumes the path to the KMP sourcecode is root-project/kmp/common/src/commonMain.
      *
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
-    fun source() = getFileSafely(
-        file.resolve("src/$moduleName"),
-        file.absolutePath, "root-project/platform/src/$moduleName"
-    )
+    fun source() = file
+        .verifyExists()
+        .resolve("src/commonMain")
+        .verifyExists()
 
     /**
-     * Function to return the location of the podspec file in the kmp sub-module.
-     * If no custom path is given, Klutter assumes the path to the Platform sourcecode is root-project/platform/platform.podspec.
+     * Function to return the location of the podspec in the platform sub-module.
      *
      * @throws KlutterException if file(s) do not exist.
-     * @return the absolute path to the podspec file.
+     * @return the absolute path to the ios Podfile.
      */
-    fun podspec() = getFileSafely(
-        file.resolve(if (podspecName.endsWith(".podspec")) podspecName else "$podspecName.podspec"),
-        file.absolutePath, "root-project/platform/platform.podspec"
-    )
-
-    /**
-     * Function to return the location of build folder in the Platform module.
-     * If no custom path is given, Klutter assumes the path to the Platform build folder is root-project/platform/build.
-     *
-     * @throws KlutterException if file(s) do not exist.
-     * @return the absolute path to the common source code.
-     */
-    fun build() = getFileSafely(
-        file.resolve("build"),
-        file.absolutePath,
-        "root-project/platform/build"
-    )
-
+    fun podspec() = file
+        .verifyExists()
+        .resolve(pluginName)
+        .verifyExists()
 }
 
 /**
- * Wrapper class with a file instance pointing to the ios sub-module.
- * If no custom path is given, Klutter assumes the path to the ios module is [root]/ios.
+ * Wrapper class with a path to the [root]/ios.
  *
  * @property file path to the iOS folder.
- *
- * @author Gillian Buijs
  */
-class IOS(file: File? = null, root: Root) :
-    KlutterFolder(root, file, "IOS directory", root.resolve("ios")) {
+class IOS(
+    val file: File,
+    private val pluginName: String,
+) {
 
     /**
      * Function to return the location of the PodFile in the ios sub-module.
@@ -163,157 +145,54 @@ class IOS(file: File? = null, root: Root) :
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
-    fun podfile() = getFileSafely(
-        file.resolve("Podfile"),
-        file.absolutePath,
-        "root-project/ios/Podfile")
+    fun podfile() = file
+        .verifyExists()
+        .resolve("Podfile")
+        .verifyExists()
+
+    /**
+     * Function to return the location of the podspec in the ios sub-module.
+     *
+     * @throws KlutterException if file(s) do not exist.
+     * @return the absolute path to the ios Podfile.
+     */
+    fun podspec() = file
+        .verifyExists()
+        .resolve(pluginName)
+        .verifyExists()
 
     /**
      * Function to return the location of the AppDelegate.swift file in the ios folder.
-     * If no custom path is given, Klutter assumes the path to the iOS AppDelegate.swift is root-project/ios/Runner/AppDelegate.swift.
      *
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios AppDelegate.
      */
-    fun appDelegate(): File? {
-        val runner = getFileSafely(
-            file.resolve("Runner"),
-            file.absolutePath,
-            "root-project/ios/Runner")
-        return getFileSafely(
-            runner?.resolve("AppDelegate.swift"),
-            runner?.absolutePath,
-            "root-project/ios/Runner/AppDelegate.swift"
-        )
-    }
+    fun appDelegate() = file
+        .verifyExists()
+        .resolve("Runner")
+        .verifyExists()
+        .resolve("AppDelegate.swift")
+        .verifyExists()
+
 }
 
 /**
  * Wrapper class with a file instance pointing to the android sub-module.
- * If no custom path is given, Klutter assumes the path to the Android module is [root]/android.
  *
  * @property file path to the Android folder.
- *
- * @author Gillian Buijs
  */
-class Android(file: File? = null, root: Root) : KlutterFolder(root, file, "Android directory", root.resolve("android")) {
+class Android(val file: File) {
 
     /**
-     * Function to return the location of the app sub-module in the android folder.
-     * If no custom path is given, Klutter assumes the path to the android app folder is root-project/android/app.
+     * Return path to android/src/main/AndroidManifest.xml.
      *
-     * @throws KlutterException if file(s) do not exist.
-     * @return the absolute path to the ios Podfile.
+     * @throws KlutterException if path/file does not exist.
+     * @return [File] AndroidManifest.xml.
      */
-    @Suppress("private")
-    fun app() = getFileSafely(file.resolve("app"), file.absolutePath, "root-project/android/app")
+    fun manifest() = file.verifyExists()
+        .resolve("src/main")
+        .verifyExists()
+        .resolve("AndroidManifest.xml")
+        .verifyExists()
 
-    /**
-     * Function to return the location of the AndroidManifest.xml file in the android/app sub-module.
-     * If no custom path is given, Klutter assumes the path to the android app manifest file is root-project/android/app/src/main/AndroidManifest.xml.
-     *
-     * @throws KlutterException if file(s) do not exist.
-     * @return the absolute path to the ios Podfile.
-     */
-    fun manifest(): File? {
-        val mainFolder = getFileSafely(
-            app()?.resolve("src/main"),
-            file.absolutePath,
-            "root-project/android/app/src/main"
-        )
-        return getFileSafely(
-            mainFolder?.resolve("AndroidManifest.xml"),
-            mainFolder?.absolutePath,
-            "root-project/android/app/src/main/AndroidManifest.xml"
-        )
-    }
-
-}
-
-/**
- * A wrapper class which holds a reference to the Klutter project root folder.
- * This class is used to safely get file instances by setting default locations for mandatory folders.
- * These defaults can be overwritten with custom values and when those do not exist the KlutterFolder
- * falls back to the default value.
- *
- * @throws KlutterException if both given <b>maybeFile</b> and <b>defaultLocation</b> do not exist.
- *
- * @author Gillian Buijs
- */
-abstract class KlutterFolder(
-    val root: Root,
-    maybeFile: File?,
-    whichFolder: String,
-    defaultLocation: File,
-) {
-
-    val file: File =
-        when {
-            maybeFile?.absoluteFile?.exists() == true -> {
-                maybeFile.absoluteFile
-            }
-
-            defaultLocation.absoluteFile.exists() -> {
-                defaultLocation.absoluteFile
-            }
-
-            else ->  throw KlutterException(
-                """
-              A folder which should be present is not found.
-              
-              Check configuration in Klutter Plugin for: $whichFolder.
-              
-              If no location is provided, Klutter assumes the correct path is: $defaultLocation.
-              
-              If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
-              """.trimIndent()
-            )
-        }
-
-    val exists = maybeFile?.absoluteFile?.exists() ?: defaultLocation.absoluteFile.exists()
-
-}
-
-/**
- * Helper method to get a file safely.
- * @throws KlutterException if [file] is null or does not exists.
- *
- * @author Gillian Buijs
- */
-internal fun getFileSafely(file: File?, whichFolder: String?, defaultLocation: String): File? {
-    if (file == null) {
-        log.error(
-            """
-            A file which should be present is null.
-            
-            Check configuration in Klutter Plugin for: $whichFolder.
-            
-            If no location is provided, Klutter assumes the correct path is: $defaultLocation.
-            
-            If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
-            """.trimIndent()
-        )
-
-        return null
-
-    } else if (!file.exists()) {
-        log.error(
-            """
-            A file which should be present does not exist:
-            
-            ${file.absolutePath}
-                        
-            Try one of the following:
-            Check configuration in Klutter Plugin for: $whichFolder.
-            Use Klutter task [generate adapter] to create any missing boilerplate.
-            
-            If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
-            """.trimIndent()
-        )
-
-        return null
-
-    } else {
-        return file.absoluteFile
-    }
 }

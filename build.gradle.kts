@@ -97,4 +97,7 @@ tasks.dokkaHtmlMultiModule.configure {
 tasks.koverMergedXmlReport {
     isEnabled = true
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
+    excludes = listOf(
+        "dev.buijs.klutter.core.test.*"
+    )
 }

@@ -138,15 +138,9 @@ repositories {
 
 dependencies {
 
-    val annotationsVersion = (properties["annotations.version"] ?: "0.12.0")
-        .also { println("VERSION ANNOTATIONS (GRADLE) ==> $it") }
-
-    val coreVersion = (properties["core.version"] ?: "0.12.7")
-        .also { println("VERSION CORE (GRADLE) ==> $it") }
-
     //Klutter
-    implementation("dev.buijs.klutter:annotations-jvm:$annotationsVersion")
-    implementation("dev.buijs.klutter:core:$coreVersion")
+    implementation(project(":packages:core"))
+    implementation(project(":packages:annotations-kmp"))
 
     //Kotlin
     implementation(kotlin("stdlib", "1.6.10"))

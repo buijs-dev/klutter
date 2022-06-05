@@ -1,4 +1,4 @@
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.plugins.gradle
 
 import dev.buijs.klutter.core.test.CompareMode
 import spock.lang.Specification

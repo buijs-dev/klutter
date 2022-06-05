@@ -98,6 +98,13 @@ tasks.koverMergedXmlReport {
     isEnabled = true
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
     excludes = listOf(
-        "dev.buijs.klutter.core.test.*"
+        //a test-only module
+        "dev.buijs.klutter.core.test.*",
+
+        //contains only annotations
+        "dev.buijs.klutter.annotations.kmp.*",
+
+        //contains only annotations
+        "dev.buijs.klutter.annotations.jvm.*"
     )
 }

@@ -12,9 +12,9 @@ class ProjectSpec extends Specification {
     @Shared
     def plugin = plugin { project, resources -> }
 
-    def "Verify creating a KlutterProject based of a String location"() {
+    def "Verify creating a dev.buijs.klutter.core.Project based of a String location"() {
         expect:
-        with(KlutterProject.create(location, plugin.pluginName)) { project ->
+        with(Project.klutterProject(location, plugin.pluginName)) { project ->
 
             project.root.folder == plugin.root
 
@@ -43,7 +43,7 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when root does not exist" () {
         when:
-        with(KlutterProject.create("/Fake", "")) { project ->
+        with(Project.klutterProject("/Fake", "")) { project ->
             // Getter will throw exception
             project.root.folder
         }
@@ -58,7 +58,7 @@ class ProjectSpec extends Specification {
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.platform.source()
@@ -77,7 +77,7 @@ class ProjectSpec extends Specification {
         new File("$root/platform").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.platform.source()
@@ -96,7 +96,7 @@ class ProjectSpec extends Specification {
         new File("$root/platform").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "plug")
+        def project = Project.klutterProject(root, "plug")
 
         when:
         project.platform.podspec()
@@ -119,7 +119,7 @@ class ProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = KlutterProject.create(root, "plugin")
+        def project = Project.klutterProject(root, "plugin")
 
         expect:
         project.platform.podspec().absolutePath == file.absolutePath
@@ -134,7 +134,7 @@ class ProjectSpec extends Specification {
         folder.mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         then:
         project.platform.source().absolutePath == folder.absolutePath
@@ -145,7 +145,7 @@ class ProjectSpec extends Specification {
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.android.manifest()
@@ -164,7 +164,7 @@ class ProjectSpec extends Specification {
         new File("$root/android").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.android.manifest()
@@ -183,7 +183,7 @@ class ProjectSpec extends Specification {
         new File("$root/android/src/main").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.android.manifest()
@@ -206,7 +206,7 @@ class ProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         then:
         project.android.manifest().absolutePath == file.absolutePath
@@ -217,7 +217,7 @@ class ProjectSpec extends Specification {
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.ios.podfile()
@@ -236,7 +236,7 @@ class ProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.ios.podfile()
@@ -259,7 +259,7 @@ class ProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         expect:
         project.ios.podfile().absolutePath == file.absolutePath
@@ -273,7 +273,7 @@ class ProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "plug")
+        def project = Project.klutterProject(root, "plug")
 
         when:
         project.ios.podspec()
@@ -296,7 +296,7 @@ class ProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = KlutterProject.create(root, "plugin")
+        def project = Project.klutterProject(root, "plugin")
 
         expect:
         project.ios.podspec().absolutePath == file.absolutePath
@@ -310,7 +310,7 @@ class ProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.ios.appDelegate()
@@ -329,7 +329,7 @@ class ProjectSpec extends Specification {
         new File("$root/ios/Runner").mkdirs()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         when:
         project.ios.appDelegate()
@@ -352,7 +352,7 @@ class ProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = KlutterProject.create(root, "")
+        def project = Project.klutterProject(root, "")
 
         expect:
         project.ios.appDelegate().absolutePath == file.absolutePath
@@ -379,9 +379,9 @@ class ProjectSpec extends Specification {
         new File("$root/platform/${pluginName}.podspec").createNewFile()
 
         when:
-        def projectFromFile = KlutterProject.create(folder, null)
-        def projectFromString = KlutterProject.create(folder.absolutePath, null)
-        def projectFromRoot = KlutterProject.create(new Root(folder), null)
+        def projectFromFile = Project.klutterProject(folder, null)
+        def projectFromString = Project.klutterProject(folder.absolutePath, null)
+        def projectFromRoot = Project.klutterProject(new Root(folder), null)
 
         then:
         projectFromFile.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")

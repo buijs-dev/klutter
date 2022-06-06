@@ -20,6 +20,7 @@
  *
  */
 
+@file:JvmName("Project")
 @file:Suppress("unused")
 package dev.buijs.klutter.core
 
@@ -43,49 +44,37 @@ data class KlutterProject(
     val ios: IOS,
     val android: Android,
     val platform: Platform,
-) {
+)
 
-    companion object {
-
-        @JvmStatic
-        fun create(
-            location: String,
-            pluginName: String? = null,
-        ) = create(Root(File(location)), pluginName)
-
-        @JvmStatic
-        fun create(
-            location: File,
-            pluginName: String? = null,
-        ) = create(Root(location), pluginName)
-
-        @JvmStatic
-        fun create(
-            root: Root,
-            pluginName: String? = null,
-        ): KlutterProject = build(
-            root, pluginName ?: root.pluginNameFromYaml()
-        )
-
-        @JvmStatic
-        private fun build(
-            root: Root,
-            pluginName: String,
-        ): KlutterProject {
-            return KlutterProject(
-                root = root,
-                ios = IOS(root.resolve("ios"), pluginName),
-                platform = Platform(root.resolve("platform"), pluginName),
-                android = Android(root.resolve("android")),
-            )
-        }
-
-        private fun Root.pluginNameFromYaml(): String =
-            PubspecVisitor(folder.resolve("pubspec.yaml")).appName()
-
-    }
-
+fun String.klutterProject(
+    pluginName: String? = null,
+) = Root(File(this)).let {
+    build(it, pluginName ?: it.pluginNameFromYaml())
 }
+
+fun File.klutterProject(
+    pluginName: String? = null,
+) = Root(this).let {
+    build(it, pluginName ?: it.pluginNameFromYaml())
+}
+
+fun Root.klutterProject(pluginName: String? = null) =
+    build(this, pluginName ?: this.pluginNameFromYaml())
+
+private fun build(
+    root: Root,
+    pluginName: String,
+): KlutterProject {
+    return KlutterProject(
+        root = root,
+        ios = IOS(root.resolve("ios"), pluginName),
+        platform = Platform(root.resolve("platform"), pluginName),
+        android = Android(root.resolve("android")),
+    )
+}
+
+private fun Root.pluginNameFromYaml(): String =
+    PubspecVisitor(folder.resolve("pubspec.yaml")).appName()
 
 /**
  * @property folder path to the top level of the project.

@@ -64,7 +64,7 @@ data class KlutterProject(
             root: Root,
             pluginName: String? = null,
         ): KlutterProject = build(
-            root, pluginName ?: PubspecVisitor(root.folder).appName()
+            root, pluginName ?: root.pluginNameFromYaml()
         )
 
         @JvmStatic
@@ -79,6 +79,10 @@ data class KlutterProject(
                 android = Android(root.resolve("android")),
             )
         }
+
+        private fun Root.pluginNameFromYaml(): String =
+            PubspecVisitor(folder.resolve("pubspec.yaml")).appName()
+
     }
 
 }

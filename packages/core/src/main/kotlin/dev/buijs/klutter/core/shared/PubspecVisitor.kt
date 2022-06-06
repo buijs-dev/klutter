@@ -50,7 +50,7 @@ internal class PubspecVisitor(
             throw KlutterException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
         }
 
-        val lines = pubspec.readLines()
+        val lines = pubspec.readLines().map { it.trim() }
 
         for (line in lines) {
             if (line.startsWith("name:")) {

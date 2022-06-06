@@ -14,7 +14,7 @@ class FakeClass {
     }
 
     @KlutterAdaptee(name = "ObiWan")
-    fun zeta(): List<String> =
+    suspend fun zeta(): List<String> =
         listOf(foo()).map { str ->
             "str = str                "
         }.filter { baz ->

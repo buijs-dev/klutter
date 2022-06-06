@@ -7,14 +7,14 @@ import java.nio.file.Files
 
 import static dev.buijs.klutter.core.test.KlutterTest.*
 
-class KlutterProjectSpec extends Specification {
+class ProjectSpec extends Specification {
 
     @Shared
     def plugin = plugin { project, resources -> }
 
     def "Verify creating a KlutterProject based of a String location"() {
         expect:
-        with(create(location, plugin.pluginName)) { project ->
+        with(KlutterProject.create(location, plugin.pluginName)) { project ->
 
             project.root.folder == plugin.root
 
@@ -43,7 +43,7 @@ class KlutterProjectSpec extends Specification {
 
     def "An exception is thrown when root does not exist" () {
         when:
-        with(create("/Fake", "")) { project ->
+        with(KlutterProject.create("/Fake", "")) { project ->
             // Getter will throw exception
             project.root.folder
         }
@@ -58,7 +58,7 @@ class KlutterProjectSpec extends Specification {
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.platform.source()
@@ -77,7 +77,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/platform").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.platform.source()
@@ -96,7 +96,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/platform").mkdirs()
 
         and:
-        def project = create(root, "plug")
+        def project = KlutterProject.create(root, "plug")
 
         when:
         project.platform.podspec()
@@ -119,7 +119,7 @@ class KlutterProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = create(root, "plugin")
+        def project = KlutterProject.create(root, "plugin")
 
         expect:
         project.platform.podspec().absolutePath == file.absolutePath
@@ -134,26 +134,18 @@ class KlutterProjectSpec extends Specification {
         folder.mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         then:
         project.platform.source().absolutePath == folder.absolutePath
     }
-
-//    def "When no pluginName is given then it is retrieved from the root/pubspec.yaml"() {
-//        given:
-//
-//
-//        when:
-//
-//    }
 
     def "An exception is thrown when android does not exist" () {
         given:
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.android.manifest()
@@ -172,7 +164,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/android").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.android.manifest()
@@ -191,7 +183,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/android/src/main").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.android.manifest()
@@ -214,7 +206,7 @@ class KlutterProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         then:
         project.android.manifest().absolutePath == file.absolutePath
@@ -225,7 +217,7 @@ class KlutterProjectSpec extends Specification {
         def root = Files.createTempDirectory("").toFile().absolutePath
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.ios.podfile()
@@ -244,7 +236,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.ios.podfile()
@@ -267,7 +259,7 @@ class KlutterProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         expect:
         project.ios.podfile().absolutePath == file.absolutePath
@@ -281,7 +273,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = create(root, "plug")
+        def project = KlutterProject.create(root, "plug")
 
         when:
         project.ios.podspec()
@@ -304,7 +296,7 @@ class KlutterProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = create(root, "plugin")
+        def project = KlutterProject.create(root, "plugin")
 
         expect:
         project.ios.podspec().absolutePath == file.absolutePath
@@ -318,7 +310,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/ios").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.ios.appDelegate()
@@ -337,7 +329,7 @@ class KlutterProjectSpec extends Specification {
         new File("$root/ios/Runner").mkdirs()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         when:
         project.ios.appDelegate()
@@ -360,13 +352,85 @@ class KlutterProjectSpec extends Specification {
         file.createNewFile()
 
         and:
-        def project = create(root, "")
+        def project = KlutterProject.create(root, "")
 
         expect:
         project.ios.appDelegate().absolutePath == file.absolutePath
     }
 
-    static KlutterProject create(def location, def pluginName) {
-        return KlutterProject.create(location, pluginName)
+    def "When no pluginName is given then it is retrieved from the root/pubspec.yaml"() {
+        given:
+        def folder = Files.createTempDirectory("").toFile()
+        def root = folder.absolutePath
+
+        and: "an existing pubspec.yaml"
+        def pubspec = new File("$root/pubspec.yaml")
+
+        and: "with plugin content"
+        pubspec.createNewFile()
+        pubspec.write(yaml(pluginName))
+
+        and: "an existing ios .podspec"
+        new File("$root/ios").mkdirs()
+        new File("$root/ios/${pluginName}.podspec").createNewFile()
+
+        and: "an existing platform .podspec"
+        new File("$root/platform").mkdirs()
+        new File("$root/platform/${pluginName}.podspec").createNewFile()
+
+        when:
+        def projectFromFile = KlutterProject.create(folder, null)
+        def projectFromString = KlutterProject.create(folder.absolutePath, null)
+        def projectFromRoot = KlutterProject.create(new Root(folder), null)
+
+        then:
+        projectFromFile.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+        projectFromFile.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+
+        and:
+        projectFromString.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+        projectFromString.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+
+        and:
+        projectFromRoot.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+        projectFromRoot.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+
+        where:
+        pluginName << [ "ridiculous_plugin" ]
+
+    }
+
+    def static yaml(String pluginName) {
+        return """
+            name: $pluginName
+            description: A new flutter plugin project.
+            version: 0.0.1
+            homepage:
+            
+            environment:
+              sdk: ">=2.16.1 <3.0.0"
+              flutter: ">=2.5.0"
+            
+            dependencies:
+              flutter:
+                sdk: flutter
+            
+            dev_dependencies:
+              flutter_test:
+                sdk: flutter
+            
+            # For information on ...
+            
+            # The following section is specific to Flutter.
+            flutter:
+              # This ...
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+                    pluginClass: RidiculousPlugin
+        """
     }
 }

@@ -91,9 +91,6 @@ internal data class Method(
 private const val REGEX =
     """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{"""
 
-private const val PACKAGE_ERROR =
-    "Method data analysis incomplete: Failed to process package name."
-
 internal fun File.toMethod(
     language: Lang = Lang.KOTLIN,
 ): List<Method> {
@@ -114,7 +111,6 @@ internal fun File.toMethod(
 
     return REGEX.toRegex().findAll(content.filter { !it.isWhitespace() })
         .map { it.groupValues }
-        .map { if(it.size != 6) throw KlutterException(PACKAGE_ERROR) else it }
         .map { values -> Method(
             import = "$packageName.$className",
             command = values[2],
@@ -128,34 +124,11 @@ internal fun File.toMethod(
  * Extract the package name to be used as import statement in generated code.
  */
 private fun String.packageName(): String {
-    val result = """package(.*)""".toRegex().find(this)
-
-    return when {
-
-        /**
-         * No package name could be valid though no reason to not properly package your code...
-         */
-        result == null -> {
-            ""
-        }
-
-        /**
-         * Package statement is found more than once which per definition is wrong.
-         *
-         * Expected size is 2:
-         * - groupValue 1 is entire line
-         * - groupValue 2 is value of match (in this case the actual name to be stored).
-         */
-        result.groupValues.size != 2 -> {
-            throw KlutterException("Package name processing failed: Multiple package statements found.")
-        }
-
-        /**
-         * Return the found package name.
-         */
-        else -> result.groupValues[1].trim()
-    }
-
+    return """package(.*)""".toRegex().find(this)
+        ?.groupValues
+        ?.get(1)
+        ?.trim()
+        ?: ""
 }
 
 /**
@@ -220,16 +193,21 @@ internal enum class DartKotlinMap(
 
     companion object {
 
-        fun toKotlinType(type: String) = values().firstOrNull { it.dartType == type } ?.kotlinType
+        @JvmStatic
+        fun toKotlinType(type: String) = toMapOrNull(type)?.kotlinType
             ?: throw KlutterException("No such kotlinType in KotlinDartMap: $type")
 
-        fun toDartType(type: String) = values().firstOrNull { it.kotlinType == type } ?.dartType
+        @JvmStatic
+        fun toDartType(type: String) = toMapOrNull(type)?.dartType
             ?: throw KlutterException("No such dartType in KotlinDartMap: $type")
 
-        fun toMap(type: String) = values().firstOrNull { it.dartType == type || it.kotlinType == type}
+        @JvmStatic
+        fun toMap(type: String) = toMapOrNull(type)
             ?: throw KlutterException("No such dartType or kotlinType in KotlinDartMap: $type")
 
-        fun toMapOrNull(type: String) = values().firstOrNull { it.dartType == type || it.kotlinType == type}
+        @JvmStatic
+        fun toMapOrNull(type: String) = values()
+            .firstOrNull { it.dartType == type || it.kotlinType == type}
 
     }
 }

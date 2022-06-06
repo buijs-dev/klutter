@@ -31,6 +31,10 @@ public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
     }
 
     func ObiWan(result: @escaping FlutterResult) {
-        result(FakeClass().zeta().toKJson())
+        FakeClass().zeta { data, error in
+            if let response = data { result(response.toKJson()) }
+
+            if let failure = error { result(failure) }
     }
+  }
 }

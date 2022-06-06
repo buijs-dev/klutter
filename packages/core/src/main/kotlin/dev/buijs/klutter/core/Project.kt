@@ -20,7 +20,6 @@
  *
  */
 
-@file:JvmName("Project")
 @file:Suppress("unused")
 package dev.buijs.klutter.core
 

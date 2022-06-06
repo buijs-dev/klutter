@@ -111,3 +111,8 @@ tasks.koverMergedXmlReport {
         "dev.buijs.klutter.plugins.gradle.*",
     )
 }
+
+kover {
+    // KOVER destroys running with coverage from IDE
+    isDisabled = hasProperty("nokover")
+}

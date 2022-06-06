@@ -35,6 +35,9 @@ data class PluginProject (
     val ios: File = root.createFolder("ios"),
     val iosClasses: File = ios.createFolder("Classes"),
     val iosPodspec: File = ios.createFile("super_awesome.podspec"),
+    val iosPodfile: File = ios.createFile("Podfile"),
+    val iosRunner: File = ios.createFolder("Runner"),
+    val iosAppDelegate: File = iosRunner.createFile("AppDelegate.swift"),
     val android: File = root.createFolder("android"),
     val androidMain: File = root.createFolder("android/src/main").also {
         it.createFolder("kotlin/foo/bar/super_awesome")
@@ -44,6 +47,7 @@ data class PluginProject (
     val platformBuildGradle: File = platform.createFile("build.gradle.kts"),
     val platformSource: File = root.createFolder("${platform.path}/src/commonMain"),
     val platformSourceClass: File = platformSource.createFile("FakeClass.kt"),
+    val platformPodspec: File = platform.createFile("super_awesome.podspec"),
     val flutter: File = root.createFolder("lib"),
     val flutterMainClass: File = flutter.createFile("${pluginName}.dart"),
     val rootBuildGradle: File = root.createFile("build.gradle.kts"),

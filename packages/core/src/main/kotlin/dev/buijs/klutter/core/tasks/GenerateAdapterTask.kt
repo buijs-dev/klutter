@@ -78,7 +78,7 @@ class GenerateAdapterTask(
             ).generate()
 
             AndroidPluginGenerator(
-                path = android.file.resolve("src/main/kotlin/$pluginPath/$pluginClassName.kt"),
+                path = android.folder.resolve("src/main/kotlin/$pluginPath/$pluginClassName.kt"),
                 methodChannelName = methodChannelName,
                 pluginClassName = pluginClassName,
                 libraryPackage = packageName,
@@ -86,7 +86,7 @@ class GenerateAdapterTask(
             ).generate()
 
             IosPluginGenerator(
-                path = ios.file.resolve("Classes/Swift$pluginClassName.swift"),
+                path = ios.folder.resolve("Classes/Swift$pluginClassName.swift"),
                 methodChannelName = methodChannelName,
                 pluginClassName = pluginClassName,
                 methods = methods,
@@ -94,7 +94,7 @@ class GenerateAdapterTask(
             ).generate()
 
             IosPodspecVisitor(
-                podspec = ios.file.resolve("$pluginName.podspec")
+                podspec = ios.folder.resolve("$pluginName.podspec")
             ).visit()
         }
 

@@ -41,12 +41,12 @@ internal class IosPodFileGenerator(
 
     override fun printer() = IosPodFilePrinter(
         iosVersion,
-        ios.file,
-        platform.file,
+        ios.folder,
+        platform.folder,
         podName,
     )
 
-    override fun writer() = IosPodFileWriter(ios.file, printer().print())
+    override fun writer() = IosPodFileWriter(ios.folder, printer().print())
 
 }
 

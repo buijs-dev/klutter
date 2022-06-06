@@ -47,16 +47,19 @@ data class KlutterProject(
 
     companion object {
 
+        @JvmStatic
         fun create(
             location: String,
             pluginName: String? = null,
         ) = create(Root(File(location)), pluginName)
 
+        @JvmStatic
         fun create(
             location: File,
             pluginName: String? = null,
         ) = create(Root(location), pluginName)
 
+        @JvmStatic
         fun create(
             root: Root,
             pluginName: String? = null,
@@ -64,6 +67,7 @@ data class KlutterProject(
             root, pluginName ?: PubspecVisitor(root.folder).appName()
         )
 
+        @JvmStatic
         private fun build(
             root: Root,
             pluginName: String,
@@ -98,10 +102,10 @@ class Root(file: File) {
 /**
  * Wrapper class with a file instance pointing to the kmp sub-module in root/platform.
  *
- * @property file path to the Platform folder.
+ * @property folder path to the Platform folder.
  */
 class Platform(
-    val file: File,
+    val folder: File,
     private val pluginName: String,
 ) {
 
@@ -111,7 +115,7 @@ class Platform(
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the common source code.
      */
-    fun source() = file
+    fun source() = folder
         .verifyExists()
         .resolve("src/commonMain")
         .verifyExists()
@@ -122,19 +126,19 @@ class Platform(
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
-    fun podspec() = file
+    fun podspec() = folder
         .verifyExists()
-        .resolve(pluginName)
+        .resolve("$pluginName.podspec")
         .verifyExists()
 }
 
 /**
  * Wrapper class with a path to the [root]/ios.
  *
- * @property file path to the iOS folder.
+ * @property folder path to the iOS folder.
  */
 class IOS(
-    val file: File,
+    val folder: File,
     private val pluginName: String,
 ) {
 
@@ -145,7 +149,7 @@ class IOS(
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
-    fun podfile() = file
+    fun podfile() = folder
         .verifyExists()
         .resolve("Podfile")
         .verifyExists()
@@ -156,9 +160,9 @@ class IOS(
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios Podfile.
      */
-    fun podspec() = file
+    fun podspec() = folder
         .verifyExists()
-        .resolve(pluginName)
+        .resolve("$pluginName.podspec")
         .verifyExists()
 
     /**
@@ -167,7 +171,7 @@ class IOS(
      * @throws KlutterException if file(s) do not exist.
      * @return the absolute path to the ios AppDelegate.
      */
-    fun appDelegate() = file
+    fun appDelegate() = folder
         .verifyExists()
         .resolve("Runner")
         .verifyExists()
@@ -179,9 +183,9 @@ class IOS(
 /**
  * Wrapper class with a file instance pointing to the android sub-module.
  *
- * @property file path to the Android folder.
+ * @property folder path to the Android folder.
  */
-class Android(val file: File) {
+class Android(val folder: File) {
 
     /**
      * Return path to android/src/main/AndroidManifest.xml.
@@ -189,7 +193,7 @@ class Android(val file: File) {
      * @throws KlutterException if path/file does not exist.
      * @return [File] AndroidManifest.xml.
      */
-    fun manifest() = file.verifyExists()
+    fun manifest() = folder.verifyExists()
         .resolve("src/main")
         .verifyExists()
         .resolve("AndroidManifest.xml")

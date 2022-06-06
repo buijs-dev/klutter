@@ -1,7 +1,6 @@
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.MethodData
-import dev.buijs.klutter.core.shared.AndroidPluginGenerator
+import dev.buijs.klutter.core.Method
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -18,7 +17,7 @@ class AndroidPluginGeneratorSpec extends Specification {
         def methodChannelName = "super_plugin"
         def pluginClassName = "SuperPlugin"
         def libraryPackage = ""
-        def methods = [new MethodData(
+        def methods = [new Method(
                 "greeting",
                 "platform.Greeting",
                 "Greeting().greeting()",

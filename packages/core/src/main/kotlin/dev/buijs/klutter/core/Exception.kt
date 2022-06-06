@@ -22,13 +22,4 @@
 
 package dev.buijs.klutter.core
 
-import java.io.File
-
-/**
- * Return the [File] or throw a [KlutterException] if it does not exists.
- */
-internal fun File.verifyExists(): File {
-    if(exists()) {
-        return this
-    } else throw KlutterException("Path does not exist: $absolutePath")
-}
+class KlutterException(msg: String): Exception(msg)

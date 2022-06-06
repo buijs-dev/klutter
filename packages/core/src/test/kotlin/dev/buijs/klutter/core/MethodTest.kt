@@ -6,7 +6,7 @@ import io.kotlintest.specs.WordSpec
 /**
  * @author Gillian Buijs
  */
-class FileMetaDartTest: WordSpec({
+class MethodTest: WordSpec({
 
     "Using the utility method" should {
 

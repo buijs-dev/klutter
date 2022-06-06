@@ -24,7 +24,7 @@ package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.DefaultWriter
+import dev.buijs.klutter.core.FileWriter
 import java.io.File
 
 /**
@@ -35,7 +35,7 @@ internal class AndroidPluginGenerator(
     private val methodChannelName: String,
     private val pluginClassName: String? = null,
     private val libraryPackage: String? = null,
-    private val methods: List<MethodData>,
+    private val methods: List<Method>,
 ): KlutterFileGenerator() {
 
     override fun printer() = AndroidPluginPrinter(
@@ -45,7 +45,7 @@ internal class AndroidPluginGenerator(
         methods = methods,
     )
 
-    override fun writer() = DefaultWriter(path, printer().print())
+    override fun writer() = FileWriter(path, printer().print())
 
 }
 
@@ -53,7 +53,7 @@ internal class AndroidPluginPrinter(
     private val libraryPackage: String,
     private val pluginClassName: String,
     private val methodChannelName: String,
-    private val methods: List<MethodData>,
+    private val methods: List<Method>,
 ): KlutterPrinter {
 
     override fun print(): String {
@@ -115,13 +115,13 @@ internal class AndroidPluginPrinter(
             |""".trimMargin()
     }
 
-    private fun printFun(definition: MethodData): String {
-        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+    private fun printFun(definition: Method): String {
+        val type = if (DartKotlinMap.toMapOrNull(definition.dataType) == null) {
             ".toKJson()"
         } else ""
 
-        return  "                \"${definition.getter}\" -> {\r\n" +
-                "                    result.success(${definition.call}${type})\r\n" +
+        return  "                \"${definition.command}\" -> {\r\n" +
+                "                    result.success(${definition.method}${type})\r\n" +
                 "                }"
     }
 

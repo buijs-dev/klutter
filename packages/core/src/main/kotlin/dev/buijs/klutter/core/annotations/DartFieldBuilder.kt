@@ -180,16 +180,19 @@ private class DetermineDartFieldDataTypeStep(
             isList = true
         }
 
-        val dataType = DartKotlinMap.toMapOrNull(type)?.dartType ?: ""
-        val customDataType = if(dataType == "") type else null
+        /**
+         * If DartKotlinMap has no mapping for the given value then
+         * the value is a custom data type.
+         */
+        val dataType = DartKotlinMap.toMapOrNull(type)?.dartType
 
         return DartFieldProcessingSucceeded(
             field = DartField(
                 name = name,
                 isList = isList,
-                optional = optional,
-                dataType = dataType,
-                customDataType = customDataType
+                isOptional = optional,
+                dataType = dataType ?: type,
+                isCustomDataType = dataType == null
             )
         )
     }

@@ -86,8 +86,8 @@ class Root(file: File) {
 
     val folder: File = if (!file.exists()) {
         throw KlutterException("""
-          The root folder does not exist: ${file.absolutePath}.
-          """.trimIndent())
+              The root folder does not exist: ${file.absolutePath}.
+              """.trimIndent())
     } else {
         file.absoluteFile
     }

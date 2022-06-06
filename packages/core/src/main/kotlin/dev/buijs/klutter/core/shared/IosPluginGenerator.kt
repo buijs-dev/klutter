@@ -25,8 +25,8 @@ package dev.buijs.klutter.core.shared
 import dev.buijs.klutter.core.DartKotlinMap
 import dev.buijs.klutter.core.KlutterFileGenerator
 import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.MethodData
-import dev.buijs.klutter.core.DefaultWriter
+import dev.buijs.klutter.core.Method
+import dev.buijs.klutter.core.FileWriter
 import java.io.File
 
 /**
@@ -37,7 +37,7 @@ internal class IosPluginGenerator(
     private val frameworkName: String = "platform",
     private val methodChannelName: String,
     private val pluginClassName: String,
-    private val methods: List<MethodData>,
+    private val methods: List<Method>,
 ): KlutterFileGenerator() {
 
     override fun printer() = IosPluginPrinter(
@@ -47,7 +47,7 @@ internal class IosPluginGenerator(
         methods = methods,
     )
 
-    override fun writer() = DefaultWriter(path, printer().print())
+    override fun writer() = FileWriter(path, printer().print())
 
 }
 
@@ -55,7 +55,7 @@ internal class IosPluginPrinter(
     private val frameworkName: String,
     private val pluginClassName: String,
     private val methodChannelName: String,
-    private val methods: List<MethodData>,
+    private val methods: List<Method>,
 ): KlutterPrinter {
 
     override fun print() = """
@@ -83,20 +83,20 @@ internal class IosPluginPrinter(
             |""".trimMargin()
 
     private fun blocks() = methods.joinToString("\n") {
-        "        case \"${it.getter}\":\n            self.${it.getter}(result: result)"
+        "        case \"${it.command}\":\n            self.${it.command}(result: result)"
     }
 
     private fun methods(): String = methods.joinToString("\n\n") { printMethod(it) }
 
-    private fun printMethod(definition: MethodData): String {
+    private fun printMethod(definition: Method): String {
 
-        val type = if (DartKotlinMap.toMapOrNull(definition.returns) == null) {
+        val type = if (DartKotlinMap.toMapOrNull(definition.dataType) == null) {
             ".toKJson()"
         } else ""
 
         return if(definition.async) {
-            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                    "        ${definition.call.removeSuffix("()")} { data, error in\n" +
+            "    func ${definition.command}(result: @escaping FlutterResult) {\n" +
+                    "        ${definition.method.removeSuffix("()")} { data, error in\n" +
                     "\n" +
                     "            if let response = data { result(response$type) }\n" +
                     "\n" +
@@ -105,8 +105,8 @@ internal class IosPluginPrinter(
                     "        }\n" +
                     "    }\n"
         } else {
-            "    func ${definition.getter}(result: @escaping FlutterResult) {\n" +
-                    "        result(${definition.call}$type)\n" +
+            "    func ${definition.command}(result: @escaping FlutterResult) {\n" +
+                    "        result(${definition.method}$type)\n" +
                     "    }"
         }
 

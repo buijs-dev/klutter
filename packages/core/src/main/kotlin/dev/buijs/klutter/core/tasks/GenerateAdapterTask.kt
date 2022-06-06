@@ -42,12 +42,15 @@ class GenerateAdapterTask(
     : KlutterTask
 {
 
-    private var dartObjects: DartObjects? = null
-    private var methods: List<MethodData>? = null
+    private var messages: List<DartMessage>? = null
+    private var enumerations: List<DartEnum>? = null
+    private var methods: List<Method>? = null
 
     override fun run() {
         platform.source().let {
-            dartObjects = KlutterResponseProcessor(it).process()
+            val processor = KlutterResponseProcessor(it)
+            messages = processor.messages
+            enumerations = processor.enumerations
             methods =  KlutterAdapteeScanner(it).scan(language = ReturnTypeLanguage.DART)
         }
 
@@ -70,10 +73,8 @@ class GenerateAdapterTask(
                 methodChannelName = methodChannelName,
                 pluginClassName = pluginClassName,
                 methods = methods,
-                messages = dartObjects ?: DartObjects(
-                    messages = emptyList(),
-                    enumerations = emptyList(),
-                ),
+                messages = messages ?: emptyList(),
+                enumerations = enumerations ?: emptyList(),
             ).generate()
 
             AndroidPluginGenerator(

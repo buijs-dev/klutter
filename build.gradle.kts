@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.dokka") version "1.6.10"
-    id("org.jetbrains.kotlinx.kover") version "0.5.0"
+    id("org.jetbrains.kotlinx.kover") version "0.5.1"
 }
 
 subprojects {

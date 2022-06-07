@@ -12,6 +12,17 @@ class MethodSpec extends Specification {
     @Shared
     def resources = new TestResource()
 
+    def "Verify Method constructor"(){
+        expect:
+        with(new Method("a", "b", "c", true, "String")){
+            it.command == "a"
+            it.import == "b"
+            it.method == "c"
+            it.dataType == "String"
+            it.async
+        }
+    }
+
     def "[DartKotlinMap] returns a valid Dart data type"() {
         expect:
         DartKotlinMap.toDartType("Double") == "double"

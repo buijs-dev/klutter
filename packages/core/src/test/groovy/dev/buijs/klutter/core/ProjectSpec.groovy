@@ -381,7 +381,7 @@ class ProjectSpec extends Specification {
         when:
         def projectFromFile = ProjectKt.klutterProject(folder, null)
         def projectFromString = ProjectKt.klutterProject(folder.absolutePath, null)
-        def projectFromRoot = ProjectKt.klutterProject(new Root(folder), null)
+        def projectFromRoot = ProjectKt.klutterProject(new Root(folder))
 
         then:
         projectFromFile.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")

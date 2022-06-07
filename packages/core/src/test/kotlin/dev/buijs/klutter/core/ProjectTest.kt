@@ -39,7 +39,7 @@ class ProjectTest: WordSpec({
         }
 
         "The Root constructor should lookup plugin name from the pubspec.yaml" {
-            val project = Root(folder).klutterProject(null)
+            val project = Root(folder).klutterProject()
             project.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
             project.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
         }

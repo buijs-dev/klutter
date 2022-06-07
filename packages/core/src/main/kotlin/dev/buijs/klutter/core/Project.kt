@@ -57,8 +57,11 @@ fun File.klutterProject(
     build(it, pluginName ?: it.pluginNameFromYaml())
 }
 
-fun Root.klutterProject(pluginName: String? = null) =
-    build(this, pluginName ?: this.pluginNameFromYaml())
+fun Root.klutterProject(pluginName: String) =
+    build(this, pluginName)
+
+fun Root.klutterProject() =
+    build(this, this.pluginNameFromYaml())
 
 private fun build(
     root: Root,

@@ -78,8 +78,8 @@ class MethodSpec extends Specification {
         where:
         dataType        | expected          | lang
         "Stttttring!"   | "Stttttring!"     | ReturnTypeLanguage.KOTLIN
-        "Int"           | "Int"             | ReturnTypeLanguage.KOTLIN
-        "Double"        | "Double"          | ReturnTypeLanguage.KOTLIN
+        "Int  "         | "Int"             | ReturnTypeLanguage.KOTLIN
+        "  Double"      | "Double"          | ReturnTypeLanguage.KOTLIN
         "Boolean"       | "Boolean"         | ReturnTypeLanguage.KOTLIN
         "String"        | "String"          | ReturnTypeLanguage.KOTLIN
         "int"           | "Int"             | ReturnTypeLanguage.KOTLIN
@@ -89,12 +89,12 @@ class MethodSpec extends Specification {
         "Stttttring!"   | "Stttttring!"     | ReturnTypeLanguage.DART
         "Int"           | "int"             | ReturnTypeLanguage.DART
         "Double"        | "double"          | ReturnTypeLanguage.DART
-        "Boolean"       | "bool"            | ReturnTypeLanguage.DART
-        "String"        | "String"          | ReturnTypeLanguage.DART
+        "Boolean  "     | "bool"            | ReturnTypeLanguage.DART
+        "  String"      | "String"          | ReturnTypeLanguage.DART
         "int"           | "int"             | ReturnTypeLanguage.DART
         "double"        | "double"          | ReturnTypeLanguage.DART
         "bool"          | "bool"            | ReturnTypeLanguage.DART
-        "String"        | "String"          | ReturnTypeLanguage.DART
+        "  String  "    | "String"          | ReturnTypeLanguage.DART
     }
 
     def "[toMethod] an empty list is returned when no methods are found"() {

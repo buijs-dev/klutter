@@ -115,7 +115,7 @@ internal fun File.toMethod(
             import = "$packageName.$className",
             command = values[2],
             method = "$className().${values[4]}",
-            async = values[3].trim().isNotBlank(),
+            async = values[3].trim() == "suspend",
             dataType = values[5].asDataType(language))
         }.toList()
 }
@@ -123,13 +123,9 @@ internal fun File.toMethod(
 /**
  * Extract the package name to be used as import statement in generated code.
  */
-private fun String.packageName(): String {
-    return """package(.*)""".toRegex().find(this)
-        ?.groupValues
-        ?.get(1)
-        ?.trim()
-        ?: ""
-}
+private fun String.packageName(): String =
+    """package(.*)""".toRegex().find(this)
+        ?.let { it.groupValues[1].trim() } ?: ""
 
 /**
  * Converts the data type if possible.

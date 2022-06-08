@@ -95,8 +95,9 @@ tasks.dokkaHtmlMultiModule.configure {
 }
 
 tasks.koverMergedXmlReport {
+
     isEnabled = true
-    xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
+
     excludes = listOf(
         //a test-only module
         "dev.buijs.klutter.core.test.*",
@@ -110,6 +111,8 @@ tasks.koverMergedXmlReport {
         //can only be tested with GradleRunner which is not registered for coverage
         "dev.buijs.klutter.plugins.gradle.*",
     )
+
+    xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
 }
 
 kover {
@@ -117,4 +120,9 @@ kover {
     // KOVER destroys running with coverage from IDE
     isDisabled = hasProperty("nokover")
     jacocoEngineVersion.set("0.8.8")
+    disabledProjects = setOf(
+        ":packages:annotations-kmp",
+        ":packages:annotations-jvm",
+        ":packages:plugin-gradle"
+    )
 }

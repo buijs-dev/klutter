@@ -191,8 +191,8 @@ private class DetermineDartFieldDataTypeStep(
                 name = name,
                 isList = isList,
                 isOptional = optional,
-                dataType = dataType ?: type,
-                isCustomDataType = dataType == null
+                type = dataType ?: type,
+                isCustomType = dataType == null
             )
         )
     }

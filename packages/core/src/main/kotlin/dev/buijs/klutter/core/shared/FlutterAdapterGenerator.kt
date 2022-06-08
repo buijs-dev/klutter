@@ -376,8 +376,8 @@ internal class FactoryPrinter(
                     field = field,
                 )
             } else {
-                val dataType = field.dataType
-                if(field.isCustomDataType){
+                val dataType = field.type
+                if(field.isCustomType){
                     sb.append("$dataType.fromJson(json['${field.name}'])")
                 } else sb.append("json['${field.name}']$q${getCastMethod(dataType)}")
             }
@@ -393,13 +393,13 @@ internal class FactoryPrinter(
 
         if(isNullable) sb.append("json['${field.name}'] == null ? [] : ")
 
-        val dataType = field.dataType
+        val dataType = field.type
         sb.append("List<${dataType}>")
         sb.append(".from(json['${field.name}']")
 
         val q = if(isNullable) "?" else ""
 
-        if(field.isCustomDataType){
+        if(field.isCustomType){
             sb.append("$q.map((o) => ${dataType}.fromJson(o)))")
         } else sb.append("$q.map((o) => o${getCastMethod(dataType)}))")
 
@@ -421,10 +421,10 @@ internal class MemberPrinter(
 ): KlutterPrinter {
 
     override fun print() = fields.sortedBy { it.isOptional }.joinToString(BR) {
-        var datatype = it.dataType
+        var datatype = it.type
 
         if(it.isList){
-            datatype = "List<${it.dataType}>"
+            datatype = "List<${it.type}>"
         }
 
         if(it.isOptional) {
@@ -454,11 +454,11 @@ internal class SerializerPrinter(
         var out = field.name
 
         if(field.isList) {
-            if(field.isCustomDataType) {
+            if(field.isCustomType) {
                 out += "$q.map((o) => o.toJson())"
             }
             out += ".toList()"
-        } else if(field.isCustomDataType) {
+        } else if(field.isCustomType) {
             out = "$out.toJson()"
         }
 

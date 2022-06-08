@@ -45,36 +45,36 @@ class KlutterResponseScannerSpec extends Specification {
         messages[0].name == "Jedi"
 
         messages[0].fields[0].name == "name"
-        messages[0].fields[0].dataType == "String"
-        !messages[0].fields[0].isCustomDataType
+        messages[0].fields[0].type == "String"
+        !messages[0].fields[0].customType
         !messages[0].fields[0].isList
         !messages[0].fields[0].isOptional
 
         //And field 2
         messages[0].fields[1].name == "age"
-        messages[0].fields[1].dataType == "int"
-        !messages[0].fields[1].isCustomDataType
+        messages[0].fields[1].type == "int"
+        !messages[0].fields[1].customType
         !messages[0].fields[1].isList
         !messages[0].fields[1].isOptional
 
         //And field 3
         messages[0].fields[2].name == "alliance"
-        messages[0].fields[2].dataType == "String"
-        !messages[0].fields[2].isCustomDataType
+        messages[0].fields[2].type == "String"
+        !messages[0].fields[2].customType
         !messages[0].fields[2].isList
         messages[0].fields[2].isOptional
 
         //And field 4
         messages[0].fields[3].name == "abilities"
-        messages[0].fields[3].dataType == "Ability"
-        messages[0].fields[3].isCustomDataType
+        messages[0].fields[3].type == "Ability"
+        messages[0].fields[3].customType
         messages[0].fields[3].isList
         !messages[0].fields[3].isOptional
 
         //And field 5
         messages[0].fields[4].name == "rank"
-        messages[0].fields[4].dataType == "Rank"
-        messages[0].fields[4].isCustomDataType
+        messages[0].fields[4].type == "Rank"
+        messages[0].fields[4].customType
         !messages[0].fields[4].isList
         !messages[0].fields[4].isOptional
 

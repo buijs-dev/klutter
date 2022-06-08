@@ -47,8 +47,8 @@ internal class KlutterResponseProcessor(
             //Collect all custom data types
             for (message in messages) {
                 for (field in message.fields) {
-                    if(field.isCustomDataType) {
-                        customDataTypes.add(field.dataType)
+                    if(field.isCustomType) {
+                        customDataTypes.add(field.type)
                     }
                 }
             }

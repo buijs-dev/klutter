@@ -127,8 +127,7 @@ private fun String.packageName(): String {
     val result = """package(.*)""".toRegex().find(this)
 
     if(result != null) {
-        val r = result.groupValues[1]
-        return r.trim()
+        return result.groupValues[1].trim()
     }
 
     return ""
@@ -144,9 +143,7 @@ private fun String.packageName(): String {
  *
  * If no value found then this value is returned as-is.
  */
-private fun String.asDataType(
-    language: Lang,
-): String {
+private fun String.asDataType(language: Lang): String {
 
     /**
      * Remove any whitespaces if present.
@@ -248,18 +245,18 @@ internal data class DartEnum(
 /**
  * Data type defined in Dart language.
  *
- * @property dataType the actual type of data.
+ * @property type the actual type of data.
  * @property name the name of the field.
  * @property isOptional [Boolean] value indicating a field is nullable.
  * @property isList [Boolean] value indicating a field is nested in a [List].
- * @property isCustomDataType [Boolean] value indicating a data type
+ * @property isCustomType [Boolean] value indicating a data type
  * is custom or a standard Dart type as defined in [DartKotlinMap].
  *
  */
 internal data class DartField(
-    val dataType: String,
+    val type: String,
     val name: String,
     val isList: Boolean,
     val isOptional: Boolean,
-    val isCustomDataType: Boolean,
+    val isCustomType: Boolean,
 )

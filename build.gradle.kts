@@ -113,7 +113,8 @@ tasks.koverMergedXmlReport {
 }
 
 kover {
-    coverageEngine.set(kotlinx.kover.api.CoverageEngine.INTELLIJ)
+    coverageEngine.set(kotlinx.kover.api.CoverageEngine.JACOCO)
     // KOVER destroys running with coverage from IDE
     isDisabled = hasProperty("nokover")
+    jacocoEngineVersion.set("0.8.8")
 }

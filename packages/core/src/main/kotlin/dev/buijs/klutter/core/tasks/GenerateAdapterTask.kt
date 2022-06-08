@@ -32,6 +32,7 @@ import dev.buijs.klutter.core.shared.AndroidPluginGenerator
 import dev.buijs.klutter.core.shared.FlutterLibraryGenerator
 import dev.buijs.klutter.core.shared.FlutterPubspecScanner
 import dev.buijs.klutter.core.shared.IosPluginGenerator
+import java.io.File
 
 /**
  * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
@@ -74,8 +75,8 @@ internal data class GenerationData(
 
 internal fun GenerationData.createFlutterLibrary(pubspec: PubspecData) {
     FlutterLibraryGenerator(
-        path = root.resolve("lib/${pubspec.libraryName}.dart"),
-        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        path = root.flutterLibrary(pubspec.libraryName),
+        methodChannelName = pubspec.methodChannelName(),
         pluginClassName = pubspec.pluginClassName,
         methods = methods,
         messages = messages,
@@ -85,8 +86,11 @@ internal fun GenerationData.createFlutterLibrary(pubspec: PubspecData) {
 
 internal fun GenerationData.createAndroidPlugin(pubspec: PubspecData, android: Android) {
     AndroidPluginGenerator(
-        path = android.folder.resolve("src/main/kotlin/${pubspec.packageName?.replace(".", "/") ?: ""}/${pubspec.pluginClassName}.kt"),
-        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        path = android.pluginClassName(
+            pubspec.packageName.toPath(),
+            pubspec.pluginClassName,
+        ),
+        methodChannelName = pubspec.methodChannelName(),
         pluginClassName = pubspec.pluginClassName,
         libraryPackage = pubspec.packageName,
         methods = methods,
@@ -95,8 +99,8 @@ internal fun GenerationData.createAndroidPlugin(pubspec: PubspecData, android: A
 
 internal fun GenerationData.createIosPlugin(pubspec: PubspecData, ios: IOS) {
     IosPluginGenerator(
-        path = ios.folder.resolve("Classes/Swift${pubspec.pluginClassName}.swift"),
-        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        path = ios.pluginClassName(pubspec.pluginClassName),
+        methodChannelName = pubspec.methodChannelName(),
         pluginClassName = pubspec.pluginClassName,
         methods = methods,
         frameworkName = "Platform",
@@ -104,3 +108,18 @@ internal fun GenerationData.createIosPlugin(pubspec: PubspecData, ios: IOS) {
 
     ios.folder.resolve("${pubspec.libraryName}.podspec").excludeArm64()
 }
+
+private fun IOS.pluginClassName(pluginClassName: String): File =
+    folder.resolve("Classes/Swift$pluginClassName.swift")
+
+private fun Android.pluginClassName(packagePath: String, pluginClassName: String): File =
+    folder.resolve("src/main/kotlin/$packagePath/$pluginClassName.kt")
+
+private fun Root.flutterLibrary(name: String): File =
+    resolve("lib/$name.dart")
+
+private fun PubspecData.methodChannelName(): String =
+    packageName ?: "KLUTTER"
+
+private fun String?.toPath(): String =
+    this?.replace(".", "/") ?: ""

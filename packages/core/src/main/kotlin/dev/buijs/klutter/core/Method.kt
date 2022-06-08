@@ -115,7 +115,7 @@ internal fun File.toMethod(
             import = "$packageName.$className",
             command = values[2],
             method = "$className().${values[4]}",
-            async = values[3].trim() == "suspend",
+            async = values[3] == "suspend",
             dataType = values[5].asDataType(language))
         }.toList()
 }
@@ -123,9 +123,18 @@ internal fun File.toMethod(
 /**
  * Extract the package name to be used as import statement in generated code.
  */
-private fun String.packageName(): String =
-    """package(.*)""".toRegex().find(this)
-        ?.let { it.groupValues[1].trim() } ?: ""
+private fun String.packageName(): String {
+
+    val result = """package(.*)""".toRegex().find(this)
+
+    if(result != null) {
+        val r = result.groupValues[1]
+        return r.trim()
+    }
+
+    return ""
+}
+
 
 /**
  * Converts the data type if possible.
@@ -138,14 +147,19 @@ private fun String.packageName(): String =
  */
 private fun String.asDataType(
     language: Lang,
-): String = trim().let {
+): String {
+
+    /**
+     * Remove any whitespaces if present.
+     */
+    val value = this.trim()
 
     /**
      * Lookup this [String] value in the DartKotlinMap.
      *
      * If no value is found in DartKotlinMap then return this.
      */
-    val dartKotlinType = DartKotlinMap.toMapOrNull(it)
+    val dartKotlinType = DartKotlinMap.toMapOrNull(value)
 
     return when {
 
@@ -153,7 +167,7 @@ private fun String.asDataType(
          * Return current value as custom data type.
          */
         dartKotlinType == null -> {
-            it
+            value
         }
 
         /**

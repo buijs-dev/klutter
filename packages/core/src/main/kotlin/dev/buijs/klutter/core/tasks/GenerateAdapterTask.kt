@@ -33,86 +33,74 @@ import dev.buijs.klutter.core.shared.FlutterLibraryGenerator
 import dev.buijs.klutter.core.shared.FlutterPubspecScanner
 import dev.buijs.klutter.core.shared.IosPluginGenerator
 
+/**
+ * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
+ */
 class GenerateAdapterTask(
     private val android: Android,
     private val ios: IOS,
     private val root: Root,
     private val platform: Platform,
-)
-    : KlutterTask
-{
-
-    private var messages: List<DartMessage>? = null
-    private var enumerations: List<DartEnum>? = null
-    private var methods: List<Method>? = null
+) : KlutterTask {
 
     override fun run() {
-        platform.source().let {
-            val processor = KlutterResponseProcessor(it)
-            messages = processor.messages
-            enumerations = processor.enumerations
-            methods =  KlutterAdapteeScanner(it).scan(language = ReturnTypeLanguage.DART)
-        }
-
-        processPlugin()
-
-    }
-
-    private fun processPlugin() {
+        val source = platform.source()
+        val processor = KlutterResponseProcessor(source)
+        val messages = processor.messages
+        val enumerations = processor.enumerations
+        val methods =  KlutterAdapteeScanner(source).scan(language = ReturnTypeLanguage.DART)
+        val data = GenerationData(
+            root = root,
+            messages = messages,
+            enumerations = enumerations,
+            methods = methods,
+        )
 
         val pubspec = FlutterPubspecScanner(root.folder.resolve("pubspec.yaml")).scan()
-
-        val pluginName = pubspec.libraryName
-        val packageName = pubspec.packageName
-        val pluginPath = packageName?.replace(".", "/") ?: ""
-        val pluginClassName = pubspec.pluginClassName
-        val methodChannelName = packageName ?: "KLUTTER"
-        methods?.let { methods ->
-            FlutterLibraryGenerator(
-                path = root.resolve("lib/$pluginName.dart"),
-                methodChannelName = methodChannelName,
-                pluginClassName = pluginClassName,
-                methods = methods,
-                messages = messages ?: emptyList(),
-                enumerations = enumerations ?: emptyList(),
-            ).generate()
-
-            AndroidPluginGenerator(
-                path = android.folder.resolve("src/main/kotlin/$pluginPath/$pluginClassName.kt"),
-                methodChannelName = methodChannelName,
-                pluginClassName = pluginClassName,
-                libraryPackage = packageName,
-                methods = methods,
-            ).generate()
-
-            IosPluginGenerator(
-                path = ios.folder.resolve("Classes/Swift$pluginClassName.swift"),
-                methodChannelName = methodChannelName,
-                pluginClassName = pluginClassName,
-                methods = methods,
-                frameworkName = "Platform",
-            ).generate()
-
-            ios.folder.resolve("$pluginName.podspec").excludeArm64()
-        }
-
+        data.createFlutterLibrary(pubspec)
+        data.createAndroidPlugin(pubspec, android)
+        data.createIosPlugin(pubspec, ios)
     }
 
-    companion object {
 
-        fun create(pathToRoot: String, pluginName: String? = null): GenerateAdapterTask {
-            val project = pluginName
-                ?.let { pathToRoot.klutterProject(it) }
-                ?:pathToRoot.klutterProject()
+}
 
-            return GenerateAdapterTask(
-                root = project.root,
-                android = project.android,
-                ios = project.ios,
-                platform = project.platform,
-            )
-        }
+internal data class GenerationData(
+    val root: Root,
+    val messages: List<DartMessage>,
+    val enumerations: List<DartEnum>,
+    val methods: List<Method>,
+)
 
+internal fun GenerationData.createFlutterLibrary(pubspec: PubspecData) {
+    FlutterLibraryGenerator(
+        path = root.resolve("lib/${pubspec.libraryName}.dart"),
+        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        pluginClassName = pubspec.pluginClassName,
+        methods = methods,
+        messages = messages,
+        enumerations = enumerations,
+    ).generate()
+}
 
-    }
+internal fun GenerationData.createAndroidPlugin(pubspec: PubspecData, android: Android) {
+    AndroidPluginGenerator(
+        path = android.folder.resolve("src/main/kotlin/${pubspec.packageName?.replace(".", "/") ?: ""}/${pubspec.pluginClassName}.kt"),
+        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        pluginClassName = pubspec.pluginClassName,
+        libraryPackage = pubspec.packageName,
+        methods = methods,
+    ).generate()
+}
+
+internal fun GenerationData.createIosPlugin(pubspec: PubspecData, ios: IOS) {
+    IosPluginGenerator(
+        path = ios.folder.resolve("Classes/Swift${pubspec.pluginClassName}.swift"),
+        methodChannelName = pubspec.packageName ?: "KLUTTER",
+        pluginClassName = pubspec.pluginClassName,
+        methods = methods,
+        frameworkName = "Platform",
+    ).generate()
+
+    ios.folder.resolve("${pubspec.libraryName}.podspec").excludeArm64()
 }

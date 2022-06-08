@@ -31,11 +31,20 @@ class KlutterGradlePlugin: Plugin<Project> {
  */
 internal open class GenerateAdapters: KlutterGradleTask() {
     override fun describe() {
-        GenerateAdapterTask.create(
-            ext.root?.absolutePath ?: project.rootDir.path,
-            ext.plugin?.name,
+        val pathToRoot = ext.root?.absolutePath ?: project.rootDir.path
+        val pluginName = ext.plugin?.name
+        val project = pluginName
+            ?.let { pathToRoot.klutterProject(it) }
+            ?:pathToRoot.klutterProject()
+
+        GenerateAdapterTask(
+            root = project.root,
+            android = project.android,
+            ios = project.ios,
+            platform = project.platform,
         ).run()
     }
+
 }
 
 /**

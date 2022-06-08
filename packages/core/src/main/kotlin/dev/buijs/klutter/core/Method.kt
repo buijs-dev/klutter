@@ -85,8 +85,7 @@ internal data class Method(
      * Can be a standard Kotlin/Dart type as defined in [DartKotlinMap]
      * or a custom defined type.
      */
-    val dataType: String,
-)
+    val dataType: String)
 
 private const val REGEX =
     """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{"""

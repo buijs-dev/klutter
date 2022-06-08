@@ -99,8 +99,12 @@ class GenerateAdapterTask(
     }
 
     companion object {
+
         fun create(pathToRoot: String, pluginName: String? = null): GenerateAdapterTask {
-            val project = pathToRoot.klutterProject(pluginName)
+            val project = pluginName
+                ?.let { pathToRoot.klutterProject(it) }
+                ?:pathToRoot.klutterProject()
+
             return GenerateAdapterTask(
                 root = project.root,
                 android = project.android,
@@ -108,5 +112,7 @@ class GenerateAdapterTask(
                 platform = project.platform,
             )
         }
+
+
     }
 }

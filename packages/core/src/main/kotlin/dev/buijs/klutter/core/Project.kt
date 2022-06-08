@@ -46,17 +46,17 @@ data class KlutterProject(
     val platform: Platform,
 )
 
-fun String.klutterProject(
-    pluginName: String? = null,
-) = Root(File(this)).let {
-    build(it, pluginName ?: it.pluginNameFromYaml())
-}
+fun String.klutterProject(pluginName: String) =
+    File(this).klutterProject(pluginName)
 
-fun File.klutterProject(
-    pluginName: String? = null,
-) = Root(this).let {
-    build(it, pluginName ?: it.pluginNameFromYaml())
-}
+fun String.klutterProject() =
+    File(this).klutterProject()
+
+fun File.klutterProject(pluginName: String) =
+    build(Root(this), pluginName)
+
+fun File.klutterProject() =
+    Root(this).klutterProject()
 
 fun Root.klutterProject(pluginName: String) =
     build(this, pluginName)

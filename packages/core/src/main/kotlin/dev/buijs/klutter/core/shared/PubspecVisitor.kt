@@ -22,6 +22,7 @@
 
 package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.verifyExists
 import java.io.File
 
@@ -31,7 +32,8 @@ import java.io.File
 fun File.findAppName(): String = verifyExists()
     .readLines()
     .map { it.trim() }
-    .first {  line -> line.startsWith("name:") }
-    .substringAfter("name:")
-    .removePrefix(" ")
+    .firstOrNull { line -> line.startsWith("name:") }
+    ?.substringAfter("name:")
+    ?.trim()
+    ?:throw KlutterException("Failed to get name from pubspec.yaml")
 

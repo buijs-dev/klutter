@@ -10,11 +10,42 @@ import static dev.buijs.klutter.core.test.KlutterTest.*
 class ProjectSpec extends Specification {
 
     @Shared
-    def plugin = plugin { project, resources -> }
+    def plugin = plugin { project, resources ->
+        resources.copy("plugin_pubspec", project.pubspecYaml)
+    }
 
     def "Verify creating a dev.buijs.klutter.core.Project based of a String location"() {
         expect:
         with(ProjectKt.klutterProject(location, plugin.pluginName)) { project ->
+
+            project.root.folder == plugin.root
+
+            with(project.platform) {platform ->
+                platform.folder.exists()
+                platform.source().exists()
+                platform.podspec().exists()
+            }
+
+            with(project.android) {android ->
+                android.folder.exists()
+                android.manifest().exists()
+            }
+
+            with(project.ios) {ios ->
+                ios.folder.exists()
+                ios.podspec().exists()
+                ios.podfile().exists()
+                ios.appDelegate().exists()
+            }
+        }
+
+        where:
+        location << [plugin.root, plugin.root.absolutePath, new Root(plugin.root)]
+    }
+
+    def "Verify creating a dev.buijs.klutter.core.Project based of a String location without plugin name"() {
+        expect:
+        with(ProjectKt.klutterProject(location)) { project ->
 
             project.root.folder == plugin.root
 
@@ -379,8 +410,8 @@ class ProjectSpec extends Specification {
         new File("$root/platform/${pluginName}.podspec").createNewFile()
 
         when:
-        def projectFromFile = ProjectKt.klutterProject(folder, null)
-        def projectFromString = ProjectKt.klutterProject(folder.absolutePath, null)
+        def projectFromFile = ProjectKt.klutterProject(folder)
+        def projectFromString = ProjectKt.klutterProject(folder.absolutePath)
         def projectFromRoot = ProjectKt.klutterProject(new Root(folder))
 
         then:

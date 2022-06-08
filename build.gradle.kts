@@ -95,34 +95,32 @@ tasks.dokkaHtmlMultiModule.configure {
 }
 
 tasks.koverMergedXmlReport {
-
     isEnabled = true
-
-    excludes = listOf(
-        //a test-only module
-        "dev.buijs.klutter.core.test.*",
-
-        //contains only annotations
-        "dev.buijs.klutter.annotations.kmp.*",
-
-        //contains only annotations
-        "dev.buijs.klutter.annotations.jvm.*",
-
-        //can only be tested with GradleRunner which is not registered for coverage
-        "dev.buijs.klutter.plugins.gradle.*",
-    )
-
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
 }
 
 kover {
-    coverageEngine.set(kotlinx.kover.api.CoverageEngine.JACOCO)
+
     // KOVER destroys running with coverage from IDE
     isDisabled = hasProperty("nokover")
+
+    coverageEngine.set(kotlinx.kover.api.CoverageEngine.JACOCO)
+
     jacocoEngineVersion.set("0.8.8")
+
     disabledProjects = setOf(
+        // contains only annotations
+        // and breaks Jacoco due to duplicate classes
         ":packages:annotations-kmp",
+
+        // contains only annotations
         ":packages:annotations-jvm",
-        ":packages:plugin-gradle"
+
+        // can only be tested with GradleRunner
+        // which is not registered for coverage
+        ":packages:plugin-gradle",
+
+        // a test-only module
+        ":packages:core-test"
     )
 }

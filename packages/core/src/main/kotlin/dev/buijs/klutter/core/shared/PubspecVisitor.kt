@@ -22,43 +22,16 @@
 
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.KlutterVisitor
+import dev.buijs.klutter.core.verifyExists
 import java.io.File
 
 /**
- * @author Gillian Buijs
+ * Get the application name from the pubspec.yaml.
  */
-internal class PubspecVisitor(
-    private val pubspec: File,
-): KlutterVisitor {
+fun File.findAppName(): String = verifyExists()
+    .readLines()
+    .map { it.trim() }
+    .first {  line -> line.startsWith("name:") }
+    .substringAfter("name:")
+    .removePrefix(" ")
 
-    private var appName: String? = null
-
-    fun appName(): String {
-
-        if(appName == null) {
-            visit()
-        }
-
-        return appName ?: throw KlutterException("App Name not found in pubspec.yaml")
-    }
-
-    override fun visit() {
-
-        if(!pubspec.exists()) {
-            throw KlutterException("Could not locate pubspec.yaml file at path: ${pubspec.absolutePath}")
-        }
-
-        val lines = pubspec.readLines().map { it.trim() }
-
-        for (line in lines) {
-            if (line.startsWith("name:")) {
-                appName = line.substringAfter("name:").removePrefix(" ")
-                return
-            }
-        }
-
-    }
-
-}

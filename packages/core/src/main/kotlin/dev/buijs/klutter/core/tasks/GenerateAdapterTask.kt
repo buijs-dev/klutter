@@ -27,11 +27,11 @@ import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.annotations.KlutterAdapteeScanner
 import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.shared.*
 import dev.buijs.klutter.core.shared.AndroidPluginGenerator
 import dev.buijs.klutter.core.shared.FlutterLibraryGenerator
 import dev.buijs.klutter.core.shared.FlutterPubspecScanner
 import dev.buijs.klutter.core.shared.IosPluginGenerator
-import dev.buijs.klutter.core.shared.IosPodspecVisitor
 
 class GenerateAdapterTask(
     private val android: Android,
@@ -93,9 +93,7 @@ class GenerateAdapterTask(
                 frameworkName = "Platform",
             ).generate()
 
-            IosPodspecVisitor(
-                podspec = ios.folder.resolve("$pluginName.podspec")
-            ).visit()
+            ios.folder.resolve("$pluginName.podspec").excludeArm64()
         }
 
     }

@@ -20,10 +20,11 @@
  *
  */
 
-@file:Suppress("unused")
+
 package dev.buijs.klutter.core
 
-import dev.buijs.klutter.core.shared.PubspecVisitor
+
+import dev.buijs.klutter.core.shared.findAppName
 import java.io.File
 
 
@@ -76,7 +77,7 @@ private fun build(
 }
 
 private fun Root.pluginNameFromYaml(): String =
-    PubspecVisitor(folder.resolve("pubspec.yaml")).appName()
+    folder.resolve("pubspec.yaml").findAppName()
 
 /**
  * @property folder path to the top level of the project.

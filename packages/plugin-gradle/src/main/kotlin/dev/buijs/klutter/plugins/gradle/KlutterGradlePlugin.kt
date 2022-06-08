@@ -6,8 +6,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import java.io.File
 import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.shared.excludeArm64
 import dev.buijs.klutter.core.tasks.GenerateAdapterTask
-import dev.buijs.klutter.core.tasks.UpdatePlatformPodspecTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -43,7 +43,7 @@ internal open class GenerateAdapters: KlutterGradleTask() {
  */
 internal open class UpdatePlatformPodspec: KlutterGradleTask() {
     override fun describe() {
-        UpdatePlatformPodspecTask(project()).run()
+        project().platform.podspec().excludeArm64()
     }
 }
 

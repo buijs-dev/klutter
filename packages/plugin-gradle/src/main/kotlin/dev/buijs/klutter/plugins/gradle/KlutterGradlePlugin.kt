@@ -7,7 +7,7 @@ import org.gradle.api.tasks.Internal
 import java.io.File
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.shared.excludeArm64
-import dev.buijs.klutter.core.tasks.GenerateAdapterTask
+import dev.buijs.klutter.core.tasks.AdapterGeneratorTask
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -20,9 +20,9 @@ class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create("klutter", KlutterGradleExtension::class.java)
 
-        project.tasks.register("generateAdapters", GenerateAdapters::class.java)
+        project.tasks.register("klutterGenerateAdapters", GenerateAdapters::class.java)
 
-        project.tasks.register("updatePlatformPodspec", UpdatePlatformPodspec::class.java)
+        project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
     }
 }
 
@@ -37,7 +37,7 @@ internal open class GenerateAdapters: KlutterGradleTask() {
             ?.let { pathToRoot.klutterProject(it) }
             ?:pathToRoot.klutterProject()
 
-        GenerateAdapterTask(
+        AdapterGeneratorTask(
             root = project.root,
             android = project.android,
             ios = project.ios,
@@ -50,7 +50,7 @@ internal open class GenerateAdapters: KlutterGradleTask() {
 /**
  * Task to edit the podspec file in the root/platform folder.
  */
-internal open class UpdatePlatformPodspec: KlutterGradleTask() {
+internal open class ExcludeArchsPlatformPodspec: KlutterGradleTask() {
     override fun describe() {
         project().platform.podspec().excludeArm64()
     }

@@ -21,7 +21,7 @@ class GenerateAdapterGradleTaskSpec extends Specification {
         }
 
         when:
-        plugin.test(plugin.platform, "generateAdapters")
+        plugin.test(plugin.platform, "klutterGenerateAdapters")
 
         then:
         plugin.verify("flutter library dart class is generated") { project, resources ->

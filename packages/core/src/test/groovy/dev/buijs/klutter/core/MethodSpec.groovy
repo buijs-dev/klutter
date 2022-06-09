@@ -45,7 +45,7 @@ class MethodSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.getMessage() == "No such kotlinType in KotlinDartMap: Stttttring!"
+        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
     }
 
     def "[DartKotlinMap] an exception is thrown when a Dart type does not exist"() {
@@ -54,7 +54,7 @@ class MethodSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.getMessage() == "No such dartType in KotlinDartMap: Stttttring!"
+        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
     }
 
     def "[DartKotlinMap] an exception is thrown when a Dart/Kotlin type does not exist"() {
@@ -63,7 +63,7 @@ class MethodSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.getMessage() == "No such dartType or kotlinType in KotlinDartMap: Stttttring!"
+        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
     }
 
     def "[DartKotlinMap] null is returned when a Dart/Kotlin type does not exist"() {

@@ -110,13 +110,80 @@ internal fun File.toMethod(
 
     return REGEX.toRegex().findAll(content.filter { !it.isWhitespace() })
         .map { it.groupValues }
-        .map { values -> Method(
-            import = "$packageName.$className",
-            command = values[2],
-            method = "$className().${values[4]}",
-            async = values[3] == "suspend",
-            dataType = values[5].asDataType(language))
-        }.toList()
+        .map { values -> values.toMethod(className, packageName, language)}
+        .toList()
+}
+
+/**
+ * @return [Method] based of [REGEX] result.
+ */
+private fun List<String>.toMethod(
+    className: String,
+    packageName: String,
+    language: Lang,
+): Method {
+
+    /**
+     * The import statement required to use this method.
+     *
+     * Example:
+     *
+     * Class [className] Foo in package with name [packageName] com.example
+     * should be import value 'com.example.Foo'.
+     */
+    val import = "$packageName.$className"
+
+    /**
+     * The command name used by the method-channel handler.
+     *
+     * Example:
+     *
+     * ```
+     * @KlutterAdaptee("greetingInfo")
+     * fun infoAboutGreeting(): String {
+     *  ...
+     * }
+     * ```
+     *
+     * Command should be 'greetingInfo'.
+     */
+    val command = this[2]
+
+    /**
+     * The actual method call signature.
+     *
+     * Example:
+     *
+     * ```
+     * Class Bar {
+     *   @KlutterAdaptee("greetingInfo")
+     *   fun infoAboutGreeting(): String {
+     *       ...
+     *    }
+     * }
+     * ```
+     *
+     * Method should be 'Bar().infoAboutGreeting()'.
+     */
+    val method = "$className().${this[4]}"
+
+    /**
+     * Boolean value indicating a method is asynchronous.
+     */
+    val async = this[3] == "suspend"
+
+    /**
+     * The data type of the return value.
+     */
+    val type = this[5].asDataType(language)
+
+    return Method(
+        import = import,
+        command = command,
+        method = method,
+        async = async,
+        dataType = type,
+    )
 }
 
 /**
@@ -200,16 +267,14 @@ internal enum class DartKotlinMap(
     companion object {
 
         @JvmStatic
-        fun toKotlinType(type: String) = toMapOrNull(type)?.kotlinType
-            ?: throw KlutterException("No such kotlinType in KotlinDartMap: $type")
+        fun toKotlinType(type: String) = toMap(type).kotlinType
 
         @JvmStatic
-        fun toDartType(type: String) = toMapOrNull(type)?.dartType
-            ?: throw KlutterException("No such dartType in KotlinDartMap: $type")
+        fun toDartType(type: String) = toMap(type).dartType
 
         @JvmStatic
         fun toMap(type: String) = toMapOrNull(type)
-            ?: throw KlutterException("No such dartType or kotlinType in KotlinDartMap: $type")
+            ?: throw KlutterException("No such type in KotlinDartMap: $type")
 
         @JvmStatic
         fun toMapOrNull(type: String) = values()

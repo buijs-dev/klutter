@@ -20,13 +20,10 @@
  *
  */
 
-
 package dev.buijs.klutter.core
 
-
-import dev.buijs.klutter.core.shared.findAppName
+import dev.buijs.klutter.core.shared.toPubspecData
 import java.io.File
-
 
 /**
  * A representation of the structure of a project made with the Klutter Framework.
@@ -77,7 +74,7 @@ private fun build(
 }
 
 private fun Root.pluginNameFromYaml(): String =
-    folder.resolve("pubspec.yaml").findAppName()
+    folder.resolve("pubspec.yaml").toPubspecData().name
 
 /**
  * @property folder path to the top level of the project.

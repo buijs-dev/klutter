@@ -22,18 +22,81 @@
 
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.KlutterException
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import dev.buijs.klutter.core.Root
 import dev.buijs.klutter.core.verifyExists
 import java.io.File
 
-/**
- * Get the application name from the pubspec.yaml.
- */
-fun File.findAppName(): String = verifyExists()
-    .readLines()
-    .map { it.trim() }
-    .firstOrNull { line -> line.startsWith("name:") }
-    ?.substringAfter("name:")
-    ?.trim()
-    ?:throw KlutterException("Failed to get name from pubspec.yaml")
+internal fun Root.toPubspecData(): PubspecData =
+    folder.resolve("pubspec.yaml").toPubspecData()
 
+internal fun File.toPubspecData(): PubspecData = verifyExists().let {
+    val mapper = ObjectMapper(YAMLFactory())
+    mapper.registerKotlinModule()
+    mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+    return mapper.readValue(it, PubspecData::class.java)
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+internal data class PubspecData(
+
+    @JsonProperty("name")
+    val name: String,
+
+    @JsonProperty("flutter")
+    internal val flutter: PubFlutter?,
+) {
+
+    val plugin: Plugin?
+        get() = flutter?.plugin
+
+    val platforms: Platforms?
+        get() = plugin?.platforms
+
+    val android: PluginClass?
+        get() = platforms?.android
+
+    val ios: PluginClass?
+        get() = platforms?.ios
+}
+
+internal data class PubFlutter(
+    @JsonProperty("plugin")
+    internal val plugin: Plugin,
+)
+
+/**
+ * flutter:
+ * plugin:
+ *  platforms:
+ *      android:
+ *          package: com.example.super_awesome
+ *          pluginClass: SuperAwesomePlugin
+ *      ios:
+ *          pluginClass: SuperAwesomePlugin
+ */
+internal data class Plugin(
+    @JsonProperty("platforms")
+    internal val platforms: Platforms,
+)
+
+internal data class Platforms(
+    @JsonProperty("android")
+    internal val android: PluginClass,
+
+    @JsonProperty("ios")
+    internal val ios: PluginClass,
+)
+
+internal data class PluginClass(
+    @JsonProperty("package")
+    internal val pluginPackage: String?,
+
+    @JsonProperty("pluginClass")
+    internal val pluginClass: String,
+)

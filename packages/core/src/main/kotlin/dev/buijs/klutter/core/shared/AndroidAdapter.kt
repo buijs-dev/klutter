@@ -24,30 +24,32 @@ package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.FileWriter
 import java.io.File
 
-/**
- * @author Gillian Buijs
- */
-internal class AndroidPluginGenerator(
-    private val path: File,
-    private val methodChannelName: String,
-    private val pluginClassName: String? = null,
-    private val libraryPackage: String? = null,
-    private val methods: List<Method>,
-): KlutterFileGenerator() {
+internal class AndroidAdapter(
+    private val android: Android,
+    data: AdapterData,
+) : AdapterGenerator(data) {
 
     override fun printer() = AndroidPluginPrinter(
-        pluginClassName = pluginClassName ?: "",
-        libraryPackage = libraryPackage ?: "",
-        methodChannelName = methodChannelName,
-        methods = methods,
+        pluginClassName = androidPluginClassName() ?: "",
+        methodChannelName = methodChannelName(),
+        libraryPackage = data.pubspec.android?.pluginPackage ?: "",
+        methods = data.methods,
     )
 
-    override fun writer() = FileWriter(path, printer().print())
+    override fun path(): File = android.pluginClassName(
+        data.pubspec.android?.pluginPackage.toPath(),
+        data.pubspec.android?.pluginClass ?: "",
+    )
 
+    private fun Android.pluginClassName(packagePath: String, pluginClassName: String): File =
+        folder.resolve("src/main/kotlin/$packagePath/$pluginClassName.kt")
+
+    private fun String?.toPath(): String =
+        this?.replace(".", "/") ?: ""
 }
+
 
 internal class AndroidPluginPrinter(
     private val libraryPackage: String,

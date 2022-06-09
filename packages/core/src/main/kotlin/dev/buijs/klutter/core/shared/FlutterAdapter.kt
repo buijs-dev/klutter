@@ -24,31 +24,21 @@ package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.Method
-import dev.buijs.klutter.core.FileWriter
 import java.io.File
 
-/**
- * @author Gillian Buijs
- */
-internal class FlutterLibraryGenerator(
-    private val path: File,
-    private val methodChannelName: String,
-    private val pluginClassName: String,
-    private val methods: List<Method>,
-    private val messages: List<DartMessage>,
-    private val enumerations: List<DartEnum>,
-): KlutterFileGenerator() {
+internal class FlutterAdapterGenerator(
+    private val root: Root, data: AdapterData,
+) : AdapterGenerator(data) {
+
+    override fun path(): File = root.resolve("lib/${data.pubspec.name}.dart")
 
     override fun printer() = FlutterAdapterPrinter(
-        methodChannelName = methodChannelName,
-        pluginClassName = pluginClassName,
-        definitions = methods,
-        messages = messages,
-        enumerations = enumerations,
+        methodChannelName = methodChannelName(),
+        pluginClassName = androidPluginClassName() ?: "",
+        definitions = data.methods,
+        messages = data.messages,
+        enumerations = data.enumerations,
     )
-
-    override fun writer() = FileWriter(path, printer().print())
-
 }
 
 internal class FlutterAdapterPrinter(

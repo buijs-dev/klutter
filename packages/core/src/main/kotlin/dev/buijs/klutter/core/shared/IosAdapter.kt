@@ -22,33 +22,33 @@
 
 package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.DartKotlinMap
-import dev.buijs.klutter.core.KlutterFileGenerator
-import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.Method
-import dev.buijs.klutter.core.FileWriter
 import java.io.File
 
-/**
- * @author Gillian Buijs
- */
-internal class IosPluginGenerator(
-    private val path: File,
-    private val frameworkName: String = "platform",
-    private val methodChannelName: String,
-    private val pluginClassName: String,
-    private val methods: List<Method>,
-): KlutterFileGenerator() {
+internal class IosAdapterGenerator(
+    private val ios: IOS,
+    data: AdapterData,
+) : AdapterGenerator(
+    data
+) {
+
+    private val frameworkName: String = "Platform"
+
+    override fun path(): File = ios.pluginClassName(iosPluginClassName() ?: "")
 
     override fun printer() = IosPluginPrinter(
         frameworkName = frameworkName,
-        pluginClassName = pluginClassName,
-        methodChannelName = methodChannelName,
-        methods = methods,
-    )
+        pluginClassName = iosPluginClassName() ?: "",
+        methodChannelName = methodChannelName(),
+        methods = data.methods,
+    ).also {
+        ios.folder.resolve("${data.pubspec.name}.podspec").excludeArm64()
+    }
 
-    override fun writer() = FileWriter(path, printer().print())
-
+    private fun IOS.pluginClassName(pluginClassName: String): File =
+        folder.resolve("Classes/Swift$pluginClassName.swift")
 }
 
 internal class IosPluginPrinter(

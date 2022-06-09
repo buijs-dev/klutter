@@ -3,7 +3,7 @@ package dev.buijs.klutter.core.shared
 import dev.buijs.klutter.core.Method
 import spock.lang.Specification
 
-class FlutterAdapterPrinterSpec extends Specification {
+class FlutterAdapterSpec extends Specification {
 
     def "Verify the FlutterAdapterPrinter creates the GeneratedAdapter with a branch for each KlutterAdaptee annotation"() {
 

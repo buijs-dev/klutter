@@ -122,11 +122,6 @@ class AndroidAdapterSpec extends Specification {
 
     }
 
-    def "Package name is used as method channel name"(){
-        expect:
-        sut.methodChannelName() == "super_plugin"
-    }
-
     def "Verify toPath"(){
         expect:
         sut.toPath(input) == output

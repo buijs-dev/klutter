@@ -67,7 +67,7 @@ internal data class PubspecData(
 
 internal data class PubFlutter(
     @JsonProperty("plugin")
-    internal val plugin: Plugin,
+    internal val plugin: Plugin?,
 )
 
 /**
@@ -82,15 +82,15 @@ internal data class PubFlutter(
  */
 internal data class Plugin(
     @JsonProperty("platforms")
-    internal val platforms: Platforms,
+    internal val platforms: Platforms?,
 )
 
 internal data class Platforms(
     @JsonProperty("android")
-    internal val android: PluginClass,
+    internal val android: PluginClass?,
 
     @JsonProperty("ios")
-    internal val ios: PluginClass,
+    internal val ios: PluginClass?,
 )
 
 internal data class PluginClass(
@@ -98,5 +98,5 @@ internal data class PluginClass(
     internal val pluginPackage: String?,
 
     @JsonProperty("pluginClass")
-    internal val pluginClass: String,
+    internal val pluginClass: String?,
 )

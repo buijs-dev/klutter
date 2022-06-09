@@ -34,7 +34,7 @@ internal class FlutterAdapterGenerator(
 
     override fun printer() = FlutterAdapterPrinter(
         methodChannelName = methodChannelName(),
-        pluginClassName = androidPluginClassName() ?: "",
+        pluginClassName = androidPluginClassName(),
         definitions = data.methods,
         messages = data.messages,
         enumerations = data.enumerations,

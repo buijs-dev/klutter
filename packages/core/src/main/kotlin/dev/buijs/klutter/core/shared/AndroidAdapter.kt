@@ -32,7 +32,7 @@ internal class AndroidAdapter(
 ) : AdapterGenerator(data) {
 
     override fun printer() = AndroidPluginPrinter(
-        pluginClassName = androidPluginClassName() ?: "",
+        pluginClassName = androidPluginClassName(),
         methodChannelName = methodChannelName(),
         libraryPackage = data.pubspec.android?.pluginPackage ?: "",
         methods = data.methods,

@@ -25,4 +25,29 @@ class AdapterStub {
                 )], [], []
         )
     }
+
+    static def methods = [
+                new Method(
+                        "doFooBar",
+                        "io.foo.bar.FooBar",
+                        "FooBar().zeta()",
+                        false,
+                        "String",
+                ),
+                new Method(
+                        "notDoFooBar",
+                        "io.foo.bar.FooBar",
+                        "FooBar().beta()",
+                        false,
+                        "int",
+                ),
+                new Method(
+                        "complexityGetter",
+                        "io.foo.bar.ComplexFoor",
+                        "ComplexFoo().bar()",
+                        false,
+                        "List<Complex>",
+                )
+        ]
+
 }

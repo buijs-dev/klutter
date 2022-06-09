@@ -53,7 +53,7 @@ internal abstract class AdapterGenerator(val data: AdapterData): KlutterFileGene
      * androidPluginClassName returns 'ForceAwakeningPlugin'.
      *
      */
-    open fun androidPluginClassName() = data.pubspec.android?.pluginClass
+    open fun androidPluginClassName() = data.pubspec.android?.pluginClass ?: ""
 
     /**
      * Filename of the to be generated classes extracted from the pubspec.yaml.
@@ -75,5 +75,5 @@ internal abstract class AdapterGenerator(val data: AdapterData): KlutterFileGene
      * iosPluginClassName returns 'ForceAwakeningPlugin'.
      *
      */
-    open fun iosPluginClassName() = data.pubspec.ios?.pluginClass
+    open fun iosPluginClassName() = data.pubspec.ios?.pluginClass ?: ""
 }

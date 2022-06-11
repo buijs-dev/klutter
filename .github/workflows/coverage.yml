@@ -27,6 +27,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      # Generate gradle.properties for collecting
+      # coverage when running tests with GradleRunner/TestKit.
+      - name: Generate TestKit properties
+        run: gradle createTestKitProperties
+
       # Generate the XML test-coverage files
       - name: Generate test coverage
         run: gradle koverMergedXmlReport

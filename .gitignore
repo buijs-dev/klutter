@@ -71,3 +71,4 @@ hs_err_pid*
 /local.properties
 /gradlew
 /gradlew.bat
+/packages/core-test/src/main/resources/testkit-gradle.properties

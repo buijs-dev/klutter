@@ -130,9 +130,13 @@ kover {
 
 sonarqube {
     properties {
-        property("sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("koverage.xml"))
         property("sonar.projectKey", "buijs-dev_klutter")
         property("sonar.organization", "buijs-dev")
         property("sonar.host.url", "https://sonarcloud.io")
+
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            rootProject.buildDir.resolve("koverage.xml").absolutePath
+        )
     }
 }

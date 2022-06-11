@@ -103,6 +103,10 @@ kotlin {
     }
 }
 
+sonarqube {
+    isSkipProject = true
+}
+
 android {
     compileSdk = 31
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")

@@ -9,6 +9,10 @@ java {
     withSourcesJar()
 }
 
+sonarqube {
+    isSkipProject = true
+}
+
 sourceSets {
     main {
         java {

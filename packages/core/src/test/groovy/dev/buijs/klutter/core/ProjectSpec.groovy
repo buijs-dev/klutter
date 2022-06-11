@@ -1,80 +1,77 @@
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.project.ProjectKt
+import dev.buijs.klutter.core.project.Root
+import dev.buijs.klutter.core.test.TestPlugin
 import spock.lang.Shared
 import spock.lang.Specification
-
-import java.nio.file.Files
-
-import static dev.buijs.klutter.core.test.KlutterTest.*
 
 class ProjectSpec extends Specification {
 
     @Shared
-    def plugin = plugin { project, resources ->
-        resources.copy("plugin_pubspec", project.pubspecYaml)
-    }
+    def plugin = new TestPlugin()
 
     def "Verify creating a dev.buijs.klutter.core.Project based of a String location"() {
+        given:
+        def project = ProjectKt.plugin(location, plugin.pluginName)
+
         expect:
-        with(ProjectKt.klutterProject(location, plugin.pluginName)) { project ->
+        project.root.folder == plugin.root
 
-            project.root.folder == plugin.root
+        with(project.platform) {platform ->
+            platform.folder.exists()
+            platform.source().exists()
+            platform.podspec().exists()
+        }
 
-            with(project.platform) {platform ->
-                platform.folder.exists()
-                platform.source().exists()
-                platform.podspec().exists()
-            }
+        with(project.android) {android ->
+            android.folder.exists()
+            android.manifest.exists()
+        }
 
-            with(project.android) {android ->
-                android.folder.exists()
-                android.manifest().exists()
-            }
-
-            with(project.ios) {ios ->
-                ios.folder.exists()
-                ios.podspec().exists()
-                ios.podfile().exists()
-                ios.appDelegate().exists()
-            }
+        with(project.ios) {ios ->
+            ios.folder.exists()
+            ios.podspec().exists()
+            ios.podfile().exists()
+            ios.appDelegate().exists()
         }
 
         where:
-        location << [plugin.root, plugin.root.absolutePath, new Root(plugin.root)]
+        location << [plugin.root, plugin.root.absolutePath]
     }
 
     def "Verify creating a dev.buijs.klutter.core.Project based of a String location without plugin name"() {
+        given:
+        def project = ProjectKt.plugin(location)
+
         expect:
-        with(ProjectKt.klutterProject(location)) { project ->
+        project.root.folder == plugin.root
 
-            project.root.folder == plugin.root
+        with(project.platform) {platform ->
+            platform.folder.exists()
+            platform.source().exists()
+            platform.podspec().exists()
+        }
 
-            with(project.platform) {platform ->
-                platform.folder.exists()
-                platform.source().exists()
-                platform.podspec().exists()
-            }
+        with(project.android) {android ->
+            android.folder.exists()
+            android.manifest.exists()
+        }
 
-            with(project.android) {android ->
-                android.folder.exists()
-                android.manifest().exists()
-            }
-
-            with(project.ios) {ios ->
-                ios.folder.exists()
-                ios.podspec().exists()
-                ios.podfile().exists()
-                ios.appDelegate().exists()
-            }
+        with(project.ios) {ios ->
+            ios.folder.exists()
+            ios.podspec().exists()
+            ios.podfile().exists()
+            ios.appDelegate().exists()
         }
 
         where:
-        location << [plugin.root, plugin.root.absolutePath, new Root(plugin.root)]
+        location << [plugin.root, plugin.root.absolutePath]
     }
 
     def "An exception is thrown when root does not exist" () {
         when:
-        with(ProjectKt.klutterProject("/Fake", "")) { project ->
+        with(ProjectKt.plugin("/Fake", "")) { project ->
             // Getter will throw exception
             project.root.folder
         }
@@ -86,10 +83,13 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when platform does not exist" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.platform.deleteDir()
+
+        and:
+        def project = ProjectKt.plugin(plugin.root, "")
 
         when:
         project.platform.source()
@@ -102,13 +102,13 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when platform does not contain a src/commonMain folder" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing platform module"
-        new File("$root/platform").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
+        plugin.platformCommonMain.deleteDir()
 
         when:
         project.platform.source()
@@ -121,13 +121,13 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when platform does not contain a podspec file" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing platform module"
-        new File("$root/platform").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "plug")
+        def project = ProjectKt.plugin(plugin.root, "plug")
+
+        and:
+        plugin.platformPodSpec.delete()
 
         when:
         project.platform.podspec()
@@ -140,46 +140,29 @@ class ProjectSpec extends Specification {
 
     def "Verify platform .podspec file is returned" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios folder"
-        new File("$root/platform").mkdirs()
-
-        and: "an existing plugin.podspec"
-        def file = new File("$root/platform/plugin.podspec")
-        file.createNewFile()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "plugin")
+        def project = ProjectKt.plugin(plugin.root, plugin.pluginName)
 
         expect:
-        project.platform.podspec().absolutePath == file.absolutePath
+        project.platform.podspec().absolutePath == plugin.platformPodSpec.absolutePath
     }
 
     def "Verify platform src/commonMain folder is returned" () {
         when:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing platform/src/commonMain folder"
-        def folder = new File("$root/platform/src/commonMain")
-        folder.mkdirs()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "")
+        def project = ProjectKt.plugin(plugin.root, "")
 
         then:
-        project.platform.source().absolutePath == folder.absolutePath
+        project.platform.source().absolutePath == plugin.platformCommonMain.absolutePath
     }
 
     def "An exception is thrown when android does not exist" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.android.deleteDir()
 
         when:
-        project.android.manifest()
+        ProjectKt.plugin(plugin.root, "")
 
         then:
         KlutterException e = thrown()
@@ -189,16 +172,16 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when android does not contain a src/main folder" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios module"
-        new File("$root/android").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.androidSrcMain.deleteDir()
 
         when:
-        project.android.manifest()
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
+        project.android.manifest
 
         then:
         KlutterException e = thrown()
@@ -208,16 +191,16 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when android/src/main does not contain an AndroidManifest.xml" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios module"
-        new File("$root/android/src/main").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.manifest.delete()
 
         when:
-        project.android.manifest()
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
+        project.android.manifest
 
         then:
         KlutterException e = thrown()
@@ -227,30 +210,23 @@ class ProjectSpec extends Specification {
 
     def "Verify android/src/main/AndroidManifest.xml is returned" () {
         when:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing android module"
-        new File("$root/android/src/main").mkdirs()
-
-        and:
-        def file = new File("$root/android/src/main/AndroidManifest.xml")
-        file.createNewFile()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "")
+        def project = ProjectKt.plugin(plugin.root, "")
 
         then:
-        project.android.manifest().absolutePath == file.absolutePath
+        project.android.manifest.absolutePath == plugin.manifest.absolutePath
     }
 
     def "An exception is thrown when ios does not exist" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.ios.deleteDir()
 
         when:
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
         project.ios.podfile()
 
         then:
@@ -261,15 +237,15 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when ios does not contain a Podfile" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios module"
-        new File("$root/ios").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.podfile.delete()
 
         when:
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
         project.ios.podfile()
 
         then:
@@ -280,70 +256,50 @@ class ProjectSpec extends Specification {
 
     def "Verify Podfile is returned" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios folder"
-        new File("$root/ios").mkdirs()
-
-        and: "an existing Podfile"
-        def file = new File("$root/ios/Podfile")
-        file.createNewFile()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "")
+        def project = ProjectKt.plugin(plugin.root, "")
 
         expect:
-        project.ios.podfile().absolutePath == file.absolutePath
+        project.ios.podfile().absolutePath == plugin.podfile.absolutePath
     }
 
     def "An exception is thrown when ios does not contain a podspec file" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios module"
-        new File("$root/ios").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "plug")
+        plugin.iosPodspec.delete()
 
         when:
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
         project.ios.podspec()
 
         then:
         KlutterException e = thrown()
         e.getMessage().startsWith("Path does not exist: ")
-        e.getMessage().endsWith("plug.podspec")
+        e.getMessage().endsWith(".podspec")
     }
 
     def "Verify .podspec file is returned" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios folder"
-        new File("$root/ios").mkdirs()
-
-        and: "an existing plugin.podspec"
-        def file = new File("$root/ios/plugin.podspec")
-        file.createNewFile()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "plugin")
+        def project = ProjectKt.plugin(plugin.root, plugin.pluginName)
 
         expect:
-        project.ios.podspec().absolutePath == file.absolutePath
+        project.ios.podspec().absolutePath == plugin.iosPodspec.absolutePath
     }
 
     def "An exception is thrown when ios does not contain a Runner folder" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios module"
-        new File("$root/ios").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.runnerFolder.deleteDir()
 
         when:
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
         project.ios.appDelegate()
 
         then:
@@ -354,15 +310,15 @@ class ProjectSpec extends Specification {
 
     def "An exception is thrown when ios/Runner does not contain a AppDelegate.swift file" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios/Runner folder"
-        new File("$root/ios/Runner").mkdirs()
+        def plugin = new TestPlugin()
 
         and:
-        def project = ProjectKt.klutterProject(root, "")
+        plugin.appDelegate.delete()
 
         when:
+        def project = ProjectKt.plugin(plugin.root, "")
+
+        and:
         project.ios.appDelegate()
 
         then:
@@ -373,95 +329,29 @@ class ProjectSpec extends Specification {
 
     def "Verify AppDelegate.swift file is returned" () {
         given:
-        def root = Files.createTempDirectory("").toFile().absolutePath
-
-        and: "an existing ios/Runner folder"
-        new File("$root/ios/Runner").mkdirs()
-
-        and: "an existing AppDelegate.swift"
-        def file = new File("$root/ios/Runner/AppDelegate.swift")
-        file.createNewFile()
-
-        and:
-        def project = ProjectKt.klutterProject(root, "")
+        def project = ProjectKt.plugin(plugin.root, "")
 
         expect:
-        project.ios.appDelegate().absolutePath == file.absolutePath
+        project.ios.appDelegate().absolutePath == plugin.appDelegate.absolutePath
     }
 
     def "When no pluginName is given then it is retrieved from the root/pubspec.yaml"() {
-        given:
-        def folder = Files.createTempDirectory("").toFile()
-        def root = folder.absolutePath
-
-        and: "an existing pubspec.yaml"
-        def pubspec = new File("$root/pubspec.yaml")
-
-        and: "with plugin content"
-        pubspec.createNewFile()
-        pubspec.write(yaml(pluginName))
-
-        and: "an existing ios .podspec"
-        new File("$root/ios").mkdirs()
-        new File("$root/ios/${pluginName}.podspec").createNewFile()
-
-        and: "an existing platform .podspec"
-        new File("$root/platform").mkdirs()
-        new File("$root/platform/${pluginName}.podspec").createNewFile()
 
         when:
-        def projectFromFile = ProjectKt.klutterProject(folder)
-        def projectFromString = ProjectKt.klutterProject(folder.absolutePath)
-        def projectFromRoot = ProjectKt.klutterProject(new Root(folder))
+        def projectFromFile = ProjectKt.plugin(plugin.root)
+        def projectFromString = ProjectKt.plugin(plugin.root.absolutePath)
 
         then:
-        projectFromFile.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
-        projectFromFile.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+        projectFromFile.ios.podspec().absolutePath.endsWith("super_awesome.podspec")
+        projectFromFile.platform.podspec().absolutePath.endsWith("super_awesome.podspec")
 
         and:
-        projectFromString.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
-        projectFromString.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
-
-        and:
-        projectFromRoot.ios.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
-        projectFromRoot.platform.podspec().absolutePath.endsWith("ridiculous_plugin.podspec")
+        projectFromString.ios.podspec().absolutePath.endsWith("super_awesome.podspec")
+        projectFromString.platform.podspec().absolutePath.endsWith("super_awesome.podspec")
 
         where:
-        pluginName << [ "ridiculous_plugin" ]
+        pluginName << [ "super_awesome" ]
 
     }
 
-    def static yaml(String pluginName) {
-        return """
-            name: $pluginName
-            description: A new flutter plugin project.
-            version: 0.0.1
-            homepage:
-            
-            environment:
-              sdk: ">=2.16.1 <3.0.0"
-              flutter: ">=2.5.0"
-            
-            dependencies:
-              flutter:
-                sdk: flutter
-            
-            dev_dependencies:
-              flutter_test:
-                sdk: flutter
-            
-            # For information on ...
-            
-            # The following section is specific to Flutter.
-            flutter:
-              # This ...
-              plugin:
-                platforms:
-                  android:
-                    package: some.company.ridiculous_plugin
-                    pluginClass: RidiculousPlugin
-                  ios:
-                    pluginClass: RidiculousPlugin
-        """
-    }
 }

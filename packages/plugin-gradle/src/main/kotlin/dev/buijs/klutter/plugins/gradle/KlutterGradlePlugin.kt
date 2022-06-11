@@ -91,13 +91,17 @@ internal abstract class KlutterGradleTask: DefaultTask() {
      */
     abstract fun describe()
 
-    @TaskAction
-    fun execute() = describe()
-
-    fun project() = (ext.root ?: project.rootProject.projectDir).plugin()
-
 }
 
+@TaskAction
+internal fun KlutterGradleTask.execute() = describe()
+
+internal fun KlutterGradleTask.project() =
+    (ext.root ?: project.rootProject.projectDir).plugin()
+
 internal fun Project.adapter(): KlutterGradleExtension =
-    extensions.getByName("klutter") as? KlutterGradleExtension
-        ?: throw IllegalStateException("klutter extension is not of the correct type")
+    extensions.getByName("klutter").let {
+        if(it is KlutterGradleExtension) { it } else {
+            throw IllegalStateException("klutter extension is not of the correct type")
+        }
+}

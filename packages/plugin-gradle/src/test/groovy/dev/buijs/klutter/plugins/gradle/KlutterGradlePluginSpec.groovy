@@ -1,5 +1,7 @@
 package dev.buijs.klutter.plugins.gradle
 
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Ignore
 import spock.lang.Specification

@@ -20,8 +20,9 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.tasks
 
+import dev.buijs.klutter.core.project.toPubspec
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files
@@ -44,7 +45,7 @@ class PubspecVisitorTest: WordSpec({
             """.trimIndent()
             )
 
-            pubspec.toPubspecData().name shouldBe "my app"
+            pubspec.toPubspec().name shouldBe "my app"
 
         }
 

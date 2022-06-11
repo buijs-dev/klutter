@@ -22,4 +22,7 @@
 
 package dev.buijs.klutter.core
 
+/**
+ * Exception class indicating a terminal problem in the Klutter Framework.
+ */
 class KlutterException(msg: String): Exception(msg)

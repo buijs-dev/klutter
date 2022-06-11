@@ -29,9 +29,6 @@ import spock.lang.Specification
 
 class FlutterAdapterSpec extends Specification {
 
-    //TODO override defaults
-    //TODO messages list
-    //TODO enumerations list
     def "FlutterAdapter should create a valid Dart class"() {
         given:
         def methods = TestData.fooBarMethods

@@ -73,3 +73,71 @@ internal class FileWriter(
         file.writeText(content)
     }
 }
+
+internal fun File.write(printer: KlutterPrinter) =
+    FileWriter(this, printer.print()).write()
+
+internal fun String.toCamelCase(): String {
+
+    var hasUnderscore = false
+
+    return lowercase().map {
+        when {
+
+            it == '_' -> {
+                hasUnderscore = true
+                ""
+            }
+
+            hasUnderscore -> {
+                hasUnderscore = false
+                it.uppercase()
+            }
+
+            else -> it.toString()
+        }
+    }.joinToString("") { it }
+
+}
+
+/**
+ * Visitor which adds EXCLUDED_ARCHS for iphone simulator if not present.
+ *
+ * These excludes are needed to be able to run the app on a simulator.
+ */
+fun File.excludeArm64() {
+    val regex = "Pod::Spec.new.+?do.+?\\|([^|]+?)\\|".toRegex()
+
+    /** Check the prefix used in the podspec or default to 's'.
+     *
+     *  By default the podspec file uses 's' as prefix.
+     *  In case a podspec does not use this default,
+     *  this regex will find the custom prefix.
+     *
+     *  If not found then 's' is used.
+     */
+    val prefix = regex.find(readText())?.groupValues?.let { it[1] } ?: "s"
+
+    // INPUT
+    val lines = readLines()
+
+    // OUTPUT
+    val newLines = mutableListOf<String>()
+
+    for(line in lines){
+        newLines.add(line)
+
+        // Check if line contains Flutter dependency (which should always be present).
+        // If so then add the vendored framework dependency.
+        // This is done so the line is added at a fixed point in the podspec.
+        if(line.filter { !it.isWhitespace() }.contains("$prefix.dependency'Flutter'")) {
+            newLines.add("""  $prefix.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
+            newLines.add("""  $prefix.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
+        }
+
+    }
+
+    // Write the editted line to the podspec file.
+    writeText(newLines.joinToString("\n") { it })
+
+}

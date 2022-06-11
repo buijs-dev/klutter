@@ -1,10 +1,55 @@
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.project.PubspecKt
+import dev.buijs.klutter.core.project.Root
+import dev.buijs.klutter.core.test.TestResource
 import spock.lang.Specification
 
 import java.nio.file.Files
 
 class UtilsSpec extends Specification {
+
+    def static resources = new TestResource()
+
+    def "File.toPubspecData should return correct package and plugin name"(){
+
+        given:
+        def yaml = Files.createTempFile("","pubspec.yaml").toFile()
+
+        and:
+        resources.copy("plugin_pubspec", yaml)
+
+        when:
+        def dto = PubspecKt.toPubspec(yaml)
+
+        then:
+        dto.name == "super_awesome"
+        dto.android.pluginPackage$core == "foo.bar.super_awesome"
+        dto.android.pluginClass$core == "SuperAwesomePlugin"
+        dto.ios.pluginClass$core == "SuperAwesomePlugin"
+
+    }
+
+    def "Root.toPubspecData should return correct package and plugin name"(){
+
+        given:
+        def folder = Files.createTempDirectory("").toFile()
+        def root = new Root("super_awesome", folder)
+        def yaml = new File("${folder.path}/pubspec.yaml")
+
+        and:
+        resources.copy("plugin_pubspec", yaml)
+
+        when:
+        def dto = PubspecKt.toPubspec(root)
+
+        then:
+        dto.name == "super_awesome"
+        dto.android.pluginPackage$core == "foo.bar.super_awesome"
+        dto.android.pluginClass$core == "SuperAwesomePlugin"
+        dto.ios.pluginClass$core == "SuperAwesomePlugin"
+
+    }
 
     def "An exception is thrown if the file does not exist"() {
 

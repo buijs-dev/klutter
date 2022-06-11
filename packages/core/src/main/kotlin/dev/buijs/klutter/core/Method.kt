@@ -23,6 +23,7 @@
 package dev.buijs.klutter.core
 
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.project.Pubspec
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 
@@ -89,6 +90,14 @@ internal data class Method(
 
 private const val REGEX =
     """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{"""
+
+/**
+ * The method-channel name which uses the package name
+ * defined in the pubspec.yaml or
+ * defaults to <plugin-name>.klutter if not present.
+ */
+internal fun Pubspec.toChannelName(): String =
+    android?.pluginPackage ?: "$name.klutter"
 
 internal fun File.toMethod(
     language: Lang = Lang.KOTLIN,

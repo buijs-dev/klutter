@@ -1,7 +1,6 @@
 package dev.buijs.klutter.core
 
 import dev.buijs.klutter.core.project.ProjectKt
-import dev.buijs.klutter.core.project.Root
 import dev.buijs.klutter.core.test.TestPlugin
 import spock.lang.Shared
 import spock.lang.Specification

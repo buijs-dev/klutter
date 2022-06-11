@@ -1,20 +1,19 @@
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.plugins.gradle.dsl.*
+import dev.buijs.klutter.core.excludeArm64
+import dev.buijs.klutter.core.project.plugin
+import dev.buijs.klutter.core.tasks.AdapterGeneratorTask
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
-import java.io.File
-import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.shared.excludeArm64
-import dev.buijs.klutter.core.tasks.AdapterGeneratorTask
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 /**
  * Gradle plugin for Klutter Framework with the following tasks:
- * - generateAdapters
- * - updatePlatformPodspec
+ * - klutterGenerateAdapters
+ * - klutterExcludeArchsPlatformPodspec
  */
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
@@ -31,11 +30,14 @@ class KlutterGradlePlugin: Plugin<Project> {
  */
 internal open class GenerateAdapters: KlutterGradleTask() {
     override fun describe() {
+
         val pathToRoot = ext.root?.absolutePath ?: project.rootDir.path
-        val pluginName = ext.plugin?.name
+
+        val pluginName = ext.plugin?.name?.ifBlank { null }
+
         val project = pluginName
-            ?.let { pathToRoot.klutterProject(it) }
-            ?:pathToRoot.klutterProject()
+            ?.let { pathToRoot.plugin(it) }
+            ?:pathToRoot.plugin()
 
         AdapterGeneratorTask(
             root = project.root,
@@ -92,10 +94,7 @@ internal abstract class KlutterGradleTask: DefaultTask() {
     @TaskAction
     fun execute() = describe()
 
-    fun project() = Root(
-        ext.root ?: throw KlutterException("Path to root folder is not set.")
-    ).klutterProject()
-
+    fun project() = (ext.root ?: project.rootProject.projectDir).plugin()
 
 }
 

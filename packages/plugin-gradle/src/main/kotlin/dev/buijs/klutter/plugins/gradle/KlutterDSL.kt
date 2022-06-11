@@ -20,7 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.dsl
+package dev.buijs.klutter.plugins.gradle
 
 
 interface KlutterDSL<T> {

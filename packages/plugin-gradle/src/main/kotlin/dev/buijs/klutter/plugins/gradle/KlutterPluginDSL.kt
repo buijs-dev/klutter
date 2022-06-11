@@ -20,7 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle.dsl
+package dev.buijs.klutter.plugins.gradle
 
 @DslMarker
 internal annotation class KlutterPluginDSLMarker
@@ -37,12 +37,12 @@ class KlutterPluginBuilder: KlutterDSLBuilder {
 
     var name: String = ""
 
-    override fun build() = KlutterPluginDTO(name = name,)
+    override fun build() = KlutterPluginDTO(name = name)
 
 }
 
 /**
- * DTO for storing shared app configuration.
+ * DTO for storing shared plugin configuration.
  */
 data class KlutterPluginDTO(
     val name: String,

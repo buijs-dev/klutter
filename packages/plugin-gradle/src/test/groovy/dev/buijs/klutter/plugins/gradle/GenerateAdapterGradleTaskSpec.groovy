@@ -50,49 +50,49 @@ class GenerateAdapterGradleTaskSpec extends Specification {
                   id("dev.buijs.klutter.gradle")
                 } """,
 
-                // Empty Klutter DSL block
-                """
-                    plugins {
-                      id("dev.buijs.klutter.gradle")
-                    }
-                    
-                    klutter {  }""",
-
-                // Empty plugin block
-                """
-                    plugins {
-                      id("dev.buijs.klutter.gradle")
-                    }
-                    
-                    klutter {
-                        plugin { }
-                    }""",
-
-                // Specified plugin name
-                """
-                    plugins {
-                      id("dev.buijs.klutter.gradle")
-                    }
-                    
-                    klutter {
-                        root = rootProject.rootDir
-                        plugin { 
-                            name = "super_awesome"
-                        }
-                    }""",
-
-                // Specified root folder and plugin name
-                """
-                    plugins {
-                      id("dev.buijs.klutter.gradle")
-                    }
-                    
-                    klutter {
-                        root = rootProject.rootDir
-                        plugin { 
-                            name = "super_awesome"
-                        }
-                    }"""
+//                // Empty Klutter DSL block
+//                """
+//                    plugins {
+//                      id("dev.buijs.klutter.gradle")
+//                    }
+//
+//                    klutter {  }""",
+//
+//                // Empty plugin block
+//                """
+//                    plugins {
+//                      id("dev.buijs.klutter.gradle")
+//                    }
+//
+//                    klutter {
+//                        plugin { }
+//                    }""",
+//
+//                // Specified plugin name
+//                """
+//                    plugins {
+//                      id("dev.buijs.klutter.gradle")
+//                    }
+//
+//                    klutter {
+//                        root = rootProject.rootDir
+//                        plugin {
+//                            name = "super_awesome"
+//                        }
+//                    }""",
+//
+//                // Specified root folder and plugin name
+//                """
+//                    plugins {
+//                      id("dev.buijs.klutter.gradle")
+//                    }
+//
+//                    klutter {
+//                        root = rootProject.rootDir
+//                        plugin {
+//                            name = "super_awesome"
+//                        }
+//                    }"""
         ]
     }
 

@@ -1,16 +1,13 @@
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.core.project.Project
-import dev.buijs.klutter.core.project.plugin
-import dev.buijs.klutter.core.test.TestPlugin
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
-import org.gradle.api.Project as GradleProject
 import org.gradle.api.plugins.ExtensionContainer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.io.File
+import org.gradle.api.Project as GradleProject
 
 internal class KlutterGradlePluginTest: WordSpec({
 
@@ -72,7 +69,5 @@ internal class KlutterGradlePluginTest: WordSpec({
         }
 
     }
-
-
 
 })

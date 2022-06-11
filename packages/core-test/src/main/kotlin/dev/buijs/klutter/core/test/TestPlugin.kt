@@ -22,10 +22,8 @@
 
 package dev.buijs.klutter.core.test
 
-import org.gradle.api.GradleException
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
-import java.io.InputStream
 import java.nio.file.Files
 
 data class TestPlugin (
@@ -68,23 +66,9 @@ data class TestPlugin (
             .withProjectDir(projectDir)
             .withTestKitDir(projectDir)
             .withPluginClasspath()
-            .withJaCoCo()
             .withArguments(args.toMutableList().also { list -> list.add("--stacktrace") })
             .build()
     }
-}
-
-fun InputStream.toFile(file: File) {
-    use { input ->
-        file.outputStream().use { input.copyTo(it) }
-    }
-}
-
-fun GradleRunner.withJaCoCo(): GradleRunner {
-    javaClass.classLoader.getResourceAsStream("testkit-gradle.properties")
-        ?.toFile(File(projectDir, "gradle.properties"))
-        ?: throw GradleException("Missing testkit-gradle.properties file!")
-    return this
 }
 
 private fun File.createFile(path: String) = resolve(path).absoluteFile.also { file ->

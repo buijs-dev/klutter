@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
     id("org.sonarqube") version "3.4.0.2513"
     id("pl.droidsonroids.jacoco.testkit") version "1.0.8"
+    id("jacoco")
 }
 
 subprojects {
@@ -26,6 +27,10 @@ buildscript {
 
 configurations {
     jacocoRuntime
+}
+
+jacoco {
+
 }
 
 allprojects {

@@ -122,10 +122,6 @@ kover {
         // contains only annotations
         ":packages:annotations-jvm",
 
-        // can only be tested with GradleRunner
-        // which is not registered for coverage
-        ":packages:plugin-gradle",
-
         // a test-only module
         ":packages:core-test"
     )

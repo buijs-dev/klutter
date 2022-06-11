@@ -23,7 +23,6 @@ Preferred way of installing/using this plugin is by using the pub [plugin](https
 1. [klutterExcludeArchsPlatformPodspec](#Gradle%20Task:%20klutterExcludeArchsPlatformPodspec)
 2. [klutterGenerateAdapters](#Gradle%20Task:%20klutterGenerateAdapters)
 <br />
-<br />
 
 #### Gradle Task: klutterExcludeArchsPlatformPodspec
 A Flutter app using Kotlin Multiplatform code won't run on an iOS simulator.
@@ -35,9 +34,8 @@ This task does so by adding the following 2 lines of code to the KMP module .pod
  user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
 ```
 <br />
-<br />
 
-### Gradle Task: klutterGenerateAdapters
+#### Gradle Task: klutterGenerateAdapters
 The generate adapters task creates all the boilerplate code needed to make the Dart code in Flutter
 communicate with Kotlin in the Multiplatform module.
 
@@ -85,7 +83,6 @@ class MyClass {
 
 ```
 <br />
-<br />
 
 Will generate this code and add it to the GeneratedKlutterAdapter class:
 
@@ -96,7 +93,6 @@ Will generate this code and add it to the GeneratedKlutterAdapter class:
     }
 
 ```
-<br />
 <br />
 
 **KlutterResponse**\

@@ -40,9 +40,9 @@ internal open class GenerateAdapters: KlutterGradleTask() {
             ?:pathToRoot.plugin()
 
         AdapterGeneratorTask(
+            ios = project.ios,
             root = project.root,
             android = project.android,
-            ios = project.ios,
             platform = project.platform,
         ).run()
     }

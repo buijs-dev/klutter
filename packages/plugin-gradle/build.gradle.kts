@@ -1,5 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+plugins {
+    id("groovy")
+    id("java-gradle-plugin")
+    id("maven-publish")
+    id("com.gradle.plugin-publish") version "0.16.0"
+    kotlin("jvm")
+}
+
 val properties = HashMap<String, String>().also { map ->
     File("${rootDir.absolutePath}/publish/_publish.properties"
     ).normalize().also { file ->
@@ -31,14 +39,6 @@ val repoEndpoint = (properties["repo.url"]
 
 val pluginGroupId = "dev.buijs.klutter"
 val pluginArtifactId = "plugin"
-
-plugins {
-    id("groovy")
-    id("java-gradle-plugin")
-    id("maven-publish")
-    id("com.gradle.plugin-publish") version "0.16.0"
-    kotlin("jvm")
-}
 
 group = pluginGroupId
 version = libversion

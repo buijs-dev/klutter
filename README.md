@@ -10,10 +10,6 @@ by the Klutter framework. This plugin provides a set of Gradle tasks which will
 generate anything from settings files to Kotlin/Dart/Groovy code needed to make 
 Flutter and KMP work together.
 
-<img src="https://raw.githubusercontent.com/buijs-dev/klutter/main/docs/klutter.png" alt="klutter-overview" width="200"/>
-
-[Source of this picture and a good read](https://littlegnal.github.io/2019-07-09/kmpp_flutter_en)
-
 ### Installation
 Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
 <br />

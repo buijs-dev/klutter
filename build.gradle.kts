@@ -3,8 +3,6 @@ plugins {
     id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
     id("org.sonarqube") version "3.4.0.2513"
-    id("pl.droidsonroids.jacoco.testkit") version "1.0.8"
-    id("jacoco")
 }
 
 subprojects {
@@ -23,14 +21,6 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
         classpath("com.android.tools.build:gradle:7.0.4")
     }
-}
-
-configurations {
-    jacocoRuntime
-}
-
-jacoco {
-
 }
 
 allprojects {
@@ -149,15 +139,4 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
         }
 
     }
-}
-
-tasks.register("createTestKitProperties") {
-    val propertiesFile = rootProject
-        .projectDir
-        .resolve("packages/core-test/src/main/resources/testkit-gradle.properties")
-        .absolutePath
-
-    val jacocoPath = configurations.jacocoRuntime.get().asPath.replace('\\', '/')
-    file(propertiesFile).createNewFile()
-    file(propertiesFile).writeText("org.gradle.jvmargs=-javaagent:${jacocoPath}=destfile=$buildDir/jacoco/test.exec")
 }

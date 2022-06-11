@@ -1,14 +1,12 @@
 # Klutter
-[![Gradle Plugin Portal](https://img.shields.io/badge/plugin%20portal-v2022--alpha--3-blue)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle/2022-alpha-3)
-[![Repsy maven](https://img.shields.io/badge/maven-2022--alpha--3-blue)](https://repsy.io/mvn/buijs-dev/klutter/dev/buijs/klutter/)
-[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
-[![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter)
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?color=black&logoColor=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
+[![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter)
+[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
 
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated
-by the Klutter framework.This plugin provides a set of Gradle tasks which will 
+by the Klutter framework. This plugin provides a set of Gradle tasks which will 
 generate anything from settings files to Kotlin/Dart/Groovy code needed to make 
 Flutter and KMP work together.
 
@@ -16,14 +14,18 @@ Flutter and KMP work together.
 
 [Source of this picture and a good read](https://littlegnal.github.io/2019-07-09/kmpp_flutter_en)
 
-## Installation
+### Installation
 Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
+<br />
+<br />
 
-## Gradle Tasks
+### Gradle Tasks
 1. [klutterExcludeArchsPlatformPodspec](#Gradle%20Task:%20klutterExcludeArchsPlatformPodspec)
 2. [klutterGenerateAdapters](#Gradle%20Task:%20klutterGenerateAdapters)
+<br />
+<br />
 
-### Gradle Task: klutterExcludeArchsPlatformPodspec
+#### Gradle Task: klutterExcludeArchsPlatformPodspec
 A Flutter app using Kotlin Multiplatform code won't run on an iOS simulator.
 There's an easy fix for that: Exclude arm64 architecture from the podspec file.
 This task does so by adding the following 2 lines of code to the KMP module .podspec file:
@@ -32,7 +34,8 @@ This task does so by adding the following 2 lines of code to the KMP module .pod
  pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
  user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
 ```
-
+<br />
+<br />
 
 ### Gradle Task: klutterGenerateAdapters
 The generate adapters task creates all the boilerplate code needed to make the Dart code in Flutter
@@ -46,6 +49,8 @@ The following steps are executed to do so:
 - Generate an adapter Swift file in the root/ios folder.
 
 The generated Dart library then gives access to any native code written in Kotlin Multiplatform.
+<br />
+<br />
 
 ### Use annotations
 The klutterGenerateAdapters task will scan for the following annotations:
@@ -79,6 +84,8 @@ class MyClass {
 }
 
 ```
+<br />
+<br />
 
 Will generate this code and add it to the GeneratedKlutterAdapter class:
 
@@ -89,7 +96,8 @@ Will generate this code and add it to the GeneratedKlutterAdapter class:
     }
 
 ```
-
+<br />
+<br />
 
 **KlutterResponse**\
 This annotation enables KMP and Flutter to communicate using data transfer objects instead of Strings.
@@ -120,22 +128,22 @@ This is a functional design choise, not a technical limitation.
 3. Boolean
 4. List
 
-**Maps?**
+**Maps?**\
 Maps are currently not supported. A DTO is a better/safer option by providing typesafety e.a.
 
-**Enumerations?**
+**Enumerations?**\
 Enumerations can be used as datatype but only if the enumeration itself has a no-args constructor.
 Values should be defined in UPPER_SNAKE_CASE. Klutter will convert it to lowerCamelCase for usage in Dart/Flutter.
 The value "none" is a reserved value used to represent null.
 
-**Custom data types?**
+**Custom data types?**\
 Any field declaration may use another DTO as type but that DTO should comply with before mentioned rules as well.
 
-**What could possibly go wrong?**
+**What could possibly go wrong?**\
 Any class annotated with KlutterResponse that does not comply will be logged as error and ignored for processing.
 Any other dependent class will also be ignored as result.
 
-**Requirements**
+**Requirements**\
 To serialize the KlutterResponse kotlinx serialization is used. Add the plugin to the KMP build.gradle.kts:
 
 ````kotlin
@@ -143,6 +151,8 @@ plugins {
     kotlin("plugin.serialization") version "<use-project-kotlin-version>"
 }
 ````
+<br />
+<br />
 
 Also add the json dependency to the commonMain sourceset:
 
@@ -153,6 +163,8 @@ Also add the json dependency to the commonMain sourceset:
     }
 }
 ```
+<br />
+<br />
 
 **Examples**
 

@@ -1,9 +1,9 @@
 package dev.buijs.klutter.plugins.gradle
 
+import dev.buijs.klutter.core.test.TestPlugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.testfixtures.ProjectBuilder
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class KlutterGradlePluginSpec extends Specification {
@@ -59,6 +59,57 @@ class KlutterGradlePluginSpec extends Specification {
         and:
         task.actions.size() == 1
         task2.actions.size() == 1
+
+    }
+
+    def "Verify KlutterGradleTask task action executes describe method"(){
+
+        given:
+        def sut = Mock(KlutterGradleTask) {
+            describe() >> increment()
+        }
+
+        when:
+        sut.execute()
+
+        then:
+        1 * sut.describe()
+
+        and:
+        i == 1
+    }
+
+    private def static i = 0
+
+    private static increment() { i = 1 }
+
+    def "Verify KlutterGradleTask project() returns ext.root if set"(){
+
+        given:
+        def plugin = new TestPlugin()
+
+        def extension = new KlutterGradleExtension()
+        extension.root = plugin.root
+
+        def container = Mock(ExtensionContainer) {
+            getByName("klutter") >> extension
+        }
+
+        def gradleProject = Mock(Project) {
+            adapter() >> extension
+            it.extensions >> container
+        }
+
+        and:
+        def sut = Mock(KlutterGradleTask) {
+            project >> gradleProject
+        }
+
+        when:
+        def project = sut.project()
+
+        then:
+        project.root.folder.absolutePath == plugin.root.absolutePath
 
     }
 

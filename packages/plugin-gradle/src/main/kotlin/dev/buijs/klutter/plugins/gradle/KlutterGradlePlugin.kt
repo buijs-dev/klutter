@@ -31,6 +31,8 @@ class KlutterGradlePlugin: Plugin<Project> {
 internal open class GenerateAdapters: KlutterGradleTask() {
     override fun describe() {
 
+        val ext = project.adapter()
+
         val pathToRoot = ext.root?.absolutePath ?: project.rootDir.path
 
         val pluginName = ext.plugin?.name?.ifBlank { null }
@@ -83,26 +85,22 @@ internal abstract class KlutterGradleTask: DefaultTask() {
         group = "klutter"
     }
 
-    @Internal
-    val ext: KlutterGradleExtension = project.adapter()
-
     /**
      * The implementing class must describe what the task does by implementing this function.
      */
     abstract fun describe()
 
     @TaskAction
-    internal fun execute() = describe()
+    fun execute() = describe()
 
-    internal fun project() =
-        (ext.root ?: project.rootProject.projectDir).plugin()
+    fun project() =
+        (project.adapter().root ?: project.rootProject.projectDir).plugin()
+
 }
 
 internal fun Project.adapter(): KlutterGradleExtension {
     return extensions.getByName("klutter").let {
-        if (it is KlutterGradleExtension) {
-            it
-        } else {
+        if (it is KlutterGradleExtension) { it } else {
             throw IllegalStateException("klutter extension is not of the correct type")
         }
     }

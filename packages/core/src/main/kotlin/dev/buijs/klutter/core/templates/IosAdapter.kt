@@ -20,39 +20,13 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.DartKotlinMap
 import dev.buijs.klutter.core.Method
-import java.io.File
 
-internal class IosAdapterGenerator(
-    private val ios: IOS,
-    data: AdapterData,
-) : AdapterGenerator(
-    data
-) {
-
-    private val frameworkName: String = "Platform"
-
-    override fun path(): File = ios.pluginClassName(iosPluginClassName() ?: "")
-
-    override fun printer() = IosPluginPrinter(
-        frameworkName = frameworkName,
-        pluginClassName = iosPluginClassName() ?: "",
-        methodChannelName = methodChannelName(),
-        methods = data.methods,
-    ).also {
-        ios.folder.resolve("${data.pubspec.name}.podspec").excludeArm64()
-    }
-
-    private fun IOS.pluginClassName(pluginClassName: String): File =
-        folder.resolve("Classes/Swift$pluginClassName.swift")
-}
-
-internal class IosPluginPrinter(
-    private val frameworkName: String,
+internal class IosAdapter(
     private val pluginClassName: String,
     private val methodChannelName: String,
     private val methods: List<Method>,
@@ -61,7 +35,7 @@ internal class IosPluginPrinter(
     override fun print() = """
             |import Flutter
             |import UIKit
-            |import $frameworkName
+            |import Platform
             |
             |public class Swift$pluginClassName: NSObject, FlutterPlugin {
             |  public static func register(with registrar: FlutterPluginRegistrar) {

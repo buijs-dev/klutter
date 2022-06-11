@@ -20,39 +20,13 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
-import java.io.File
 
 internal class AndroidAdapter(
-    private val android: Android,
-    data: AdapterData,
-) : AdapterGenerator(data) {
-
-    override fun printer() = AndroidPluginPrinter(
-        pluginClassName = androidPluginClassName(),
-        methodChannelName = methodChannelName(),
-        libraryPackage = data.pubspec.android?.pluginPackage ?: "",
-        methods = data.methods,
-    )
-
-    override fun path(): File = android.pluginClassName(
-        data.pubspec.android?.pluginPackage.toPath(),
-        data.pubspec.android?.pluginClass ?: "",
-    )
-
-    private fun Android.pluginClassName(packagePath: String, pluginClassName: String): File =
-        folder.resolve("src/main/kotlin/$packagePath/$pluginClassName.kt")
-
-    private fun String?.toPath(): String =
-        this?.replace(".", "/") ?: ""
-}
-
-
-internal class AndroidPluginPrinter(
-    private val libraryPackage: String,
+    private val pluginPackageName: String,
     private val pluginClassName: String,
     private val methodChannelName: String,
     private val methods: List<Method>,
@@ -73,7 +47,7 @@ internal class AndroidPluginPrinter(
             .joinToString("\n") { "import $it" }
 
         return """
-            |package $libraryPackage
+            |package $pluginPackageName
             |
             |$imports
             |import androidx.annotation.NonNull

@@ -20,31 +20,15 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.Method
-import java.io.File
 
-internal class FlutterAdapterGenerator(
-    private val root: Root, data: AdapterData,
-) : AdapterGenerator(data) {
-
-    override fun path(): File = root.resolve("lib/${data.pubspec.name}.dart")
-
-    override fun printer() = FlutterAdapterPrinter(
-        methodChannelName = methodChannelName(),
-        pluginClassName = androidPluginClassName(),
-        definitions = data.methods,
-        messages = data.messages,
-        enumerations = data.enumerations,
-    )
-}
-
-internal class FlutterAdapterPrinter(
-    private val methodChannelName: String = "KLUTTER",
+internal class FlutterAdapter(
     private val pluginClassName: String = "Adapter",
-    private val definitions: List<Method>,
+    private val methodChannelName: String = "KLUTTER",
+    private val methods: List<Method>,
     private val messages: List<DartMessage>,
     private val enumerations: List<DartEnum>,
 ): KlutterPrinter {
@@ -59,7 +43,7 @@ internal class FlutterAdapterPrinter(
             EnumerationPrinter(it).print()
         }
 
-        val block = definitions.joinToString("\r\n\r\n") { printFun(it) }
+        val block = methods.joinToString("\r\n\r\n") { printFun(it) }
 
         return """
             |import 'dart:convert';
@@ -188,7 +172,7 @@ internal class EnumerationPrinter(private val message: DartEnum): KlutterPrinter
             printValues(message) +
             "  static const none = ${message.name}._('none');$BR" +
             BR + BR +
-            "static const values = [${message.values.joinToString(",") { toCamelCase(it) }}];$BR$BR" +
+            "static const values = [${message.values.joinToString(",") { it.toCamelCase()}}];$BR$BR" +
             "  @override$BR" +
             "  String toString() {$BR" +
             "    return '${message.name}.\$string';\n" +
@@ -203,7 +187,7 @@ internal class EnumerationPrinter(private val message: DartEnum): KlutterPrinter
         val jsonValues = if(message.valuesJSON.size == message.values.size) message.valuesJSON else message.values
 
         message.values.forEachIndexed { index, s ->
-            sb.append("  static const ${toCamelCase(s)} = ${message.name}._('${jsonValues[index]}');$BR")
+            sb.append("  static const ${s.toCamelCase()} = ${message.name}._('${jsonValues[index]}');$BR")
         }
 
         return sb.toString()
@@ -236,13 +220,13 @@ internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrint
     private fun cases(): String {
         if(message.valuesJSON.isEmpty()) {
             return message.values.joinToString(";") {
-                "$BR      case \"$it\": return ${message.name}.${toCamelCase(it)}"
+                "$BR      case \"$it\": return ${message.name}.${it.toCamelCase()}"
             } + ";"
         }
 
         var print = ""
         message.valuesJSON.forEachIndexed { index, json ->
-            print += "$BR      case \"$json\": return ${message.name}.${toCamelCase(message.values[index])};"
+            print += "$BR      case \"$json\": return ${message.name}.${message.values[index].toCamelCase()};"
         }
 
         return print
@@ -251,13 +235,13 @@ internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrint
     private fun serializers(): String {
         if(message.valuesJSON.isEmpty()) {
             return message.values.joinToString(";") {
-                "$BR      case ${message.name}.${toCamelCase(it)}: return \"$it\""
+                "$BR      case ${message.name}.${it.toCamelCase()}: return \"$it\""
             }  + ";"
         }
 
         var print = ""
         message.valuesJSON.forEachIndexed { index, json ->
-            print += "$BR      case ${message.name}.${toCamelCase(message.values[index])}: return \"$json\";"
+            print += "$BR      case ${message.name}.${message.values[index].toCamelCase()}: return \"$json\";"
         }
 
         return print
@@ -265,28 +249,7 @@ internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrint
 
 }
 
-internal fun toCamelCase(snake: String): String {
 
-    var hasUnderscore = false
-
-    return snake.lowercase().map {
-        when {
-
-            it == '_' -> {
-                hasUnderscore = true
-                ""
-            }
-
-            hasUnderscore -> {
-                hasUnderscore = false
-                it.uppercase()
-            }
-
-            else -> it.toString()
-        }
-    }.joinToString("") { it }
-
-}
 
 /**
  * Prints all members of a class.

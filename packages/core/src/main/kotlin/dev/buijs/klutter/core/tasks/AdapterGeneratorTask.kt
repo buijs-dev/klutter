@@ -22,9 +22,14 @@
 
 package dev.buijs.klutter.core.tasks
 
-
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.shared.*
+import dev.buijs.klutter.core.annotations.KlutterAdapteeScanner
+import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
+import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.project.*
+import dev.buijs.klutter.core.templates.AndroidAdapter
+import dev.buijs.klutter.core.templates.FlutterAdapter
+import dev.buijs.klutter.core.templates.IosAdapter
 
 /**
  * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
@@ -36,12 +41,99 @@ class AdapterGeneratorTask(
     private val platform: Platform,
 ) : KlutterTask {
 
+    private val methodChannelName = root.toPubspec().toChannelName()
+
     override fun run() {
-        AdapterCollector(root, platform).data.let { data ->
-            FlutterAdapterGenerator(root, data).generate()
-            AndroidAdapter(android, data).generate()
-            IosAdapterGenerator(ios, data).generate()
+        platform.collect().let {
+            it.flutter(root)
+            it.android(android)
+            it.ios(ios)
         }
     }
 
+    private fun AdapterData.flutter(root: Root){
+        root.pathToLib.maybeCreate().write(
+            FlutterAdapter(
+                pluginClassName = root.pluginClassName,
+                methodChannelName = methodChannelName,
+                methods = methods,
+                messages = messages,
+                enumerations = enumerations,
+            )
+        )
+    }
+
+    private fun AdapterData.ios(ios: IOS){
+        ios.podspec().excludeArm64()
+        ios.pathToPlugin.maybeCreate().write(
+            IosAdapter(
+                pluginClassName = ios.pluginClassName,
+                methodChannelName = methodChannelName,
+                methods = methods,
+            )
+        )
+    }
+
+    private fun AdapterData.android(android: Android){
+        android.pathToPlugin.maybeCreate().write(
+            AndroidAdapter(
+                pluginClassName = android.pluginClassName,
+                pluginPackageName = android.pluginPackageName,
+                methodChannelName = methodChannelName,
+                methods = methods,
+            )
+        )
+    }
 }
+
+/**
+ * Utility to scan a Klutter project and collect it's metadata.
+ *
+ * The metadata is required to generate method channel code in:
+ * - root/lib
+ * - root/android
+ * - root/ios
+ */
+internal fun Platform.collect(): AdapterData {
+
+    // Scan platform module for @KlutterAdaptee.
+    val methods = KlutterAdapteeScanner(source())
+        .scan(language = ReturnTypeLanguage.DART)
+
+    // Scan for any class annotated with @KlutterResponse.
+    val processor = KlutterResponseProcessor(source())
+
+    // Response classes annotated with @KlutterResponse.
+    val messages = processor.messages
+
+    // Enumerations annotated with @KlutterResponse.
+    val enumerations = processor.enumerations
+
+    return AdapterData(
+        methods = methods,
+        messages = messages,
+        enumerations = enumerations,
+    )
+}
+
+/**
+ * Metadata containing all required information to generated method channel code.
+ */
+internal data class AdapterData(
+
+    /**
+     * List of @KlutterAdaptee annotated methods.
+     */
+    val methods: List<Method>,
+
+    /**
+     * List of custom data transfer objects annotated with @KlutterResponse defined in the platform module.
+     */
+    val messages: List<DartMessage>,
+
+    /**
+     * List of enumerations annotated with @KlutterResponse defined in the platform module.
+     */
+    val enumerations: List<DartEnum>,
+
+)

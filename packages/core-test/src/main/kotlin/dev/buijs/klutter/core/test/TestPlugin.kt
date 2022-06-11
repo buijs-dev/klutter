@@ -1,4 +1,3 @@
-@file:JvmName("KlutterTest")
 /* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,44 +26,40 @@ import org.gradle.testkit.runner.GradleRunner
 import java.io.File
 import java.nio.file.Files
 
-private val resources = TestResource()
-
-data class PluginProject (
+data class TestPlugin (
     val pluginName: String = "super_awesome",
+    val pluginClassName: String = "SuperAwesomePlugin",
+    val pluginPackageName: String = "com.example.super_awesome",
     val root: File = Files.createTempDirectory("").toFile(),
+    val libFolder: File = root.createFolder("lib"),
+    val libFile: File = libFolder.createFile("${pluginName}.dart"),
+
+    val platform: File = root.createFolder("platform"),
+    val platformCommonMain: File = platform.createFolder("src/commonMain"),
+    val platformSourceFile: File = platformCommonMain.createFile("FakeClass.kt"),
+    val platformPodSpec: File = platform.createFile("${pluginName}.podspec"),
+
     val ios: File = root.createFolder("ios"),
     val iosClasses: File = ios.createFolder("Classes"),
-    val iosPodspec: File = ios.createFile("super_awesome.podspec"),
-    val iosPodfile: File = ios.createFile("Podfile"),
-    val iosRunner: File = ios.createFolder("Runner"),
-    val iosAppDelegate: File = iosRunner.createFile("AppDelegate.swift"),
+    val iosPodspec: File = ios.createFile("$pluginName.podspec"),
+    val podfile: File = ios.createFile("Podfile"),
+    val runnerFolder: File = ios.createFolder("Runner"),
+    val appDelegate: File = runnerFolder.createFile("AppDelegate.swift"),
+
     val android: File = root.createFolder("android"),
-    val androidMain: File = root.createFolder("android/src/main").also {
-        it.createFolder("kotlin/foo/bar/super_awesome")
-    },
-    val androidManifest: File = androidMain.createFile("AndroidManifest.xml"),
-    val platform: File = root.createFolder("platform"),
+    val androidSrcMain: File = android.createFolder("src/main"),
+    val manifest: File = androidSrcMain.createFile("AndroidManifest.xml"),
+    val pathToPluginSource: File = androidSrcMain.createFolder("kotlin/foo/bar/$pluginName/"),
+    val pathToPlugin: File = pathToPluginSource.createFile("$pluginClassName.kt"),
+
     val platformBuildGradle: File = platform.createFile("build.gradle.kts"),
-    val platformSource: File = root.createFolder("${platform.path}/src/commonMain"),
-    val platformSourceClass: File = platformSource.createFile("FakeClass.kt"),
-    val platformPodspec: File = platform.createFile("super_awesome.podspec"),
-    val flutter: File = root.createFolder("lib"),
-    val flutterMainClass: File = flutter.createFile("${pluginName}.dart"),
-    val rootBuildGradle: File = root.createFile("build.gradle.kts"),
     val rootSettingsGradle: File = root.createFile("settings.gradle.kts"),
-    val pubspecYaml: File = root.createFile("pubspec.yaml")
+    val pubspecYaml: File = root.createFile("pubspec.yaml").also {
+        it.writeText(TestResource().load("plugin_pubspec"))
+    },
 ) {
-
-    fun verify(
-        message: String = "Test Failure",
-        assertion: (project: PluginProject, resources: TestResource) -> Boolean,
-    ) {
-        val passed = assertion.invoke(this, TestResource())
-        assert(passed) { message }
-    }
-
     fun test(
-        projectDir: File = root,
+        projectDir: File,
         vararg args: String,
     ) {
         GradleRunner.create()
@@ -73,88 +68,6 @@ data class PluginProject (
             .withArguments(args.toMutableList().also { list -> list.add("--stacktrace") })
             .build()
     }
-
-    private fun hasChild(
-        file: File,
-        compareToResource: String = "",
-        compareMode: CompareMode = CompareMode.IDENTICAL,
-    ): Boolean {
-
-        if(!file.exists()) {
-            assert(false) { "File does not exist: $file" }
-        }
-
-        if(compareToResource != "") {
-            return compare(
-                file.readText(),
-                resources.load(compareToResource),
-                compareMode,
-            )
-        }
-
-        return true
-    }
-
-    fun hasChild(
-        path: String = "",
-        filename: String = "",
-        compareToResource: String = "",
-        compareMode: CompareMode = CompareMode.IDENTICAL,
-    ): Boolean {
-
-        if(path != "" && !File(path).exists()) {
-            return false
-        }
-
-        return hasChild(
-            File("$path/$filename").normalize(),
-            compareToResource,
-            compareMode,
-        )
-    }
-
-    private fun compare(
-        actual: String,
-        expected: String,
-        compareMode: CompareMode,
-    ) = when(compareMode) {
-
-        CompareMode.IDENTICAL -> {
-           actual == expected
-        }
-
-        CompareMode.IGNORE_SPACES -> {
-            val actualNoSpaces = actual.filter { !it.isWhitespace() }
-            val expectedNoSpaces = expected.filter { !it.isWhitespace() }
-            if(actualNoSpaces == expectedNoSpaces) {
-                true
-            } else {
-                println("======== Comparison FAILED (Ignoring Spaces) ========")
-                println("")
-                println("======== EXPECTED ========")
-                println(expected)
-                println("")
-                println("======== ACTUAL ========")
-                println(actual)
-                println("")
-                println("======== EXPECTED (Ignoring Spaces) ========")
-                println(expectedNoSpaces)
-                println("")
-                println("======== ACTUAL (Ignoring Spaces) ========")
-                println(actualNoSpaces)
-                println("")
-                false
-            }
-
-        }
-
-    }
-}
-
-fun plugin(
-    setup: (project: PluginProject, resources: TestResource) -> PluginProject = { _, _ -> PluginProject() },
-): PluginProject {
-    return PluginProject().also { setup.invoke(it, TestResource()) }
 }
 
 private fun File.createFile(path: String) = resolve(path).absoluteFile.also { file ->
@@ -163,9 +76,4 @@ private fun File.createFile(path: String) = resolve(path).absoluteFile.also { fi
 
 private fun File.createFolder(path: String) = resolve(path).absoluteFile.also { file ->
     file.normalize().let { if(!it.exists()) it.mkdirs() }
-}
-
-enum class CompareMode {
-    IDENTICAL,
-    IGNORE_SPACES,
 }

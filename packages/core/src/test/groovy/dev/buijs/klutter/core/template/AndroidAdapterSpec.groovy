@@ -20,60 +20,30 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.template
 
-import dev.buijs.klutter.core.Android
-import dev.buijs.klutter.core.Method
-import spock.lang.Shared
+import dev.buijs.klutter.core.CoreTestUtil
+import dev.buijs.klutter.core.TestData
+import dev.buijs.klutter.core.templates.AndroidAdapter
 import spock.lang.Specification
-
-import static dev.buijs.klutter.core.test.KlutterTest.plugin
 
 class AndroidAdapterSpec extends Specification {
 
-    @Shared
-    def sut = new AndroidAdapter(
-            new Android(new File("")),
-            AdapterStub.get()
-    )
-
     def "AndroidAdapter should create a valid Kotlin class"() {
-
         given:
-        def plugin = plugin { project, resources ->
-            def p = new File("${project.android.path}/src/main/kotlin/super_plugin")
-            p.mkdirs()
-            new File("${p.path}/SuperPlugin.kt").createNewFile()
-        }
+        def packageName = "super_plugin"
+        def pluginName = "SuperPlugin"
+        def channelName = "dev.company.plugins.super_plugins"
+        def methods = [TestData.greetingMethod]
 
-        def methods = [new Method(
-                "greeting",
-                "platform.Greeting",
-                "Greeting().greeting()",
-                false,
-                "String"
-        )]
+        and: "The printer as SUT"
+        def adapter = new AndroidAdapter(packageName, pluginName, channelName, methods)
 
-        when:
-        def android = new AndroidAdapter(
-                new Android(plugin.android),
-                new AdapterData(new PubspecData("super_plugin", new PubFlutter(
-                        new Plugin(
-                                new Platforms(
-                                        new PluginClass("super_plugin", "SuperPlugin"),
-                                        new PluginClass("super_plugin", "SuperPlugin"),)
-                        )
-                )), methods, [], [])
-        )
+        expect:
+        CoreTestUtil.verify(adapter, classBody)
 
-        and:
-        android.generate()
-
-        then:
-        with(android.path()) {adapter ->
-            adapter.exists()
-            adapter.text.replaceAll(" ", "") ==
-                     """package super_plugin
+        where:
+        classBody = """package super_plugin
             
                         import platform.Greeting
                         import androidx.annotation.NonNull
@@ -98,7 +68,7 @@ class AndroidAdapterSpec extends Specification {
                           private val mainScope = CoroutineScope(Dispatchers.Main) 
                            
                           override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-                            channel = MethodChannel(flutterPluginBinding.binaryMessenger, "super_plugin")
+                            channel = MethodChannel(flutterPluginBinding.binaryMessenger, "dev.company.plugins.super_plugins")
                             channel.setMethodCallHandler(this)
                           }
                         
@@ -117,21 +87,7 @@ class AndroidAdapterSpec extends Specification {
                             channel.setMethodCallHandler(null)
                           }
                         }
-                        """.replaceAll(" ", "")
-        }
-
+                        """
     }
 
-    def "Verify toPath"(){
-        expect:
-        sut.toPath(input) == output
-
-        where:
-        input               | output
-        null                | ""
-        ""                  | ""
-        "-1"                | "-1"
-        "/foo/bar"          | "/foo/bar"
-        "some.package.name" | "some/package/name"
-    }
 }

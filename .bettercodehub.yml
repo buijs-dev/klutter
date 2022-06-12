@@ -2,3 +2,9 @@ exclude:
   - /publish/.*
   - /packages/annotations-jvm/.*
   - /packages/annotations-kmp/.*
+
+languages:
+  - kotlin
+  - groovy
+
+component_depth: 8

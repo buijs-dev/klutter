@@ -13,6 +13,13 @@ languages:
         - .*/core-test/.*\.kt
 
   - name: groovy
-
+    production:
+      exclude:
+        - .*/core-test/.*\.kt
+        - .*Spec\.groovy
+    test:
+      include:
+        - .*/core-test/.*\.kt
+        - .*Spec\.groovy
 
 component_depth: 2

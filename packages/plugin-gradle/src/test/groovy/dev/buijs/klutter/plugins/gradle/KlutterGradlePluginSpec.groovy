@@ -165,14 +165,17 @@ class KlutterGradlePluginSpec extends Specification {
         }
 
         and:
-        def sut = GroovyMock(ExcludeArchsPlatformPodspec) {
+        def sut = Mock(ExcludeArchsPlatformPodspec) {
             it.project() >> plugin
         }
 
         when:
-        sut.describe()
+        sut.execute()
 
         then:
+        1 * sut.describe()
+
+        and:
         j == 0
 
     }

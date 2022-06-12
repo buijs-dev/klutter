@@ -18,9 +18,7 @@ import java.io.File
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create("klutter", KlutterGradleExtension::class.java)
-
         project.tasks.register("klutterGenerateAdapters", GenerateAdapters::class.java)
-
         project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
     }
 }
@@ -29,26 +27,14 @@ class KlutterGradlePlugin: Plugin<Project> {
  * Task to generate method-channel boilerplate in ios and android folders.
  */
 internal open class GenerateAdapters: KlutterGradleTask() {
-    override fun describe() {
-
-        val ext = project.adapter()
-
-        val pathToRoot = ext.root?.absolutePath ?: project.rootDir.path
-
-        val pluginName = ext.plugin?.name?.ifBlank { null }
-
-        val project = pluginName
-            ?.let { pathToRoot.plugin(it) }
-            ?:pathToRoot.plugin()
-
+    override fun describe() = project().let {
         AdapterGeneratorTask(
-            ios = project.ios,
-            root = project.root,
-            android = project.android,
-            platform = project.platform,
+            ios = it.ios,
+            root = it.root,
+            android = it.android,
+            platform = it.platform,
         ).run()
     }
-
 }
 
 /**
@@ -88,7 +74,7 @@ internal abstract class KlutterGradleTask: DefaultTask() {
     /**
      * The implementing class must describe what the task does by implementing this function.
      */
-    abstract fun describe()
+    open fun describe() { }
 
     @TaskAction
     fun execute() = describe()

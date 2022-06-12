@@ -52,10 +52,7 @@ sourceSets {
 }
 
 sonarqube {
-    properties {
-        // These classes contain glue code for which code coverage is not recorded
-        property("sonar.exclusions","**/plugins/gradle/tasks")
-    }
+    isSkipProject = true
 }
 
 pluginBundle {

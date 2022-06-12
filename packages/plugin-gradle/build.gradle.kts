@@ -51,6 +51,13 @@ sourceSets {
     }
 }
 
+sonarqube {
+    properties {
+        // These classes contain glue code for which code coverage is not recorded
+        property("sonar.exclusions","**/plugins/gradle/tasks")
+    }
+}
+
 pluginBundle {
     website = "https://buijs.dev/klutter/"
     vcsUrl = "https://github.com/buijs-dev/klutter"

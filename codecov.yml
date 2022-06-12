@@ -1,2 +1,6 @@
 github_checks:
   annotations: false
+
+ignore:
+  # These classes contain glue code for which code coverage is not recorded
+  - packages/plugin-gradle/src/main/kotlin/dev/buijs/klutter/plugins/gradle/tasks

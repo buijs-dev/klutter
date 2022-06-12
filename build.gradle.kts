@@ -109,9 +109,6 @@ tasks.koverMergedXmlReport {
     excludes = listOf(
         // A test-only module
         "dev.buijs.klutter.core.test.*",
-
-        // Glue code for which code coverage is not recorded
-        "dev.buijs.klutter.plugins.gradle.tasks.*",
     )
 
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))

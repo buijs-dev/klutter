@@ -1,5 +1,7 @@
 package dev.buijs.klutter.plugins.gradle
 
+import dev.buijs.klutter.core.UtilsKt
+import dev.buijs.klutter.core.project.Platform
 import dev.buijs.klutter.core.test.TestPlugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
@@ -62,7 +64,7 @@ class KlutterGradlePluginSpec extends Specification {
 
     }
 
-    def "Verify KlutterGradleTask task action executes describe method"(){
+    def "Verify KlutterGradleTask task action executes describe method"() {
 
         given:
         def sut = Mock(KlutterGradleTask) {
@@ -83,7 +85,7 @@ class KlutterGradlePluginSpec extends Specification {
 
     private static increment() { i = 1 }
 
-    def "Verify KlutterGradleTask project() returns ext.root if set"(){
+    def "Verify KlutterGradleTask project() returns ext.root if set"() {
 
         given:
         def plugin = new TestPlugin()
@@ -113,4 +115,69 @@ class KlutterGradlePluginSpec extends Specification {
 
     }
 
+    def "Verify KlutterGradleTask project() returns rootProject dir if no root is set"() {
+
+        given:
+        def plugin = new TestPlugin()
+
+        def extension = new KlutterGradleExtension()
+
+        def container = Mock(ExtensionContainer) {
+            getByName("klutter") >> extension
+        }
+
+        def gradleRootProject = Mock(Project) {
+            it.projectDir >> plugin.root
+        }
+
+        def gradleProject = Mock(Project) {
+            adapter() >> extension
+            it.extensions >> container
+            it.rootProject >> gradleRootProject
+        }
+
+        and:
+        def sut = Mock(KlutterGradleTask) {
+            project >> gradleProject
+        }
+
+        when:
+        def project = sut.project()
+
+        then:
+        project.root.folder.absolutePath == plugin.root.absolutePath
+
+    }
+
+    def "Verify ExcludeArchsPlatformPodspec task"() {
+
+        given:
+        def podspec = GroovyMock(UtilsKt) {
+            it.excludeArm64(_) >> decrement()
+        }
+
+        def platform = GroovyMock(Platform) {
+            it.podspec() >> podspec
+        }
+
+        def plugin = GroovyMock(dev.buijs.klutter.core.project.Project) {
+            it.platform >> platform
+        }
+
+        and:
+        def sut = GroovyMock(ExcludeArchsPlatformPodspec) {
+            it.project() >> plugin
+        }
+
+        when:
+        sut.describe()
+
+        then:
+        j == 0
+
+    }
+
+    private def static j = 1
+
+    private static decrement() { j = 0 }
 }

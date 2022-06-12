@@ -183,4 +183,35 @@ class KlutterGradlePluginSpec extends Specification {
     private def static j = 1
 
     private static decrement() { j = 0 }
+
+    def "Verify GenerateAdapters task"() {
+
+        given:
+        def plugin = GroovyMock(dev.buijs.klutter.core.project.Project) {
+            it.ios >> add()
+            it.root >> add()
+            it.android >> add()
+            it.platform >> add()
+        }
+
+        and:
+        def sut = Mock(GenerateAdapters) {
+            it.project() >> plugin
+        }
+
+        when:
+        sut.execute()
+
+        then:
+        1 * sut.describe()
+
+        and:
+        k == 4
+
+    }
+
+    private def static k = 0
+
+    private static add() { k +=1 }
+
 }

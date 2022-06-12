@@ -74,7 +74,7 @@ internal abstract class KlutterGradleTask: DefaultTask() {
     /**
      * The implementing class must describe what the task does by implementing this function.
      */
-    open fun describe() { }
+    abstract fun describe()
 
     @TaskAction
     fun execute() = describe()

@@ -20,14 +20,21 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.plugins.gradle.tasks
 
-interface KlutterDSL<T> {
-    fun configure(lambda: T.() -> Unit): KlutterDTO
+import dev.buijs.klutter.core.tasks.AdapterGeneratorTask
+import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+
+/**
+ * Task to generate method-channel boilerplate in ios and android folders.
+ */
+internal open class GenerateAdapters: KlutterGradleTask() {
+    override fun describe() = project().let {
+        AdapterGeneratorTask(
+            ios = it.ios,
+            root = it.root,
+            android = it.android,
+            platform = it.platform,
+        ).run()
+    }
 }
-
-interface KlutterDSLBuilder {
-    fun build(): KlutterDTO
-}
-
-interface KlutterDTO

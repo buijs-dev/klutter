@@ -20,14 +20,16 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.plugins.gradle.tasks
 
-interface KlutterDSL<T> {
-    fun configure(lambda: T.() -> Unit): KlutterDTO
+import dev.buijs.klutter.core.excludeArm64
+import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+
+/**
+ * Task to edit the podspec file in the root/platform folder.
+ */
+internal open class ExcludeArchsPlatformPodspec: KlutterGradleTask() {
+    override fun describe() {
+        project().platform.podspec().excludeArm64()
+    }
 }
-
-interface KlutterDSLBuilder {
-    fun build(): KlutterDTO
-}
-
-interface KlutterDTO

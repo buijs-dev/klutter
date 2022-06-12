@@ -22,4 +22,4 @@ languages:
         - .*/core-test/.*\.kt
         - .*Spec\.groovy
 
-component_depth: 2
+component_depth: 5

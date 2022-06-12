@@ -1,0 +1,18 @@
+exclude:
+  - /publish/.*
+  - /packages/annotations-jvm/.*
+  - /packages/annotations-kmp/.*
+
+languages:
+  - name: kotlin
+    production:
+      exclude:
+        - .*/core-test/.*\.kt
+    test:
+      include:
+        - .*/core-test/.*\.kt
+
+  - name: groovy
+
+
+component_depth: 2

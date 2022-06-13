@@ -33,7 +33,7 @@ package dev.buijs.klutter.core
  * is custom or a standard Dart type as defined in [DartKotlinMap].
  *
  */
-internal data class DartField(
+internal class DartField(
     val type: String,
     val name: String,
     val isList: Boolean,

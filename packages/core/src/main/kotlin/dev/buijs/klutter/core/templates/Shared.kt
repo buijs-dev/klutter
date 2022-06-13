@@ -20,27 +20,18 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.templates
+
+import dev.buijs.klutter.core.DartKotlinMap
 
 /**
- * Message/(JSON) response object defined in Dart language.
- *
- * @property name of the class.
- * @property fields list of class members.
+ * Return the current String value postfixed with '.toKJson()'
+ * if Method dataType is not a standard Dart/Kotlin type.
  */
-internal class DartMessage(
-    val name: String,
-    fields: List<DartField>,
-) {
-    val fields: List<DartField> = notEmpty(fields)
-}
+internal fun String.maybePostfixToKJson() =
+    DartKotlinMap.toMapOrNull(this)?.let { "" } ?: ".toKJson()"
 
 /**
- * A DartMessage without any members is not valid and will break generated code.
- *
- * @throws KlutterException if fields isEmpty.
- * @return List<DartField> if not empty.
+ * Return the current String value postfixed with '.toJson()'.
  */
-private fun notEmpty(fields: List<DartField>): List<DartField> = fields.ifEmpty {
-    throw KlutterException("Invalid DartMessage: List of fields is empty.")
-}
+internal fun String.postfixJson() = "$this.toJson()"

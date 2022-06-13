@@ -2,6 +2,7 @@ package dev.buijs.klutter.core
 
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.test.TestResource
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
 import java.nio.file.Files
@@ -15,7 +16,7 @@ class MethodTest: WordSpec({
             val file = Files.createTempFile("SomeClass", "kt").toFile()
 
             //expect:
-            file.toMethods().isEmpty()
+            file.toMethods().isEmpty() shouldBe true
         }
 
         "[toMethod] a list of methods is returned" {
@@ -24,7 +25,7 @@ class MethodTest: WordSpec({
             TestResource().copy("platform_source_code", file.absolutePath)
 
             //expect:
-            file.toMethods(ReturnTypeLanguage.DART).isNotEmpty()
+            file.toMethods(ReturnTypeLanguage.DART).isNotEmpty() shouldBe true
         }
 
     }

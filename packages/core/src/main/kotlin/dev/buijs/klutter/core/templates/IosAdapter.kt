@@ -23,7 +23,6 @@
 package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.DartKotlinMap
 import dev.buijs.klutter.core.Method
 
 internal class IosAdapter(
@@ -60,27 +59,22 @@ internal class IosAdapter(
         "        case \"${it.command}\":\n            self.${it.command}(result: result)"
     }
 
-    private fun methods(): String = methods.joinToString("\n\n") { printMethod(it) }
+    private fun methods(): String = methods.joinToString("\n\n") { it.print() }
 
-    private fun printMethod(definition: Method): String {
-
-        val type = if (DartKotlinMap.toMapOrNull(definition.dataType) == null) {
-            ".toKJson()"
-        } else ""
-
-        return if(definition.async) {
-            "    func ${definition.command}(result: @escaping FlutterResult) {\n" +
-                    "        ${definition.method.removeSuffix("()")} { data, error in\n" +
+    private fun Method.print(): String {
+        return if(async) {
+            "    func ${command}(result: @escaping FlutterResult) {\n" +
+                    "        ${method.removeSuffix("()")} { data, error in\n" +
                     "\n" +
-                    "            if let response = data { result(response$type) }\n" +
+                    "            if let response = data { result(response${dataType.maybePostfixToKJson()}) }\n" +
                     "\n" +
                     "            if let failure = error { result(failure) }\n" +
                     "\n" +
                     "        }\n" +
                     "    }\n"
         } else {
-            "    func ${definition.command}(result: @escaping FlutterResult) {\n" +
-                    "        result(${definition.method}$type)\n" +
+            "    func ${command}(result: @escaping FlutterResult) {\n" +
+                    "        result(${method}${dataType.maybePostfixToKJson()})\n" +
                     "    }"
         }
 

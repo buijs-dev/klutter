@@ -26,7 +26,7 @@ class TestUtil {
 
     def static warningColor = "\u001B[1;31m"
 
-    def static verify(String actual, String expected) {
+    static Boolean verify(String actual, String expected) {
 
         if(actual == expected) {
             println("============== Test OK: IDENTICAL CONTENT ==============")

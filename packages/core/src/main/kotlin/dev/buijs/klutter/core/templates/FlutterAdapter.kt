@@ -43,7 +43,7 @@ internal class FlutterAdapter(
             EnumerationPrinter(it).print()
         }
 
-        val block = methods.joinToString("\r\n\r\n") { printFun(it) }
+        val block = methods.joinToString("\r\n\r\n") { it.printFun() }
 
         return """
             |import 'dart:async';
@@ -99,13 +99,13 @@ internal class FlutterAdapter(
             """.trimMargin()
     }
 
-    private fun printFun(definition: Method) =
-        if(DartKotlinMap.toMapOrNull(definition.dataType) == null) {
-            """|  static Future<AdapterResponse<${definition.dataType}>> get ${definition.command} async {
+    private fun Method.printFun() =
+        if(DartKotlinMap.toMapOrNull(dataType) == null) {
+            """|  static Future<AdapterResponse<${dataType}>> get $command async {
            |    try {
-           |      final response = await _channel.invokeMethod('${definition.command}');
+           |      final response = await _channel.invokeMethod('${command}');
            |      final json = jsonDecode(response);
-           |      return AdapterResponse.success(${serializer(definition)});
+           |      return AdapterResponse.success(${serializer()});
            |    } catch (e) {
            |      return AdapterResponse.failure(
            |          e is Error ? Exception(e.stackTrace) : e as Exception
@@ -113,10 +113,10 @@ internal class FlutterAdapter(
            |    }
            |  }"""
         } else {
-            """|  static Future<AdapterResponse<${definition.dataType}>> get ${definition.command} async {
+            """|  static Future<AdapterResponse<${dataType}>> get $command async {
            |    try {
-           |      final json = await _channel.invokeMethod('${definition.command}');
-           |      return AdapterResponse.success(${serializer(definition)});
+           |      final json = await _channel.invokeMethod('${command}');
+           |      return AdapterResponse.success(${serializer()});
            |    } catch (e) {
            |      return AdapterResponse.failure(
            |          e is Error ? Exception(e.stackTrace) : e as Exception
@@ -126,12 +126,12 @@ internal class FlutterAdapter(
         }
 
 
-    private fun serializer(definition: Method): String {
+    private fun Method.serializer(): String {
 
         val listRegex = """List<([^>]+?)>""".toRegex()
 
         var isList = false
-        var type = definition.dataType
+        var type = dataType
         val q = if(type.contains("?")) "?" else ""
 
         listRegex.find(type)?.let {
@@ -373,6 +373,7 @@ internal class MemberPrinter(
 ): KlutterPrinter {
 
     override fun print() = fields.sortedBy { it.isOptional }.joinToString(BR) {
+
         var datatype = it.type
 
         if(it.isList){
@@ -412,7 +413,7 @@ internal class SerializerPrinter(
                 "$q.toList()"
             }
         } else if(field.isCustomType) {
-            out = "$out$q.toJson()"
+            out = "$out$q".postfixJson()
         }
 
         return out

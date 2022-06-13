@@ -37,7 +37,7 @@ internal class AndroidAdapter(
         val block = if (methods.isEmpty()) {
             "             return result.notImplemented()"
         } else {
-            val defs = methods.joinToString("\n") { printFun(it) }
+            val defs = methods.joinToString("\n") { it.printFun() }
             "$defs \n                else -> result.notImplemented()"
         }
 
@@ -91,13 +91,9 @@ internal class AndroidAdapter(
             |""".trimMargin()
     }
 
-    private fun printFun(definition: Method): String {
-        val type = if (DartKotlinMap.toMapOrNull(definition.dataType) == null) {
-            ".toKJson()"
-        } else ""
-
-        return  "                \"${definition.command}\" -> {\r\n" +
-                "                    result.success(${definition.method}${type})\r\n" +
+    private fun Method.printFun(): String {
+        return  "                \"${command}\" -> {\n" +
+                "                    result.success(${method}${dataType.maybePostfixToKJson()})\n" +
                 "                }"
     }
 

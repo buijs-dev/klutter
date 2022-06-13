@@ -116,7 +116,9 @@ fun File.excludeArm64() {
      *
      *  If not found then 's' is used.
      */
-    val prefix = regex.find(readText())?.groupValues?.let { it[1] } ?: "s"
+    val fromRegex = regex.find(readText())
+
+    val prefix = if(fromRegex == null) "s" else fromRegex.groupValues[1]
 
     // INPUT
     val lines = readLines()

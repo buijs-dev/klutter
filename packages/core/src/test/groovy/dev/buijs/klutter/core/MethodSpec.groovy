@@ -1,6 +1,11 @@
 package dev.buijs.klutter.core
 
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.project.Pubspec
+import dev.buijs.klutter.core.project.PubspecFlutter
+import dev.buijs.klutter.core.project.PubspecPlugin
+import dev.buijs.klutter.core.project.PubspecPluginClass
+import dev.buijs.klutter.core.project.PubspecPluginPlatforms
 import dev.buijs.klutter.core.test.TestResource
 import spock.lang.Shared
 import spock.lang.Specification
@@ -122,5 +127,30 @@ class MethodSpec extends Specification {
     def "[packageName] package name is returned"() {
         expect:
         MethodKt.packageName("package a.b.c") == "a.b.c"
+    }
+
+    def "[toChannelName] pluginPackage name is returned"() {
+        given:
+        Pubspec pubspec = new Pubspec("Na!", new PubspecFlutter(plugin))
+
+        expect:
+        MethodKt.toChannelName(pubspec) == expected
+
+        where:
+        plugin << [
+                null,
+                new PubspecPlugin(null),
+                new PubspecPlugin(new PubspecPluginPlatforms(null, null)),
+                new PubspecPlugin(new PubspecPluginPlatforms(new PubspecPluginClass(null, null), null)),
+                new PubspecPlugin(new PubspecPluginPlatforms(new PubspecPluginClass("Batman!", null), null))
+        ]
+
+        expected << [
+                "Na!.klutter",
+                "Na!.klutter",
+                "Na!.klutter",
+                "Na!.klutter",
+                "Batman!",
+        ]
     }
 }

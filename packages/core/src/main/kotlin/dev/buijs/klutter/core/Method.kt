@@ -202,11 +202,8 @@ private fun String.packageName(): String {
 
     val result = """package(.*)""".toRegex().find(this)
 
-    if(result != null) {
-        return result.groupValues[1].trim()
-    }
+    return if(result == null) "" else result.groupValues[1].trim()
 
-    return ""
 }
 
 
@@ -257,80 +254,3 @@ private fun String.asDataType(language: Lang): String {
         }
     }
 }
-
-
-/**
- * This is not an exhaustive mapping but a basic mapping to
- * facilitate converting Kotlin DTO classes to Dart DTO classes.
- */
-internal enum class DartKotlinMap(
-    val kotlinType: String,
-    val dartType: String,
-) {
-
-    INTEGER("Int", "int"),
-    DOUBLE("Double", "double"),
-    BOOLEAN("Boolean", "bool"),
-    STRING("String", "String");
-
-    companion object {
-
-        @JvmStatic
-        fun toKotlinType(type: String) = toMap(type).kotlinType
-
-        @JvmStatic
-        fun toDartType(type: String) = toMap(type).dartType
-
-        @JvmStatic
-        fun toMap(type: String) = toMapOrNull(type)
-            ?: throw KlutterException("No such type in KotlinDartMap: $type")
-
-        @JvmStatic
-        fun toMapOrNull(type: String) = values()
-            .firstOrNull { it.dartType == type || it.kotlinType == type}
-
-    }
-}
-
-/**
- * Message/(JSON) response object defined in Dart language.
- *
- * @property name of the class.
- * @property fields list of class members.
- */
-internal data class DartMessage(
-    val name: String,
-    val fields: List<DartField>
-)
-
-/**
- * Enumeration value defined in Dart language.
- *
- * @property name enum class name.
- * @property values the enum constants.
- * @property valuesJSON the serializable values.
- */
-internal data class DartEnum(
-    val name: String,
-    val values: List<String>,
-    val valuesJSON: List<String>,
-)
-
-/**
- * Data type defined in Dart language.
- *
- * @property type the actual type of data.
- * @property name the name of the field.
- * @property isOptional [Boolean] value indicating a field is nullable.
- * @property isList [Boolean] value indicating a field is nested in a [List].
- * @property isCustomType [Boolean] value indicating a data type
- * is custom or a standard Dart type as defined in [DartKotlinMap].
- *
- */
-internal data class DartField(
-    val type: String,
-    val name: String,
-    val isList: Boolean,
-    val isOptional: Boolean,
-    val isCustomType: Boolean,
-)

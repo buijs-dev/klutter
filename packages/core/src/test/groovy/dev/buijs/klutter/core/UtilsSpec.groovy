@@ -165,4 +165,24 @@ class UtilsSpec extends Specification {
         file.text == ";-)"
 
     }
+
+    def "When excludeArm64 regex can not determine prefix value it defaults to 's' "(){
+
+        given:
+        def file = Files.createTempFile("","pubspec.yaml").toFile()
+
+        and: "the line excludeArm64 will look for"
+        file.write("s.dependency'Flutter'")
+
+        when:
+        UtilsKt.excludeArm64(file)
+
+        then:
+        with(file.text) {
+            it.contains("""s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
+            it.contains("""s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
+        }
+
+    }
+
 }

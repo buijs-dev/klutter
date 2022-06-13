@@ -1,9 +1,1 @@
 component_depth: 9
-languages:
-- kotlin
-- groovy
-
-exclude:
-- /publish/.*
-- /packages/annotations-jvm/.*
-- /packages/annotations-kmp/.*

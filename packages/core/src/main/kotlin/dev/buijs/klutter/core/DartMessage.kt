@@ -28,7 +28,25 @@ package dev.buijs.klutter.core
  * @property name of the class.
  * @property fields list of class members.
  */
-internal data class DartMessage(
+internal class DartMessage(
     val name: String,
-    val fields: List<DartField>
-)
+    fields: List<DartField>,
+) {
+    val fields: List<DartField> = notEmpty(fields)
+}
+
+/**
+ * A DartMessage without any members is not valid and will break generated code.
+ *
+ * @throws KlutterException if fields isEmpty.
+ * @return List<DartField> if not empty.
+ */
+private fun notEmpty(fields: List<DartField>): List<DartField> {
+
+    if(fields.isEmpty()) {
+        throw KlutterException("Invalid DartM>essage: List of fields is empty.")
+    }
+
+    return fields
+
+}

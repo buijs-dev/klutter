@@ -15,7 +15,7 @@ class MethodTest: WordSpec({
             val file = Files.createTempFile("SomeClass", "kt").toFile()
 
             //expect:
-            file.toMethod().isEmpty()
+            file.toMethods().isEmpty()
         }
 
         "[toMethod] a list of methods is returned" {
@@ -24,7 +24,7 @@ class MethodTest: WordSpec({
             TestResource().copy("platform_source_code", file.absolutePath)
 
             //expect:
-            file.toMethod(ReturnTypeLanguage.DART).isNotEmpty()
+            file.toMethods(ReturnTypeLanguage.DART).isNotEmpty()
         }
 
     }

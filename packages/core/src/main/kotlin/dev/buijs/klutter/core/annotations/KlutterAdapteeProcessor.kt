@@ -23,7 +23,7 @@
 package dev.buijs.klutter.core.annotations
 
 import dev.buijs.klutter.core.Method
-import dev.buijs.klutter.core.toMethod
+import dev.buijs.klutter.core.toMethods
 import java.io.File
 
 /**
@@ -36,7 +36,7 @@ internal class KlutterAdapteeScanner(
     fun scan(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<Method> =
         KlutterAnnotatedSourceCollector(source, "@KlutterAdaptee")
             .collect()
-            .map { it.toMethod(language) }
+            .map { it.toMethods(language) }
             .flatten()
 }
 

@@ -99,7 +99,7 @@ private const val REGEX =
 internal fun Pubspec.toChannelName(): String =
     android?.pluginPackage ?: "$name.klutter"
 
-internal fun File.toMethod(
+internal fun File.toMethods(
     language: Lang = Lang.KOTLIN,
 ): List<Method> {
 

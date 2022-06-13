@@ -107,7 +107,7 @@ class MethodSpec extends Specification {
         def file = Files.createTempFile("SomeClass", "kt").toFile()
 
         expect:
-        MethodKt.toMethod(file, ReturnTypeLanguage.KOTLIN).isEmpty()
+        MethodKt.toMethods(file, ReturnTypeLanguage.KOTLIN).isEmpty()
     }
 
     def "[toMethod] a list of methods is returned"() {
@@ -116,7 +116,7 @@ class MethodSpec extends Specification {
         resources.copy("platform_source_code", file.absolutePath)
 
         expect:
-        !MethodKt.toMethod(file, ReturnTypeLanguage.KOTLIN).isEmpty()
+        !MethodKt.toMethods(file, ReturnTypeLanguage.KOTLIN).isEmpty()
     }
 
     def "[packageName] returns null if file contains no package name"() {

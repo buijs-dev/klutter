@@ -24,6 +24,8 @@ package dev.buijs.klutter.core.test
 
 class TestUtil {
 
+    def static warningColor = "\u001B[1;31m"
+
     def static verify(String actual, String expected) {
 
         if(actual == expected) {
@@ -56,9 +58,11 @@ class TestUtil {
             if(expectedLines.size() > i) {
                 def expectedLine = expectedLines[i].trim()
                 def actualLine = actualLines[i].trim()
-                def colour = expectedLine != actualLine ? "\u001B[1;31m" : ""
+                def colour = expectedLine != actualLine ? warningColor : ""
                 println("$colour============== EXPECTED: '${expectedLine}'")
                 println("$colour============== ACTUAL:   '${actualLine}'")
+            } else {
+                println("$warningColor============== ACTUAL:   '${actualLines[i].trim()}'")
             }
         }
 

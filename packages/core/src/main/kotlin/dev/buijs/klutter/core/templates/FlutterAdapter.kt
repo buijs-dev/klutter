@@ -46,7 +46,6 @@ internal class FlutterAdapter(
         val block = methods.joinToString("\r\n\r\n") { printFun(it) }
 
         return """
-            |import 'dart:convert';
             |import 'dart:async';
             |import 'package:flutter/services.dart';
             |
@@ -407,12 +406,13 @@ internal class SerializerPrinter(
         var out = field.name
 
         if(field.isList) {
-            if(field.isCustomType) {
-                out += "$q.map((o) => o.toJson())"
+            out += if(field.isCustomType) {
+                "$q.map((o) => o.toJson()).toList()"
+            } else {
+                "$q.toList()"
             }
-            out += ".toList()"
         } else if(field.isCustomType) {
-            out = "$out.toJson()"
+            out = "$out$q.toJson()"
         }
 
         return out

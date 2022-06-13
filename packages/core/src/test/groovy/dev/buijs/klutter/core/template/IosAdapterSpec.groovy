@@ -33,7 +33,7 @@ class IosAdapterSpec extends Specification {
         given:
         def pluginName = "SuperAwesomePlugin"
         def channelName = "foo.bar.super_awesome"
-        def methods = TestData.fooBarMethods
+        def methods = TestData.complexityMethods
 
         and: "The printer as SUT"
         def adapter = new IosAdapter(pluginName, channelName, methods)

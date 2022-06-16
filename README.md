@@ -2,6 +2,8 @@
 [![GitHub license](https://img.shields.io/github/license/buijs-dev/klutter?color=black&logoColor=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
 [![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg?token=AS154MVM51)](https://codecov.io/gh/buijs-dev/klutter)
 [![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
+[![CodeScene Code Health](https://codescene.io/projects/27235/status-badges/code-health)](https://codescene.io/projects/27235)
+[![CodeScene System Mastery](https://codescene.io/projects/27235/status-badges/system-mastery)](https://codescene.io/projects/27235)
 
 Klutter is a framework and tool set which uses Flutter to create the frontend
 and Kotlin Multiplatform for the backend. The connective layer is generated

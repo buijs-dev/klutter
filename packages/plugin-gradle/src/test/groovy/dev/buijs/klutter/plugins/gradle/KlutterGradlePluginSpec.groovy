@@ -1,6 +1,6 @@
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.core.UtilsKt
+import dev.buijs.klutter.core.FileUtilsKt
 import dev.buijs.klutter.core.project.Platform
 import dev.buijs.klutter.core.test.TestPlugin
 import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
@@ -154,7 +154,7 @@ class KlutterGradlePluginSpec extends Specification {
     def "Verify ExcludeArchsPlatformPodspec task"() {
 
         given:
-        def podspec = GroovyMock(UtilsKt) {
+        def podspec = GroovyMock(FileUtilsKt) {
             it.excludeArm64(_) >> decrement()
         }
 

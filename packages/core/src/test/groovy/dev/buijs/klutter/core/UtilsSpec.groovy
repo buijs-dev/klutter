@@ -54,7 +54,7 @@ class UtilsSpec extends Specification {
     def "An exception is thrown if the file does not exist"() {
 
         when:
-        UtilsKt.verifyExists(new File("/fake"))
+        FileUtilsKt.verifyExists(new File("/fake"))
 
         then:
         KlutterException e = thrown()
@@ -65,7 +65,7 @@ class UtilsSpec extends Specification {
     def "The file is returned if it exists"() {
 
         when:
-        def file = UtilsKt.verifyExists(new File("/"))
+        def file = FileUtilsKt.verifyExists(new File("/"))
 
         then:
         file.exists()
@@ -85,7 +85,7 @@ class UtilsSpec extends Specification {
         file.exists()
 
         when:
-        UtilsKt.maybeCreate(file)
+        FileUtilsKt.maybeCreate(file)
 
         then:
         file.exists()
@@ -102,7 +102,7 @@ class UtilsSpec extends Specification {
         !file.exists()
 
         when:
-        UtilsKt.maybeCreate(file)
+        FileUtilsKt.maybeCreate(file)
 
         then: "file does exist"
         file.exists()
@@ -118,7 +118,7 @@ class UtilsSpec extends Specification {
         }
 
         when:
-        UtilsKt.maybeCreate(file)
+        FileUtilsKt.maybeCreate(file)
 
         then:
         KlutterException e = thrown()
@@ -175,7 +175,7 @@ class UtilsSpec extends Specification {
         file.write("s.dependency'Flutter'")
 
         when:
-        UtilsKt.excludeArm64(file)
+        FileUtilsKt.excludeArm64(file)
 
         then:
         with(file.text) {

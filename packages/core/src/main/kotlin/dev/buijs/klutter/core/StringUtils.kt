@@ -20,18 +20,53 @@
  *
  */
 
-package dev.buijs.klutter.core.templates
-
-import dev.buijs.klutter.core.DartKotlinMap
+package dev.buijs.klutter.core
 
 /**
- * Return the current String value postfixed with '.toKJson()'
+ * Return the current String value post-fixed with '.toKJson()'
  * if Method dataType is not a standard Dart/Kotlin type.
  */
 internal fun String.maybePostfixToKJson() =
     DartKotlinMap.toMapOrNull(this)?.let { "" } ?: ".toKJson()"
 
 /**
- * Return the current String value postfixed with '.toJson()'.
+ * Return the current String value post-fixed with the given value.
  */
-internal fun String.postfixJson() = "$this.toJson()"
+internal fun String.postFix(value: String) = "$this$value"
+
+/**
+ * Convert a String to camelCase.
+ */
+internal fun String.toCamelCase(): String {
+
+    var hasUnderscore = false
+
+    return lowercase().map {
+        when {
+
+            it == '_' -> {
+                hasUnderscore = true
+                ""
+            }
+
+            hasUnderscore -> {
+                hasUnderscore = false
+                it.uppercase()
+            }
+
+            else -> it.toString()
+        }
+    }.joinToString("") { it }
+
+}
+
+/**
+ * Try to get the data type nested within a 'List<...>'.
+ *
+ * @return nested datatype if found or value of this String if not.
+ */
+internal fun String.unwrapFromList(): String = """List<([^>]+?)>"""
+    .toRegex()
+    .find(this)
+    ?.let { it.groups[1]?.value }
+    ?:this

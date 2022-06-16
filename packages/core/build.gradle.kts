@@ -26,23 +26,27 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
 
-    //JUnit
+    // Logging
+    implementation("io.github.microutils:kotlin-logging:2.1.23")
+
+    // JUnit
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
 
-    //Spock
+    // Spock
     testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
     testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
 
-    //Gradle
+    // Gradle
     implementation(gradleApi())
     testImplementation(gradleTestKit())
 
-    //Mock
+    // Mock
     testImplementation("org.mockito:mockito-core:4.2.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
+    // Project
     testImplementation(project(":packages:core-test"))
 }
 

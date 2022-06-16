@@ -77,29 +77,6 @@ internal class FileWriter(
 internal fun File.write(printer: KlutterPrinter) =
     FileWriter(this, printer.print()).write()
 
-internal fun String.toCamelCase(): String {
-
-    var hasUnderscore = false
-
-    return lowercase().map {
-        when {
-
-            it == '_' -> {
-                hasUnderscore = true
-                ""
-            }
-
-            hasUnderscore -> {
-                hasUnderscore = false
-                it.uppercase()
-            }
-
-            else -> it.toString()
-        }
-    }.joinToString("") { it }
-
-}
-
 /**
  * Visitor which adds EXCLUDED_ARCHS for iphone simulator if not present.
  *

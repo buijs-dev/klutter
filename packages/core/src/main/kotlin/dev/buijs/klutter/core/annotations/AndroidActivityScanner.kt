@@ -67,9 +67,7 @@ internal class AndroidActivityScanner(
             throw KlutterException(MSG_TOO_MANY_RESULTS.format(size))
         }
 
-        else -> {
-            this[0]
-        }
+        else -> this[0]
     }
 
 }

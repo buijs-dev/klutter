@@ -91,14 +91,9 @@ internal class KlutterResponseProcessor(
 internal class EnumScanner(private val content: String) {
 
     fun scan() = enumRegex.findAll(content).map { match ->
-        val values = DartEnumValueBuilder(match.value).build()
-
-        DartEnum(
-            name = match.groups[2]?.value?.filter { !it.isWhitespace() }
-                ?: throw KlutterException("Failed to process an enum class."),
-            values = values.constants,
-            valuesJSON = values.jsonValues
-        )
+        val name = match.groups[2]?.value?.filter { !it.isWhitespace() }
+            ?: throw KlutterException("Failed to process an enum class.")
+        match.value.toDartEnum(name)
     }.toList()
 
 }
@@ -109,7 +104,7 @@ internal class MessageScanner(private val content: String) {
         DartMessage(
             name = match.groups[2]?.value?.filter { !it.isWhitespace() }
                 ?: throw KlutterException("Failed to process an open class."),
-            fields = match.value.lines().mapNotNull { DartFieldBuilder(it).build() }
+            fields = match.value.lines().mapNotNull { it.toDartField() }
         )
     }.toList()
 

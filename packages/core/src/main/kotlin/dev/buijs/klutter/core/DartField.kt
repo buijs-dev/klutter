@@ -22,6 +22,12 @@
 
 package dev.buijs.klutter.core
 
+import mu.KotlinLogging
+
+private val regex = """val ([^:]+?): (.+)""".toRegex()
+
+private val log = KotlinLogging.logger { }
+
 /**
  * Data type defined in Dart language.
  *
@@ -39,4 +45,116 @@ internal data class DartField(
     val isList: Boolean,
     val isOptional: Boolean,
     val isCustomType: Boolean,
+)
+
+/**
+ * Process a single line and try to create a DartField object.
+ *
+ * @return [DartField]
+ */
+internal fun String.toDartField(): DartField? {
+
+    val match = regex.find(this)
+
+    return when {
+
+        this.isBlank() -> null
+
+        match == null -> {
+            log.debug {"Invalid field declaration: $this" }; null
+        }
+
+        else -> {
+            match.groupValues.determineName().determinDataType().toDartField()
+        }
+
+    }
+
+}
+
+/**
+ * Determine the name of the field and if it is optional or not.
+ */
+private fun List<String>.determineName(): Data {
+    return this[1].trim().let {
+        when {
+            it.isBlank() -> {
+                throw KlutterException("Could not determine name of field.")
+            }
+
+            it.contains(" ") -> {
+                throw KlutterException("Name of field is invalid: '$it'")
+            }
+
+            else -> Data(name = it, type = this[2])
+        }
+    }
+}
+
+/**
+ * Determine the data type declaration of the field.
+ */
+private fun Data.determinDataType(): Data {
+    val t: String = type
+        .filter { !it.isWhitespace() }
+        .removeSuffix(",")
+
+        // Setting a field to null explicitly in Kotlin
+        // gives the ability to have optional fields in JSON.
+        //
+        // Without the '= null' deserialization would
+        // fail if the key is missing.
+        .removeSuffix("=null")
+
+    // If at this point the type still contains a default
+    // value then processing can not continue.
+    //
+    // The DTO to be generated in Dart can not have default
+    // values for an immutable field.
+    if(t.contains("=")){
+        throw KlutterException("A KlutterResponse DTO can not have default values.")
+    }
+
+    return Data(name = name, type = t)
+
+}
+
+/**
+ * Convert the String content to an instance of [DartField].
+ */
+private fun Data.toDartField(): DartField {
+
+    // Maybe get the data type nested within 'List<...>'
+    val t = type.unwrapFromList().removeSuffix("?")
+
+    // If unwrapping returned dataType then it is not a List
+    val isList = t != type.removeSuffix("?")
+
+    val optional = type.endsWith("?")
+
+    val dataType = DartKotlinMap.toMapOrNull(t)?.dartType
+
+    return DartField(
+        name = name,
+        isList = isList,
+        isOptional = optional,
+        type = dataType ?: t,
+        isCustomType = dataType == null
+    )
+
+}
+
+/**
+ * Helper class to store parsed line data.
+ */
+private data class Data(
+    /**
+     * The field name.
+     */
+    val name: String,
+
+    /**
+     * The field type.
+     */
+    val type: String,
 )

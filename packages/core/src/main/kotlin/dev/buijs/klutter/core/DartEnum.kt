@@ -34,3 +34,49 @@ internal data class DartEnum(
     val values: List<String>,
     val valuesJSON: List<String>,
 )
+
+/**
+ * Convert String content of File to a DartEnum object.
+ *
+ * @return [DartEnum]
+ */
+internal fun String.toDartEnum(name: String) = this
+    .ifBlank { throw KlutterException("Unable to process enumeration: Enum has no values") }
+    .splitValues()
+    .toEnum(name)
+
+private fun Map<String, String>.toEnum(
+    name: String
+) = DartEnum(
+    name = name,
+    values = keys.toList(),
+    valuesJSON = values.toList(),
+)
+
+private fun String.splitValues(): Map<String, String> = toValues().let { s ->
+    val values = if(s.hasAnnotations()) s
+        .map { it.substringAfterLast(")") }
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+    else s
+
+    val valuesJSON = if(s.hasAnnotations()) s
+        .map { it.substringBetween('"', '"') }
+        .filter { it.isNotEmpty() }
+    else s
+
+    values.zip(valuesJSON).toMap()
+}
+
+private fun String.toValues() = this
+    .substringBetween('{', '}')
+    .split(",")
+    .map { it.trim() }
+
+private fun List<String>.hasAnnotations() =
+    any { it.contains("@") }
+
+private fun String.substringBetween(
+    from: Char,
+    to: Char,
+) = substringAfter(from).substringBefore(to).trim()

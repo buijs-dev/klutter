@@ -25,6 +25,11 @@ package dev.buijs.klutter.core.templates
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.Method
 
+private const val BR = "\n"
+
+/**
+ * Output the main dart file which delegates platform calls to the Kotlin Multiplatform code.
+ */
 internal class FlutterAdapter(
     private val pluginClassName: String = "Adapter",
     private val methodChannelName: String = "KLUTTER",
@@ -33,19 +38,7 @@ internal class FlutterAdapter(
     private val enumerations: List<DartEnum>,
 ): KlutterPrinter {
 
-    override fun print(): String {
-
-        val messages = messages.joinToString("\n" + "\n") {
-            MessagePrinter(it).print()
-        }
-
-        val enumerations = enumerations.joinToString("\n" + "\n") {
-            EnumerationPrinter(it).print()
-        }
-
-        val block = methods.joinToString("\r\n\r\n") { it.printFun() }
-
-        return """
+    override fun print(): String = """
             |import 'dart:async';
             |import 'package:flutter/services.dart';
             |
@@ -57,7 +50,7 @@ internal class FlutterAdapter(
             |class $pluginClassName {
             |  static const MethodChannel _channel = MethodChannel('$methodChannelName');
             |  
-            $block
+            ${methods.joinToString(BR + BR) { it.asFunctionString() }}
             |
             |}
             |
@@ -92,106 +85,108 @@ internal class FlutterAdapter(
             |   
             |}
             |
-            |${messages}
+            |${messages.asMessagesString()}
             |
-            |${enumerations}
+            |${enumerations.asEnumerationsString()}
             |
             """.trimMargin()
+
+    private fun List<DartMessage>.asMessagesString(): String {
+        return joinToString(BR + BR) {
+            MessagePrinter(it).print()
+        }
     }
 
-    private fun Method.printFun() =
-        if(DartKotlinMap.toMapOrNull(dataType) == null) {
-            """|  static Future<AdapterResponse<${dataType}>> get $command async {
-           |    try {
-           |      final response = await _channel.invokeMethod('${command}');
-           |      final json = jsonDecode(response);
-           |      return AdapterResponse.success(${serializer()});
-           |    } catch (e) {
-           |      return AdapterResponse.failure(
-           |          e is Error ? Exception(e.stackTrace) : e as Exception
-           |      );
-           |    }
-           |  }"""
-        } else {
-            """|  static Future<AdapterResponse<${dataType}>> get $command async {
-           |    try {
-           |      final json = await _channel.invokeMethod('${command}');
-           |      return AdapterResponse.success(${serializer()});
-           |    } catch (e) {
-           |      return AdapterResponse.failure(
-           |          e is Error ? Exception(e.stackTrace) : e as Exception
-           |      );
-           |    }
-           |  }"""
+    private fun List<DartEnum>.asEnumerationsString(): String {
+        return joinToString(BR + BR) {
+            EnumerationPrinter(it).print()
         }
+    }
 
+    private fun Method.asFunctionString(): String {
+        return if(DartKotlinMap.toMapOrNull(dataType) == null) {
+            """|  static Future<AdapterResponse<${dataType}>> get $command async {
+               |    try {
+               |      final response = await _channel.invokeMethod('${command}');
+               |      final json = jsonDecode(response);
+               |      return AdapterResponse.success(${serializer()});
+               |    } catch (e) {
+               |      return AdapterResponse.failure(
+               |          e is Error ? Exception(e.stackTrace) : e as Exception
+               |      );
+               |    }
+               |  }""".trimMargin()
+            } else {
+                """|  static Future<AdapterResponse<${dataType}>> get $command async {
+               |    try {
+               |      final json = await _channel.invokeMethod('${command}');
+               |      return AdapterResponse.success(${serializer()});
+               |    } catch (e) {
+               |      return AdapterResponse.failure(
+               |          e is Error ? Exception(e.stackTrace) : e as Exception
+               |      );
+               |    }
+               |  }""".trimMargin()
+        }
+    }
 
     private fun Method.serializer(): String {
 
-        val listRegex = """List<([^>]+?)>""".toRegex()
+        // Maybe get the data type nested within 'List<...>'
+        val type = dataType.unwrapFromList()
 
-        var isList = false
-        var type = dataType
-        val q = if(type.contains("?")) "?" else ""
-
-        listRegex.find(type)?.let {
-            isList = true
-            type = it.groups[1]?.value ?: type
-        }
-
-        val dartType = DartKotlinMap.toMapOrNull(type)?.dartType
+        // If unwrapping returned dataType then it is not a List
+        val isList = type != dataType
 
         //Standard DART datatype
-        if(dartType != null) {
-            return if(isList) {
-                "List<$type>.from(json.map((o) => o$q${getCastMethod(dartType)}))"
-            } else "json${getCastMethod(dartType)}"
-        }
-
-        //Custom DTO or enum
-        return if(isList) {
-            "List<$type>.from(json.map((o) => $type.fromJson(o)))"
-        } else "$type.fromJson(json)"
+        return if(isList) type.asList() else type.asString()
 
     }
 
-}
+    private fun String.asList() = if(DartKotlinMap.toMapOrNull(this) == null) {
+        "List<$this>.from(json.map((o) => $this.fromJson(o)))"
+    } else {
+        "List<$this>.from(json.map((o) => o${if(this.contains("?")) "?" else ""}${getCastMethod(this)}))"
+    }
 
-private const val BR = "\n"
+    private fun String.asString() = if(DartKotlinMap.toMapOrNull(this) == null) {
+        "$this.fromJson(json)"
+    } else {
+        "json${getCastMethod(this)}"
+    }
+
+}
 
 /**
  * Prints all members of a class.
  */
 internal class EnumerationPrinter(private val message: DartEnum): KlutterPrinter {
 
-    override fun print() = "" +
-            "class ${message.name} {$BR" +
-            "final String string;$BR$BR" +
-            "const ${message.name}._(this.string);" +
-            printValues(message) +
-            "  static const none = ${message.name}._('none');$BR" +
-            BR + BR +
-            "static const values = [${message.values.joinToString(",") { it.toCamelCase()}}];$BR$BR" +
-            "  @override$BR" +
-            "  String toString() {$BR" +
-            "    return '${message.name}.\$string';\n" +
-            "  }$BR" +
-            EnumExtensionPrinter(message).print() +
-            "}$BR"
+    override fun print() =
+        """|class ${message.name} {
+           |final String string;
+           |
+           |const ${message.name}._(this.string);
+           |
+           |${message.printValues()}
+           |  static const none = ${message.name}._('none');
+           |  
+           |  static const values = [${message.values.joinToString(",") { it.toCamelCase()}}];
+           |  
+           |  @override
+           |  String toString() {
+           |      return '${message.name}.${'$'}string';
+           |  }
+           |  
+           |  ${EnumExtensionPrinter(message).print()}
+           |  
+           |}
+        """.trimMargin()
 
-    private fun printValues(message: DartEnum): String {
-
-        val sb = StringBuilder()
-
-        val jsonValues = if(message.valuesJSON.size == message.values.size) message.valuesJSON else message.values
-
-        message.values.forEachIndexed { index, s ->
-            sb.append("  static const ${s.toCamelCase()} = ${message.name}._('${jsonValues[index]}');$BR")
-        }
-
-        return sb.toString()
-
-    }
+    private fun DartEnum.printValues(): String = chooseValues()
+        .map { entry ->
+            "  static const ${entry.key.toCamelCase()} = ${name}._('${entry.value}');" }
+        .joinToString(BR) { it }
 
 }
 
@@ -201,71 +196,63 @@ internal class EnumerationPrinter(private val message: DartEnum): KlutterPrinter
 internal class EnumExtensionPrinter(private val message: DartEnum): KlutterPrinter {
 
     override fun print() = """
-        |
         |  static ${message.name} fromJson(String value) {
-        |    switch(value) {${cases()}
+        |    switch(value) {
+        |    ${message.cases()}
         |      default: return ${message.name}.none;
         |    }
         | }
         |
         |  String? toJson() {
-        |    switch(this) { ${serializers()}
+        |    switch(this) { 
+        |    ${message.serializers()}
         |      default: return null;
         |    }
         |  }
         |
     """.trimMargin()
 
-    private fun cases(): String {
-        if(message.valuesJSON.isEmpty()) {
-            return message.values.joinToString(";") {
-                "$BR      case \"$it\": return ${message.name}.${it.toCamelCase()}"
-            } + ";"
-        }
+    private fun DartEnum.cases(): String = chooseValues()
+        .map { entry -> "      case \"${entry.value}\": return ${name}.${entry.key.toCamelCase()};" }
+        .joinToString(BR) { it }
 
-        var print = ""
-        message.valuesJSON.forEachIndexed { index, json ->
-            print += "$BR      case \"$json\": return ${message.name}.${message.values[index].toCamelCase()};"
-        }
-
-        return print
-    }
-
-    private fun serializers(): String {
-        if(message.valuesJSON.isEmpty()) {
-            return message.values.joinToString(";") {
-                "$BR      case ${message.name}.${it.toCamelCase()}: return \"$it\""
-            }  + ";"
-        }
-
-        var print = ""
-        message.valuesJSON.forEachIndexed { index, json ->
-            print += "$BR      case ${message.name}.${message.values[index].toCamelCase()}: return \"$json\";"
-        }
-
-        return print
-    }
+    private fun DartEnum.serializers(): String = chooseValues()
+        .map { entry -> "      case ${name}.${entry.key.toCamelCase()}: return \"${entry.value}\";" }
+        .joinToString(BR) { it }
 
 }
 
-
+/**
+ * Merge enum values list to a map consisting of the enumeration key and JSON value (if present).
+ *
+ * If there are no JSON values or the JSON values count does not match the enumeration key count
+ * then a map of key to key is returned.
+ *
+ * If JSON value count is equal to key count then map of enumeration key to JSON value is returned.
+ */
+private fun DartEnum.chooseValues(): Map<String, String> {
+    val v = if(valuesJSON.size == values.size) valuesJSON else values
+    return values.zip(v).toMap()
+}
 
 /**
  * Prints all members of a class.
  */
-internal class MessagePrinter(private val message: DartMessage): KlutterPrinter {
+internal class MessagePrinter(
+    private val message: DartMessage,
+): KlutterPrinter {
 
     override fun print() = """
         |
         |class ${message.name} {
         |  
-        |${ConstructorPrinter(message).print()}
+        |${message.asConstructorString()}
         |  
         |${FactoryPrinter(message).print()}
         |
-        |${MemberPrinter(message.fields).print()}
+        |${message.fields.asFieldsString()}
         |
-        |${SerializerPrinter(message.fields).print()}  
+        |${message.fields.asSerializerString()}  
         |}
     """.trimMargin()
 
@@ -274,29 +261,18 @@ internal class MessagePrinter(private val message: DartMessage): KlutterPrinter 
 /**
  * Prints the class constructor
  */
-internal class ConstructorPrinter(
-    private val message: DartMessage
-): KlutterPrinter {
-
-    override fun print() =
-        "" +
-                "  ${message.name}({$BR" +
-                "${message.fields.sortedBy { it.isOptional }.joinToString(BR){ printField(it) }}$BR" +
-                "  });"
-
-    private fun printField(field: DartField) =
-        StringBuilder().also { sb ->
-            sb.append("    ")
-
-            if(!field.isOptional) {
-                sb.append("required ")
-            }
-
-            sb.append("this.${field.name},")
-
-        }.toString()
-
-}
+private fun DartMessage.asConstructorString() = fields
+    .sortedBy { it.isOptional }
+    .joinToString(BR){ ""
+        .ifRequired(it) { _, _ -> "required " }
+        .append { _ -> "this.${it.name}," }  }
+    .let {
+        """
+        |  $name({
+        |$it
+        |  });
+        """.trimMargin()
+    }
 
 /**
  * Prints the factory method.
@@ -305,57 +281,29 @@ internal class FactoryPrinter(
     private val message: DartMessage
 ): KlutterPrinter {
 
-    override fun print() = "" +
-            "factory ${message.name}.fromJson(dynamic json) {$BR" +
-            "   return ${message.name} ($BR" +
-            "${message.fields.joinToString(BR) { printField(it) }}$BR" +
-            "   );$BR" +
-            " }"
+    override fun print() =
+        """ |factory ${message.name}.fromJson(dynamic json) {
+            |   return ${message.name} (
+            |${message.fields.joinToString(BR) { it.asFieldString() }}
+            |   );
+            | }   
+        """.trimMargin()
 
+    private fun DartField.asFieldString() = "      ${name}: "
+        .ifList(this) { field, curr ->  field.asListString(curr) }
+        .ifNotList(this) { field, curr ->  field.asString(curr) }
+        .append { "," }
 
-    private fun printField(field: DartField) =
-        StringBuilder().also { sb ->
+    private fun DartField.asListString(value: String): String = value
+        .ifOptional(this) { _, curr -> "${curr}json['${name}'] == null ? [] : " }
+        .append { "List<${type}>.from(json['${name}']" }
+        .ifCustomType(this) { _, curr -> "$curr${this.opt()}.map((o) => ${type}.fromJson(o)))" }
+        .ifStandardType(this) { _, curr -> "$curr${this.opt()}.map((o) => o${getCastMethod(type)}))" }
 
-            val q = if(field.isOptional) "?" else ""
+    private fun DartField.asString(value: String): String = value
+        .ifCustomType(this) { _, curr -> "$curr$type.fromJson(json['${name}'])" }
+        .ifStandardType(this) { _, curr -> "${curr}json['${name}']${this.opt()}${getCastMethod(type)}" }
 
-            sb.append("     ")
-            sb.append("${field.name}: ")
-
-            if(field.isList) {
-                procesAsList(
-                    sb = sb,
-                    isNullable = field.isOptional,
-                    field = field,
-                )
-            } else {
-                val dataType = field.type
-                if(field.isCustomType){
-                    sb.append("$dataType.fromJson(json['${field.name}'])")
-                } else sb.append("json['${field.name}']$q${getCastMethod(dataType)}")
-            }
-            sb.append(",")
-
-        }.toString()
-
-    private fun procesAsList(
-        sb: StringBuilder,
-        isNullable: Boolean,
-        field: DartField,
-    ) {
-
-        if(isNullable) sb.append("json['${field.name}'] == null ? [] : ")
-
-        val dataType = field.type
-        sb.append("List<${dataType}>")
-        sb.append(".from(json['${field.name}']")
-
-        val q = if(isNullable) "?" else ""
-
-        if(field.isCustomType){
-            sb.append("$q.map((o) => ${dataType}.fromJson(o)))")
-        } else sb.append("$q.map((o) => o${getCastMethod(dataType)}))")
-
-    }
 }
 
 internal fun getCastMethod(dataType: String) = when(DartKotlinMap.toMap(dataType)) {
@@ -366,56 +314,71 @@ internal fun getCastMethod(dataType: String) = when(DartKotlinMap.toMap(dataType
 }
 
 /**
- * Prints the fields of a class.
+ * Print the fields of a message.
  */
-internal class MemberPrinter(
-    private val fields: List<DartField>
-): KlutterPrinter {
-
-    override fun print() = fields.sortedBy { it.isOptional }.joinToString(BR) {
-
-        var datatype = it.type
-
-        if(it.isList){
-            datatype = "List<${it.type}>"
-        }
-
-        if(it.isOptional) {
-            " $datatype? ${it.name};"
-        } else " final $datatype ${it.name};"
+private fun List<DartField>.asFieldsString() =
+    sortedBy { it.isOptional }.joinToString(BR) { it.type
+        .ifList(it) { field, _ -> "List<${field.type}>" }
+        .ifOptional(it) { field, curr -> " $curr? ${field.name};" }
+        .ifRequired(it) { field, curr -> " final $curr ${field.name};" }
     }
 
-}
+private fun String.ifList(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(field.isList) closure.invoke(field, this) else this
+
+private fun String.ifNotList(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(!field.isList) closure.invoke(field, this) else this
+
+private fun String.ifOptional(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(field.isOptional) closure.invoke(field, this) else this
+
+private fun String.ifRequired(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(!field.isOptional) closure.invoke(field, this) else this
+
+private fun String.ifCustomType(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(field.isCustomType) closure.invoke(field, this) else this
+
+private fun String.ifStandardType(
+    field: DartField,
+    closure: (field: DartField, value: String) -> String,
+) = if(!field.isCustomType) closure.invoke(field, this) else this
+
+private fun String.append(
+    closure: (old: String) -> String,
+) = "$this${closure.invoke(this)}"
 
 /**
- * Prints the toJson method.
+ * Print the toJson method.
  */
-internal class SerializerPrinter(
-    private val fields: List<DartField>
-): KlutterPrinter {
+private fun List<DartField>.asSerializerString() = """
+    | Map<String, dynamic> toJson() {
+    |   return {
+    ||${joinToString(",$BR") { "     '${it.name}': ${it.maybePostfixMapToList()}" }}    
+    |   };
+    | }   
+    """.trimMargin()
 
-    override fun print() =
-        " Map<String, dynamic> toJson() {$BR" +
-                "   return {$BR" +
-                "|${fields.joinToString(",$BR") { "     '${it.name}': ${serializer(it)}" }}$BR" +
-                "   };$BR" +
-                " }"
+private fun DartField.opt() = if(isOptional) "?" else ""
 
-    private fun serializer(field: DartField): String {
-        val q = if(field.isOptional) "?" else ""
+private fun DartField.maybePostfixMapToList() = when {
 
-        var out = field.name
+    !isList -> name.maybePostfixJson(this)
 
-        if(field.isList) {
-            out += if(field.isCustomType) {
-                "$q.map((o) => o.toJson()).toList()"
-            } else {
-                "$q.toList()"
-            }
-        } else if(field.isCustomType) {
-            out = "$out$q".postfixJson()
-        }
+    isCustomType -> "$name${opt()}.map((o) => o.toJson()).toList()"
 
-        return out
-    }
+    else -> "$name${opt()}.toList()"
+
 }
+
+private fun String.maybePostfixJson(field: DartField): String =
+    if(field.isCustomType) "$this${field.opt()}.toJson()" else this

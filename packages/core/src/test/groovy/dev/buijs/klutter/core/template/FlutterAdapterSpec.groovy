@@ -295,11 +295,12 @@ class FlutterAdapterSpec extends Specification {
             class FooEnum {
               final String string;
             
-              const FooEnum._(this.string);  static const foo1 = FooEnum._('FOO1');
+              const FooEnum._(this.string);  
+              
+              static const foo1 = FooEnum._('FOO1');
               static const foo2 = FooEnum._('FOO2');
               static const foo3 = FooEnum._('FOO3');
               static const none = FooEnum._('none');
-            
             
               static const values = [foo1,foo2,foo3];
             
@@ -328,10 +329,12 @@ class FlutterAdapterSpec extends Specification {
             }
             
             
+            
             class BarEnum {
               final String string;
             
-              const BarEnum._(this.string);  static const bar1 = BarEnum._('bar');
+              const BarEnum._(this.string);  
+              static const bar1 = BarEnum._('bar');
               static const bar2 = BarEnum._('barry');
               static const bar3 = BarEnum._('bardon');
               static const none = BarEnum._('none');

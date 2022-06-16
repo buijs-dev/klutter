@@ -45,37 +45,36 @@ internal class IosAdapter(
             |
             |  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
             |    switch call.method {
-            |${blocks()}
+            |${methods.asFunctionBodyString()}
             |        default:
             |            result(FlutterMethodNotImplemented)
             |        }
             |  }
             |
-            |${methods()}  
+            |${methods.joinToString("\n\n") { it.print() }}  
             |}
             |""".trimMargin()
 
-    private fun blocks() = methods.joinToString("\n") {
-        "        case \"${it.command}\":\n            self.${it.command}(result: result)"
+    private fun List<Method>.asFunctionBodyString() = joinToString("\n") {
+        """ |       case "${it.command}":
+            |            self.${it.command}(result: result)""".trimMargin()
     }
-
-    private fun methods(): String = methods.joinToString("\n\n") { it.print() }
 
     private fun Method.print(): String {
         return if(async) {
-            "    func ${command}(result: @escaping FlutterResult) {\n" +
-                    "        ${method.removeSuffix("()")} { data, error in\n" +
-                    "\n" +
-                    "            if let response = data { result(response${dataType.maybePostfixToKJson()}) }\n" +
-                    "\n" +
-                    "            if let failure = error { result(failure) }\n" +
-                    "\n" +
-                    "        }\n" +
-                    "    }\n"
+            """|    func ${command}(result: @escaping FlutterResult) {
+               |        ${method.removeSuffix("()")} { data, error in
+               |            if let response = data { result(response${dataType.maybePostfixToKJson()}) }
+               |                     
+               |            if let failure = error { result(failure) }                       
+               |        }   
+               |    }                                      
+            """.trimMargin()
         } else {
-            "    func ${command}(result: @escaping FlutterResult) {\n" +
-                    "        result(${method}${dataType.maybePostfixToKJson()})\n" +
-                    "    }"
+            """|    func ${command}(result: @escaping FlutterResult) {
+               |        result(${method}${dataType.maybePostfixToKJson()})
+               |    }
+            """.trimMargin()
         }
 
     }

@@ -24,6 +24,7 @@ package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class AndroidAdapter(
     private val pluginPackageName: String,
@@ -32,69 +33,63 @@ internal class AndroidAdapter(
     private val methods: List<Method>,
 ): KlutterPrinter {
 
-    override fun print(): String {
+    override fun print(): String = """
+        |package $pluginPackageName
+        |
+        |${methods.asImportString()}
+        |import androidx.annotation.NonNull
+        |
+        |import io.flutter.embedding.engine.plugins.FlutterPlugin
+        |import io.flutter.plugin.common.MethodCall
+        |import io.flutter.plugin.common.MethodChannel
+        |import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+        |import io.flutter.plugin.common.MethodChannel.Result
+        |import kotlinx.coroutines.CoroutineScope
+        |import kotlinx.coroutines.Dispatchers
+        |import kotlinx.coroutines.launch
+        |
+        |/** $pluginClassName */
+        |class ${pluginClassName}: FlutterPlugin, MethodCallHandler {
+        |  /// The MethodChannel that will the communication between Flutter and native Android
+        |  ///
+        |  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+        |  /// when the Flutter Engine is detached from the Activity
+        |  private lateinit var channel : MethodChannel
+        |   
+        |  private val mainScope = CoroutineScope(Dispatchers.Main) 
+        |   
+        |  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        |    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "$methodChannelName")
+        |    channel.setMethodCallHandler(this)
+        |  }
+        |
+        |  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        |        mainScope.launch {
+        |           when (call.method) {
+        |${methods.asFunctionBodyString() ?: "             return result.notImplemented()"}
+        |           }
+        |        }
+        |  }
+        |
+        |  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        |    channel.setMethodCallHandler(null)
+        |  }
+        |}
+        |""".trimMargin()
 
-        val block = if (methods.isEmpty()) {
-            "             return result.notImplemented()"
-        } else {
-            val defs = methods.joinToString("\n") { it.printFun() }
-            "$defs \n                else -> result.notImplemented()"
+    private fun Method.print(): String = """                
+        "$command" -> {
+              result.success(${method}${dataType.maybePostfixToKJson()})
+        }"""
+
+    private fun List<Method>.asImportString(): String = map { it.import }
+        .distinct()
+        .joinToString("\n") { "import $it" }
+
+    private fun List<Method>.asFunctionBodyString(): String? =
+        ifNotEmpty {
+            joinToString("\n") { it.print() }
+                .postFix(" \n                else -> result.notImplemented()")
         }
-
-        val imports = methods
-            .map { it.import }
-            .distinct()
-            .joinToString("\n") { "import $it" }
-
-        return """
-            |package $pluginPackageName
-            |
-            |$imports
-            |import androidx.annotation.NonNull
-            |
-            |import io.flutter.embedding.engine.plugins.FlutterPlugin
-            |import io.flutter.plugin.common.MethodCall
-            |import io.flutter.plugin.common.MethodChannel
-            |import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-            |import io.flutter.plugin.common.MethodChannel.Result
-            |import kotlinx.coroutines.CoroutineScope
-            |import kotlinx.coroutines.Dispatchers
-            |import kotlinx.coroutines.launch
-            |
-            |/** $pluginClassName */
-            |class ${pluginClassName}: FlutterPlugin, MethodCallHandler {
-            |  /// The MethodChannel that will the communication between Flutter and native Android
-            |  ///
-            |  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-            |  /// when the Flutter Engine is detached from the Activity
-            |  private lateinit var channel : MethodChannel
-            |   
-            |  private val mainScope = CoroutineScope(Dispatchers.Main) 
-            |   
-            |  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-            |    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "$methodChannelName")
-            |    channel.setMethodCallHandler(this)
-            |  }
-            |
-            |  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-            |        mainScope.launch {
-            |           when (call.method) {
-            |$block
-            |           }
-            |        }
-            |  }
-            |
-            |  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-            |    channel.setMethodCallHandler(null)
-            |  }
-            |}
-            |""".trimMargin()
-    }
-
-    private fun Method.printFun(): String {
-        return  "                \"${command}\" -> {\n" +
-                "                    result.success(${method}${dataType.maybePostfixToKJson()})\n" +
-                "                }"
-    }
 
 }

@@ -49,6 +49,41 @@ class TestData {
                     false,
                     "int",
             ),
+            new Method(
+                    "fooBarBinary",
+                    "io.foo.bar.FooBar",
+                    "FooBar().trueOrFalse()",
+                    false,
+                    "bool",
+            ),
+            new Method(
+                    "twoFoo4You",
+                    "io.foo.bar.FooBar",
+                    "FooBar().makeItADouble()",
+                    false,
+                    "double",
+            ),
+            new Method(
+                    "getExoticFoo",
+                    "io.foo.bar.FooBar",
+                    "FooBar().exotic()",
+                    false,
+                    "ExoticFoo",
+            ),
+            new Method(
+                    "manyFooBars",
+                    "io.foo.bar.FooBar",
+                    "FooBar().moreManyMore()",
+                    true,
+                    "List<String>",
+            ),
+            new Method(
+                    "maybeFoos",
+                    "io.foo.bar.FooBar",
+                    "FooBar().moreMaybeFoos()",
+                    true,
+                    "List<String>?",
+            ),
     ]
 
     def static emptyMessageFoo = new DartMessage(

@@ -65,7 +65,7 @@ internal fun String.toDartField(): DartField? {
         }
 
         else -> {
-            match.groupValues.determineName().determinDataType().toDartField()
+            match.groupValues.determineName().determineDataType().toDartField()
         }
 
     }
@@ -94,7 +94,7 @@ private fun List<String>.determineName(): Data {
 /**
  * Determine the data type declaration of the field.
  */
-private fun Data.determinDataType(): Data {
+private fun Data.determineDataType(): Data {
     val t: String = type
         .filter { !it.isWhitespace() }
         .removeSuffix(",")

@@ -68,5 +68,5 @@ internal fun String.toCamelCase(): String {
 internal fun String.unwrapFromList(): String = """List<([^>]+?)>"""
     .toRegex()
     .find(this)
-    ?.let { it.groups[1]?.value }
+    ?.let { it.groups[1]!!.value }
     ?:this

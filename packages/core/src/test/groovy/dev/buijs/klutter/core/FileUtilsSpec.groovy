@@ -7,7 +7,7 @@ import spock.lang.Specification
 
 import java.nio.file.Files
 
-class UtilsSpec extends Specification {
+class FileUtilsSpec extends Specification {
 
     def static resources = new TestResource()
 

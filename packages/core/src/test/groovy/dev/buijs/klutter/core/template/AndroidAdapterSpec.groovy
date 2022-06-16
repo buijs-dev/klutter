@@ -90,4 +90,61 @@ class AndroidAdapterSpec extends Specification {
                         """
     }
 
+    def "AndroidAdapter should create a valid Kotlin class when the methods list is empty"() {
+        given:
+        def packageName = "super_plugin"
+        def pluginName = "SuperPlugin"
+        def channelName = "dev.company.plugins.super_plugins"
+        def methods = []
+
+        and: "The printer as SUT"
+        def adapter = new AndroidAdapter(packageName, pluginName, channelName, methods)
+
+        expect:
+        CoreTestUtil.verify(adapter, classBody)
+
+        where:
+        classBody = """package super_plugin
+            
+                        import androidx.annotation.NonNull
+                        
+                        import io.flutter.embedding.engine.plugins.FlutterPlugin
+                        import io.flutter.plugin.common.MethodCall
+                        import io.flutter.plugin.common.MethodChannel
+                        import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+                        import io.flutter.plugin.common.MethodChannel.Result
+                        import kotlinx.coroutines.CoroutineScope
+                        import kotlinx.coroutines.Dispatchers
+                        import kotlinx.coroutines.launch
+                        
+                        /** SuperPlugin */
+                        class SuperPlugin: FlutterPlugin, MethodCallHandler {
+                          /// The MethodChannel that will the communication between Flutter and native Android
+                          ///
+                          /// This local reference serves to register the plugin with the Flutter Engine and unregister it
+                          /// when the Flutter Engine is detached from the Activity
+                          private lateinit var channel : MethodChannel
+                           
+                          private val mainScope = CoroutineScope(Dispatchers.Main) 
+                           
+                          override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+                            channel = MethodChannel(flutterPluginBinding.binaryMessenger, "dev.company.plugins.super_plugins")
+                            channel.setMethodCallHandler(this)
+                          }
+                        
+                          override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+                                mainScope.launch {
+                                   when (call.method) {
+                                       return result.notImplemented()
+                                   }
+                                }
+                          }
+                        
+                          override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+                            channel.setMethodCallHandler(null)
+                          }
+                        }
+                        """
+    }
+
 }

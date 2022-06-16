@@ -1,8 +1,8 @@
 package dev.buijs.klutter.core
 
-
 import spock.lang.Specification
 
+@SuppressWarnings("GroovyAccessibility")
 class DartFieldSpec extends Specification {
 
     def "Processing a a String that does not match the regex returns null"() {
@@ -33,6 +33,37 @@ class DartFieldSpec extends Specification {
         "val foo: String"           | "String"          | "foo"     | false     | false         | false
         "val foo: Sidekick?"        | "Sidekick"        | "foo"     | false     | true          | true
         "val foo: String?"          | "String"          | "foo"     | false     | true          | false
+
+    }
+
+    def "[determineName] throws exception if name can not be determined"() {
+        given:
+        def input = [null, name]
+
+        when:
+        DartFieldKt.determineName(input)
+
+        then:
+        KlutterException e = thrown()
+        e.message == message
+
+        where:
+        name           | message
+        " "             | "Could not determine name of field."
+        ""              | "Could not determine name of field."
+        "bla bla   "    | "Name of field is invalid: 'bla bla'"
+    }
+
+    def "[determineDataType] throws exception if name can not be determined"() {
+        given:
+        def data = new Data("", """val foo: String = "" """)
+
+        when:
+        DartFieldKt.determineDataType(data)
+
+        then:
+        KlutterException e = thrown()
+        e.message == "A KlutterResponse DTO can not have default values."
 
     }
 

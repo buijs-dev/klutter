@@ -23,6 +23,7 @@
 package dev.buijs.klutter.core.annotations
 
 
+import dev.buijs.klutter.core.tasks.scanForKlutterAdaptee
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files

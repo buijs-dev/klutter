@@ -1,6 +1,5 @@
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.test.TestResource
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
@@ -25,7 +24,7 @@ class MethodTest: WordSpec({
             TestResource().copy("platform_source_code", file.absolutePath)
 
             //expect:
-            file.toMethods(ReturnTypeLanguage.DART).isNotEmpty() shouldBe true
+            file.toMethods(Language.DART).isNotEmpty() shouldBe true
         }
 
     }

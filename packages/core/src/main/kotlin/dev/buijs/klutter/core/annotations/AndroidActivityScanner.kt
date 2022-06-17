@@ -26,8 +26,6 @@ import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.shared.verifyExists
 import java.io.File
 
-private typealias Collector = KlutterAnnotatedSourceCollector
-
 private const val MSG_NO_RESULTS =
     "MainActivity not found or the @KlutterAdapter is missing in folder %s."
 
@@ -51,12 +49,8 @@ internal class AndroidActivityScanner(
 
     internal fun scan() = pathToAndroidApp
         .verifyExists()
-        .collect()
+        .collectAnnotatedWith("@KlutterAdapter")
         .validate()
-
-    private fun File.collect(): List<File> {
-        return Collector(this, "@KlutterAdapter").collect()
-    }
 
     private fun List<File>.validate() = when {
         this.isEmpty() -> {

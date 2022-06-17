@@ -22,40 +22,26 @@
 
 package dev.buijs.klutter.core.annotations
 
+import dev.buijs.klutter.core.shared.verifyExists
+import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 /**
- * @author Gillian Buijs
+ * Find all files in a folder (including sub folders)
+ * containing an annotation with [annotationName].
+ *
+ * @return List of Files that contain the given annotation.
  */
-internal class KlutterAnnotatedSourceCollector(
-    private val source: File,
-    private val annotationName: String,
-){
+internal fun File.collectAnnotatedWith(annotationName: String): List<File> {
 
-    fun collect():  List<File> {
+    val annotation = annotationName.prefixIfNot("@")
 
-        var annotation = annotationName
-        if(!annotation.startsWith("@")) {
-            annotation = "@$annotationName"
-        }
-
-        return search(source)
-            .filter { it.readText().contains(annotation) }
-
-    }
-
-    private fun search(directory: File): List<File> {
-        val classes = mutableListOf<File>()
-
-        if (directory.exists()) {
-            directory.walkTopDown().forEach { f ->
-                if(f.isFile) {
-                    classes.add(f)
-                }
-            }
-        }
-
-        return classes
-    }
+    return this
+        .verifyExists()
+        .walkTopDown()
+        .map { f -> if(!f.isFile) null else f }
+        .toList()
+        .filterNotNull()
+        .filter { it.readText().contains(annotation) }
 
 }

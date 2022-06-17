@@ -1,14 +1,11 @@
 package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.project.Pubspec
 import dev.buijs.klutter.core.project.PubspecFlutter
 import dev.buijs.klutter.core.project.PubspecPlugin
 import dev.buijs.klutter.core.project.PubspecPluginClass
 import dev.buijs.klutter.core.project.PubspecPluginPlatforms
-import dev.buijs.klutter.core.shared.DartKotlinMap
-import dev.buijs.klutter.core.shared.Method
 import dev.buijs.klutter.core.test.TestResource
 import spock.lang.Shared
 import spock.lang.Specification
@@ -85,24 +82,24 @@ class MethodSpec extends Specification {
 
         where:
         dataType        | expected          | lang
-        "Stttttring!"   | "Stttttring!"     | ReturnTypeLanguage.KOTLIN
-        "Int  "         | "Int"             | ReturnTypeLanguage.KOTLIN
-        "  Double"      | "Double"          | ReturnTypeLanguage.KOTLIN
-        "Boolean"       | "Boolean"         | ReturnTypeLanguage.KOTLIN
-        "String"        | "String"          | ReturnTypeLanguage.KOTLIN
-        "int"           | "Int"             | ReturnTypeLanguage.KOTLIN
-        "double"        | "Double"          | ReturnTypeLanguage.KOTLIN
-        "bool"          | "Boolean"         | ReturnTypeLanguage.KOTLIN
-        "String"        | "String"          | ReturnTypeLanguage.KOTLIN
-        "Stttttring!"   | "Stttttring!"     | ReturnTypeLanguage.DART
-        "Int"           | "int"             | ReturnTypeLanguage.DART
-        "Double"        | "double"          | ReturnTypeLanguage.DART
-        "Boolean  "     | "bool"            | ReturnTypeLanguage.DART
-        "  String"      | "String"          | ReturnTypeLanguage.DART
-        "int"           | "int"             | ReturnTypeLanguage.DART
-        "double"        | "double"          | ReturnTypeLanguage.DART
-        "bool"          | "bool"            | ReturnTypeLanguage.DART
-        "  String  "    | "String"          | ReturnTypeLanguage.DART
+        "Stttttring!"   | "Stttttring!"     | Language.KOTLIN
+        "Int  "         | "Int"             | Language.KOTLIN
+        "  Double"      | "Double"          | Language.KOTLIN
+        "Boolean"       | "Boolean"         | Language.KOTLIN
+        "String"        | "String"          | Language.KOTLIN
+        "int"           | "Int"             | Language.KOTLIN
+        "double"        | "Double"          | Language.KOTLIN
+        "bool"          | "Boolean"         | Language.KOTLIN
+        "String"        | "String"          | Language.KOTLIN
+        "Stttttring!"   | "Stttttring!"     | Language.DART
+        "Int"           | "int"             | Language.DART
+        "Double"        | "double"          | Language.DART
+        "Boolean  "     | "bool"            | Language.DART
+        "  String"      | "String"          | Language.DART
+        "int"           | "int"             | Language.DART
+        "double"        | "double"          | Language.DART
+        "bool"          | "bool"            | Language.DART
+        "  String  "    | "String"          | Language.DART
     }
 
     def "[toMethod] an empty list is returned when no methods are found"() {
@@ -110,7 +107,7 @@ class MethodSpec extends Specification {
         def file = Files.createTempFile("SomeClass", "kt").toFile()
 
         expect:
-        MethodKt.toMethods(file, ReturnTypeLanguage.KOTLIN).isEmpty()
+        MethodKt.toMethods(file, Language.KOTLIN).isEmpty()
     }
 
     def "[toMethod] a list of methods is returned"() {
@@ -119,7 +116,46 @@ class MethodSpec extends Specification {
         resources.copy("platform_source_code", file.absolutePath)
 
         expect:
-        !MethodKt.toMethods(file, ReturnTypeLanguage.KOTLIN).isEmpty()
+        !MethodKt.toMethods(file, Language.KOTLIN).isEmpty()
+    }
+
+    def "[toMethod] throws an exception if a return type contains Lists with null values"() {
+        given:
+        def file = Files.createTempFile("SomeClass", "kt").toFile()
+        file.write(classBody)
+
+        when:
+        MethodKt.toMethods(file, Language.KOTLIN)
+
+        then:
+        KlutterException e = thrown()
+        e.message == "Failed to convert datatype. Lists may no contains null values: 'List<String?>'"
+
+        where:
+        classBody = """
+        package foo.bar.baz
+
+        import dev.buijs.klutter.annotations.Annotations
+        
+        class FakeClass {
+            @KlutterAdaptee(name = "DartMaul")
+            fun foo(): String {
+                return "Maul"
+            }
+        
+            @KlutterAdaptee(name = "BabyYoda")
+            fun fooBar(): List<String?> {
+                return listOf("baz")
+            }
+        }
+        
+        @Serializable
+        @KlutterResponse
+        enum class {
+            @SerialName("boom") BOOM,
+            @SerialName("boom boom") BOOM_BOOM,
+        }
+        """
     }
 
     def "[packageName] returns null if file contains no package name"() {

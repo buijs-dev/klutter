@@ -149,7 +149,7 @@ internal class FlutterAdapter(
     private fun String.asList() = if(DartKotlinMap.toMapOrNull(this) == null) {
         "List<$this>.from(json.map((o) => $this.fromJson(o)))"
     } else {
-        "List<$this>.from(json.map((o) => o${if(this.contains("?")) "?" else ""}${getCastMethod(this)}))"
+        "List<$this>.from(json.map((o) => o${getCastMethod(this)}))"
     }
 
     private fun String.asString() = if(DartKotlinMap.toMapOrNull(this) == null) {

@@ -20,21 +20,9 @@
  *
  */
 
-package dev.buijs.klutter.core.annotations
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.shared.Method
-import dev.buijs.klutter.core.shared.toMethods
-import java.io.File
-
-internal fun File.scanForKlutterAdaptee(
-    language: ReturnTypeLanguage = ReturnTypeLanguage.DART,
-): List<Method> = KlutterAnnotatedSourceCollector(
-    this,
-    "@KlutterAdaptee",
-).collect().map { it.toMethods(language) }.flatten()
-
-
-internal enum class ReturnTypeLanguage {
-    DART, KOTLIN
+internal enum class Language {
+    DART,
+    KOTLIN
 }

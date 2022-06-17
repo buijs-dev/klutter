@@ -34,7 +34,7 @@ internal class KlutterResponseProcessor(
     source: File,
 ) {
 
-    private val list = KlutterAnnotatedSourceCollector(source, "@KlutterResponse").collect()
+    private val list = source.collectAnnotatedWith("@KlutterResponse")
     private val customDataTypes = mutableListOf<String>()
 
     val enumerations = list.map { EnumScanner(it.readText()).scan() }.flatten()

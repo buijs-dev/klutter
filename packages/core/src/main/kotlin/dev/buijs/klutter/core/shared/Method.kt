@@ -23,12 +23,11 @@
 package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.findClassName
 import dev.buijs.klutter.core.project.Pubspec
 import java.io.File
 
-private typealias Lang = ReturnTypeLanguage
+private typealias Lang = Language
 
 /**
  * Data class to contain information about analyzed Kotlin (Platform) code
@@ -225,7 +224,7 @@ private fun String.asDataType(language: Lang): String {
     /**
      * Remove any whitespaces if present.
      */
-    val value = this.trim()
+    val value = this.trim().verifyListWithoutNull()
 
     /**
      * Lookup this [String] value in the DartKotlinMap.
@@ -257,4 +256,16 @@ private fun String.asDataType(language: Lang): String {
             dartKotlinType.kotlinType
         }
     }
+}
+
+/**
+ * @throws [KlutterException] if a datatype is a List containing null values.
+ * @return [String] this value if datatype is not a list or a list without null values.
+ */
+private fun String.verifyListWithoutNull(): String {
+    return if("""List<[^>]+?\?>""".toRegex().find(this) != null) {
+        throw KlutterException(
+            "Failed to convert datatype. Lists may no contains null values: '$this'"
+        )
+    } else this
 }

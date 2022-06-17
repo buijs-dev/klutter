@@ -22,19 +22,15 @@
 
 package dev.buijs.klutter.core.tasks
 
-import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.KlutterTask
 import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
-import dev.buijs.klutter.core.annotations.scanForKlutterAdaptee
+import dev.buijs.klutter.core.annotations.collectAnnotatedWith
 import dev.buijs.klutter.core.project.*
 import dev.buijs.klutter.core.shared.*
-import dev.buijs.klutter.core.shared.DartMessage
-import dev.buijs.klutter.core.shared.Method
-import dev.buijs.klutter.core.shared.maybeCreate
-import dev.buijs.klutter.core.shared.toChannelName
-import dev.buijs.klutter.core.shared.write
 import dev.buijs.klutter.core.templates.AndroidAdapter
 import dev.buijs.klutter.core.templates.FlutterAdapter
 import dev.buijs.klutter.core.templates.IosAdapter
+import java.io.File
 
 /**
  * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
@@ -141,5 +137,11 @@ internal data class AdapterData(
      * List of enumerations annotated with @KlutterResponse defined in the platform module.
      */
     val enumerations: List<DartEnum>,
+)
 
-    )
+internal fun File.scanForKlutterAdaptee(
+    language: Language = Language.DART,
+): List<Method> = this
+    .collectAnnotatedWith("@KlutterAdaptee")
+    .map { it.toMethods(language) }
+    .flatten()

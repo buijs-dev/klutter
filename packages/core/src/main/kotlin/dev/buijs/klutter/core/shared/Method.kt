@@ -23,7 +23,6 @@
 package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.findClassName
 import dev.buijs.klutter.core.project.Pubspec
 import java.io.File
 

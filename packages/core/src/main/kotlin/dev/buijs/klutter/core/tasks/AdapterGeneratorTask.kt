@@ -22,14 +22,14 @@
 
 package dev.buijs.klutter.core.tasks
 
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterTask
-import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
-import dev.buijs.klutter.core.annotations.collectAnnotatedWith
 import dev.buijs.klutter.core.project.*
 import dev.buijs.klutter.core.shared.*
 import dev.buijs.klutter.core.templates.AndroidAdapter
 import dev.buijs.klutter.core.templates.FlutterAdapter
 import dev.buijs.klutter.core.templates.IosAdapter
+import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 /**
@@ -99,17 +99,18 @@ internal fun Platform.collect(): AdapterData {
 
     val source = source()
 
-    // Scan platform module for @KlutterAdaptee.
-    val methods = source.scanForKlutterAdaptee()
+    val methods = source.methods()
 
-    // Scan for any class annotated with @KlutterResponse.
-    val processor = KlutterResponseProcessor(source)
+    val responses = source.responses()
 
-    // Response classes annotated with @KlutterResponse.
-    val messages = processor.messages
+    val messages = responses.toDartMessages()
 
-    // Enumerations annotated with @KlutterResponse.
-    val enumerations = processor.enumerations
+    val enumerations = responses.toDartEnums()
+
+    validate(
+        messages = messages,
+        enumerations = enumerations,
+    )
 
     return AdapterData(
         methods = methods,
@@ -139,9 +140,88 @@ internal data class AdapterData(
     val enumerations: List<DartEnum>,
 )
 
-internal fun File.scanForKlutterAdaptee(
-    language: Language = Language.DART,
-): List<Method> = this
+/**
+ * Find all files in a folder (including sub folders)
+ * containing an annotation with [annotationName].
+ *
+ * @return List of Files that contain the given annotation.
+ */
+internal fun File.collectAnnotatedWith(
+    annotationName: String,
+): List<File> = this
+    .verifyExists()
+    .walkTopDown()
+    .map { f -> if(!f.isFile) null else f }
+    .toList()
+    .filterNotNull()
+    .filter { it
+        .readText()
+        .contains(annotationName.prefixIfNot("@"))
+    }
+
+/**
+ * Validate every field in the DartMessages is either a standard type
+ * or a custom type that is includes as DartMessage.
+ *
+ * @throws [KlutterException] if a DartMessage contains any
+ * custom datatype field that is not defined as DartMessage.
+ */
+private fun validate(
+    messages: List<DartMessage>,
+    enumerations: List<DartEnum>,
+) {
+
+    val customDataTypes = mutableListOf<String>()
+
+    //Collect all custom data types.
+    for (message in messages) {
+        for (field in message.fields) {
+            if (field.isCustomType) {
+                customDataTypes.add(field.type)
+            }
+        }
+    }
+
+    //Iterate the enumeration names and match it to the custom data types.
+    //Remove from custom data types list if matched.
+    enumerations.map { it.name }.forEach {
+        customDataTypes.removeAll { cdt -> cdt == it }
+    }
+
+    //Iterate the message names and match it to the custom data types.
+    //Remove from custom data types list if matched.
+    messages.map { it.name }.forEach {
+        customDataTypes.removeAll { cdt -> cdt == it }
+    }
+
+    //Any custom data type name left in the list means there is no class definition found by this name
+    if (customDataTypes.isNotEmpty()) {
+        throw KlutterException(
+            """ |Processing annotation '@KlutterResponse' failed, caused by:
+                |
+                |Could not resolve the following classes:
+                |
+                |${customDataTypes.joinToString { "- '$it'\r\n" }}
+                |
+                |Verify if all KlutterResponse annotated classes comply with the following rules:
+                |
+                |1. Must be an open class
+                |2. Fields must be immutable
+                |3. Constructor only (no body)
+                |4. No inheritance
+                |5. Any field type should comply with the same rules
+                |
+                |If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
+            """.trimMargin()
+        )
+    }
+
+}
+
+internal fun File.methods() = this
     .collectAnnotatedWith("@KlutterAdaptee")
-    .map { it.toMethods(language) }
+    .map { it.toMethods(Language.DART) }
     .flatten()
+
+internal fun File.responses() = this
+    .collectAnnotatedWith("@KlutterResponse")

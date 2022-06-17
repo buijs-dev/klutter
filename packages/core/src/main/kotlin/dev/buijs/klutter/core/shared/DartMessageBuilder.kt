@@ -20,28 +20,21 @@
  *
  */
 
-package dev.buijs.klutter.core.annotations
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.shared.verifyExists
-import org.jetbrains.kotlin.util.prefixIfNot
+import dev.buijs.klutter.core.*
 import java.io.File
 
-/**
- * Find all files in a folder (including sub folders)
- * containing an annotation with [annotationName].
- *
- * @return List of Files that contain the given annotation.
- */
-internal fun File.collectAnnotatedWith(annotationName: String): List<File> {
+private val bodiesRegex = """(open class ([^(]+?)\([^)]+\))""".toRegex()
 
-    val annotation = annotationName.prefixIfNot("@")
-
-    return this
-        .verifyExists()
-        .walkTopDown()
-        .map { f -> if(!f.isFile) null else f }
-        .toList()
-        .filterNotNull()
-        .filter { it.readText().contains(annotation) }
-
+internal fun List<File>.toDartMessages(): List<DartMessage> {
+    return this.map { file ->
+        bodiesRegex.findAll(file.readText()).map { match ->
+            DartMessage(
+                name = match.groups[2]?.value?.filter { !it.isWhitespace() }
+                    ?: throw KlutterException("Failed to process an open class."),
+                fields = match.value.lines().mapNotNull { it.toDartField() }
+            )
+        }.toList()
+    }.flatten()
 }

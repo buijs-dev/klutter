@@ -7,7 +7,7 @@ class DartEnumSpec extends Specification {
 
     def "Processing a blank String throws an exception"() {
         when:
-        DartEnumKt.toDartEnum("", "EnumClassName")
+        DartEnumKt.toDartEnums("", "EnumClassName")
 
         then:
         KlutterException e = thrown()
@@ -16,7 +16,7 @@ class DartEnumSpec extends Specification {
 
     def "If there are no JSON values then values and valuesJSON are identical"() {
         when:
-        def denum = DartEnumKt.toDartEnum(content, "Dog")
+        def denum = DartEnumKt.toDartEnums(content, "Dog")
 
         then:
         !denum.values.isEmpty()
@@ -57,7 +57,7 @@ class DartEnumSpec extends Specification {
         """
 
         when:
-        def denum = DartEnumKt.toDartEnum(content, "Dog")
+        def denum = DartEnumKt.toDartEnums(content, "Dog")
 
         then:
         denum.values.eachWithIndex{ entry, i ->

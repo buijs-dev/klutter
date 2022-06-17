@@ -22,11 +22,11 @@
 
 package dev.buijs.klutter.core.templates
 
-import dev.buijs.klutter.core.DartField
+import dev.buijs.klutter.core.shared.DartField
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.shared.*
-import dev.buijs.klutter.core.toCamelCase
-import dev.buijs.klutter.core.unwrapFromList
+import dev.buijs.klutter.core.shared.toCamelCase
+import dev.buijs.klutter.core.shared.unwrapFromList
 
 private const val BR = "\n"
 

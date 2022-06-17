@@ -22,8 +22,7 @@
 
 package dev.buijs.klutter.core.annotations
 
-
-import dev.buijs.klutter.core.tasks.scanForKlutterAdaptee
+import dev.buijs.klutter.core.tasks.methods
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files
@@ -61,7 +60,7 @@ class KlutterAdapteeProcessorTest: WordSpec({
     "Using the scanner" should {
 
         "Return Dart types as default" {
-            source.scanForKlutterAdaptee().let { methods ->
+            source.methods().let { methods ->
                 methods.size shouldBe 2
                 methods.first().let { method ->
                     method.async shouldBe false

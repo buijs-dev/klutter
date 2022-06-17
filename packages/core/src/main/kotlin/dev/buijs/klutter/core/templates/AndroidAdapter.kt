@@ -22,9 +22,10 @@
 
 package dev.buijs.klutter.core.templates
 
-import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.shared.Method
+import dev.buijs.klutter.core.shared.maybePostfixToKJson
+import dev.buijs.klutter.core.shared.postFix
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class AndroidAdapter(

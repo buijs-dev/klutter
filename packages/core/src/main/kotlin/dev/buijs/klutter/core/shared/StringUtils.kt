@@ -20,9 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.core
-
-import dev.buijs.klutter.core.shared.DartKotlinMap
+package dev.buijs.klutter.core.shared
 
 /**
  * Return the current String value post-fixed with '.toKJson()'

@@ -20,9 +20,9 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.shared.DartKotlinMap
+import dev.buijs.klutter.core.KlutterException
 import mu.KotlinLogging
 
 private val regex = """val ([^:]+?): (.+)""".toRegex()

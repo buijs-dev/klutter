@@ -24,6 +24,7 @@ package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
 import dev.buijs.klutter.core.shared.Method
+import dev.buijs.klutter.core.shared.maybePostfixToKJson
 
 internal class IosAdapter(
     private val pluginClassName: String,

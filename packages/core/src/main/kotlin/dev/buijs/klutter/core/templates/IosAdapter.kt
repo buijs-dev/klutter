@@ -23,7 +23,7 @@
 package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.Method
+import dev.buijs.klutter.core.shared.Method
 
 internal class IosAdapter(
     private val pluginClassName: String,

@@ -23,6 +23,8 @@
 package dev.buijs.klutter.core.annotations
 
 import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.shared.DartMessage
+import dev.buijs.klutter.core.shared.toDartEnum
 import java.io.File
 
 private val enumRegex = """(enum class ([^{]+?)\{[^}]+})""".toRegex()

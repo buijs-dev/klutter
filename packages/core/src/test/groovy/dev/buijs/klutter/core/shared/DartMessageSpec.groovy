@@ -1,6 +1,6 @@
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
-
+import dev.buijs.klutter.core.KlutterException
 import spock.lang.Specification
 
 class DartMessageSpec extends Specification {

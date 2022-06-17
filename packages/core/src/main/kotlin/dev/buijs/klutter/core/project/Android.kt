@@ -1,7 +1,7 @@
 package dev.buijs.klutter.core.project
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.verifyExists
+import dev.buijs.klutter.core.shared.verifyExists
 import java.io.File
 
 /**

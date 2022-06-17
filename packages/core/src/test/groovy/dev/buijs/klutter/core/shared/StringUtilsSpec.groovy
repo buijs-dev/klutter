@@ -1,6 +1,6 @@
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
-
+import dev.buijs.klutter.core.StringUtilsKt
 import spock.lang.Specification
 
 class StringUtilsSpec extends Specification {

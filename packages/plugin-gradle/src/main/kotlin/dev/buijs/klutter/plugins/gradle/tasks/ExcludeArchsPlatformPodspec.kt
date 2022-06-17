@@ -22,7 +22,7 @@
 
 package dev.buijs.klutter.plugins.gradle.tasks
 
-import dev.buijs.klutter.core.excludeArm64
+import dev.buijs.klutter.core.shared.excludeArm64
 import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
 
 /**

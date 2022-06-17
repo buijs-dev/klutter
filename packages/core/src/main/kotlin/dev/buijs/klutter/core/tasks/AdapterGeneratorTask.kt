@@ -23,10 +23,15 @@
 package dev.buijs.klutter.core.tasks
 
 import dev.buijs.klutter.core.*
-import dev.buijs.klutter.core.annotations.KlutterAdapteeScanner
 import dev.buijs.klutter.core.annotations.KlutterResponseProcessor
-import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.annotations.scanForKlutterAdaptee
 import dev.buijs.klutter.core.project.*
+import dev.buijs.klutter.core.shared.*
+import dev.buijs.klutter.core.shared.DartMessage
+import dev.buijs.klutter.core.shared.Method
+import dev.buijs.klutter.core.shared.maybeCreate
+import dev.buijs.klutter.core.shared.toChannelName
+import dev.buijs.klutter.core.shared.write
 import dev.buijs.klutter.core.templates.AndroidAdapter
 import dev.buijs.klutter.core.templates.FlutterAdapter
 import dev.buijs.klutter.core.templates.IosAdapter
@@ -96,12 +101,13 @@ class AdapterGeneratorTask(
  */
 internal fun Platform.collect(): AdapterData {
 
+    val source = source()
+
     // Scan platform module for @KlutterAdaptee.
-    val methods = KlutterAdapteeScanner(source())
-        .scan(language = ReturnTypeLanguage.DART)
+    val methods = source.scanForKlutterAdaptee()
 
     // Scan for any class annotated with @KlutterResponse.
-    val processor = KlutterResponseProcessor(source())
+    val processor = KlutterResponseProcessor(source)
 
     // Response classes annotated with @KlutterResponse.
     val messages = processor.messages
@@ -136,4 +142,4 @@ internal data class AdapterData(
      */
     val enumerations: List<DartEnum>,
 
-)
+    )

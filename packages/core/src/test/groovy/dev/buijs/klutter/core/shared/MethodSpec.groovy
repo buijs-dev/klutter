@@ -1,11 +1,14 @@
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.project.Pubspec
 import dev.buijs.klutter.core.project.PubspecFlutter
 import dev.buijs.klutter.core.project.PubspecPlugin
 import dev.buijs.klutter.core.project.PubspecPluginClass
 import dev.buijs.klutter.core.project.PubspecPluginPlatforms
+import dev.buijs.klutter.core.shared.DartKotlinMap
+import dev.buijs.klutter.core.shared.Method
 import dev.buijs.klutter.core.test.TestResource
 import spock.lang.Shared
 import spock.lang.Specification

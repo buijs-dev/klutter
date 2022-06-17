@@ -1,5 +1,8 @@
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.shared.DartMessage
+import dev.buijs.klutter.core.shared.Method
+
 class TestData {
 
     def static greetingMethod = new Method(

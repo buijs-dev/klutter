@@ -1,5 +1,7 @@
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.shared.Method
+
 internal fun fooBarMethods(): List<Method> = listOf(
     Method(
         "doFooBar",

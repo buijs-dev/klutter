@@ -23,8 +23,8 @@
 package dev.buijs.klutter.core.template
 
 import dev.buijs.klutter.core.CoreTestUtil
-import dev.buijs.klutter.core.DartEnum
-import dev.buijs.klutter.core.DartMessage
+import dev.buijs.klutter.core.shared.DartEnum
+import dev.buijs.klutter.core.shared.DartMessage
 import dev.buijs.klutter.core.TestData
 import dev.buijs.klutter.core.templates.FlutterAdapter
 import spock.lang.Specification

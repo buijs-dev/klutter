@@ -1,6 +1,6 @@
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.core.FileUtilsKt
+import dev.buijs.klutter.core.shared.FileUtilsKt
 import dev.buijs.klutter.core.project.Platform
 import dev.buijs.klutter.core.test.TestPlugin
 import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec

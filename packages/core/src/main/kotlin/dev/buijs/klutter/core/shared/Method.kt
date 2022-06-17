@@ -20,11 +20,12 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
+import dev.buijs.klutter.core.findClassName
 import dev.buijs.klutter.core.project.Pubspec
-import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 
 private typealias Lang = ReturnTypeLanguage
@@ -106,22 +107,25 @@ internal fun File.toMethods(
     val content = readText()
 
     /**
-     * Name of Kotlin file without extension
-     * used to import the class
-     * and use it's enclosing methods.
-     */
-    val className = name.removeSuffixIfPresent(".kt")
-
-    /**
      * Name of package used to import the Kotlin class.
      */
     val packageName = content.packageName()
 
-    return REGEX.toRegex().findAll(content.filter { !it.isWhitespace() })
-        .map { it.groupValues }
-        .map { values -> values.toMethod(className, packageName, language)}
-        .toList()
+    return toClassBodies()
+        .map { body -> REGEX.toRegex().findAll(body.filter { !it.isWhitespace() })
+            .map { it.groupValues }
+            .map { values -> values.toMethod(body.classNameOrFail(), packageName, language) }
+            .toList()
+        }.flatten()
+
 }
+
+/**
+ * @throws [KlutterException] if unable to determine the Kotlin Class name.
+ * @return [String] name of Kotlin Class as defined in the body content.
+ */
+private fun String.classNameOrFail(): String = findClassName()
+    ?: throw KlutterException("Failed to determine class name. Analyzed class content: $this")
 
 /**
  * @return [Method] based of [REGEX] result.

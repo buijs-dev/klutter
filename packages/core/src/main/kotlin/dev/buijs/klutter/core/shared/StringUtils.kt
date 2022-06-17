@@ -22,6 +22,8 @@
 
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.shared.DartKotlinMap
+
 /**
  * Return the current String value post-fixed with '.toKJson()'
  * if Method dataType is not a standard Dart/Kotlin type.
@@ -66,7 +68,14 @@ internal fun String.toCamelCase(): String {
  * @return nested datatype if found or value of this String if not.
  */
 internal fun String.unwrapFromList(): String = """List<([^>]+?)>"""
-    .toRegex()
-    .find(this)
-    ?.let { it.groups[1]!!.value }
+    .toRegex().find(this)
+    ?.let { it.groupValues[1] }
     ?:this
+
+/**
+ * Extract the class name from a (sub) String which contains a single class definition.
+ */
+internal fun String.findClassName(): String? = """class([^{]+?)\{"""
+    .toRegex().find(this.replace("\n", ""))
+    ?.let { it.groupValues[1] }
+    ?.trim()

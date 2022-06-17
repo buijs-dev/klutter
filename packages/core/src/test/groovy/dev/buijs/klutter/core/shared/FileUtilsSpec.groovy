@@ -1,5 +1,7 @@
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.CoreTestUtil
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.project.PubspecKt
 import dev.buijs.klutter.core.project.Root
 import dev.buijs.klutter.core.test.TestResource

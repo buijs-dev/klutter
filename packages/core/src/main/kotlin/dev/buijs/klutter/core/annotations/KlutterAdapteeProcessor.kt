@@ -22,23 +22,18 @@
 
 package dev.buijs.klutter.core.annotations
 
-import dev.buijs.klutter.core.Method
-import dev.buijs.klutter.core.toMethods
+import dev.buijs.klutter.core.*
+import dev.buijs.klutter.core.shared.Method
+import dev.buijs.klutter.core.shared.toMethods
 import java.io.File
 
-/**
- * @author Gillian Buijs
- */
-internal class KlutterAdapteeScanner(
-    private val source: File,
-) {
+internal fun File.scanForKlutterAdaptee(
+    language: ReturnTypeLanguage = ReturnTypeLanguage.DART,
+): List<Method> = KlutterAnnotatedSourceCollector(
+    this,
+    "@KlutterAdaptee",
+).collect().map { it.toMethods(language) }.flatten()
 
-    fun scan(language: ReturnTypeLanguage = ReturnTypeLanguage.KOTLIN): List<Method> =
-        KlutterAnnotatedSourceCollector(source, "@KlutterAdaptee")
-            .collect()
-            .map { it.toMethods(language) }
-            .flatten()
-}
 
 internal enum class ReturnTypeLanguage {
     DART, KOTLIN

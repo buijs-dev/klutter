@@ -20,7 +20,10 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
+
+import dev.buijs.klutter.core.DartField
+import dev.buijs.klutter.core.KlutterException
 
 /**
  * Message/(JSON) response object defined in Dart language.

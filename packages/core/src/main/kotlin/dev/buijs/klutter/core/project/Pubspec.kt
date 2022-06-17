@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.verifyExists
+import dev.buijs.klutter.core.shared.verifyExists
 import java.io.File
 
 internal fun Root.toPubspec(): Pubspec =

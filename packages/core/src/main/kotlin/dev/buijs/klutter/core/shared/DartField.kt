@@ -22,6 +22,7 @@
 
 package dev.buijs.klutter.core
 
+import dev.buijs.klutter.core.shared.DartKotlinMap
 import mu.KotlinLogging
 
 private val regex = """val ([^:]+?): (.+)""".toRegex()

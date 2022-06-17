@@ -22,7 +22,7 @@
 
 package dev.buijs.klutter.core.template
 
-import dev.buijs.klutter.core.Method
+import dev.buijs.klutter.core.shared.Method
 import dev.buijs.klutter.core.fooBarMethods
 import dev.buijs.klutter.core.templates.FlutterAdapter
 import dev.buijs.klutter.core.verify

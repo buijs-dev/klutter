@@ -20,8 +20,11 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.core.KlutterWriter
 import java.io.File
 
 /**

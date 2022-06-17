@@ -20,7 +20,9 @@
  *
  */
 
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
+
+import dev.buijs.klutter.core.KlutterException
 
 /**
  * This is not an exhaustive mapping but a basic mapping to

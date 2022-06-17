@@ -1,4 +1,4 @@
-package dev.buijs.klutter.core
+package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.annotations.ReturnTypeLanguage
 import dev.buijs.klutter.core.test.TestResource

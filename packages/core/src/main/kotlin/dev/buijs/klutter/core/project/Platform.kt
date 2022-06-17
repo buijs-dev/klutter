@@ -26,7 +26,6 @@ import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.shared.verifyExists
 import java.io.File
 
-
 /**
  * Wrapper class with a file instance pointing to the kmp sub-module in root/platform.
  *

@@ -20,9 +20,8 @@
  *
  */
 
-package dev.buijs.klutter.core.annotations
+package dev.buijs.klutter.core.tasks
 
-import dev.buijs.klutter.core.tasks.methods
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import java.nio.file.Files

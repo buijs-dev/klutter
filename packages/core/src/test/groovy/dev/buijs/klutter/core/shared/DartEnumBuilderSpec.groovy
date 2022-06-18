@@ -6,6 +6,48 @@ import java.nio.file.Files
 
 class DartEnumBuilderSpec extends Specification {
 
+    def "If the input list is empty, then the output list empty"() {
+        expect:
+        DartEnumBuilderKt.toDartEnumList([]).isEmpty()
+    }
+
+    def "If the input files are empty, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("")
+
+        expect:
+        DartEnumBuilderKt.toDartEnumList([file]).isEmpty()
+    }
+
+    def "If the input do not contain enum classes, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("""
+               Once upon a time in a galaxy not that far away there was this crazy developer...
+        """)
+
+        expect:
+        DartEnumBuilderKt.toDartEnumList([file]).isEmpty()
+    }
+
+    def "If the input contain classes that are not enums, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("""
+               class Jedi(
+                    val name: String,
+                    val age: Int,
+                    val alliance: String? = null,
+                    val abilities: List<Ability>,
+                    val rank: Rank
+                )
+        """)
+
+        expect:
+        DartEnumBuilderKt.toDartEnumList([file]).isEmpty()
+    }
+
     def "Verify messages and enumerations are returned properly"(){
 
         given:
@@ -39,7 +81,7 @@ class DartEnumBuilderSpec extends Specification {
             """)
 
         when:
-        def enumerations = DartEnumBuilderKt.toDartEnums([file])
+        def enumerations = DartEnumBuilderKt.toDartEnumList([file])
 
         then:
         enumerations.size == 3

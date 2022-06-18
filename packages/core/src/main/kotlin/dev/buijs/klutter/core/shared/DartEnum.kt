@@ -42,7 +42,7 @@ internal data class DartEnum(
  *
  * @return [DartEnum]
  */
-internal fun String.toDartEnums(name: String) = this
+internal fun String.toDartEnum(name: String) = this
     .ifBlank { throw KlutterException("Unable to process enumeration: Enum has no values") }
     .splitValues()
     .toEnum(name)

@@ -103,9 +103,9 @@ internal fun Platform.collect(): AdapterData {
 
     val responses = source.responses()
 
-    val messages = responses.toDartMessages()
+    val messages = responses.toDartMessageList()
 
-    val enumerations = responses.toDartEnums()
+    val enumerations = responses.toDartEnumList()
 
     validate(
         messages = messages,

@@ -1,17 +1,23 @@
 package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.KlutterException
 import java.io.File
 
-private val enumRegex = """(enum class ([^{]+?)\{[^}]+})""".toRegex()
+private val regex = """(enum class ([^{]+?)\{[^}]+})""".toRegex()
 
-internal fun List<File>.toDartEnums(): List<DartEnum> {
-    return this.map { file ->
-        enumRegex.findAll(file.readText())
-            .map { match ->
-                val name = match.groups[2]?.value?.filter { !it.isWhitespace() }
-                    ?: throw KlutterException("Failed to process an enum class.")
-                match.value.toDartEnums(name)
-            }.toList()
-    }.flatten()
+/**
+ * Scan a list of Kotlin files for enumerations
+ * and convert each to a DartEnum.
+ *
+ * @return List<DartEnum> converted from the input files.
+ */
+internal fun List<File>.toDartEnumList(): List<DartEnum> = this
+    .map { file -> file.readText() }
+    .flatMap { text -> regex.findAll(text) }
+    .map { match -> match.toDartEnum() }
+    .toList()
+
+private fun MatchResult.toDartEnum(): DartEnum {
+    val name = groupValues[2].filter { !it.isWhitespace() }
+    val values = groupValues[1]
+    return values.toDartEnum(name)
 }

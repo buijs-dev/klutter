@@ -6,6 +6,48 @@ import java.nio.file.Files
 
 class DartMessageBuilderSpec extends Specification {
 
+    def "If the input list is empty, then the output list empty"() {
+        expect:
+        DartMessageBuilderKt.toDartMessageList([]).isEmpty()
+    }
+
+    def "If the input files are empty, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("")
+
+        expect:
+        DartMessageBuilderKt.toDartMessageList([file]).isEmpty()
+    }
+
+    def "If the input do not contain classes, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("""
+               Once upon a time in a galaxy not that far away there was this crazy developer...
+        """)
+
+        expect:
+        DartMessageBuilderKt.toDartMessageList([file]).isEmpty()
+    }
+
+    def "If the input contain classes that are not open, then the output list empty"() {
+        given:
+        def file = Files.createTempFile("", ".kt").toFile()
+        file.write("""
+               class Jedi(
+                    val name: String,
+                    val age: Int,
+                    val alliance: String? = null,
+                    val abilities: List<Ability>,
+                    val rank: Rank
+                )
+        """)
+
+        expect:
+        DartMessageBuilderKt.toDartMessageList([file]).isEmpty()
+    }
+
     def "Verify messages and enumerations are returned properly"(){
 
         given:
@@ -39,7 +81,7 @@ class DartMessageBuilderSpec extends Specification {
             """)
 
         when:
-        def messages = DartMessageBuilderKt.toDartMessages([file])
+        def messages = DartMessageBuilderKt.toDartMessageList([file])
 
         then:
         messages.size() == 1

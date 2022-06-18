@@ -158,6 +158,41 @@ class MethodSpec extends Specification {
         """
     }
 
+    def "[toMethod] returns empty list if class name is undetermined"() {
+        given:
+        def file = Files.createTempFile("SomeClass", "kt").toFile()
+
+        and:
+        file.write(classBody)
+
+        expect:
+        MethodKt.toMethods(file, Language.KOTLIN).isEmpty()
+
+        where:
+        classBody = """
+        package foo.bar.baz
+
+        import dev.buijs.klutter.annotations.Annotations
+     
+        @KlutterAdaptee(name = "DartMaul")
+        fun foo(): String {
+            return "Maul"
+        }
+    
+        @KlutterAdaptee(name = "BabyYoda")
+        fun fooBar(): List<String?> {
+            return listOf("baz")
+        }
+        
+        @Serializable
+        @KlutterResponse
+        enum class {
+            @SerialName("boom") BOOM,
+            @SerialName("boom boom") BOOM_BOOM,
+        }
+        """
+    }
+
     def "[packageName] returns null if file contains no package name"() {
         expect:
         MethodKt.packageName("") == ""

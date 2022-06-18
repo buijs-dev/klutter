@@ -109,21 +109,21 @@ internal fun File.toMethods(
      */
     val packageName = content.packageName()
 
-    return toClassBodies()
-        .map { body -> REGEX.toRegex().findAll(body.filter { !it.isWhitespace() })
-            .map { it.groupValues }
-            .map { values -> values.toMethod(body.classNameOrFail(), packageName, language) }
-            .toList()
-        }.flatten()
+    val methods = mutableListOf<Method>()
 
+    for(body in toClassBodies()) {
+        val b = body.filter { !it.isWhitespace() }
+        val c = body.findClassName()!!
+        methods.addAll(
+            REGEX.toRegex().findAll(b)
+                .toList()
+                .map { match -> match.groupValues }
+                .map { values -> values.toMethod(c, packageName, language) }
+        )
+    }
+
+    return methods
 }
-
-/**
- * @throws [KlutterException] if unable to determine the Kotlin Class name.
- * @return [String] name of Kotlin Class as defined in the body content.
- */
-private fun String.classNameOrFail(): String = findClassName()
-    ?: throw KlutterException("Failed to determine class name. Analyzed class content: $this")
 
 /**
  * @return [Method] based of [REGEX] result.

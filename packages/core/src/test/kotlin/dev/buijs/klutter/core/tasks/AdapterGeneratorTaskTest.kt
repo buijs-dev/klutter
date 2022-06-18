@@ -20,26 +20,31 @@
  *
  */
 
-package dev.buijs.klutter.core.shared
+package dev.buijs.klutter.core.tasks
 
-import java.io.File
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.WordSpec
+import java.nio.file.Files
 
-private val regex = """(open class ([^(]+?)\([^)]+\))""".toRegex()
+class AdapterGeneratorTaskTest: WordSpec({
 
-/**
- * Scan a list of Kotlin files for classes
- * and convert each to a DartMessage.
- *
- * @return List<DartMessage> converted from the input files.
- */
-internal fun List<File>.toDartMessageList(): List<DartMessage> = this
-    .map { file -> file.readText() }
-    .flatMap { text -> regex.findAll(text) }
-    .map { match -> DartMessage(match.name(), match.fields()) }
-    .toList()
+    "Scanning a file" should {
 
-private fun MatchResult.name() =
-    groupValues[2].filter { !it.isWhitespace() }
+        val file = Files.createTempFile("Foo", ".kt").toFile()
 
-private fun MatchResult.fields() =
-    value.lines().mapNotNull { it.toDartField() }
+        file.writeText("""
+            @SomeAnnotation
+        """.trimIndent())
+
+        "Add an @ sign if annotation does not have one" {
+
+            val files = file.collectAnnotatedWith("SomeAnnotation")
+
+            files.size shouldBe 1
+
+            files.first().readText().trim() shouldBe "@SomeAnnotation"
+
+        }
+
+    }
+})

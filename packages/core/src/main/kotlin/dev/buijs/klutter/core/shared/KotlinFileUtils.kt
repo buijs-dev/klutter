@@ -27,7 +27,7 @@ import java.io.File
 /**
  * Read the content of a Kotlin Class File and return the classes found as String.
  */
-fun File.toClassBodies(): List<String> {
+internal fun File.toClassBodies(): List<String> {
 
     // The class content to be returned.
     val output = mutableListOf<String>()

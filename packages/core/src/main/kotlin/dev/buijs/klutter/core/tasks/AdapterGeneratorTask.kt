@@ -166,7 +166,7 @@ internal fun File.collectAnnotatedWith(
  * @throws [KlutterException] if a DartMessage contains any
  * custom datatype field that is not defined as DartMessage.
  */
-private fun validate(
+internal fun validate(
     messages: List<DartMessage>,
     enumerations: List<DartEnum>,
 ) {

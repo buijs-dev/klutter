@@ -17,7 +17,7 @@ internal fun List<File>.toDartEnumList(): List<DartEnum> = this
     .toList()
 
 private fun MatchResult.toDartEnum(): DartEnum {
-    val name = groupValues[2].filter { !it.isWhitespace() }
+    val name = groupValueWithoutSpaces(2)
     val values = groupValues[1]
     return values.toDartEnum(name)
 }

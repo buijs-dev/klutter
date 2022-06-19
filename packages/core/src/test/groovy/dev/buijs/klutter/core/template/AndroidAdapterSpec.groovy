@@ -23,11 +23,30 @@
 package dev.buijs.klutter.core.template
 
 import dev.buijs.klutter.core.CoreTestUtil
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.TestData
+import dev.buijs.klutter.core.project.AndroidKt
+import dev.buijs.klutter.core.shared.DartEnum
+import dev.buijs.klutter.core.shared.DartField
+import dev.buijs.klutter.core.shared.DartMessage
+import dev.buijs.klutter.core.tasks.AdapterGeneratorTaskKt
 import dev.buijs.klutter.core.templates.AndroidAdapter
 import spock.lang.Specification
 
 class AndroidAdapterSpec extends Specification {
+
+    def "[toPath] verify conversion"() {
+        expect:
+        AndroidKt.toPath(input) == output
+
+        where:
+        input       | output
+        null        | ""
+        ""          | ""
+        "   "       | "   "
+        "blablabl"  | "blablabl"
+        "bla.blab"  | "bla/blab"
+    }
 
     def "AndroidAdapter should create a valid Kotlin class"() {
         given:
@@ -145,6 +164,65 @@ class AndroidAdapterSpec extends Specification {
                           }
                         }
                         """
+    }
+
+    def "Validate throws exception if customDataType list is not empty after validating"() {
+        given:
+        def message1 = new DartMessage("Bob",
+                [new DartField("FartCannon", "", false, false, true)]
+        )
+
+        def message2 = new DartMessage("Dave",
+                [new DartField("String", "", false, false, false)]
+        )
+
+        when:
+        AdapterGeneratorTaskKt.validate([message1, message2], [])
+
+        then:
+        KlutterException e = thrown()
+        CoreTestUtil.verify(e.message,
+                """Processing annotation '@KlutterResponse' failed, caused by:
+            
+                            Could not resolve the following classes:
+                            
+                            - 'FartCannon'
+                            
+                            
+                            Verify if all KlutterResponse annotated classes comply with the following rules:
+                            
+                            1. Must be an open class
+                            2. Fields must be immutable
+                            3. Constructor only (no body)
+                            4. No inheritance
+                            5. Any field type should comply with the same rules
+                            
+                            If this looks like a bug please file an issue at: https://github.com/buijs-dev/klutter/issues
+                            """
+
+        )
+
+    }
+
+    def "Validate no exception is thrown if customDataType list not empty after validating"() {
+        when:
+        def message1 = new DartMessage("Bob",
+                [new DartField("FartCannon", "", false, false, true)]
+        )
+
+        def message2 = new DartMessage("Dave",
+                [new DartField("String", "", false, false, false)]
+        )
+
+        def message3 = new DartMessage("FartCannon",
+                [new DartField("GruMood", "intensity", false, false, true)]
+        )
+
+        def enum1 = new DartEnum("GruMood", ["BAD, GOOD, CARING, HATING, CONQUER_THE_WORLD"], [])
+
+        then:
+        AdapterGeneratorTaskKt.validate([message1, message2, message3], [enum1])
+
     }
 
 }

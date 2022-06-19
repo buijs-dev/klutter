@@ -54,6 +54,8 @@ class Android(
         .verifyExists()
         .resolve("$pluginClassName.kt")
 
-    private fun String?.toPath(): String =
-        this?.replace(".", "/") ?: ""
+}
+
+internal fun String?.toPath(): String {
+    return (this ?: "").replace(".", "/")
 }

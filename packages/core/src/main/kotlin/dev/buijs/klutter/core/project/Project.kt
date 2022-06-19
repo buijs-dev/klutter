@@ -67,7 +67,7 @@ private fun build(root: Root): Project {
         ios = IOS(
             folder = root.resolve("ios"),
             pluginName = root.pluginName,
-            pluginClassName = pubspec.ios?.pluginClass ?: root.pluginClassName
+            pluginClassName = pubspec.iosClassName(root.pluginClassName)
         ),
         platform = Platform(
             folder = root.resolve("platform"),
@@ -75,8 +75,8 @@ private fun build(root: Root): Project {
         ),
         android = Android(
             folder = root.resolve("android"),
-            pluginPackageName = pubspec.android?.pluginPackage ?: "",
-            pluginClassName = pubspec.android?.pluginClass ?: root.pluginClassName,
+            pluginPackageName = pubspec.androidPackageName(),
+            pluginClassName = pubspec.androidClassName(root.pluginClassName),
         ),
     )
 }

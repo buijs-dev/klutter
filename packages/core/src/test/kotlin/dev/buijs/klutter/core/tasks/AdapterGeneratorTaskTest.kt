@@ -30,19 +30,33 @@ class AdapterGeneratorTaskTest: WordSpec({
 
     "Scanning a file" should {
 
-        val file = Files.createTempFile("Foo", ".kt").toFile()
-
-        file.writeText("""
-            @SomeAnnotation
-        """.trimIndent())
-
         "Add an @ sign if annotation does not have one" {
+
+            val file = Files.createTempFile("Foo", ".kt").toFile()
+
+            file.writeText("""
+                @SomeAnnotation
+            """.trimIndent())
 
             val files = file.collectAnnotatedWith("SomeAnnotation")
 
             files.size shouldBe 1
 
             files.first().readText().trim() shouldBe "@SomeAnnotation"
+
+        }
+
+        "Return an empty list if annotation is not found" {
+
+            val file = Files.createTempFile("Foo", ".kt").toFile()
+
+            file.writeText("""
+                @SomeAnnotation
+            """.trimIndent())
+
+            val files = file.collectAnnotatedWith("@AnnotationNotFound")
+
+            files.size shouldBe 0
 
         }
 

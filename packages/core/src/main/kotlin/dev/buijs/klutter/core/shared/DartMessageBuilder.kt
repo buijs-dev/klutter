@@ -39,7 +39,7 @@ internal fun List<File>.toDartMessageList(): List<DartMessage> = this
     .toList()
 
 private fun MatchResult.name() =
-    groupValues[2].filter { !it.isWhitespace() }
+    groupValueWithoutSpaces(2)
 
 private fun MatchResult.fields() =
     value.lines().mapNotNull { it.toDartField() }

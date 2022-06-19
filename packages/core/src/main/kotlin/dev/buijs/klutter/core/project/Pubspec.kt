@@ -196,3 +196,45 @@ internal data class PubspecPluginClass(
     @JsonProperty("pluginClass")
     internal val pluginClass: String?,
 )
+
+internal fun Pubspec.iosClassName(orElse: String): String {
+    return when {
+        ios == null -> {
+            orElse
+        }
+        ios!!.pluginClass == null -> {
+            orElse
+        }
+        else -> {
+            ios!!.pluginClass!!
+        }
+    }
+}
+
+internal fun Pubspec.androidClassName(orElse: String): String {
+    return when {
+        android == null -> {
+            orElse
+        }
+        android!!.pluginClass == null -> {
+            orElse
+        }
+        else -> {
+            android!!.pluginClass!!
+        }
+    }
+}
+
+internal fun Pubspec.androidPackageName(): String {
+    return when {
+        android == null -> {
+            ""
+        }
+        android!!.pluginPackage == null -> {
+            ""
+        }
+        else -> {
+            android!!.pluginPackage!!
+        }
+    }
+}

@@ -48,6 +48,10 @@ class PubspecSpec extends Specification {
 
         then:
         pubspec.flutter$core == null
+        pubspec.plugin == null
+        pubspec.platforms == null
+        pubspec.ios == null
+        pubspec.android == null
     }
 
     def "If pubspec contains flutter plugin block without content then it is not null" () {
@@ -140,4 +144,199 @@ class PubspecSpec extends Specification {
 
     }
 
+    def "iosClassName returns orElse value if ios is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.iosClassName(pubspec, "SomeClass") == "SomeClass"
+
+    }
+
+    def "iosClassName returns orElse value if ios pluginClass is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+                    pluginClass:
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.iosClassName(pubspec, "SomeClass") == "SomeClass"
+
+    }
+
+    def "iosClassName returns value from YAML if present" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+                    pluginClass: RidiculousPlugin
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.iosClassName(pubspec, "SomeClass") == "RidiculousPlugin"
+
+    }
+
+    def "androidClassName returns orElse value if ios is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidClassName(pubspec, "SomeClass") == "SomeClass"
+
+    }
+
+    def "androidClassName returns orElse value if ios pluginClass is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass:
+                
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidClassName(pubspec, "SomeClass") == "SomeClass"
+
+    }
+
+    def "androidClassName returns value from YAML if present" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+                    pluginClass: RidiculousPlugin
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidClassName(pubspec, "SomeClass") == "RidiculousPlugin"
+
+    }
+
+    def "androidPackageName returns orElse value if ios is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidPackageName(pubspec) == ""
+
+    }
+
+    def "androidPackageName returns orElse value if ios pluginClass is null" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package:
+                    pluginClass:
+                
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidPackageName(pubspec) == ""
+
+    }
+
+    def "androidPackageName returns value from YAML if present" () {
+        given:
+        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
+        yaml.write("""
+            name: ridiculous_plugin
+            flutter:
+              plugin:
+                platforms:
+                  android:
+                    package: some.company.ridiculous_plugin
+                    pluginClass: RidiculousPlugin
+                  ios:
+                    pluginClass: RidiculousPlugin
+        """)
+
+        when:
+        def pubspec = PubspecKt.toPubspec(yaml)
+
+        then:
+        PubspecKt.androidPackageName(pubspec) == "some.company.ridiculous_plugin"
+
+    }
 }

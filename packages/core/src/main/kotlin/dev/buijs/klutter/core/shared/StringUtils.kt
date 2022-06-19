@@ -65,15 +65,42 @@ internal fun String.toCamelCase(): String {
  *
  * @return nested datatype if found or value of this String if not.
  */
-internal fun String.unwrapFromList(): String = """List<([^>]+?)>"""
-    .toRegex().find(this)
-    ?.let { it.groupValues[1] }
-    ?:this
+internal fun String.unwrapFromList(): String {
+
+    // Check if current String value is a List.
+    val match = """List<([^>]+?)>""".toRegex().find(this)
+
+        // Return current value if no match found.
+        ?: return this
+
+    // Return the extract value from within the List type.
+    return match.groupValues[1]
+
+}
 
 /**
  * Extract the class name from a (sub) String which contains a single class definition.
  */
-internal fun String.findClassName(): String? = """class([^{]+?)\{"""
-    .toRegex().find(this.replace("\n", ""))
-    ?.let { it.groupValues[1] }
-    ?.trim()
+internal fun String.findClassName(): String? {
+
+    // Remove linebreaks to make regex matching easier.
+    val it = replace("\n", "")
+
+    // Check if current String value contains 'class {'.
+    val match = """class([^{]+?)\{""".toRegex().find(it)
+
+        // Return null if no match found
+        ?: return null
+
+    // Return the extract class name.
+    return match.groupValues[1].trim()
+
+}
+
+/**
+ * @param [group] Int value group to return.
+ * @return String value from MatchResult without any whitespaces.
+ */
+internal fun MatchResult.groupValueWithoutSpaces(
+    group: Int,
+): String = groupValues[group].filter { !it.isWhitespace() }

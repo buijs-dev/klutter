@@ -1,4 +1,6 @@
-[<img src="./logo_animated.gif" width="200" border="5" alt="buijs software logo" />](https://github.com/buijs-dev)
+<div>
+<img src="./logo_animated.gif" width="200" border="5" alt="buijs software logo"/>
+</div>
 
 # Klutter
 [![GitHub](https://img.shields.io/github/license/buijs-dev/klutter?color=black&style=for-the-badge)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
@@ -14,16 +16,16 @@ by the Klutter framework. This plugin provides a set of Gradle tasks which will
 generate anything from settings files to Kotlin/Dart/Groovy code needed to make 
 Flutter and KMP work together.
 
-### Installation
+## Installation
 Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
 <br />
 <br />
 
-### Gradle Tasks
+## Gradle Tasks
 1. [klutterExcludeArchsPlatformPodspec](#Gradle%20Task:%20klutterExcludeArchsPlatformPodspec)
 2. [klutterGenerateAdapters](#Gradle%20Task:%20klutterGenerateAdapters)
 
-#### Gradle Task: klutterExcludeArchsPlatformPodspec
+### Gradle Task: klutterExcludeArchsPlatformPodspec
 A Flutter app using Kotlin Multiplatform code won't run on an iOS simulator.
 There's an easy fix for that: Exclude arm64 architecture from the podspec file.
 This task does so by adding the following 2 lines of code to the KMP module .podspec file:
@@ -33,7 +35,7 @@ This task does so by adding the following 2 lines of code to the KMP module .pod
  user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
 ```
 
-#### Gradle Task: klutterGenerateAdapters
+### Gradle Task: klutterGenerateAdapters
 The generate adapters task creates all the boilerplate code needed to make the Dart code in Flutter
 communicate with Kotlin in the Multiplatform module.
 
@@ -248,4 +250,3 @@ Example of invalid declaration (SomethingElse class should not have a body):
     }
 
 ```
-<br />

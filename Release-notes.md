@@ -1,6 +1,6 @@
 # Klutter release notes
 
-## 2022.r6.alpha
+## v2022.r6.alpha
 - [Bugfix] klutterExcludeArchsPlatformPodspec: A warning is now logged when adding exclusion fails.
 - [Bugfix] klutterGeneratedAdapters: Do not append Dart Adapter class with 'Plugin'.
 

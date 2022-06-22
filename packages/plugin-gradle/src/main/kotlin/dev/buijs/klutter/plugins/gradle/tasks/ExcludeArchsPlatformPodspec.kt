@@ -30,6 +30,6 @@ import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
  */
 internal open class ExcludeArchsPlatformPodspec: KlutterGradleTask() {
     override fun describe() {
-        project().platform.podspec().excludeArm64()
+        project().platform.podspec().excludeArm64("ios.deployment_target")
     }
 }

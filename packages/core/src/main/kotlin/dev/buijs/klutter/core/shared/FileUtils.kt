@@ -83,14 +83,14 @@ internal fun File.write(printer: KlutterPrinter) =
 /**
  * Visitor which adds EXCLUDED_ARCHS for iphone simulator if not present.
  *
- * These excludes are needed to be able to run the app on a simulator.
+ * These exclusions are needed to be able to run the app on a simulator.
  */
-fun File.excludeArm64() {
-    val regex = "Pod::Spec.new.+?do.+?\\|([^|]+?)\\|".toRegex()
+fun File.excludeArm64(insertAfter: String) {
+    val regex = "Pod::Spec.new.+?do.+?.([^|]+?).".toRegex()
 
     /** Check the prefix used in the podspec or default to 's'.
      *
-     *  By default the podspec file uses 's' as prefix.
+     *  By default, the podspec file uses 's' as prefix.
      *  In case a podspec does not use this default,
      *  this regex will find the custom prefix.
      *
@@ -106,17 +106,32 @@ fun File.excludeArm64() {
     // OUTPUT
     val newLines = mutableListOf<String>()
 
+    // Used to check if adding exclusion lines is done.
+    var hasAdded = false
+
     for(line in lines){
         newLines.add(line)
 
         // Check if line contains Flutter dependency (which should always be present).
         // If so then add the vendored framework dependency.
         // This is done so the line is added at a fixed point in the podspec.
-        if(line.filter { !it.isWhitespace() }.contains("$prefix.dependency'Flutter'")) {
+        if(line.filter { !it.isWhitespace() }.contains("$prefix.$insertAfter")) {
             newLines.add("""  $prefix.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
             newLines.add("""  $prefix.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
+            hasAdded = true
         }
 
+    }
+
+    if(!hasAdded) {
+        throw KlutterException("""
+          |Failed to add exclusions for arm64.
+          |
+          |Unable to find the following line in file $path:
+          |- '$prefix.dependency 'Flutter''
+          |
+          |""".trimMargin(),
+        )
     }
 
     // Write the editted line to the podspec file.

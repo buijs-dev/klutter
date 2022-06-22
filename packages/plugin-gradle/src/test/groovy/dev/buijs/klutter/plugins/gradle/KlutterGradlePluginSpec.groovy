@@ -155,7 +155,7 @@ class KlutterGradlePluginSpec extends Specification {
 
         given:
         def podspec = GroovyMock(FileUtilsKt) {
-            it.excludeArm64(_) >> decrement()
+            it.excludeArm64(_, _) >> decrement()
         }
 
         def platform = GroovyMock(Platform) {

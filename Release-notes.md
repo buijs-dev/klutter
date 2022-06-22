@@ -1,4 +1,16 @@
-# Klutter CLI release notes
+# Klutter release notes
+
+## 2022.r6.alpha
+- [Bugfix] klutterExcludeArchsPlatformPodspec: A warning is now logged when adding exclusion fails.
+- [Bugfix] klutterGeneratedAdapters: Do not append Dart Adapter class with 'Plugin'.
+
+## v2022-alpha-5
+- Removed all support for a Klutter project.
+- Removed redundant tasks.
+- Removed redundant DSL for Gradle build file.
+- Renamed generateAdapters task to klutterGenerateAdapters.
+- Add new task klutterExcludeArchsPlatformPodspec.
+- Refactored core internals for easier maintenance.
 
 ## v2022-alpha-3
 - Add support for generating boilerplate code in a Flutter project.

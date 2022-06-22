@@ -65,7 +65,7 @@ class AdapterGeneratorTask(
     }
 
     private fun AdapterData.ios(ios: IOS){
-        ios.podspec().excludeArm64()
+        ios.podspec().excludeArm64("dependency'Flutter'")
         ios.pathToPlugin.maybeCreate().write(
             IosAdapter(
                 pluginClassName = ios.pluginClassName,

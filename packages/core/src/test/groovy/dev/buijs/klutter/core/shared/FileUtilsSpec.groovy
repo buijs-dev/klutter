@@ -177,7 +177,7 @@ class FileUtilsSpec extends Specification {
         file.write("s.dependency'Flutter'")
 
         when:
-        FileUtilsKt.excludeArm64(file)
+        FileUtilsKt.excludeArm64(file, "dependency'Flutter'")
 
         then:
         with(file.text) {

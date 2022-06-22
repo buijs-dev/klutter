@@ -187,4 +187,18 @@ class FileUtilsSpec extends Specification {
 
     }
 
+    def "When excludeArm64 fails to add exclusions then an exception is thrown "(){
+
+        given:
+        def file = Files.createTempFile("","pubspec.yaml").toFile()
+
+        when:
+        FileUtilsKt.excludeArm64(file, "dependency'Flutter'")
+
+        then:
+        KlutterException e = thrown()
+        e.message.startsWith("Failed to add exclusions for arm64.")
+
+    }
+
 }

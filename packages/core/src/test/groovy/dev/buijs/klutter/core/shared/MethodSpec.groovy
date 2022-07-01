@@ -226,7 +226,8 @@ class MethodSpec extends Specification {
         
             class Platform {
         
-                @KlutterAdaptee("getBatteryLevel", requiresAndroidContext = true)
+                @AndroidContext
+                @KlutterAdaptee("getBatteryLevel")
                 suspend fun getBatteryLevel(context: Any): Double? {
                     return BatteryLevel(context).level.toDouble()
                 }

@@ -37,7 +37,6 @@ import kotlinx.serialization.json.Json
 @Target(AnnotationTarget.FUNCTION)
 expect annotation class KlutterAdaptee(
     val name: String,
-    val requiresAndroidContext: Boolean,
 )
 
 /**

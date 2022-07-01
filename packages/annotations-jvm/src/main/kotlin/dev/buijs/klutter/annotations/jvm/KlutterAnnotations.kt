@@ -4,7 +4,6 @@ package dev.buijs.klutter.annotations.jvm
 @Target(AnnotationTarget.FUNCTION)
 annotation class KlutterAdaptee(
     val name: String,
-    val requiresAndroidContext: Boolean = false,
 )
 
 @Retention(AnnotationRetention.SOURCE)

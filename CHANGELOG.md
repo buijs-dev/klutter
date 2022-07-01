@@ -1,9 +1,9 @@
 # Klutter release notes
 
-## v2022.r6-4.alpha
+## v2022.r6-5.alpha
 - Improved generated Flutter code to handle null values.
 - Removed AdapterResponse class from generated Flutter code and added klutter-dart import.
-- Added option value <I>requiresAndroidContext</I> to @KlutterAdaptee to pass Android Context.
+- Added AndroidContext annotation to pass Android Context.
 - [Bugfix] Fixed adding exclusions to Podfile when they are already added.
 
 ## v2022.r6-2.alpha

@@ -95,7 +95,7 @@ internal data class Method(
 )
 
 private const val ADAPTEE_REGEX =
-    """@KlutterAdaptee\((name=|)"([^"]+?)"(|,requiresAndroidContext=(true|false))\)(suspend|)fun([^(]+?)\((|\w+?:\w+?)\):([^{=]+?)[{=]"""
+    """(@AndroidContext|)@KlutterAdaptee\((name=|)"([^"]+?)"\)(@AndroidContext|)(suspend|)fun([^(]+?)\((|\w+?:\w+?)\):([^{=]+?)[{=]"""
 
 /**
  * The method-channel name which uses the package name
@@ -169,7 +169,7 @@ private fun List<String>.toMethod(
      *
      * Command should be 'greetingInfo'.
      */
-    val command = this[2]
+    val command = this[3]
 
     /**
      * The actual method call signature.
@@ -194,7 +194,8 @@ private fun List<String>.toMethod(
      * android context in the platform code.
      */
     val method = this[6].let {
-        val requiresAndroidContext = this[4].trim().lowercase() == "true"
+        val requiresAndroidContext =
+            this[1].trim() == "@AndroidContext" || this[5].trim() == "@AndroidContext"
 
         if(requiresAndroidContext) {
             "$className().$it(context)"

@@ -122,7 +122,7 @@ internal class FlutterAdapter(
 
                 if(nullable) {
                     """        if(value == null) {
-                    |          onNullValue!.call();
+                    |          onNullValue?.call();
                     |        } else {
                     |          onSuccess?.call(value!);
                     |        }"""

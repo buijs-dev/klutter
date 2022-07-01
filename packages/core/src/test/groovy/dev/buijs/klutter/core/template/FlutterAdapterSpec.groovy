@@ -472,7 +472,7 @@ class Adapter {
 
       if(caller.mounted) {
         onComplete?.call(response);        if(value == null) {
-          onNullValue!.call();
+          onNullValue?.call();
         } else {
           onSuccess?.call(value!);
         }      }

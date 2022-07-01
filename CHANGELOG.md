@@ -1,5 +1,17 @@
 # Klutter release notes
 
+## v2022.r6-4.alpha
+- Improved generated Flutter code to handle null values.
+- Removed AdapterResponse class from generated Flutter code and added klutter-dart import.
+- Added option value <I>requiresAndroidContext</I> to @KlutterAdaptee to pass Android Context.
+- [Bugfix] Fixed adding exclusions to Podfile when they are already added.
+
+## v2022.r6-2.alpha
+- [Bugfix] Fixed missing dart:convert import in generated flutter adapter class.
+
+## v2022.r6-1.alpha
+- [Bugfix] Fixed standard nullable fields to be incorrectly flagged as custom datatype.
+
 ## v2022.r6.alpha
 - [Bugfix] klutterExcludeArchsPlatformPodspec: A warning is now logged when adding exclusion fails.
 - [Bugfix] klutterGeneratedAdapters: Do not append Dart Adapter class with 'Plugin'.

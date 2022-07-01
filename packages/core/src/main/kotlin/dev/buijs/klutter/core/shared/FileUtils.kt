@@ -86,6 +86,25 @@ internal fun File.write(printer: KlutterPrinter) =
  * These exclusions are needed to be able to run the app on a simulator.
  */
 fun File.excludeArm64(insertAfter: String) {
+
+    var hasExcludedPod = false
+
+    var hasExcludedUsr = false
+
+    val pod = ".pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
+
+    val usr = ".user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
+
+    val text = readText()
+
+    if(text.contains(pod)) {
+        hasExcludedPod = true
+    }
+
+    if(text.contains(usr)) {
+        hasExcludedUsr = true
+    }
+
     val regex = "Pod::Spec.new.+?do.+?.([^|]+?).".toRegex()
 
     /** Check the prefix used in the podspec or default to 's'.
@@ -96,7 +115,7 @@ fun File.excludeArm64(insertAfter: String) {
      *
      *  If not found then 's' is used.
      */
-    val fromRegex = regex.find(readText())
+    val fromRegex = regex.find(text)
 
     val prefix = if(fromRegex == null) "s" else fromRegex.groupValues[1]
 
@@ -106,9 +125,6 @@ fun File.excludeArm64(insertAfter: String) {
     // OUTPUT
     val newLines = mutableListOf<String>()
 
-    // Used to check if adding exclusion lines is done.
-    var hasAdded = false
-
     for(line in lines){
         newLines.add(line)
 
@@ -116,14 +132,18 @@ fun File.excludeArm64(insertAfter: String) {
         // If so then add the vendored framework dependency.
         // This is done so the line is added at a fixed point in the podspec.
         if(line.filter { !it.isWhitespace() }.contains("$prefix.$insertAfter")) {
-            newLines.add("""  $prefix.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
-            newLines.add("""  $prefix.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }""")
-            hasAdded = true
+            newLines.add("""  $prefix$pod""")
+            newLines.add("""  $prefix$usr""")
+            hasExcludedPod = true
+            hasExcludedUsr = true
         }
 
     }
 
-    if(!hasAdded) {
+    if(hasExcludedPod && hasExcludedUsr) {
+        // Write the editted line to the podspec file.
+        writeText(newLines.joinToString("\n") { it })
+    } else {
         throw KlutterException("""
           |Failed to add exclusions for arm64.
           |
@@ -133,8 +153,5 @@ fun File.excludeArm64(insertAfter: String) {
           |""".trimMargin(),
         )
     }
-
-    // Write the editted line to the podspec file.
-    writeText(newLines.joinToString("\n") { it })
 
 }

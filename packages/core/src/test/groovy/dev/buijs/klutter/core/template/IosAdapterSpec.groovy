@@ -42,47 +42,47 @@ class IosAdapterSpec extends Specification {
         CoreTestUtil.verify(adapter, classBody)
 
         where:
-        classBody = """
-            import Flutter
-            import UIKit
-            import Platform
-            
-            public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
-              public static func register(with registrar: FlutterPluginRegistrar) {
-                let channel = FlutterMethodChannel(name: "foo.bar.super_awesome", binaryMessenger: registrar.messenger())
-                let instance = SwiftSuperAwesomePlugin()
-                registrar.addMethodCallDelegate(instance, channel: channel)
-              }
-            
-              public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-                switch call.method {
-                    case "doFooBar":
-                        self.doFooBar(result: result)
-                    case "notDoFooBar":
-                        self.notDoFooBar(result: result)
-                    case "complexityGetter":
-                        self.complexityGetter(result: result)
-                    default:
-                        result(FlutterMethodNotImplemented)
-                }
-              }
-            
-                func doFooBar(result: @escaping FlutterResult) {
-                    result(FooBar().zeta())
-                }
-            
-                func notDoFooBar(result: @escaping FlutterResult) {
-                    result(FooBar().beta())
-                }
-            
-                func complexityGetter(result: @escaping FlutterResult) {
-                    ComplexFoo().bar { data, error in
-                        if let response = data { result(response.toKJson()) }
-            
-                        if let failure = error { result(failure) }
-                 }
-                 }
-                }"""
+        classBody =
+                 """import Flutter
+                    import UIKit
+                    import Platform
+                    
+                    public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
+                      public static func register(with registrar: FlutterPluginRegistrar) {
+                        let channel = FlutterMethodChannel(name: "foo.bar.super_awesome", binaryMessenger: registrar.messenger())
+                        let instance = SwiftSuperAwesomePlugin()
+                        registrar.addMethodCallDelegate(instance, channel: channel)
+                      }
+                    
+                      public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+                        switch call.method {
+                            case "doFooBar":
+                                self.doFooBar(result: result)
+                            case "notDoFooBar":
+                                self.notDoFooBar(result: result)
+                            case "complexityGetter":
+                                self.complexityGetter(result: result)
+                            default:
+                                result(FlutterMethodNotImplemented)
+                        }
+                      }
+                    
+                        func doFooBar(result: @escaping FlutterResult) {
+                            result(FooBar().zeta())
+                        }
+                    
+                        func notDoFooBar(result: @escaping FlutterResult) {
+                            result(FooBar().beta())
+                        }
+                    
+                        func complexityGetter(result: @escaping FlutterResult) {
+                            ComplexFoo().bar(context: "") { data, error in
+                                if let response = data { result(response.toKJson()) }
+                    
+                                if let failure = error { result(failure) }
+                         }
+                         }
+                        }"""
     }
 
 }

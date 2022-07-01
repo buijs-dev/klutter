@@ -62,6 +62,7 @@ internal class IosAdapter(
     }
 
     private fun Method.print(): String {
+        val method = method.replace("(context)", """(context: "")""")
         return if(async) {
             """|    func ${command}(result: @escaping FlutterResult) {
                |        ${method.removeSuffix("()")} { data, error in

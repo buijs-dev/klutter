@@ -11,7 +11,8 @@ class TestData {
             "platform.Greeting",
             "Greeting().greeting()",
             false,
-            "String"
+            "String",
+            false
     )
 
     def static complexityMethods = [
@@ -21,6 +22,7 @@ class TestData {
                     "FooBar().zeta()",
                     false,
                     "String",
+                    false
             ),
             new Method(
                     "notDoFooBar",
@@ -28,13 +30,15 @@ class TestData {
                     "FooBar().beta()",
                     false,
                     "int",
+                    false
             ),
             new Method(
                     "complexityGetter",
                     "io.foo.bar.ComplexFoor",
-                    "ComplexFoo().bar()",
+                    "ComplexFoo().bar(context)",
                     true,
                     "List<Complex>",
+                    false
             )
     ]
 
@@ -45,6 +49,7 @@ class TestData {
                     "FooBar().zeta()",
                     false,
                     "String",
+                    false
             ),
             new Method(
                     "notDoFooBar",
@@ -52,6 +57,7 @@ class TestData {
                     "FooBar().beta()",
                     false,
                     "int",
+                    false
             ),
             new Method(
                     "fooBarBinary",
@@ -59,6 +65,7 @@ class TestData {
                     "FooBar().trueOrFalse()",
                     false,
                     "bool",
+                    false
             ),
             new Method(
                     "twoFoo4You",
@@ -66,6 +73,7 @@ class TestData {
                     "FooBar().makeItADouble()",
                     false,
                     "double",
+                    false
             ),
             new Method(
                     "getExoticFoo",
@@ -73,6 +81,7 @@ class TestData {
                     "FooBar().exotic()",
                     false,
                     "ExoticFoo",
+                    false
             ),
             new Method(
                     "manyFooBars",
@@ -80,6 +89,7 @@ class TestData {
                     "FooBar().moreManyMore()",
                     true,
                     "List<String>",
+                    false
             ),
             new Method(
                     "maybeFoos",
@@ -87,6 +97,7 @@ class TestData {
                     "FooBar().moreMaybeFoos()",
                     true,
                     "List<String>?",
+                    true
             ),
     ]
 

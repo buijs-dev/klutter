@@ -19,12 +19,13 @@ class MethodSpec extends Specification {
 
     def "Verify Method constructor"(){
         expect:
-        with(new Method("a", "b", "c", true, "String")){
+        with(new Method("a", "b", "c", true, "String", false)){
             it.command == "a"
             it.import == "b"
             it.method == "c"
             it.dataType == "String"
             it.async
+            !it.nullable
         }
     }
 
@@ -95,7 +96,7 @@ class MethodSpec extends Specification {
         "Int"           | "int"             | Language.DART
         "Double"        | "double"          | Language.DART
         "Boolean  "     | "bool"            | Language.DART
-        "  String"      | "String"          | Language.DART
+        "  String?"      | "String"          | Language.DART
         "int"           | "int"             | Language.DART
         "double"        | "double"          | Language.DART
         "bool"          | "bool"            | Language.DART
@@ -129,7 +130,7 @@ class MethodSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.message == "Failed to convert datatype. Lists may no contains null values: 'List<String?>'"
+        e.message == "Failed to convert datatype. Lists may not contain null values: 'List<String?>'"
 
         where:
         classBody = """
@@ -137,24 +138,24 @@ class MethodSpec extends Specification {
 
         import dev.buijs.klutter.annotations.Annotations
         
-        class FakeClass {
-            @KlutterAdaptee(name = "DartMaul")
-            fun foo(): String {
-                return "Maul"
+            class FakeClass {
+                @KlutterAdaptee(name = "DartMaul")
+                fun foo(): String {
+                    return "Maul"
+                }
+            
+                @KlutterAdaptee(name = "BabyYoda")
+                fun fooBar(): List<String?> {
+                    return listOf("baz")
+                }
             }
-        
-            @KlutterAdaptee(name = "BabyYoda")
-            fun fooBar(): List<String?> {
-                return listOf("baz")
+            
+            @Serializable
+            @KlutterResponse
+            enum class {
+                @SerialName("boom") BOOM,
+                @SerialName("boom boom") BOOM_BOOM,
             }
-        }
-        
-        @Serializable
-        @KlutterResponse
-        enum class {
-            @SerialName("boom") BOOM,
-            @SerialName("boom boom") BOOM_BOOM,
-        }
         """
     }
 
@@ -190,6 +191,47 @@ class MethodSpec extends Specification {
             @SerialName("boom") BOOM,
             @SerialName("boom boom") BOOM_BOOM,
         }
+        """
+    }
+
+    def "[toMethod] returns correct data types if context is an argument"() {
+        given:
+        def file = Files.createTempFile("Platform", "kt").toFile()
+
+        and:
+        file.write(classBody)
+
+        when:
+        def methods = MethodKt.toMethods(file, Language.KOTLIN)
+
+        then:
+        methods.size() == 1
+
+        and:
+        def method = methods.first()
+
+        and:
+        method.nullable
+        method.async
+        method.command == "getBatteryLevel"
+        method.import == "com.example.batterylevel.platform.Platform"
+        method.method == "Platform().getBatteryLevel(context)"
+        method.dataType == "Double"
+
+        where:
+        classBody = """
+            package com.example.batterylevel.platform
+        
+            import dev.buijs.klutter.annotations.kmp.*
+        
+            class Platform {
+        
+                @KlutterAdaptee("getBatteryLevel", requiresAndroidContext = true)
+                suspend fun getBatteryLevel(context: Any): Double? {
+                    return BatteryLevel(context).level.toDouble()
+                }
+        
+            }
         """
     }
 

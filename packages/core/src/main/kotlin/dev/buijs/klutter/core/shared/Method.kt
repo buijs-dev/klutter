@@ -24,6 +24,7 @@ package dev.buijs.klutter.core.shared
 
 import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.project.Pubspec
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.File
 
 private typealias Lang = Language
@@ -85,10 +86,16 @@ internal data class Method(
      * Can be a standard Kotlin/Dart type as defined in [DartKotlinMap]
      * or a custom defined type.
      */
-    val dataType: String)
+    val dataType: String,
 
-private const val REGEX =
-    """@KlutterAdaptee\(("|[^"]+?")([^"]+?)".+?(suspend|)fun([^(]+?\([^:]+?):([^{]+?)\{"""
+    /**
+     * [Boolean] value indicating the return value can be null.
+     */
+    val nullable: Boolean = false,
+)
+
+private const val ADAPTEE_REGEX =
+    """@KlutterAdaptee\((name=|)"([^"]+?)"(|,requiresAndroidContext=(true|false))\)(suspend|)fun([^(]+?)\((|\w+?:\w+?)\):([^{=]+?)[{=]"""
 
 /**
  * The method-channel name which uses the package name
@@ -115,10 +122,14 @@ internal fun File.toMethods(
         val b = body.filter { !it.isWhitespace() }
         val c = body.findClassName()!!
         methods.addAll(
-            REGEX.toRegex().findAll(b)
+            ADAPTEE_REGEX.toRegex().findAll(b)
                 .toList()
                 .map { match -> match.groupValues }
-                .map { values -> values.toMethod(c, packageName, language) }
+                .map { values -> values.toMethod(
+                    className = c,
+                    packageName = packageName,
+                    language = language,
+                ) }
         )
     }
 
@@ -126,7 +137,7 @@ internal fun File.toMethods(
 }
 
 /**
- * @return [Method] based of [REGEX] result.
+ * @return [Method] based of [ADAPTEE_REGEX] result.
  */
 private fun List<String>.toMethod(
     className: String,
@@ -175,18 +186,38 @@ private fun List<String>.toMethod(
      * ```
      *
      * Method should be 'Bar().infoAboutGreeting()'.
+     *
+     * If the method is annotated with @AndroidContext
+     * then context variable is added to the method call.
+     * The context variable is created in the Android plugin class
+     * and then passed to this method enabling the usage of
+     * android context in the platform code.
      */
-    val method = "$className().${this[4]}"
+    val method = this[6].let {
+        val requiresAndroidContext = this[4].trim().lowercase() == "true"
+
+        if(requiresAndroidContext) {
+            "$className().$it(context)"
+        } else {
+            "$className().$it()"
+        }
+
+    }
 
     /**
      * Boolean value indicating a method is asynchronous.
      */
-    val async = this[3] == "suspend"
+    val async = this[5] == "suspend"
 
     /**
      * The data type of the return value.
      */
-    val type = this[5].asDataType(language)
+    val type = this[8].asDataType(language)
+
+    /**
+     * Indicator of value possibly returning null.
+     */
+    val nullable = this[8].endsWith("?")
 
     return Method(
         import = import,
@@ -194,6 +225,7 @@ private fun List<String>.toMethod(
         method = method,
         async = async,
         dataType = type,
+        nullable = nullable,
     )
 }
 
@@ -223,7 +255,7 @@ private fun String.asDataType(language: Lang): String {
     /**
      * Remove any whitespaces if present.
      */
-    val value = this.trim().verifyListWithoutNull()
+    val value = this.trim().verifyListWithoutNull().removeSuffixIfPresent("?")
 
     /**
      * Lookup this [String] value in the DartKotlinMap.
@@ -264,7 +296,7 @@ private fun String.asDataType(language: Lang): String {
 private fun String.verifyListWithoutNull(): String {
     return if("""List<[^>]+?\?>""".toRegex().find(this) != null) {
         throw KlutterException(
-            "Failed to convert datatype. Lists may no contains null values: '$this'"
+            "Failed to convert datatype. Lists may not contain null values: '$this'"
         )
     } else this
 }

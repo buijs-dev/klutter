@@ -68,7 +68,7 @@ expect annotation class KlutterResponse()
  * Android adapter.
  */
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FUNCTION)
 expect annotation class AndroidContext()
 
 @Serializable

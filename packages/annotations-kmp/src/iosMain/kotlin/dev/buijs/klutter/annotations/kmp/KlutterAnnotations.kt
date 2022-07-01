@@ -15,5 +15,5 @@ actual annotation class KlutterAdapter()
 actual annotation class KlutterResponse()
 
 @Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FUNCTION)
 actual annotation class AndroidContext()

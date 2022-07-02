@@ -1,5 +1,5 @@
 <div>
-<img src="./logo_animated.gif" width="200" border="5" alt="buijs software logo"/>
+<img src="./logo_animated.gif" width="200" alt="buijs software logo"/>
 </div>
 
 # Klutter
@@ -52,9 +52,15 @@ The generated Dart library then gives access to any native code written in Kotli
 
 ### Use annotations
 The klutterGenerateAdapters task will scan for the following annotations:
+- AndroidContext
 - KlutterAdapter
 - KlutterAdaptee
 - KlutterResponse
+
+**AndroidContext**\
+This annotation is complementary to the KlutterAdaptee annotation. Adding this annotation to a method in the KMP module
+enables the usage of Android Context in your platform code. See the battery app [tutorial](https://buijs.dev/klutter-2/) 
+for an example of it's usage.
 
 **KlutterAdapter**\
 The MainActivity in the flutter/android/app source should be annotated with the **@KlutterAdapter** annotation.

@@ -17,9 +17,8 @@ generate anything from settings files to Kotlin/Dart/Groovy code needed to make
 Flutter and KMP work together.
 
 ## Installation
-Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
-<br />
-<br />
+- Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
+- For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 
 ## Gradle Tasks
 1. [klutterExcludeArchsPlatformPodspec](#Gradle%20Task:%20klutterExcludeArchsPlatformPodspec)

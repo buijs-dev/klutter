@@ -42,6 +42,14 @@ class FlutterAdapterSpec extends Specification {
         CoreTestUtil.verify(adapter, expected1)
     }
 
+    def "Verify there is no convert import if there is no custom datatype"() {
+        given:
+        def adapter = new FlutterAdapter("Adapter", "KLUTTER", [], [], [])
+
+        expect:
+        !adapter.print().contains("import 'dart:convert';")
+    }
+
     def "FlutterAdapter should convert enumerations and messages"() {
         given:
         def methods = TestData.fooBarMethods
@@ -126,7 +134,7 @@ class Adapter {
       return response;
     }
   }
-
+  
   static Future<AdapterResponse<int>> notDoFooBar(State caller, {
     void Function(int)? onSuccess,
     void Function(Exception)? onFailure,
@@ -174,7 +182,7 @@ class Adapter {
 
     try {
          
-               final jsonResponse = await _channel.invokeMethod('complexityGetter');
+      final jsonResponse = await _channel.invokeMethod('complexityGetter');
       final json = jsonDecode(jsonResponse);
       final value = List<Complex>.from(json.map((o) => Complex.fromJson(o)));
       final AdapterResponse<List<Complex>> response = 
@@ -182,7 +190,7 @@ class Adapter {
 
       if(caller.mounted) {
         onComplete?.call(response);      
-          onSuccess?.call(value);
+        onSuccess?.call(value);
       }
 
       return response;
@@ -231,13 +239,13 @@ class Adapter {
   }) async {
 
     try {
-    final json = await _channel.invokeMethod('doFooBar');
+      final json = await _channel.invokeMethod('doFooBar');
       final value = json.toString();
       final AdapterResponse<String> response = 
           AdapterResponse.success(value);
 
       if(caller.mounted) {
-        onComplete?.call(response);      
+          onComplete?.call(response);      
           onSuccess?.call(value);
       }
 
@@ -261,6 +269,48 @@ class Adapter {
     }
   }
 
+static Future<AdapterResponse<String>> maybeFooBar(State caller, {
+    void Function(String)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<String>)? onComplete,
+  }) async {
+
+    try {
+      final json = await _channel.invokeMethod('maybeFooBar');
+      final value = json?.toString();
+      final AdapterResponse<String> response = 
+          AdapterResponse.success(value);
+
+      if(caller.mounted) {
+        onComplete?.call(response);
+        if(value == null) {
+            onNullValue?.call();
+        } else {
+           onSuccess?.call(value!);
+        }
+      }
+
+      return response;
+      
+    } catch (e) {
+      
+      final exception = e is Error 
+          ? Exception(e.stackTrace) 
+          : e as Exception;
+      
+      final AdapterResponse<String> response = 
+          AdapterResponse.failure(exception);
+
+      if(caller.mounted) {
+        onComplete?.call(response);
+        onFailure?.call(exception);
+      }
+
+      return response;
+    }
+  }
+  
   static Future<AdapterResponse<int>> notDoFooBar(State caller, {
     void Function(int)? onSuccess,
     void Function(Exception)? onFailure,
@@ -269,13 +319,13 @@ class Adapter {
   }) async {
 
     try {
-    final json = await _channel.invokeMethod('notDoFooBar');
+      final json = await _channel.invokeMethod('notDoFooBar');
       final value = json.toInt();
       final AdapterResponse<int> response = 
           AdapterResponse.success(value);
 
       if(caller.mounted) {
-        onComplete?.call(response);      
+          onComplete?.call(response);      
           onSuccess?.call(value);
       }
 
@@ -307,14 +357,14 @@ class Adapter {
   }) async {
 
     try {
-    final json = await _channel.invokeMethod('fooBarBinary');
+      final json = await _channel.invokeMethod('fooBarBinary');
       final value = json;
       final AdapterResponse<bool> response = 
           AdapterResponse.success(value);
 
       if(caller.mounted) {
         onComplete?.call(response);      
-          onSuccess?.call(value);
+        onSuccess?.call(value);
       }
 
       return response;
@@ -345,7 +395,7 @@ class Adapter {
   }) async {
 
     try {
-    final json = await _channel.invokeMethod('twoFoo4You');
+      final json = await _channel.invokeMethod('twoFoo4You');
       final value = json.toDouble();
       final AdapterResponse<double> response = 
           AdapterResponse.success(value);
@@ -384,7 +434,7 @@ class Adapter {
 
     try {
          
-               final jsonResponse = await _channel.invokeMethod('getExoticFoo');
+      final jsonResponse = await _channel.invokeMethod('getExoticFoo');
       final json = jsonDecode(jsonResponse);
       final value = ExoticFoo.fromJson(json);
       final AdapterResponse<ExoticFoo> response = 
@@ -392,7 +442,7 @@ class Adapter {
 
       if(caller.mounted) {
         onComplete?.call(response);      
-          onSuccess?.call(value);
+        onSuccess?.call(value);
       }
 
       return response;
@@ -424,7 +474,7 @@ class Adapter {
 
     try {
          
-               final jsonResponse = await _channel.invokeMethod('manyFooBars');
+      final jsonResponse = await _channel.invokeMethod('manyFooBars');
       final json = jsonDecode(jsonResponse);
       final value = List<String>.from(json.map((o) => o.toString()));
       final AdapterResponse<List<String>> response = 
@@ -464,18 +514,20 @@ class Adapter {
 
     try {
          
-               final jsonResponse = await _channel.invokeMethod('maybeFoos');
+      final jsonResponse = await _channel.invokeMethod('maybeFoos');
       final json = jsonDecode(jsonResponse);
       final value = List<String>.from(json?.map((o) => o.toString()));
       final AdapterResponse<List<String>?> response = 
           AdapterResponse.success(value);
 
       if(caller.mounted) {
-        onComplete?.call(response);        if(value == null) {
-          onNullValue?.call();
+        onComplete?.call(response);        
+        if(value == null) {
+            onNullValue?.call();
         } else {
-          onSuccess?.call(value!);
-        }      }
+           onSuccess?.call(value!);
+        }      
+     }
 
       return response;
       
@@ -503,7 +555,7 @@ class Adapter {
 class Foo {
   
   Foo({
-required this.field1,
+    required this.field1,
   });
   
 factory Foo.fromJson(dynamic json) {

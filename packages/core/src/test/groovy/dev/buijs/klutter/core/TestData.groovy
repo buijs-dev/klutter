@@ -52,6 +52,14 @@ class TestData {
                     false
             ),
             new Method(
+                    "maybeFooBar",
+                    "io.foo.bar.FooBar",
+                    "FooBar().zeta()",
+                    false,
+                    "String",
+                    true
+            ),
+            new Method(
                     "notDoFooBar",
                     "io.foo.bar.FooBar",
                     "FooBar().beta()",

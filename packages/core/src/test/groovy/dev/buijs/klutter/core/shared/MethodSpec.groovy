@@ -219,21 +219,58 @@ class MethodSpec extends Specification {
         method.dataType == "Double"
 
         where:
-        classBody = """
-            package com.example.batterylevel.platform
-        
-            import dev.buijs.klutter.annotations.kmp.*
-        
-            class Platform {
-        
-                @AndroidContext
-                @KlutterAdaptee("getBatteryLevel")
-                suspend fun getBatteryLevel(context: Any): Double? {
-                    return BatteryLevel(context).level.toDouble()
-                }
-        
-            }
-        """
+        classBody << [
+                """
+                    package com.example.batterylevel.platform
+                
+                    import dev.buijs.klutter.annotations.kmp.*
+                
+                    class Platform {
+                
+                        @AndroidContext
+                        @KlutterAdaptee("getBatteryLevel")
+                        suspend fun getBatteryLevel(context: Any): Double? {
+                            return BatteryLevel(context).level.toDouble()
+                        }
+                
+                    }
+                """,
+
+                """
+                    package com.example.batterylevel.platform
+                
+                    import dev.buijs.klutter.annotations.kmp.*
+                
+                    class Platform {
+                
+                       
+                        @KlutterAdaptee("getBatteryLevel")
+                        @AndroidContext
+                        suspend fun getBatteryLevel(context: Any): Double? {
+                            return BatteryLevel(context).level.toDouble()
+                        }
+                
+                    }
+                """,
+
+                """
+                    package com.example.batterylevel.platform
+                
+                    import dev.buijs.klutter.annotations.kmp.*
+                
+                    class Platform {
+                
+                        @AndroidContext
+                        @KlutterAdaptee("getBatteryLevel")
+                        @AndroidContext
+                        suspend fun getBatteryLevel(context: Any): Double? {
+                            return BatteryLevel(context).level.toDouble()
+                        }
+                
+                    }
+                """
+
+        ]
     }
 
     def "[packageName] returns null if file contains no package name"() {

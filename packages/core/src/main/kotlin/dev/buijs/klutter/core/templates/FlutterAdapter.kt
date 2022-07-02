@@ -121,7 +121,8 @@ internal class FlutterAdapter(
                |        onComplete?.call(response);""" +
 
                 if(nullable) {
-                    """        if(value == null) {
+                    """        
+                    |        if(value == null) {
                     |          onNullValue?.call();
                     |        } else {
                     |          onSuccess?.call(value!);

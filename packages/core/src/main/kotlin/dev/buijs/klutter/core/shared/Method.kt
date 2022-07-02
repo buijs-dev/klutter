@@ -195,7 +195,7 @@ private fun List<String>.toMethod(
      */
     val method = this[6].let {
         val requiresAndroidContext =
-            this[1].trim() == "@AndroidContext" || this[5].trim() == "@AndroidContext"
+            this[1].trim() == "@AndroidContext" || this[4].trim() == "@AndroidContext"
 
         if(requiresAndroidContext) {
             "$className().$it(context)"

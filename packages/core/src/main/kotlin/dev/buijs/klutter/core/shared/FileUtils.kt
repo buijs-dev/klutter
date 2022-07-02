@@ -105,7 +105,7 @@ fun File.excludeArm64(insertAfter: String) {
         hasExcludedUsr = true
     }
 
-    val regex = "Pod::Spec.new.+?do.+?.([^|]+?).".toRegex()
+    val regex = "Pod::Spec.new.+?do.+?.([^|]+).".toRegex()
 
     /** Check the prefix used in the podspec or default to 's'.
      *
@@ -132,10 +132,17 @@ fun File.excludeArm64(insertAfter: String) {
         // If so then add the vendored framework dependency.
         // This is done so the line is added at a fixed point in the podspec.
         if(line.filter { !it.isWhitespace() }.contains("$prefix.$insertAfter")) {
-            newLines.add("""  $prefix$pod""")
-            newLines.add("""  $prefix$usr""")
-            hasExcludedPod = true
-            hasExcludedUsr = true
+
+            if(!hasExcludedPod) {
+                newLines.add("""  $prefix$pod""")
+                hasExcludedPod = true
+            }
+
+            if(!hasExcludedUsr) {
+                newLines.add("""  $prefix$usr""")
+                hasExcludedUsr = true
+            }
+
         }
 
     }
@@ -148,7 +155,7 @@ fun File.excludeArm64(insertAfter: String) {
           |Failed to add exclusions for arm64.
           |
           |Unable to find the following line in file $path:
-          |- '$prefix.dependency 'Flutter''
+          |- '$prefix.$insertAfter'
           |
           |""".trimMargin(),
         )

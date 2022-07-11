@@ -1,7 +1,4 @@
 @file:Suppress("UNUSED_VARIABLE")
-
-import dev.buijs.klutter.Repository
-
 plugins {
     kotlin("plugin.serialization") version "1.7.10"
     kotlin("multiplatform")
@@ -94,11 +91,11 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = Repository.username
-                password = Repository.password
+                username = dev.buijs.klutter.Repository.username
+                password = dev.buijs.klutter.Repository.password
             }
 
-            url = Repository.endpoint
+            url = dev.buijs.klutter.Repository.endpoint
         }
     }
 }

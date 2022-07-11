@@ -1,4 +1,4 @@
-GenerateAdapterGradleTaskSpec.#!/bin/sh
+#!/bin/sh
 #stop script on failure
 set -e
 
@@ -15,9 +15,9 @@ echo " ____________
 
 echo "\0/ Klutter: step: build core modules"
 echo "------------------"
-./gradlew clean -p "packages/core"
-./gradlew build -p "packages/core"
+./gradlew clean -p "lib/core"
+./gradlew build -p "lib/core"
 
 echo "\0/ Klutter: step: publish core modules"
 echo "------------------"
-./gradlew publish -p "packages/core"
+./gradlew publish -p "lib/core"

@@ -1,7 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
-./_publish.properties
-./_develop.properties
-./_release.properties
+../src/main/resources/_publish.properties
+_develop.properties
+_release.properties
 ./publish_plugins-release.sh
 /_develop.properties
 /_publish.properties
@@ -11,3 +11,4 @@
 /gradlew
 /gradlew.bat
 /gradle/wrapper/gradle-wrapper.properties
+/publish_gradle_plugin_release.sh

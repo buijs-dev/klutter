@@ -1,0 +1,103 @@
+/* Copyright (c) 2021 - 2022 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package dev.buijs.klutter.ui.templates
+
+import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.ui.KomposeRoute
+
+/**
+ *
+ */
+internal class NavigatorTemplate(
+    private val routes: List<KomposeRoute>,
+): KlutterPrinter {
+
+    override fun print(): String {
+        val dollar = "$"
+        return """ 
+            |import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+            |import 'package:flutter/widgets.dart';
+            |
+            |${routes.joinToString("\n") { it.asImports() }}
+            |
+            |class KomposeNavigator {
+            |  KomposeNavigator(BuildContext context) {
+            |    onGenerateRoute = (settings) {
+            |      switch (settings.name) {
+            |${routes.joinToString("\n") { it.toPageRoute() }}
+            |        default:
+            |          return platformPageRoute<PlatformScaffold>(
+            |            context: context,
+            |            builder: (_) => PlatformScaffold(
+            |              body: Center(
+            |                child: Text("No route defined for $dollar{settings.name}"),
+            |              ),
+            |            ),
+            |          );
+            |      }
+            |    };
+            |  }
+            |
+            |${routes.joinToString("\n") { it.toStaticRoute() }}
+            |
+            |  late final RouteFactory onGenerateRoute;
+            |}
+            |
+            |abstract class KomposeRouteArgument<T> {
+            |  dynamic argument;
+            |
+            |  T dekompose();
+            |
+            |  static KomposeRouteArgument? get none => null;
+            |}
+            |""".trimMargin()
+
+    }
+
+    private fun KomposeRoute.toPageRoute(): String {
+        return if(hasNoArgConstructor) """
+            |        case ${name.lowercase()}Route:
+            |          return platformPageRoute<PlatformScaffold>(
+            |              context: context,
+            |              builder: (_) => $className.kompose(KomposeRouteArgument.none));
+        """.trimMargin()
+        else """
+            |        case ${name.lowercase()}Route:
+            |          return platformPageRoute<PlatformScaffold>(
+            |            context: context,
+            |            builder: (_) => $className.kompose(
+            |              ${className}KomposeRouteArgument.orNull(settings.arguments),
+            |            ),
+            |          );
+        """.trimMargin()
+    }
+
+    private fun KomposeRoute.toStaticRoute(): String {
+        return "static const String ${className.lowercase()}Route = '/${this.name}';"
+    }
+
+    private fun KomposeRoute.asImports(): String {
+        return "import '${className.lowercase()}.dart';"
+    }
+
+}

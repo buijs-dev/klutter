@@ -19,48 +19,38 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.ui.builder.notswiftui
 
-package dev.buijs.klutter.core.test
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.ui.Kompose
+import dev.buijs.klutter.core.shared.KlutterDSLBuilder
+import dev.buijs.klutter.ui.KomposeBody
 
-import spock.lang.Specification
+@DslMarker
+internal annotation class NotSwiftUIBuilderMarker
 
-import java.nio.file.Files
+@NotSwiftUIBuilderMarker
+class NotSwiftUIBuilder: KlutterDSLBuilder {
 
-/**
- * @author Gillian Buijs
- */
-class TestResourceSpec extends Specification {
+    private var child: Kompose? = null
 
-    def "Verify a resource is loaded as String" (){
+    fun SafeArea(lambda: SafeAreaBuilder.() -> Unit) {
+        if(child != null) {
+            throw KlutterException("Can not set multiple children at top level.")
+        }
 
-        given:
-        def resources = new TestResource()
-
-        when:
-        def content = resources.load("android_adapter")
-
-        then:
-        content != null
-        content != ""
-
+        child = SafeAreaBuilder().apply(lambda).build()
     }
 
-    def "Verify a resource is copied" (){
-
-        given:
-        def resources = new TestResource()
-        def target = Files.createTempDirectory("")
-        def actual = new File("${target.toFile().absolutePath}/foo.kt")
-
-        when:
-        resources.copy("android_adapter", actual)
-
-        then:
-        actual != null
-        actual.exists()
-        actual.text != null
-        actual.text != ""
-
+    fun Scaffold(lambda: ScaffoldBuilder.() -> Unit) {
+        if(child != null) {
+            throw KlutterException("Can not set multiple children at top level.")
+        }
+        child = ScaffoldBuilder().apply(lambda).build()
     }
+
+    override fun build() = KomposeBody(
+        child = child,
+    )
 
 }

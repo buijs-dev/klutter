@@ -19,12 +19,38 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.ui.builder.klutterui
 
-package dev.buijs.klutter.core.test
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.ui.Kompose
+import dev.buijs.klutter.core.shared.KlutterDSLBuilder
+import dev.buijs.klutter.ui.KomposeBody
 
-/**
- * Exception which indicates a problem configuring or executing a test.
- *
- * @author Gillian Buijs
- */
-class TestException(msg: String): Exception(msg)
+@DslMarker
+internal annotation class KlutterUIBuilderDSLMarker
+
+@KlutterUIBuilderDSLMarker
+class KlutterUIBuilder: KlutterDSLBuilder {
+
+    private var child: Kompose? = null
+
+    fun SafeArea(lambda: SafeAreaBuilder.() -> Unit) {
+        if(child != null) {
+            throw KlutterException("Can not set multiple children at top level.")
+        }
+
+        child = SafeAreaBuilder().apply(lambda).build()
+    }
+
+    fun Scaffold(lambda: ScaffoldBuilder.() -> Unit) {
+        if(child != null) {
+            throw KlutterException("Can not set multiple children at top level.")
+        }
+        child = ScaffoldBuilder().apply(lambda).build()
+    }
+
+    override fun build() = KomposeBody(
+        child = child,
+    )
+
+}

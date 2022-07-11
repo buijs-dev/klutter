@@ -1,6 +1,5 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import dev.buijs.klutter.ProjectVersions
 import dev.buijs.klutter.Repository
 
 plugins {
@@ -13,7 +12,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter"
-version = ProjectVersions.annotations
+version = dev.buijs.klutter.ProjectVersions.annotations
 
 kotlin {
 

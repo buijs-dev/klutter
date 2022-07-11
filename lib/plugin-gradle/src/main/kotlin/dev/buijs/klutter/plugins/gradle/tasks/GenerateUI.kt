@@ -20,30 +20,26 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.plugins.gradle.tasks
 
-@DslMarker
-internal annotation class KlutterPluginDSLMarker
-
-@KlutterPluginDSLMarker
-class KlutterPluginDSL: KlutterDSL<KlutterPluginBuilder> {
-    override fun configure(lambda: KlutterPluginBuilder.() -> Unit): KlutterPluginDTO {
-        return KlutterPluginBuilder().apply(lambda).build()
-    }
-}
-
-@KlutterPluginDSLMarker
-class KlutterPluginBuilder: KlutterDSLBuilder {
-
-    var name: String = ""
-
-    override fun build() = KlutterPluginDTO(name = name)
-
-}
+import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+import dev.buijs.klutter.ui.tasks.UiGeneratorTask
 
 /**
- * DTO for storing shared plugin configuration.
+ * Task to generate a Flutter UI.
+ *
+ * Views can be constructed using a Klutter Kompose DSL, being one of:
+ * - JetlagUI
+ * - KlutterUI
+ * - NotSwiftUI
+ *
+ * KlutterUI is the default DSL which resembles Flutter the most.
+ * JetlagUI is a DSL which is inspired by Jetpack Compose.
+ * NotSwiftUI is a DSL which is inspired by SwiftUI.
+ *
  */
-data class KlutterPluginDTO(
-    val name: String,
-): KlutterDTO
+internal open class GenerateUI : KlutterGradleTask() {
+    override fun describe() = project().let {
+        UiGeneratorTask(root = it.root).run()
+    }
+}

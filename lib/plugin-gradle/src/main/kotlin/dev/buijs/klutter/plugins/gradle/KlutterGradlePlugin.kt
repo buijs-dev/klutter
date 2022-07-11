@@ -25,6 +25,7 @@ package dev.buijs.klutter.plugins.gradle
 import dev.buijs.klutter.core.project.plugin
 import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
+import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -35,12 +36,14 @@ import java.io.File
 /**
  * Gradle plugin for Klutter Framework with the following tasks:
  * - klutterGenerateAdapters
+ * - klutterGenerateUI
  * - klutterExcludeArchsPlatformPodspec
  */
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create("klutter", KlutterGradleExtension::class.java)
         project.tasks.register("klutterGenerateAdapters", GenerateAdapters::class.java)
+        project.tasks.register("klutterGenerateUI", GenerateUI::class.java)
         project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
     }
 }

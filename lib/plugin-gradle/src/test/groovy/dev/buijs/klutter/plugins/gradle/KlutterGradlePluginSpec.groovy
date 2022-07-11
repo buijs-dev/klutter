@@ -46,11 +46,12 @@ class KlutterGradlePluginSpec extends Specification {
         def arr = taskContainer.toArray()
 
         and:
-        arr.size() == 2
+        arr.size() == 3
 
         and:
         def task = arr[0]
         def task2 = arr[1]
+        def task3 = arr[2]
 
         and:
         task != null
@@ -61,8 +62,13 @@ class KlutterGradlePluginSpec extends Specification {
         task2.toString() == "task ':klutterGenerateAdapters'"
 
         and:
+        task3 != null
+        task3.toString() == "task ':klutterGenerateUI'"
+
+        and:
         task.actions.size() == 1
         task2.actions.size() == 1
+        task3.actions.size() == 1
 
     }
 

@@ -60,7 +60,7 @@ hs_err_pid*
 /test-project/lib/generated/messages.dart
 /klutter-annotations/annotations-jvm/dev.properties
 /klutter-annotations/annotations-kmp/annotations_kmp.podspec
-/publish/publish_plugins-release.sh
+/lib-publish/publish_plugins-release.sh
 /klutter-annotations/build/
 /.gradle/
 /packages/gradle/
@@ -72,3 +72,13 @@ hs_err_pid*
 /gradlew
 /gradlew.bat
 /packages/core-test/src/main/resources/testkit-gradle.properties
+/packages/plugin-pub/checklist.txt
+/packages/plugin-pub/dartdoc.sh
+/packages/plugin-pub/format.sh
+/lib/plugin-pub/checklist.txt
+/lib/plugin-pub/dartdoc.sh
+/lib/plugin-pub/format.sh
+/lib/plugin-pub/pana.sh
+/lib-build/res/publish_gradle_plugin_release.sh
+/lib-build/src/main/resources/publish.properties
+/lib-build/tools/publish_gradle_plugin_release.sh

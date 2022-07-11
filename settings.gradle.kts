@@ -1,6 +1,6 @@
-include(":packages:annotations-jvm")
-include(":packages:annotations-kmp")
-include(":packages:core")
-include(":packages:core-test")
-include(":packages:plugin-gradle")
-rootProject.name = "klutter"
+include(":lib:annotations")
+include(":lib:core")
+include(":lib:kompose")
+include(":lib:plugin-gradle")
+include(":lib:test")
+includeBuild("lib-build")

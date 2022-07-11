@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.buijs.klutter"
-version = dev.buijs.klutter.ProjectVersions.annotations
+version = "0.16.0"
 
 kotlin {
 

@@ -1,0 +1,31 @@
+import dev.buijs.klutter.annotations.jvm.KomposeView
+import dev.buijs.klutter.ui.*
+import dev.buijs.klutter.ui.builder.JetlagScreen
+import dev.buijs.klutter.ui.builder.JetlagUI
+import dev.buijs.klutter.ui.viewmodel.Navigator
+
+@KomposeView
+class Home: JetlagUI(name = "Home") {
+
+    override fun screen(): JetlagScreen = {
+        SafeArea {
+            Scaffold {
+                Center {
+                    Column {
+                        children(
+                            Text("Home"),
+                            TextButton(
+                                model = Navigator(),
+                                text = "Go to feed",
+                            ) {
+                                route = "feed"
+                                arguments = "Data from home"
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}

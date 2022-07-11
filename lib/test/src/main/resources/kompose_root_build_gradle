@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
+        classpath("com.android.tools.build:gradle:7.0.4")
+        classpath("dev.buijs.klutter:core:0.14.1")
+        classpath("dev.buijs.klutter.gradle:dev.buijs.klutter.gradle.gradle.plugin:0.14.2")
+    }
+}
+
+repositories {
+    google()
+    gradlePluginPortal()
+    mavenCentral()
+    maven { url = uri("https://repsy.io/mvn/buijs-dev/klutter") }
+}
+
+allprojects {
+    repositories {
+        google()
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            url = uri("https://repsy.io/mvn/buijs-dev/klutter")
+        }
+    }
+
+}
+
+tasks.register("klutterInstallFrontend", Exec::class) {
+    commandLine("bash", "./gradlew", "clean", "build","-p", "kompose")
+    finalizedBy("klutterKomposeGenerateUI")
+}
+
+tasks.register("klutterKomposeGenerateUI", Exec::class) {
+    commandLine("bash", "./gradlew", "klutterGenerateUI", "-p", "kompose")
+}

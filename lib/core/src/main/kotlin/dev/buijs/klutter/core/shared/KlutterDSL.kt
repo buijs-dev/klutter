@@ -20,7 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.core.shared
 
 interface KlutterDSL<T> {
     fun configure(lambda: T.() -> Unit): KlutterDTO

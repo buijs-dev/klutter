@@ -22,8 +22,11 @@
 
 package dev.buijs.klutter.plugins.gradle.tasks
 
+import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+import dev.buijs.klutter.plugins.gradle.klutterExtension
 import dev.buijs.klutter.ui.tasks.UiGeneratorTask
+import org.gradle.jvm.tasks.Jar
 
 /**
  * Task to generate a Flutter UI.
@@ -39,7 +42,14 @@ import dev.buijs.klutter.ui.tasks.UiGeneratorTask
  *
  */
 internal open class GenerateUI : KlutterGradleTask() {
-    override fun describe() = project().let {
-        UiGeneratorTask(root = it.root).run()
+    override fun describe() {
+        project.klutterExtension().application?.let {
+            UiGeneratorTask(
+                pathToBuild = it.buildFolder
+                    ?: project.rootProject.project(":lib").buildDir.resolve("libs/kompose-jvm.jar"),
+                pathToOutput = it.outputFolder
+                    ?: project.rootProject.rootDir.resolve("app/frontend/lib"),
+            ).run()
+        } ?: throw KlutterException("Missing application config in klutter block.")
     }
 }

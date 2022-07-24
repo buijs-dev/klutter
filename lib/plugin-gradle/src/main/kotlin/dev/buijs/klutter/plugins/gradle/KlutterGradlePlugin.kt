@@ -22,16 +22,20 @@
 
 package dev.buijs.klutter.plugins.gradle
 
-import dev.buijs.klutter.core.project.plugin
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.core.project.*
 import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
+import mu.KotlinLogging
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+
+private val log = KotlinLogging.logger { }
 
 /**
  * Gradle plugin for Klutter Framework with the following tasks:
@@ -58,8 +62,15 @@ open class KlutterGradleExtension {
     @Internal
     internal var plugin: KlutterPluginDTO? = null
 
+    @Internal
+    internal var application: KlutterApplicationDTO? = null
+
     fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
         plugin = KlutterPluginBuilder().apply(lambda).build()
+    }
+
+    fun application(lambda: KlutterApplicationBuilder.() -> Unit) {
+        application = KlutterApplicationBuilder().apply(lambda).build()
     }
 
 }
@@ -81,12 +92,47 @@ internal abstract class KlutterGradleTask: DefaultTask() {
     @TaskAction
     fun execute() = describe()
 
-    fun project() =
-        (project.adapter().root ?: project.rootProject.projectDir).plugin()
+    fun project(): dev.buijs.klutter.core.project.Project {
+        val ext = project.klutterExtension()
+
+        val root = ext.root ?: project.rootProject.projectDir
+        val plugin = ext.plugin
+        val application = ext.application
+
+        return when {
+            plugin != null && application != null -> {
+                throw KlutterException(
+                    "Both plugin and application are set in klutter DSL but only 1 can be used."
+                )
+            }
+
+            application != null -> {
+                log.info { "Klutter Gradle configured as application." }
+                val appRoot = application.root ?: project.rootProject.rootDir.resolve("app/backend")
+                log.info { "Processing Klutter app with root: ${appRoot.absolutePath}" }
+                val appProject = appRoot.plugin()
+                Project(
+                    root = appProject.root,
+                    ios = appProject.ios,
+                    android = appProject.android,
+                    platform = Platform(
+                        folder = root.resolve("lib"),
+                        pluginName = "lib"
+                    ),
+                )
+            }
+
+            else -> {
+                log.info { "Klutter Gradle configured as plugin." }
+                root.plugin()
+            }
+        }
+
+    }
 
 }
 
-internal fun Project.adapter(): KlutterGradleExtension {
+internal fun Project.klutterExtension(): KlutterGradleExtension {
     return extensions.getByName("klutter").let {
         if (it is KlutterGradleExtension) { it } else {
             throw IllegalStateException("klutter extension is not of the correct type")

@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm") version "1.7.10"
     id("com.gradle.plugin-publish") version "0.16.0"
     id("java-gradle-plugin")
     id("klutter")

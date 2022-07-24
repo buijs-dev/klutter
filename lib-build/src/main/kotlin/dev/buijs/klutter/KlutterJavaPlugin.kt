@@ -35,7 +35,7 @@ class KlutterJavaPlugin: Plugin<Project> {
 
         target.apply {
             it.plugin(org.gradle.api.plugins.JavaPlugin::class.java)
-            it.plugin(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin::class.java)
+            //it.plugin(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin::class.java)
         }
 
         target.extensions.configure(JavaPluginExtension::class.java) {
@@ -53,8 +53,8 @@ open class KlutterJavaExtension {
 
     val implementation = listOf(
         //Kotlin
-        "org.jetbrains.kotlin:kotlin-reflect:1.6.21",
-        "org.jetbrains.kotlin:kotlin-compiler:1.6.21",
+        "org.jetbrains.kotlin:kotlin-reflect:1.7.10",
+        "org.jetbrains.kotlin:kotlin-compiler:1.7.10",
 
         //Jackson for XML
         "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2",

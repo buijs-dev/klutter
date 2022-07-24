@@ -1,8 +1,8 @@
 import dev.buijs.klutter.annotations.jvm.KomposeView
-import dev.buijs.klutter.ui.*
-import dev.buijs.klutter.ui.builder.JetlagScreen
-import dev.buijs.klutter.ui.builder.JetlagUI
-import dev.buijs.klutter.ui.viewmodel.Navigator
+import dev.buijs.klutter.dev.buijs.klutter.ui.*
+import dev.buijs.klutter.dev.buijs.klutter.ui.builder.JetlagScreen
+import dev.buijs.klutter.dev.buijs.klutter.ui.builder.JetlagUI
+import dev.buijs.klutter.dev.buijs.klutter.ui.viewmodel.Navigator
 
 @KomposeView
 class Home: JetlagUI(name = "Home") {

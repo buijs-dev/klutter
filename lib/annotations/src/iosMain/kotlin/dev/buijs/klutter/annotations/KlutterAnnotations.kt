@@ -39,7 +39,3 @@ actual annotation class KlutterResponse()
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 actual annotation class AndroidContext()
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class KomposeView()

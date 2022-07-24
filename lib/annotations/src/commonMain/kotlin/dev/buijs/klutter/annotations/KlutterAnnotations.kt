@@ -69,10 +69,6 @@ expect annotation class KlutterResponse()
 @Target(AnnotationTarget.FUNCTION)
 expect annotation class AndroidContext()
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-expect annotation class KomposeView()
-
 @Serializable
 abstract class KlutterJSON<T> {
 
@@ -81,4 +77,5 @@ abstract class KlutterJSON<T> {
     abstract fun data(): T
 
     abstract fun strategy(): SerializationStrategy<T>
+
 }

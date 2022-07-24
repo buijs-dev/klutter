@@ -21,27 +21,33 @@
  */
 package dev.buijs.klutter.annotations
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlin.test.Test
-import kotlin.test.assertEquals
+/**
+ * Annotation for UIBuilder classes.
+ *
+ * Any UIBuilder class annotated with @Komposeview
+ * will be converted to a Flutter UI screen.
+ */
+@Target(AnnotationTarget.CLASS)
+actual annotation class KomposeView()
 
-class SomeTest {
+/**
+ * Annotation which informs Klutter to implement multiple
+ * method channel calls to pass KlutterEvents to this Controller class.
+ *
+ * Should be used in conjunction with KomposeController super class.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+actual annotation class Controller()
 
-    @Test
-    fun shouldTest() {
-        assertEquals("""{"bar":"boo"}""", Foo(bar = "boo").toKJson())
-    }
-
-}
-
-@Serializable
-@Suppress("Unused")
-class Foo(val bar: String): KlutterJSON<Foo>(){
-
-    override fun data() = this
-
-    override fun strategy() = serializer()
-
-}
+/**
+ * Annotation which informs Klutter to implement multiple
+ * method channel calls which control the state for this class.
+ *
+ * Should be used in conjunction with KlutterJSON super class.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+actual annotation class Stateful(
+    actual val type: KomposeState
+)

@@ -21,27 +21,30 @@
  */
 package dev.buijs.klutter.annotations
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlin.test.Test
-import kotlin.test.assertEquals
+/**
+ * Type of state retention for classes which implement KlutterJSON.
+ */
+enum class KomposeState {
 
-class SomeTest {
+    /**
+     * There is no state.
+     *
+     * Everytime an event is processed a new instance of the annotated class will be created.
+     */
+    NONE,
 
-    @Test
-    fun shouldTest() {
-        assertEquals("""{"bar":"boo"}""", Foo(bar = "boo").toKJson())
-    }
+    /**
+     * The state is bound to the view lifetime.
+     *
+     * When the view is disposed, so is the state.
+     */
+    EPHEMERAL,
 
-}
-
-@Serializable
-@Suppress("Unused")
-class Foo(val bar: String): KlutterJSON<Foo>(){
-
-    override fun data() = this
-
-    override fun strategy() = serializer()
+    /**
+     * The state is retained during the app lifetime.
+     *
+     * When the app is closed, the state is disposed.
+     */
+    APP
 
 }

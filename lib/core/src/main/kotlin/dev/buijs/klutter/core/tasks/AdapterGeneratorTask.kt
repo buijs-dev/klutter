@@ -26,9 +26,7 @@ import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.KlutterTask
 import dev.buijs.klutter.core.project.*
 import dev.buijs.klutter.core.shared.*
-import dev.buijs.klutter.core.templates.AndroidAdapter
-import dev.buijs.klutter.core.templates.FlutterAdapter
-import dev.buijs.klutter.core.templates.IosAdapter
+import dev.buijs.klutter.core.templates.*
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
@@ -53,38 +51,81 @@ class AdapterGeneratorTask(
     }
 
     private fun AdapterData.flutter(root: Root){
-        root.pathToLib.maybeCreate().write(
-            FlutterAdapter(
-                pluginClassName = root.pluginClassName,
-                methodChannelName = methodChannelName,
-                methods = methods,
-                messages = messages,
-                enumerations = enumerations,
+        if(controllers.isNotEmpty()) {
+            root.pathToLib.maybeCreate().write(
+                KomposeFlutterAdapter(
+                    pluginClassName = root.pluginClassName,
+                    methodChannelName = methodChannelName,
+                    messages = messages,
+                    enumerations = enumerations,
+                )
             )
-        )
+        } else {
+            root.pathToLib.maybeCreate().write(
+                FlutterAdapter(
+                    pluginClassName = root.pluginClassName,
+                    methodChannelName = methodChannelName,
+                    methods = methods,
+                    messages = messages,
+                    enumerations = enumerations,
+                )
+            )
+        }
     }
 
     private fun AdapterData.ios(ios: IOS){
         ios.podspec().excludeArm64("dependency'Flutter'")
-        ios.pathToPlugin.maybeCreate().write(
-            IosAdapter(
-                pluginClassName = ios.pluginClassName,
-                methodChannelName = methodChannelName,
-                methods = methods,
+        if(controllers.isNotEmpty()) {
+            ios.pathToPlugin.maybeCreate().write(
+                KomposeIosAdapter(
+                    pluginClassName = ios.pluginClassName,
+                    methodChannelName = methodChannelName,
+                    controllers = controllers,
+                )
             )
-        )
+            ios.pathToClasses.resolve("SwiftKomposeAppState.swift").write(
+                IosAdapterState(controllers)
+            )
+
+        } else {
+            ios.pathToPlugin.maybeCreate().write(
+                IosAdapter(
+                    pluginClassName = ios.pluginClassName,
+                    methodChannelName = methodChannelName,
+                    methods = methods,
+                )
+            )
+        }
     }
 
     private fun AdapterData.android(android: Android){
-        android.pathToPlugin.maybeCreate().write(
-            AndroidAdapter(
-                pluginClassName = android.pluginClassName,
-                pluginPackageName = android.pluginPackageName,
-                methodChannelName = methodChannelName,
-                methods = methods,
+        if(controllers.isNotEmpty()) {
+            android.pathToPlugin.maybeCreate().write(
+                KomposeAndroidAdapter(
+                    pluginClassName = android.pluginClassName,
+                    pluginPackageName = android.pluginPackageName,
+                    methodChannelName = methodChannelName,
+                )
             )
-        )
+
+            android.pathToPluginPackage.resolve("KomposeAppState.kt").write(
+                AndroidAdapterState(
+                    pluginPackageName = android.pluginPackageName,
+                    fullyQualifiedControllers = controllers
+                )
+            )
+        } else {
+            android.pathToPlugin.maybeCreate().write(
+                AndroidAdapter(
+                    pluginClassName = android.pluginClassName,
+                    pluginPackageName = android.pluginPackageName,
+                    methodChannelName = methodChannelName,
+                    methods = methods,
+                )
+            )
+        }
     }
+
 }
 
 /**
@@ -101,6 +142,8 @@ internal fun Platform.collect(): AdapterData {
 
     val methods = source.methods()
 
+    val controllers = source.controllers().toControllerNames()
+
     val responses = source.responses()
 
     val messages = responses.toDartMessageList()
@@ -116,6 +159,7 @@ internal fun Platform.collect(): AdapterData {
         methods = methods,
         messages = messages,
         enumerations = enumerations,
+        controllers = controllers,
     )
 }
 
@@ -138,26 +182,12 @@ internal data class AdapterData(
      * List of enumerations annotated with @KlutterResponse defined in the platform module.
      */
     val enumerations: List<DartEnum>,
-)
 
-/**
- * Find all files in a folder (including sub folders)
- * containing an annotation with [annotationName].
- *
- * @return List of Files that contain the given annotation.
- */
-internal fun File.collectAnnotatedWith(
-    annotationName: String,
-): List<File> = this
-    .verifyExists()
-    .walkTopDown()
-    .map { f -> if(!f.isFile) null else f }
-    .toList()
-    .filterNotNull()
-    .filter { it
-        .readText()
-        .contains(annotationName.prefixIfNot("@"))
-    }
+    /**
+     * List of controller classes annotated with @Controller defined in the platform module.
+     */
+    val controllers: List<String>,
+)
 
 /**
  * Validate every field in the DartMessages is either a standard type
@@ -218,10 +248,34 @@ internal fun validate(
 
 }
 
+internal fun File.responses() = this
+    .collectAnnotatedWith("@KlutterResponse", "@Stateful")
+
 internal fun File.methods() = this
     .collectAnnotatedWith("@KlutterAdaptee")
     .map { it.toMethods(Language.DART) }
     .flatten()
 
-internal fun File.responses() = this
-    .collectAnnotatedWith("@KlutterResponse")
+internal fun File.controllers() = this
+    .collectAnnotatedWith("@Controller")
+
+/**
+ * Find all files in a folder (including sub folders)
+ * containing an annotation with [annotationName].
+ *
+ * @return List of Files that contain the given annotation.
+ */
+internal fun File.collectAnnotatedWith(
+    vararg annotationName: String,
+): List<File> = this
+    .verifyExists()
+    .walkTopDown()
+    .map { f -> if(!f.isFile) null else f }
+    .toList()
+    .filterNotNull()
+    .filter { file ->
+        annotationName
+            .toList()
+            .map { it.prefixIfNot("@") }
+            .any { file.readText().contains(it) }
+    }

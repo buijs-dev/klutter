@@ -20,44 +20,37 @@
  *
  */
 
-package dev.buijs.klutter.core.project
+package dev.buijs.klutter.core.shared
 
-import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.shared.verifyExists
 import java.io.File
 
+private val regex = """@Controller.*?class([^:]+?):KomposeController<""".toRegex()
+
 /**
- * Wrapper class with a file instance pointing to the android sub-module.
- *
- * @property folder path to the Android folder.
  */
-class Android(
-    val folder: File,
-    val pluginPackageName: String,
-    val pluginClassName: String,
-) {
+internal fun List<File>.toControllerNames(): List<String> = this
+    .map { file -> file.findControllers() }
+    .flatten()
 
-    /**
-     * Return path to android/src/main/AndroidManifest.xml.
-     *
-     * @throws KlutterException if path/file does not exist.
-     * @return [File] AndroidManifest.xml.
-     */
-    val manifest = folder.verifyExists()
-        .resolve("src/main")
-        .verifyExists()
-        .resolve("AndroidManifest.xml")
-        .verifyExists()
+private fun File.findControllers(): List<String> {
 
-    val pathToPluginPackage: File = folder
-        .resolve("src/main/kotlin/${pluginPackageName.toPath()}")
-        .verifyExists()
+    val content = readText()
 
-    val pathToPlugin: File = pathToPluginPackage
-        .resolve("$pluginClassName.kt")
+    val packageName = content.packageName()
+
+    val controllers = mutableListOf<String>()
+
+    for(name in content.toControllers()) {
+        controllers.add("${packageName}.$name")
+    }
+
+    return controllers
 
 }
 
-internal fun String?.toPath(): String {
-    return (this ?: "").replace(".", "/")
+/**
+ */
+private fun String.toControllers(): List<String> {
+    return regex.findAll(this.replace("""[\s\n]""".toRegex(), ""))
+        .map { it.groupValues[1] }.toList()
 }

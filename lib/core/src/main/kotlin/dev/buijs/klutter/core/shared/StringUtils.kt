@@ -87,7 +87,7 @@ internal fun String.findClassName(): String? {
     val it = replace("\n", "")
 
     // Check if current String value contains 'class {'.
-    val match = """class([^{]+?)\{""".toRegex().find(it)
+    val match = """class([^{:]+?)([{:])""".toRegex().find(it)
 
         // Return null if no match found
         ?: return null

@@ -19,13 +19,22 @@ class MethodSpec extends Specification {
 
     def "Verify Method constructor"(){
         expect:
-        with(new Method("a", "b", "c", true, "String", false)){
+        with(new Method(
+                "a",
+                "b",
+                "c",
+                true,
+                "String",
+                false,
+                false,
+        )){
             it.command == "a"
             it.import == "b"
             it.method == "c"
             it.dataType == "String"
             it.async
             !it.nullable
+            !it.stateful
         }
     }
 

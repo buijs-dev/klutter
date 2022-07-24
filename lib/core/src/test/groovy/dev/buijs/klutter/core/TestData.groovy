@@ -12,7 +12,8 @@ class TestData {
             "Greeting().greeting()",
             false,
             "String",
-            false
+            false,
+            false,
     )
 
     def static complexityMethods = [
@@ -22,7 +23,8 @@ class TestData {
                     "FooBar().zeta()",
                     false,
                     "String",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "notDoFooBar",
@@ -30,7 +32,8 @@ class TestData {
                     "FooBar().beta()",
                     false,
                     "int",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "complexityGetter",
@@ -38,7 +41,8 @@ class TestData {
                     "ComplexFoo().bar(context)",
                     true,
                     "List<Complex>",
-                    false
+                    false,
+                    false,
             )
     ]
 
@@ -49,7 +53,8 @@ class TestData {
                     "FooBar().zeta()",
                     false,
                     "String",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "maybeFooBar",
@@ -57,7 +62,8 @@ class TestData {
                     "FooBar().zeta()",
                     false,
                     "String",
-                    true
+                    true,
+                    false,
             ),
             new Method(
                     "notDoFooBar",
@@ -65,7 +71,8 @@ class TestData {
                     "FooBar().beta()",
                     false,
                     "int",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "fooBarBinary",
@@ -73,7 +80,8 @@ class TestData {
                     "FooBar().trueOrFalse()",
                     false,
                     "bool",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "twoFoo4You",
@@ -81,7 +89,8 @@ class TestData {
                     "FooBar().makeItADouble()",
                     false,
                     "double",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "getExoticFoo",
@@ -89,7 +98,8 @@ class TestData {
                     "FooBar().exotic()",
                     false,
                     "ExoticFoo",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "manyFooBars",
@@ -97,7 +107,8 @@ class TestData {
                     "FooBar().moreManyMore()",
                     true,
                     "List<String>",
-                    false
+                    false,
+                    false,
             ),
             new Method(
                     "maybeFoos",
@@ -105,7 +116,8 @@ class TestData {
                     "FooBar().moreMaybeFoos()",
                     true,
                     "List<String>?",
-                    true
+                    true,
+                    false,
             ),
     ]
 

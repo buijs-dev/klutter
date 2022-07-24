@@ -104,16 +104,16 @@ internal class FlutterAdapter(
                |
                |    try {
                |    """ +
-        if(doJsonDecode) {
-            """     
+                if(doJsonDecode) {
+                    """     
                final jsonResponse = await _channel.invokeMethod('${command}');
                |      final json = jsonDecode(jsonResponse);
                |"""
-        } else {
-            """final json = await _channel.invokeMethod('${command}');
+                } else {
+                    """final json = await _channel.invokeMethod('${command}');
                 |"""
-        } +
-            """      final value = ${serializer()};
+                } +
+                """      final value = ${serializer()};
                |      final AdapterResponse<${dataType}> response = 
                |          AdapterResponse.success(value);
                |
@@ -129,7 +129,7 @@ internal class FlutterAdapter(
                     |        }"""
 
                 } else {
-                 """      
+                    """      
                     |          onSuccess?.call(value);
                     |"""
                 } + """

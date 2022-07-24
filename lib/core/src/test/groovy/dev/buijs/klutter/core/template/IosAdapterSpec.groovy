@@ -43,7 +43,7 @@ class IosAdapterSpec extends Specification {
 
         where:
         classBody =
-                 """import Flutter
+                """import Flutter
                     import UIKit
                     import Platform
                     

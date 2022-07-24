@@ -1,4 +1,5 @@
 plugins {
+    kotlin("jvm") version "1.7.10"
     id("klutter")
     id("klutter-java")
     id("klutter-test")

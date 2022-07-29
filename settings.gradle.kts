@@ -1,5 +1,6 @@
 include(":lib:annotations")
 include(":lib:core")
+include(":lib:testkit")
 include(":lib:kompose")
 include(":lib:plugin-gradle")
 include(":lib:test")

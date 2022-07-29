@@ -294,6 +294,7 @@ private fun File.createLib() {
             |    android()
             |    iosX64()
             |    iosArm64()
+            |    iosArm32()
             |    jvm()
             |
             |    cocoapods {
@@ -351,19 +352,23 @@ private fun File.createLib() {
             |
             |        val iosX64Main by getting
             |        val iosArm64Main by getting
+            |        val iosArm32Main by getting
             |        val iosMain by creating {
             |            dependsOn(commonMain)
             |            iosX64Main.dependsOn(this)
             |            iosArm64Main.dependsOn(this)
+            |            iosArm32Main.dependsOn(this)
             |            dependencies {}
             |        }
             |
             |        val iosX64Test by getting
             |        val iosArm64Test by getting
+            |        val iosArm32Test by getting
             |        val iosTest by creating {
             |            dependsOn(commonTest)
             |            iosX64Test.dependsOn(this)
             |            iosArm64Test.dependsOn(this)
+            |            iosArm32Test.dependsOn(this)
             |        }
             |    }
             |}

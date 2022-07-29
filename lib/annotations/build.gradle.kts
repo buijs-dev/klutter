@@ -20,6 +20,7 @@ kotlin {
     jvm()
     iosX64()
     iosArm64()
+    iosArm32()
     iosSimulatorArm64()
 
     cocoapods {
@@ -35,7 +36,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
             }
         }
 
@@ -61,12 +62,15 @@ kotlin {
         val androidTest by getting {
             dependsOn(androidAndroidTestRelease)
         }
+
+        val iosArm32Main by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
+            iosArm32Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
         }

@@ -21,7 +21,22 @@
  */
 package dev.buijs.klutter.ui.controller
 
-class NoController : KomposeController<Nothing>(state = Nothing) {
+import dev.buijs.klutter.annotations.KlutterJSON
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationStrategy
+
+@Serializable
+object Nothingness: KlutterJSON<Nothingness>() {
+    override fun data(): Nothingness {
+        return this
+    }
+
+    override fun strategy(): SerializationStrategy<Nothingness> {
+        return serializer()
+    }
+}
+
+object NoController: KomposeController<Nothingness>(state = Nothingness) {
     override fun onEvent(event: String, data: Any?) {
         // Nothing
     }

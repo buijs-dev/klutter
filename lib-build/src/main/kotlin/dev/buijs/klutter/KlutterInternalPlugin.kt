@@ -40,6 +40,7 @@ object ProjectVersions {
     val kompose = properties("kompose.version")
     val gradle = properties("plugin.gradle.version")
     val pub = properties("plugin.pub.version")
+    val kitty = properties("kitty.version")
 }
 
 object Repository {

@@ -23,21 +23,17 @@
 package dev.buijs.klutter.core.tasks
 
 import spock.lang.Ignore
-import spock.lang.Shared
 import spock.lang.Specification
 
 import java.nio.file.Files
 
 class ApplicationGeneratorTaskSpec extends Specification {
 
-   @Ignore
+    @Ignore // TODO template contains local paths
     def "Verify kompose app is generated"() {
 
         given:
-        def root = new File("/Users/buijs/repos/kompose4/tester")
-        root.mkdir()
-        def pathToRoot = root.absolutePath
-        //def pathToRoot = Files.createTempDirectory("").toFile().absolutePath
+        def pathToRoot = Files.createTempDirectory("").toFile().absolutePath
 
         when:
         new ApplicationGeneratorTask(pathToRoot).run()

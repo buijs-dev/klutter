@@ -37,11 +37,11 @@ internal class KomposeIosAdapter(
             |import UIKit
             |import Platform
             |
-            |public class $pluginClassName: NSObject, FlutterPlugin {
+            |public class Swift$pluginClassName: NSObject, FlutterPlugin {
             |
             |    public static func register(with registrar: FlutterPluginRegistrar) {
             |        let channel = FlutterMethodChannel(name: "$methodChannelName", binaryMessenger: registrar.messenger())
-            |        let instance = $pluginClassName()
+            |        let instance = Swift$pluginClassName()
             |        registrar.addMethodCallDelegate(instance, channel: channel)
             |    }
             |

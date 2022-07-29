@@ -35,7 +35,6 @@ class KlutterJavaPlugin: Plugin<Project> {
 
         target.apply {
             it.plugin(org.gradle.api.plugins.JavaPlugin::class.java)
-            //it.plugin(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin::class.java)
         }
 
         target.extensions.configure(JavaPluginExtension::class.java) {

@@ -49,7 +49,6 @@ class AndroidAdapterSpec extends Specification {
         "bla.blab"  | "bla/blab"
     }
 
-    @Ignore //TODO fix!
     def "AndroidAdapter should create a valid Kotlin class"() {
         given:
         def packageName = "super_plugin"
@@ -137,7 +136,6 @@ class AndroidAdapterSpec extends Specification {
                         """
     }
 
-    @Ignore //TODO
     def "AndroidAdapter should create a valid Kotlin class when the methods list is empty"() {
         given:
         def packageName = "super_plugin"

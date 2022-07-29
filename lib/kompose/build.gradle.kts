@@ -21,12 +21,13 @@ kotlin {
     jvm()
     iosX64()
     iosArm64()
+    iosArm32()
     iosSimulatorArm64()
 
     cocoapods {
         summary = "Klutter UI module"
         homepage = "https://buijs.dev"
-        ios.deploymentTarget = "13"
+        ios.deploymentTarget = "14.1"
         framework {
             baseName = "Kompose"
         }
@@ -36,18 +37,20 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation(project(":lib:annotations"))
             }
         }
 
         val androidMain by getting
+        val iosArm32Main by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
+            iosArm32Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
         }
@@ -57,7 +60,7 @@ kotlin {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
                 implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
                 implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
                 implementation(project(":lib:core"))
                 implementation(project(":lib:annotations"))
             }

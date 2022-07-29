@@ -30,7 +30,6 @@ import dev.buijs.klutter.core.templates.FlutterAdapter
 import spock.lang.Ignore
 import spock.lang.Specification
 
-@Ignore //TODO
 class FlutterAdapterSpec extends Specification {
 
     def "FlutterAdapter should create a valid Dart class"() {

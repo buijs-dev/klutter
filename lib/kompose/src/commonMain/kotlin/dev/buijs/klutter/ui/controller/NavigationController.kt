@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.ui.controller
 
-class NavigationController : KomposeController<Nothing>(state = Nothing) {
+class NavigationController : KomposeController<Nothingness>(state = Nothingness) {
     var route: String? = null
     var arguments: Any? = null
     override fun onEvent(event: String, data: Any?) {

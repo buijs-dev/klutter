@@ -48,8 +48,11 @@ kover {
         // and breaks Jacoco due to duplicate classes
         ":lib:annotations",
 
+        // breaks Jacoco due to duplicate classes, haven't found a fix yet...
+        ":lib:kompose",
+
         // a test-only module
-        ":lib:test"
+        ":lib:test",
     )
 }
 

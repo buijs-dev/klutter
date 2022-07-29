@@ -10,7 +10,6 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import org.gradle.api.Project as GradleProject
 
-@Ignore //TODO fix
 internal class KlutterGradlePluginTest: WordSpec({
 
     "Verify adapter method" should {

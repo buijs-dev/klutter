@@ -7,7 +7,6 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
-@Ignore //TODO fix
 class GenerateAdapterGradleTaskSpec extends Specification {
 
     @Shared

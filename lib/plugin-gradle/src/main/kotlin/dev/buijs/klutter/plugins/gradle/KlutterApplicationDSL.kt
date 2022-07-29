@@ -42,14 +42,16 @@ class KlutterApplicationBuilder: KlutterDSLBuilder {
 
     var name: String = ""
     var root: File? = null
-    var buildFolder: File? = null
-    var outputFolder: File? = null
+    var uiBuildFolder: File? = null
+    var uiOutputFolder: File? = null
+    var uiTestFolder: File? = null
 
     override fun build() = KlutterApplicationDTO(
         name = name,
         root = root,
-        buildFolder = buildFolder,
-        outputFolder = outputFolder,
+        buildFolder = uiBuildFolder,
+        outputFolder = uiOutputFolder,
+        uiTestFolder = uiTestFolder,
     )
 
 }
@@ -62,4 +64,5 @@ data class KlutterApplicationDTO(
     val root: File?,
     val buildFolder: File?,
     val outputFolder: File?,
+    val uiTestFolder: File?,
 ): KlutterDTO

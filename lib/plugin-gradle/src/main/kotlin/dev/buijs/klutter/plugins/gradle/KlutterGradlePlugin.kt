@@ -24,6 +24,9 @@ package dev.buijs.klutter.plugins.gradle
 
 import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.project.*
+import dev.buijs.klutter.plugins.gradle.tasks.*
+import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidAndIosWithFlutter
+import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidWithFlutter
 import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
@@ -46,9 +49,15 @@ private val log = KotlinLogging.logger { }
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.create("klutter", KlutterGradleExtension::class.java)
+        project.tasks.register("klutterBuild", BuildKlutterProject::class.java)
+        project.tasks.register("klutterBuildAndroid", BuildAndroidWithFlutter::class.java)
+        project.tasks.register("klutterBuildAndroidIos", BuildAndroidAndIosWithFlutter::class.java)
+        project.tasks.register("klutterBuildIos", BuildIosWithFlutter::class.java)
+        project.tasks.register("klutterCopyAarFile", CopyAndroidAarFile::class.java)
+        project.tasks.register("klutterCopyFramework", CopyIosFramework::class.java)
+        project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
         project.tasks.register("klutterGenerateAdapters", GenerateAdapters::class.java)
         project.tasks.register("klutterGenerateUI", GenerateUI::class.java)
-        project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
     }
 }
 

@@ -44,9 +44,9 @@ object ProjectVersions {
 }
 
 object Repository {
-    val endpoint: URI = URI(properties("repo.endpoint"))
-    val username = properties("repo.username")
-    val password = properties("repo.password")
+    val endpoint: URI = URI(System.getenv("KLUTTER_PRIVATE_URL") ?: properties("repo.endpoint"))
+    val username = System.getenv("KLUTTER_PRIVATE_USERNAME") ?: properties("repo.username")
+    val password = System.getenv("KLUTTER_PRIVATE_PASSWORD") ?: properties("repo.password")
 }
 
 fun properties(key: String): String = Properties().also {

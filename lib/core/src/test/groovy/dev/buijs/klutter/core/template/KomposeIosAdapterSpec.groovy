@@ -33,7 +33,6 @@ class KomposeIosAdapterSpec extends Specification {
         given:
         def pluginName = "SwiftKomposeAppBackendPlugin"
         def channelName = "dev.buijs.klutter.kompose_app_backend"
-        def methods = []
         def controllers = ["dev.buijs.klutter.kompose_app.platform.GreetingController"]
 
         and: "The printer as SUT"

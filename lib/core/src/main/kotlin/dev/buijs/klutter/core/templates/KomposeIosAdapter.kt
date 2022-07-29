@@ -25,6 +25,7 @@ package dev.buijs.klutter.core.templates
 import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.shared.Method
 import dev.buijs.klutter.core.shared.maybePostfixToKJson
+import org.jetbrains.kotlin.util.prefixIfNot
 
 internal class KomposeIosAdapter(
     private val pluginClassName: String,
@@ -37,11 +38,11 @@ internal class KomposeIosAdapter(
             |import UIKit
             |import Platform
             |
-            |public class Swift$pluginClassName: NSObject, FlutterPlugin {
+            |public class ${pluginClassName.prefixIfNot("Swift")}: NSObject, FlutterPlugin {
             |
             |    public static func register(with registrar: FlutterPluginRegistrar) {
             |        let channel = FlutterMethodChannel(name: "$methodChannelName", binaryMessenger: registrar.messenger())
-            |        let instance = Swift$pluginClassName()
+            |        let instance = ${pluginClassName.prefixIfNot("Swift")}()
             |        registrar.addMethodCallDelegate(instance, channel: channel)
             |    }
             |

@@ -31,7 +31,7 @@ abstract class KittyElement {
 
 }
 
-data class KittTextField(
+data class KittyTextField(
     private val elementId: String,
 ): KittyElement() {
 
@@ -47,7 +47,7 @@ data class KittTextField(
 
 }
 
-data class KittButton(
+data class KittyButton(
     private val elementId: String,
 ): KittyElement() {
 

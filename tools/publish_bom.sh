@@ -5,7 +5,7 @@ set -e
 cd ".."
 
 echo " ____________
-< Publishing Klutter Kompose modules >
+< Publishing Klutter BOM modules >
  ------------
         \   ^__^
          \  (oo)\_______
@@ -13,11 +13,11 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-echo "\0/ Klutter: step: build kompose modules"
+echo "\0/ Klutter: step: build BOM"
 echo "------------------"
-./gradlew clean -p "lib/klutter-kompose"
-./gradlew build -p "lib/klutter-kompose"
+./gradlew clean -p "lib"
+./gradlew build -p "lib"
 
-echo "\0/ Klutter: step: publish kompose modules"
+echo "\0/ Klutter: step: publish BOM"
 echo "------------------"
-./gradlew publish -p "lib/klutter-kompose"
+./gradlew publish -p "lib"

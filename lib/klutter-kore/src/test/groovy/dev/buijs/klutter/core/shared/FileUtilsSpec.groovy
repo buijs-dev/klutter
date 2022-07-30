@@ -26,9 +26,9 @@ class FileUtilsSpec extends Specification {
 
         then:
         dto.name == "super_awesome"
-        dto.android.pluginPackage$core == "foo.bar.super_awesome"
-        dto.android.pluginClass$core == "SuperAwesomePlugin"
-        dto.ios.pluginClass$core == "SuperAwesomePlugin"
+        dto.android.pluginPackage$klutter_kore == "foo.bar.super_awesome"
+        dto.android.pluginClass$klutter_kore == "SuperAwesomePlugin"
+        dto.ios.pluginClass$klutter_kore == "SuperAwesomePlugin"
 
     }
 
@@ -47,9 +47,9 @@ class FileUtilsSpec extends Specification {
 
         then:
         dto.name == "super_awesome"
-        dto.android.pluginPackage$core == "foo.bar.super_awesome"
-        dto.android.pluginClass$core == "SuperAwesomePlugin"
-        dto.ios.pluginClass$core == "SuperAwesomePlugin"
+        dto.android.pluginPackage$klutter_kore == "foo.bar.super_awesome"
+        dto.android.pluginClass$klutter_kore == "SuperAwesomePlugin"
+        dto.ios.pluginClass$klutter_kore == "SuperAwesomePlugin"
 
     }
 

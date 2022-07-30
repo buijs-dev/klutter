@@ -13,11 +13,11 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-echo "\0/ Klutter: step: build plugin-gradle modules"
+echo "\0/ Klutter: step: build klutter-gradle modules"
 echo "------------------"
-./gradlew clean -p "lib/plugin-gradle"
-./gradlew build -p "lib/plugin-gradle"
+./gradlew clean -p "lib/klutter-gradle"
+./gradlew build -p "lib/klutter-gradle"
 
-echo "\0/ Klutter: step: publish plugin-gradle modules"
+echo "\0/ Klutter: step: publish klutter-gradle modules"
 echo "------------------"
-./gradlew publish -p "lib/plugin-gradle"
+./gradlew publish -p "lib/klutter-gradle"

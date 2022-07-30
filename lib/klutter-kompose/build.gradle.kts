@@ -37,7 +37,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-                implementation(project(":lib:annotations"))
+                implementation(project(":lib:klutter-annotations"))
             }
         }
 
@@ -60,21 +60,14 @@ kotlin {
                 implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
                 implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-                implementation(project(":lib:core"))
-                implementation(project(":lib:annotations"))
+                implementation(project(":lib:klutter-kore"))
+                implementation(project(":lib:klutter-annotations"))
             }
         }
 
         val jvmTest by getting {
             dependencies {
-                // Kotlin Test
-                @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
-                implementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
-                implementation("org.codehaus.groovy:groovy-all:3.0.9")
-                implementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
-                implementation("org.mockito:mockito-core:4.6.1")
-                implementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-                implementation(project(":lib:test"))
+                implementation(project(":lib-test"))
             }
         }
     }

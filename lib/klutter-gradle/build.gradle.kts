@@ -2,10 +2,10 @@ plugins {
     kotlin("jvm") version "1.7.10"
     id("com.gradle.plugin-publish") version "0.16.0"
     id("java-gradle-plugin")
-    id("groovy")
     id("java-library")
-    id("klutter")
     id("maven-publish")
+    id("groovy")
+    id("klutter")
 }
 
 group = "dev.buijs.klutter"
@@ -51,9 +51,9 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
-            artifactId = "gradle-plugin"
+            artifactId = "klutter-gradle"
             version = dev.buijs.klutter.ProjectVersions.gradle
-            artifact("$projectDir/build/libs/plugin-gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
+            artifact("$projectDir/build/libs/klutter-gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
 
             pom {
                 name.set("Klutter: Gradle Plugin")
@@ -106,9 +106,9 @@ gradlePlugin {
 
 dependencies {
     // Project
-    implementation(project(":lib:core"))
-    implementation(project(":lib:kompose"))
-    implementation(project(":lib:annotations"))
+    implementation(project(":lib:klutter-kore"))
+    implementation(project(":lib:klutter-kompose"))
+    implementation(project(":lib:klutter-annotations"))
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
@@ -123,20 +123,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
     implementation("io.github.microutils:kotlin-logging:2.1.23")
 
-    // Mockingjay
-    testImplementation("org.mockito:mockito-core:4.6.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
-
-    // Spock
-    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
-    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
-
-    // Kotlin Test
-    @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
-
-    testImplementation(project(":lib:test"))
-    testImplementation(gradleTestKit())
+    testImplementation(project(":lib-test"))
 }
 
 tasks.named<Test>("test") {

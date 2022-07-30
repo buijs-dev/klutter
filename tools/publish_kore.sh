@@ -5,7 +5,7 @@ set -e
 cd ".."
 
 echo " ____________
-< Publishing Klutter Core modules >
+< Publishing Klutter Kore modules >
  ------------
         \   ^__^
          \  (oo)\_______
@@ -13,11 +13,11 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-echo "\0/ Klutter: step: build core modules"
+echo "\0/ Klutter: step: build kore modules"
 echo "------------------"
-./gradlew clean -p "lib/core"
-./gradlew build -p "lib/core"
+./gradlew clean -p "lib/klutter-kore"
+./gradlew build -p "lib/klutter-kore"
 
 echo "\0/ Klutter: step: publish core modules"
 echo "------------------"
-./gradlew publish -p "lib/core"
+./gradlew publish -p "lib/klutter-kore"

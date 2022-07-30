@@ -1,4 +1,4 @@
-# Module annotations-kmp
+# Klutter Annotations
 
 This module contains annotations for the Klutter Framework.
 

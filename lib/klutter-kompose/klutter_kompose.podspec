@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'kompose'
-    spec.version                  = '0.16.42'
+    spec.name                     = 'klutter_kompose'
+    spec.version                  = '0.16.60'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
@@ -12,13 +12,13 @@ Pod::Spec.new do |spec|
                 
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':lib:kompose',
+        'KOTLIN_PROJECT_PATH' => ':lib:klutter-kompose',
         'PRODUCT_MODULE_NAME' => 'Kompose',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build kompose',
+            :name => 'Build klutter_kompose',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

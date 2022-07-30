@@ -32,7 +32,7 @@ class PubspecSpec extends Specification {
         def pubspec = PubspecKt.toPubspec(yaml)
 
         then:
-        pubspec.flutter$core == null
+        pubspec.flutter$klutter_kore == null
     }
 
     def "If pubspec contains flutter block without plugin then it is null" () {
@@ -47,7 +47,7 @@ class PubspecSpec extends Specification {
         def pubspec = PubspecKt.toPubspec(yaml)
 
         then:
-        pubspec.flutter$core == null
+        pubspec.flutter$klutter_kore == null
         pubspec.plugin == null
         pubspec.platforms == null
         pubspec.ios == null
@@ -67,7 +67,7 @@ class PubspecSpec extends Specification {
         def pubspec = PubspecKt.toPubspec(yaml)
 
         then:
-        pubspec.flutter$core != null
+        pubspec.flutter$klutter_kore != null
         pubspec.plugin == null
     }
 
@@ -132,15 +132,15 @@ class PubspecSpec extends Specification {
         def pubspec = PubspecKt.toPubspec(yaml)
 
         then:
-        pubspec.flutter$core != null
-        pubspec.flutter$core.plugin$core != null
+        pubspec.flutter$klutter_kore != null
+        pubspec.flutter$klutter_kore.plugin$klutter_kore != null
         pubspec.plugin != null
         pubspec.platforms != null
         pubspec.android != null
-        pubspec.android.pluginPackage$core == "some.company.ridiculous_plugin"
-        pubspec.android.pluginClass$core == "RidiculousPlugin"
+        pubspec.android.pluginPackage$klutter_kore == "some.company.ridiculous_plugin"
+        pubspec.android.pluginClass$klutter_kore == "RidiculousPlugin"
         pubspec.ios != null
-        pubspec.ios.pluginClass$core == "RidiculousPlugin"
+        pubspec.ios.pluginClass$klutter_kore == "RidiculousPlugin"
 
     }
 

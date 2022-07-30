@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'annotations'
+    spec.name                     = 'klutter_annotations'
     spec.version                  = '0.16.22'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
@@ -12,13 +12,13 @@ Pod::Spec.new do |spec|
                 
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':lib:annotations',
+        'KOTLIN_PROJECT_PATH' => ':lib:klutter-annotations',
         'PRODUCT_MODULE_NAME' => 'Annotations',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build annotations',
+            :name => 'Build klutter_annotations',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

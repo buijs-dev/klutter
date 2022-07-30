@@ -8,16 +8,6 @@ gradlePlugin {
         id = "klutter"
         implementationClass = "dev.buijs.klutter.KlutterInternalPlugin"
     }
-
-    plugins.register("klutter-java") {
-        id = "klutter-java"
-        implementationClass = "dev.buijs.klutter.KlutterJavaPlugin"
-    }
-
-    plugins.register("klutter-test") {
-        id = "klutter-test"
-        implementationClass = "dev.buijs.klutter.KlutterTestPlugin"
-    }
 }
 
 buildscript {

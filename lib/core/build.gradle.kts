@@ -1,9 +1,16 @@
 plugins {
     kotlin("jvm") version "1.7.10"
     id("klutter")
-    id("klutter-java")
-    id("klutter-test")
+    id("groovy")
     id("maven-publish")
+    id("java-library")
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 sourceSets {
@@ -24,20 +31,30 @@ sourceSets {
     }
 }
 
-dependenciesTest {
-    implementation.forEach {
-        dependencies.add("testImplementation", it)
-    }
-}
-
-dependenciesJava {
-    implementation.forEach {
-        dependencies.add("implementation", it)
-    }
-}
-
 dependencies {
     implementation(gradleApi())
+
+    //Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
+
+    //Jackson for XML
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
+
+    //Logging
+    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
+    implementation("io.github.microutils:kotlin-logging:2.1.23")
+
+    // Spock
+    testImplementation("org.codehaus.groovy:groovy-all:3.0.9")
+    testImplementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
+
+    // Kotlin Test
+    @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
+
     testImplementation(gradleTestKit())
     testImplementation(project(":lib:test"))
 }
@@ -89,4 +106,8 @@ publishing {
             }
         }
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

@@ -1,12 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE")
 plugins {
+    kotlin("plugin.serialization") version "1.7.0"
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
     id("maven-publish")
     id("klutter")
-
-    kotlin("plugin.serialization") version "1.7.0"
 }
 
 group = "dev.buijs.klutter"
@@ -68,10 +67,12 @@ kotlin {
 
         val jvmTest by getting {
             dependencies {
-                implementation("io.kotlintest:kotlintest-runner-junit5:3.1.10")
+                // Kotlin Test
+                @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
+                implementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
                 implementation("org.codehaus.groovy:groovy-all:3.0.9")
                 implementation("org.spockframework:spock-core:2.2-M1-groovy-3.0")
-                implementation("org.mockito:mockito-core:4.2.0")
+                implementation("org.mockito:mockito-core:4.6.1")
                 implementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
                 implementation(project(":lib:test"))
             }

@@ -53,6 +53,7 @@ class ApplicationGeneratorTask(
         val root = File(pathToRoot).also { it.verifyExists() }
         root.createApp()
         root.createLib()
+        root.createTestLib()
         root.addGradleWrapper()
         root.writeBuildGradleFile()
         root.writeSettingsGradleFile()
@@ -270,6 +271,12 @@ internal fun File.addDependenciesToAndroidBuildGradle() {
     """.trimIndent())
     writeText(text)
 
+}
+
+private fun File.createTestLib() {
+    resolve("lib-test/src/main/kotlin/dev/buijs/klutter/integrationtest").mkdirs()
+    resolve("lib-test/src/test/kotlin").mkdirs()
+    resolve("lib-test/src/test/resources").mkdirs()
 }
 
 /**

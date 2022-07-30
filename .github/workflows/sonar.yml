@@ -16,16 +16,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: 11
           cache: gradle
 
-      # Setup Gradle
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.4.2
 
       # Upload Sonar analysis
       - name: Cache SonarCloud packages
@@ -35,7 +35,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Build and analyze
-        run: gradle build sonarqube --info
+        run: gradle clean build sonarqube --info
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

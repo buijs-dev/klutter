@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'klutter_kompose'
-    spec.version                  = '0.16.60'
+    spec.version                  = '0.16.61'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''

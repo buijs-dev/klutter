@@ -8,17 +8,25 @@
 [![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27235)
 
 
-Klutter is a framework which uses Flutter to create the frontend
-and Kotlin Multiplatform for the backend. The connective layer is generated
-by Klutter. 
+Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
+It can be used to create Flutter plugins or standalone apps. See for getting
+started with Klutter:
+- [Flutter plugin](#Flutter%20plugin)
+- [Standalone application](#Standalone%20application)
 
-## Installation
-- Preferred way of installing/using this plugin is by using the pub [plugin](https://github.com/buijs-dev/klutter-dart).
-- For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+## Flutter plugin
+The preferred way of creating and/or using Flutter plugins with Klutter is by 
+using the [pub plugin](https://github.com/buijs-dev/klutter-dart). 
+For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+
+## Standalone application
+Creating a standalone application with Klutter is an unfinished incubating feature.
+Coming soon...
 
 # Framework
-- [Annotations](lib/annotations/module.md)
-- [Core](lib/core/module.md)
-- [Gradle plugin](lib/plugin-gradle/module.md)
-- [Pub plugin](https://github.com/buijs-dev/klutter-dart)
-- [Kompose](lib/kompose/module.md)
+- [Annotations](lib/klutter-annotations/module.md)
+- [Kore](lib/klutter-kore/module.md)
+- [Kompose](lib/klutter-kompose/module.md)
+- [Test Kit](lib/klutter-test/module.md)
+- [Plugin Gradle](lib/klutter-gradle/module.md)
+- [Plugin Pub](https://github.com/buijs-dev/klutter-dart)

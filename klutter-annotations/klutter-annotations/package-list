@@ -1,0 +1,36 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dev.buijs.klutter.annotations////PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/index.html
+$dokka.location:dev.buijs.klutter.annotations/AndroidContext///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-android-context/index.html
+$dokka.location:dev.buijs.klutter.annotations/AndroidContext/AndroidContext/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-android-context/-android-context.html
+$dokka.location:dev.buijs.klutter.annotations/Controller///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-controller/index.html
+$dokka.location:dev.buijs.klutter.annotations/Controller/Controller/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-controller/-controller.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterAdaptee///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-adaptee/index.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterAdaptee/KlutterAdaptee/#kotlin.String/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-adaptee/-klutter-adaptee.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterAdaptee/name/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-adaptee/name.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterAdapter///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-adapter/index.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterAdapter/KlutterAdapter/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-adapter/-klutter-adapter.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterJSON///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-j-s-o-n/index.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterJSON/KlutterJSON/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-j-s-o-n/-klutter-j-s-o-n.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterJSON/data/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-j-s-o-n/data.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterJSON/strategy/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-j-s-o-n/strategy.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterJSON/toKJson/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-j-s-o-n/to-k-json.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterResponse///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-response/index.html
+$dokka.location:dev.buijs.klutter.annotations/KlutterResponse/KlutterResponse/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-klutter-response/-klutter-response.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.APP///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-a-p-p/index.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.APP/name/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-a-p-p/name.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.APP/ordinal/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-a-p-p/ordinal.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.EPHEMERAL///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-e-p-h-e-m-e-r-a-l/index.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.EPHEMERAL/name/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-e-p-h-e-m-e-r-a-l/name.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.EPHEMERAL/ordinal/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-e-p-h-e-m-e-r-a-l/ordinal.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.NONE///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-n-o-n-e/index.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.NONE/name/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-n-o-n-e/name.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState.NONE/ordinal/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/-n-o-n-e/ordinal.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeState///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-state/index.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeView///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-view/index.html
+$dokka.location:dev.buijs.klutter.annotations/KomposeView/KomposeView/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-kompose-view/-kompose-view.html
+$dokka.location:dev.buijs.klutter.annotations/Stateful///PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-stateful/index.html
+$dokka.location:dev.buijs.klutter.annotations/Stateful/Stateful/#dev.buijs.klutter.annotations.KomposeState/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-stateful/-stateful.html
+$dokka.location:dev.buijs.klutter.annotations/Stateful/type/#/PointingToDeclaration/klutter-annotations/dev.buijs.klutter.annotations/-stateful/type.html
+dev.buijs.klutter.annotations
+

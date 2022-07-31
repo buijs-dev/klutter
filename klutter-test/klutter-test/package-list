@@ -1,0 +1,42 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dev.buijs.klutter.test.integration//#/dev.buijs.klutter.test.integration.KittyDriver#kotlin.String#kotlin.Function1[dev.buijs.klutter.test.integration.KittyDriver,kotlin.Unit]/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/#.html
+$dokka.location:dev.buijs.klutter.test.integration//#screenshot/dev.buijs.klutter.test.integration.KittyDriver#kotlin.String#kotlin.Function1[dev.buijs.klutter.test.integration.KittyDriver,kotlin.Unit]/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/#screenshot.html
+$dokka.location:dev.buijs.klutter.test.integration////PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/index.html
+$dokka.location:dev.buijs.klutter.test.integration//click/io.appium.java_client.AppiumDriver#dev.buijs.klutter.test.integration.KittyLocator/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/click.html
+$dokka.location:dev.buijs.klutter.test.integration//find/io.appium.java_client.AppiumDriver#dev.buijs.klutter.test.integration.KittyLocator/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/find.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyAction///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-action/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyAction/KittyAction/#kotlin.String#kotlin.Function2[io.appium.java_client.AppiumDriver,io.appium.java_client.AppiumDriver,kotlin.Unit]/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-action/-kitty-action.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyAction/action/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-action/action.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyAction/description/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-action/description.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyButton///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-button/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyButton/KittyButton/#kotlin.String/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-button/-kitty-button.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyButton/byAndroid/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-button/by-android.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyButton/byIOS/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-button/by-i-o-s.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver.Companion///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/-companion/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver.Companion/init/#java.io.File?/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/-companion/init.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver/KittyDriver/#io.appium.java_client.android.AndroidDriver?#io.appium.java_client.ios.IOSDriver?#java.io.File?/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/-kitty-driver.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver/click/#dev.buijs.klutter.test.integration.KittyLocator/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/click.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver/close/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/close.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyDriver/find/#dev.buijs.klutter.test.integration.KittyLocator/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-driver/find.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyElement///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-element/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyElement/KittyElement/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-element/-kitty-element.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyElement/byAndroid/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-element/by-android.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyElement/byIOS/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-element/by-i-o-s.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyException///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-exception/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyException/KittyException/#kotlin.String#kotlin.Throwable/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-exception/-kitty-exception.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/KittyLocator/#kotlin.String#dev.buijs.klutter.test.integration.KittyElement/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/-kitty-locator.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/click/#dev.buijs.klutter.test.integration.KittyDriver/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/click.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/element/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/element.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/id/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/id.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/isDisplayed/#dev.buijs.klutter.test.integration.KittyDriver/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/is-displayed.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/isDisplayed/#io.appium.java_client.android.AndroidDriver/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/is-displayed.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyLocator/isDisplayed/#io.appium.java_client.ios.IOSDriver/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-locator/is-displayed.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyTextField///PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-text-field/index.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyTextField/KittyTextField/#kotlin.String/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-text-field/-kitty-text-field.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyTextField/byAndroid/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-text-field/by-android.html
+$dokka.location:dev.buijs.klutter.test.integration/KittyTextField/byIOS/#/PointingToDeclaration/klutter-test/dev.buijs.klutter.test.integration/-kitty-text-field/by-i-o-s.html
+dev.buijs.klutter.test.integration
+

@@ -1,0 +1,47 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dev.buijs.klutter.plugins.gradle////PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/KlutterApplicationBuilder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/-klutter-application-builder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/build/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/build.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/name/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/name.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/root/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/root.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/uiBuildFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/ui-build-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/uiOutputFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/ui-output-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationBuilder/uiTestFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-builder/ui-test-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDSL///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-s-l/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDSL/KlutterApplicationDSL/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-s-l/-klutter-application-d-s-l.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDSL/configure/#kotlin.Function1[dev.buijs.klutter.plugins.gradle.KlutterApplicationBuilder,kotlin.Unit]/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-s-l/configure.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/KlutterApplicationDTO/#kotlin.String#java.io.File?#java.io.File?#java.io.File?#java.io.File?/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/-klutter-application-d-t-o.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/buildFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/build-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/name/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/name.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/outputFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/output-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/root/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/root.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterApplicationDTO/uiTestFolder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-application-d-t-o/ui-test-folder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterDependencyHandler///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-dependency-handler/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterDependencyHandler/KlutterDependencyHandler/#org.gradle.api.Project/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-dependency-handler/-klutter-dependency-handler.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterDependencyHandler/addImplementation/#kotlin.String#kotlin.String?/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-dependency-handler/add-implementation.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterDependencyHandler/addTestImplementation/#kotlin.String#kotlin.String?/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-dependency-handler/add-test-implementation.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/KlutterGradleExtension/#org.gradle.api.Project/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/-klutter-gradle-extension.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/application/#kotlin.Function1[dev.buijs.klutter.plugins.gradle.KlutterApplicationBuilder,kotlin.Unit]/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/application.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/implementation/#kotlin.String#kotlin.String?/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/implementation.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/plugin/#kotlin.Function1[dev.buijs.klutter.plugins.gradle.KlutterPluginBuilder,kotlin.Unit]/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/plugin.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/root/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/root.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradleExtension/testImplementation/#kotlin.String#kotlin.String?/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-extension/test-implementation.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradlePlugin///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-plugin/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradlePlugin/KlutterGradlePlugin/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-plugin/-klutter-gradle-plugin.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterGradlePlugin/apply/#org.gradle.api.Project/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-gradle-plugin/apply.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginBuilder///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-builder/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginBuilder/KlutterPluginBuilder/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-builder/-klutter-plugin-builder.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginBuilder/build/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-builder/build.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginBuilder/name/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-builder/name.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDSL///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-s-l/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDSL/KlutterPluginDSL/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-s-l/-klutter-plugin-d-s-l.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDSL/configure/#kotlin.Function1[dev.buijs.klutter.plugins.gradle.KlutterPluginBuilder,kotlin.Unit]/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-s-l/configure.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDTO///PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-t-o/index.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDTO/KlutterPluginDTO/#kotlin.String/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-t-o/-klutter-plugin-d-t-o.html
+$dokka.location:dev.buijs.klutter.plugins.gradle/KlutterPluginDTO/name/#/PointingToDeclaration/klutter-gradle/dev.buijs.klutter.plugins.gradle/-klutter-plugin-d-t-o/name.html
+dev.buijs.klutter.plugins.gradle
+

@@ -1,0 +1,73 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dev.buijs.klutter.core.project////PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/index.html
+$dokka.location:dev.buijs.klutter.core.project//plugin/dev.buijs.klutter.core.project.Root#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/plugin.html
+$dokka.location:dev.buijs.klutter.core.project//plugin/java.io.File#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/plugin.html
+$dokka.location:dev.buijs.klutter.core.project//plugin/java.io.File#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/plugin.html
+$dokka.location:dev.buijs.klutter.core.project//plugin/kotlin.String#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/plugin.html
+$dokka.location:dev.buijs.klutter.core.project//plugin/kotlin.String#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/plugin.html
+$dokka.location:dev.buijs.klutter.core.project/Android///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/index.html
+$dokka.location:dev.buijs.klutter.core.project/Android/Android/#java.io.File#kotlin.String#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/-android.html
+$dokka.location:dev.buijs.klutter.core.project/Android/folder/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/folder.html
+$dokka.location:dev.buijs.klutter.core.project/Android/manifest/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/manifest.html
+$dokka.location:dev.buijs.klutter.core.project/Android/pathToPlugin/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/path-to-plugin.html
+$dokka.location:dev.buijs.klutter.core.project/Android/pathToPluginPackage/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/path-to-plugin-package.html
+$dokka.location:dev.buijs.klutter.core.project/Android/pluginClassName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/plugin-class-name.html
+$dokka.location:dev.buijs.klutter.core.project/Android/pluginPackageName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-android/plugin-package-name.html
+$dokka.location:dev.buijs.klutter.core.project/IOS///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/index.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/IOS/#java.io.File#kotlin.String#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/-i-o-s.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/appDelegate/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/app-delegate.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/folder/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/folder.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/pathToClasses/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/path-to-classes.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/pathToPlugin/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/path-to-plugin.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/pluginClassName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/plugin-class-name.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/pluginName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/plugin-name.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/podfile/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/podfile.html
+$dokka.location:dev.buijs.klutter.core.project/IOS/podspec/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-i-o-s/podspec.html
+$dokka.location:dev.buijs.klutter.core.project/Platform///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-platform/index.html
+$dokka.location:dev.buijs.klutter.core.project/Platform/Platform/#java.io.File#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-platform/-platform.html
+$dokka.location:dev.buijs.klutter.core.project/Platform/folder/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-platform/folder.html
+$dokka.location:dev.buijs.klutter.core.project/Platform/podspec/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-platform/podspec.html
+$dokka.location:dev.buijs.klutter.core.project/Platform/source/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-platform/source.html
+$dokka.location:dev.buijs.klutter.core.project/Project///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/index.html
+$dokka.location:dev.buijs.klutter.core.project/Project/Project/#dev.buijs.klutter.core.project.Root#dev.buijs.klutter.core.project.IOS#dev.buijs.klutter.core.project.Android#dev.buijs.klutter.core.project.Platform/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/-project.html
+$dokka.location:dev.buijs.klutter.core.project/Project/android/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/android.html
+$dokka.location:dev.buijs.klutter.core.project/Project/ios/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/ios.html
+$dokka.location:dev.buijs.klutter.core.project/Project/platform/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/platform.html
+$dokka.location:dev.buijs.klutter.core.project/Project/root/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-project/root.html
+$dokka.location:dev.buijs.klutter.core.project/Root///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/index.html
+$dokka.location:dev.buijs.klutter.core.project/Root/Root/#kotlin.String#java.io.File/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/-root.html
+$dokka.location:dev.buijs.klutter.core.project/Root/folder/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/folder.html
+$dokka.location:dev.buijs.klutter.core.project/Root/pathToLib/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/path-to-lib.html
+$dokka.location:dev.buijs.klutter.core.project/Root/pluginClassName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/plugin-class-name.html
+$dokka.location:dev.buijs.klutter.core.project/Root/pluginName/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/plugin-name.html
+$dokka.location:dev.buijs.klutter.core.project/Root/resolve/#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.project/-root/resolve.html
+$dokka.location:dev.buijs.klutter.core.shared////PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/index.html
+$dokka.location:dev.buijs.klutter.core.shared//excludeArm64/java.io.File#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/exclude-arm64.html
+$dokka.location:dev.buijs.klutter.core.shared//execute/kotlin.String#java.io.File/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/execute.html
+$dokka.location:dev.buijs.klutter.core.shared/KlutterDSL///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/-klutter-d-s-l/index.html
+$dokka.location:dev.buijs.klutter.core.shared/KlutterDSL/configure/#kotlin.Function1[TypeParam(bounds=[kotlin.Any?]),kotlin.Unit]/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/-klutter-d-s-l/configure.html
+$dokka.location:dev.buijs.klutter.core.shared/KlutterDSLBuilder///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/-klutter-d-s-l-builder/index.html
+$dokka.location:dev.buijs.klutter.core.shared/KlutterDSLBuilder/build/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/-klutter-d-s-l-builder/build.html
+$dokka.location:dev.buijs.klutter.core.shared/KlutterDTO///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.shared/-klutter-d-t-o/index.html
+$dokka.location:dev.buijs.klutter.core.tasks////PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/index.html
+$dokka.location:dev.buijs.klutter.core.tasks/AdapterGeneratorTask///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-adapter-generator-task/index.html
+$dokka.location:dev.buijs.klutter.core.tasks/AdapterGeneratorTask/AdapterGeneratorTask/#dev.buijs.klutter.core.project.Android#dev.buijs.klutter.core.project.IOS#dev.buijs.klutter.core.project.Root#dev.buijs.klutter.core.project.Platform/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-adapter-generator-task/-adapter-generator-task.html
+$dokka.location:dev.buijs.klutter.core.tasks/AdapterGeneratorTask/run/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-adapter-generator-task/run.html
+$dokka.location:dev.buijs.klutter.core.tasks/ApplicationGeneratorTask///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-application-generator-task/index.html
+$dokka.location:dev.buijs.klutter.core.tasks/ApplicationGeneratorTask/ApplicationGeneratorTask/#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-application-generator-task/-application-generator-task.html
+$dokka.location:dev.buijs.klutter.core.tasks/ApplicationGeneratorTask/run/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core.tasks/-application-generator-task/run.html
+$dokka.location:dev.buijs.klutter.core////PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/index.html
+$dokka.location:dev.buijs.klutter.core/KlutterException///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-exception/index.html
+$dokka.location:dev.buijs.klutter.core/KlutterException/KlutterException/#kotlin.String/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-exception/-klutter-exception.html
+$dokka.location:dev.buijs.klutter.core/KlutterPrinter///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-printer/index.html
+$dokka.location:dev.buijs.klutter.core/KlutterPrinter/print/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-printer/print.html
+$dokka.location:dev.buijs.klutter.core/KlutterTask///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-task/index.html
+$dokka.location:dev.buijs.klutter.core/KlutterTask/run/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-task/run.html
+$dokka.location:dev.buijs.klutter.core/KlutterWriter///PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-writer/index.html
+$dokka.location:dev.buijs.klutter.core/KlutterWriter/write/#/PointingToDeclaration/klutter-kore/dev.buijs.klutter.core/-klutter-writer/write.html
+dev.buijs.klutter.core
+dev.buijs.klutter.core.project
+dev.buijs.klutter.core.shared
+dev.buijs.klutter.core.tasks
+

@@ -1,0 +1,175 @@
+/* Copyright (c) 2021 - 2022 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+package dev.buijs.klutter.plugins.gradle
+
+import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.core.project.*
+import dev.buijs.klutter.plugins.gradle.tasks.*
+import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidAndIosWithFlutter
+import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidWithFlutter
+import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
+import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
+import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
+import mu.KotlinLogging
+import org.gradle.api.Action
+import org.gradle.api.DefaultTask
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
+import java.io.File
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+
+private val log = KotlinLogging.logger { }
+
+/**
+ * Gradle plugin for Klutter Framework with the following tasks:
+ * - klutterGenerateAdapters
+ * - klutterGenerateUI
+ * - klutterExcludeArchsPlatformPodspec
+ */
+class KlutterGradlePlugin: Plugin<Project> {
+    override fun apply(project: Project) {
+        project.extensions.add("klutter", KlutterGradleExtension(project))
+        project.tasks.register("klutterBuild", BuildKlutterProject::class.java)
+        project.tasks.register("klutterBuildAndroid", BuildAndroidWithFlutter::class.java)
+        project.tasks.register("klutterBuildAndroidIos", BuildAndroidAndIosWithFlutter::class.java)
+        project.tasks.register("klutterBuildIos", BuildIosWithFlutter::class.java)
+        project.tasks.register("klutterCopyAarFile", CopyAndroidAarFile::class.java)
+        project.tasks.register("klutterCopyFramework", CopyIosFramework::class.java)
+        project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspec::class.java)
+        project.tasks.register("klutterGenerateAdapters", GenerateAdapters::class.java)
+        project.tasks.register("klutterGenerateUI", GenerateUI::class.java)
+    }
+}
+
+/**
+ * Glue for the DSL used in a build.gradle(.kts) file and the Klutter tasks.
+ */
+open class KlutterGradleExtension(project: Project) {
+
+    private var handler = KlutterDependencyHandler(project)
+
+    var root: File? = null
+
+    @Internal
+    internal var plugin: KlutterPluginDTO? = null
+
+    @Internal
+    internal var application: KlutterApplicationDTO? = null
+
+    /**
+     * Configure the Gradle Plugin for a klutter plugin (consumer or producer).
+     */
+    fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
+        plugin = KlutterPluginBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Configure the Gradle Plugin for a klutter application using Kompose for the UI.
+     */
+    fun application(lambda: KlutterApplicationBuilder.() -> Unit) {
+        application = KlutterApplicationBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Add klutter implementation dependency to this project.
+     */
+    fun implementation(simpleModuleName: String, version: String? = null) {
+        handler.addImplementation(simpleModuleName, version)
+    }
+
+    /**
+     * Add klutter testImplementation dependency to this project.
+     */
+    fun testImplementation(simpleModuleName: String, version: String? = null) {
+        handler.addTestImplementation(simpleModuleName, version)
+    }
+
+}
+
+/**
+ * Parent of all Gradle Tasks.
+ */
+internal abstract class KlutterGradleTask: DefaultTask() {
+
+    init {
+        group = "klutter"
+    }
+
+    /**
+     * The implementing class must describe what the task does by implementing this function.
+     */
+    abstract fun describe()
+
+    @TaskAction
+    fun execute() = describe()
+
+    fun project(): dev.buijs.klutter.core.project.Project {
+        val ext = project.klutterExtension()
+
+        val root = ext.root ?: project.rootProject.projectDir
+        val plugin = ext.plugin
+        val application = ext.application
+
+        return when {
+            plugin != null && application != null -> {
+                throw KlutterException(
+                    "Both plugin and application are set in klutter DSL but only 1 can be used."
+                )
+            }
+
+            application != null -> {
+                log.info { "Klutter Gradle configured as application." }
+                val appRoot = application.root ?: project.rootProject.rootDir.resolve("app/backend")
+                log.info { "Processing Klutter app with root: ${appRoot.absolutePath}" }
+                val appProject = appRoot.plugin()
+                Project(
+                    root = appProject.root,
+                    ios = appProject.ios,
+                    android = appProject.android,
+                    platform = Platform(
+                        folder = root.resolve("lib"),
+                        pluginName = "lib"
+                    ),
+                )
+            }
+
+            else -> {
+                log.info { "Klutter Gradle configured as plugin." }
+                root.plugin()
+            }
+        }
+
+    }
+
+}
+
+internal fun Project.klutterExtension(): KlutterGradleExtension {
+    return extensions.getByName("klutter").let {
+        if (it is KlutterGradleExtension) { it } else {
+            throw IllegalStateException("klutter extension is not of the correct type")
+        }
+    }
+}

@@ -1,4 +1,4 @@
-# Klutter release notes
+# CHANGELOG
 
 ## v2022.r6-7.alpha
 - [Bugfix] Fixed adding exclusions to Podfile when they are already partially present.
@@ -39,5 +39,4 @@ and app module causes issues when building for Android.
 ## v2022-pre-alpha-5
 - Extract all task functionality from the plugins module and add it to klutter-core. CLI and Gradle plugin can now both use the same functionality.
 - Move annotations-processor to klutter-core because there is no requirement to use the processor on any other place.
-- Remove gradle-plugins module from klutter repo and to it's own [repo](https://github.com/buijs-dev/klutter-gradle)
 - Add buildSrc to the template.

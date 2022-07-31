@@ -1,6 +1,12 @@
-include(":packages:annotations-jvm")
-include(":packages:annotations-kmp")
-include(":packages:core")
-include(":packages:core-test")
-include(":packages:plugin-gradle")
-rootProject.name = "klutter"
+// Project modules
+include(":lib:klutter-annotations")
+include(":lib:klutter-kore")
+include(":lib:klutter-test")
+include(":lib:klutter-kompose")
+include(":lib:klutter-gradle")
+
+// Internal Testing library
+include(":lib-test")
+
+// Internal build properties
+includeBuild("lib-build")

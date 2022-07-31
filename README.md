@@ -9,24 +9,22 @@
 
 
 Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
-It can be used to create Flutter plugins or standalone apps. See for getting
-started with Klutter:
-- [Flutter plugin](#Flutter%20plugin)
-- [Standalone application](#Standalone%20application)
+It can be used to create Flutter plugins or standalone apps.
 
-## Flutter plugin
-The preferred way of creating and/or using Flutter plugins with Klutter is by 
+### Getting started
+- The preferred way of creating and/or using Flutter plugins with Klutter is by 
 using the [pub plugin](https://github.com/buijs-dev/klutter-dart). 
-For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
-
-## Standalone application
-Creating a standalone application with Klutter is an unfinished incubating feature.
+- For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+- Creating a standalone application with Klutter is an unfinished incubating feature.
 Coming soon...
 
-# Framework
+### Framework
 - [Annotations](lib/klutter-annotations/module.md)
 - [Kore](lib/klutter-kore/module.md)
 - [Kompose](lib/klutter-kompose/module.md)
 - [Test Kit](lib/klutter-test/module.md)
 - [Plugin Gradle](lib/klutter-gradle/module.md)
 - [Plugin Pub](https://github.com/buijs-dev/klutter-dart)
+
+### Kdocs
+https://buijs-dev.github.io/klutter/

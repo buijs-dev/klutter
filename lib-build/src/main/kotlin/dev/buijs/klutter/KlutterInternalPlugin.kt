@@ -35,21 +35,26 @@ class KlutterInternalPlugin: Plugin<Project> {
 }
 
 object ProjectVersions {
-    val core = properties("core.version")
-    val annotations = properties("annotations.version")
-    val kompose = properties("kompose.version")
-    val gradle = properties("plugin.gradle.version")
-    val pub = properties("plugin.pub.version")
-    val kitty = properties("kitty.version")
+    val core = versions("kore.version")
+    val annotations = versions("annotations.version")
+    val kompose = versions("kompose.version")
+    val gradle = versions("plugin.gradle.version")
+    val pub = versions("plugin.pub.version")
+    val kitty = versions("test.version")
 }
 
 object Repository {
-    val endpoint: URI = URI(System.getenv("KLUTTER_PRIVATE_URL") ?: properties("repo.endpoint"))
-    val username = System.getenv("KLUTTER_PRIVATE_USERNAME") ?: properties("repo.username")
-    val password = System.getenv("KLUTTER_PRIVATE_PASSWORD") ?: properties("repo.password")
+    val endpoint: URI = URI(System.getenv("KLUTTER_PRIVATE_URL") ?: repository("repo.endpoint"))
+    val username = System.getenv("KLUTTER_PRIVATE_USERNAME") ?: repository("repo.username")
+    val password = System.getenv("KLUTTER_PRIVATE_PASSWORD") ?: repository("repo.password")
 }
 
-fun properties(key: String): String = Properties().also {
+fun versions(key: String): String = Properties().also {
     it.load(KlutterInternalPlugin::class.java.classLoader
         .getResourceAsStream("publish.properties"))
+}.getProperty(key) ?: throw GradleException("missing $key")
+
+fun repository(key: String): String = Properties().also {
+    it.load(KlutterInternalPlugin::class.java.classLoader
+        .getResourceAsStream("repository.properties"))
 }.getProperty(key) ?: throw GradleException("missing $key")

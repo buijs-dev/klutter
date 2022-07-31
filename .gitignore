@@ -82,3 +82,5 @@ hs_err_pid*
 /lib-build/res/publish_gradle_plugin_release.sh
 /lib-build/src/main/resources/publish.properties
 /lib-build/tools/publish_gradle_plugin_release.sh
+/lib-build/src/main/resources/repository.properties
+/lib/klutter-gradle/src/main/resources/publish.properties

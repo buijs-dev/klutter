@@ -19,7 +19,6 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.plugins.gradle
 
 import dev.buijs.klutter.core.KlutterException
@@ -31,12 +30,16 @@ import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
 import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
 import mu.KotlinLogging
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
 private val log = KotlinLogging.logger { }
 
@@ -48,7 +51,7 @@ private val log = KotlinLogging.logger { }
  */
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.create("klutter", KlutterGradleExtension::class.java)
+        project.extensions.add("klutter", KlutterGradleExtension(project))
         project.tasks.register("klutterBuild", BuildKlutterProject::class.java)
         project.tasks.register("klutterBuildAndroid", BuildAndroidWithFlutter::class.java)
         project.tasks.register("klutterBuildAndroidIos", BuildAndroidAndIosWithFlutter::class.java)
@@ -64,7 +67,9 @@ class KlutterGradlePlugin: Plugin<Project> {
 /**
  * Glue for the DSL used in a build.gradle(.kts) file and the Klutter tasks.
  */
-open class KlutterGradleExtension {
+open class KlutterGradleExtension(project: Project) {
+
+    private var handler = KlutterDependencyHandler(project)
 
     var root: File? = null
 
@@ -74,12 +79,32 @@ open class KlutterGradleExtension {
     @Internal
     internal var application: KlutterApplicationDTO? = null
 
+    /**
+     * Configure the Gradle Plugin for a klutter plugin (consumer or producer).
+     */
     fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
         plugin = KlutterPluginBuilder().apply(lambda).build()
     }
 
+    /**
+     * Configure the Gradle Plugin for a klutter application using Kompose for the UI.
+     */
     fun application(lambda: KlutterApplicationBuilder.() -> Unit) {
         application = KlutterApplicationBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Add klutter implementation dependency to this project.
+     */
+    fun implementation(simpleModuleName: String, version: String? = null) {
+        handler.addImplementation(simpleModuleName, version)
+    }
+
+    /**
+     * Add klutter testImplementation dependency to this project.
+     */
+    fun testImplementation(simpleModuleName: String, version: String? = null) {
+        handler.addTestImplementation(simpleModuleName, version)
     }
 
 }

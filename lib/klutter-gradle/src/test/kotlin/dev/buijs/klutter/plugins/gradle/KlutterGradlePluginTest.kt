@@ -4,7 +4,6 @@ import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
 import org.gradle.api.plugins.ExtensionContainer
-import org.junit.Ignore
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.io.File
@@ -49,7 +48,8 @@ internal class KlutterGradlePluginTest: WordSpec({
 
     "Verify KlutterGradleExtension class" should {
 
-        val extension = KlutterGradleExtension()
+        val project: org.gradle.api.Project = mock {  }
+        val extension = KlutterGradleExtension(project)
 
         "All values default to null" {
             extension.root shouldBe null

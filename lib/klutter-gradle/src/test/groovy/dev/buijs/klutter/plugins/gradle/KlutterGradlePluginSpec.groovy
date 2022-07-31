@@ -48,28 +48,6 @@ class KlutterGradlePluginSpec extends Specification {
         and:
         arr.size() == 9
 
-//        and:
-//        def task = arr[0]
-//        def task2 = arr[1]
-//        def task3 = arr[2]
-//
-//        and:
-//        task != null
-//        task.toString() == "task ':klutterExcludeArchsPlatformPodspec'"
-//
-//        and:
-//        task2 != null
-//        task2.toString() == "task ':klutterGenerateAdapters'"
-//
-//        and:
-//        task3 != null
-//        task3.toString() == "task ':klutterGenerateUI'"
-//
-//        and:
-//        task.actions.size() == 1
-//        task2.actions.size() == 1
-//        task3.actions.size() == 1
-
     }
 
     def "Verify KlutterGradleTask task action executes describe method"() {
@@ -98,7 +76,7 @@ class KlutterGradlePluginSpec extends Specification {
         given:
         def plugin = new TestPlugin()
 
-        def extension = new KlutterGradleExtension()
+        def extension = new KlutterGradleExtension(Mock(Project))
         extension.root = plugin.root
 
         def container = Mock(ExtensionContainer) {
@@ -128,7 +106,7 @@ class KlutterGradlePluginSpec extends Specification {
         given:
         def plugin = new TestPlugin()
 
-        def extension = new KlutterGradleExtension()
+        def extension = new KlutterGradleExtension(Mock(Project))
 
         def container = Mock(ExtensionContainer) {
             getByName("klutter") >> extension

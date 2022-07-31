@@ -114,6 +114,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
 
+    // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+
     // Jackson for XML
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
@@ -128,4 +131,9 @@ dependencies {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.register("copyKlutterProperties", Copy::class) {
+    from(project.rootProject.rootDir.resolve("lib-build/src/main/resources/publish.properties"))
+    into(project.projectDir.resolve("src/main/resources"))
 }

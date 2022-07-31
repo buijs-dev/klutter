@@ -1,9 +1,8 @@
-import org.jetbrains.dokka.DokkaConfiguration.*
 import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     kotlin("jvm") version "1.7.10"
-    id("org.jetbrains.dokka") version "1.7.0"
+    id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
     id("org.sonarqube") version "3.4.0.2513"
     id("klutter")
@@ -50,14 +49,7 @@ sonarqube {
 tasks.withType<DokkaTask>().configureEach {
     dokkaSourceSets {
         configureEach {
-            documentedVisibilities.set(
-                setOf(
-                    Visibility.PUBLIC,
-                    Visibility.PRIVATE,
-                    Visibility.PROTECTED,
-                    Visibility.INTERNAL,
-                )
-            )
+            includeNonPublic
         }
     }
 }

@@ -41,6 +41,7 @@ object ProjectVersions {
     val gradle = versions("plugin.gradle.version")
     val pub = versions("plugin.pub.version")
     val kitty = versions("test.version")
+    val jetbrains = versions("plugin.jetbrains.version")
 }
 
 object Repository {
@@ -49,6 +50,11 @@ object Repository {
     val password = System.getenv("KLUTTER_PRIVATE_PASSWORD") ?: repository("repo.password")
 }
 
+object Signing {
+    val certificateChain = System.getenv("") ?: signing("certificate_chain")
+    val privateKey = System.getenv("") ?: signing("private_key")
+    val privateKeyPassword = System.getenv("") ?: signing("private_key_password")
+}
 fun versions(key: String): String = Properties().also {
     it.load(KlutterInternalPlugin::class.java.classLoader
         .getResourceAsStream("publish.properties"))
@@ -57,4 +63,9 @@ fun versions(key: String): String = Properties().also {
 fun repository(key: String): String = Properties().also {
     it.load(KlutterInternalPlugin::class.java.classLoader
         .getResourceAsStream("repository.properties"))
+}.getProperty(key) ?: throw GradleException("missing $key")
+
+fun signing(key: String): String = Properties().also {
+    it.load(KlutterInternalPlugin::class.java.classLoader
+        .getResourceAsStream("signing.properties"))
 }.getProperty(key) ?: throw GradleException("missing $key")

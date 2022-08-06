@@ -32,19 +32,17 @@ sourceSets {
 }
 
 dependencies {
-    //Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
 
-    //Jackson for XML
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
+    // Jackson for XML
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
 
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
     implementation("io.github.microutils:kotlin-logging:2.1.23")
 
+    // T-t-t-t-testing !
     testImplementation(project(":lib-test"))
 }
 

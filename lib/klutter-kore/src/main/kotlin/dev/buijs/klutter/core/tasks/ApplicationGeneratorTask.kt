@@ -19,13 +19,11 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.core.tasks
 
 import dev.buijs.klutter.core.KlutterTask
 import dev.buijs.klutter.core.shared.execute
 import dev.buijs.klutter.core.shared.verifyExists
-import dev.buijs.klutter.core.shared.write
 import java.io.File
 
 internal const val klutterGradleVersion = "2022.r8-alpha"
@@ -46,8 +44,36 @@ internal const val gradleWrapperDistributionUrl = "https\\://services.gradle.org
  * Task to generate a klutter application project.
  */
 class ApplicationGeneratorTask(
+    /**
+     * Path to the folder where to create the new project.
+     */
     private val pathToRoot: String,
+
+    /**
+     * Name of the application.
+     *
+     * This name will be used when generating the flutter application
+     * which ensures the name will be propagated to the Android and iOS artifact.
+     *
+     * Default value: "kompose_app_frontend".
+     */
+    appName: String? = null,
+
+    /**
+     * Name of the application organisation.
+     *
+     * This name will be used when generating the flutter application
+     * which ensures the organisation name will be propagated to the Android and iOS artifact.
+     *
+     * Default value: "dev.buijs.klutter".
+     */
+    groupName: String? = null,
+
 ) : KlutterTask {
+
+    private val appName: String = appName ?: "kompose_app_frontend"
+
+    private val groupName: String = groupName ?: "dev.buijs.klutter"
 
     override fun run() {
         val root = File(pathToRoot).also { it.verifyExists() }
@@ -63,24 +89,24 @@ class ApplicationGeneratorTask(
 
         val folder = resolve("app").also { it.mkdir() }
 
-        "flutter create kompose_app_frontend".execute(folder)
+        "flutter create $appName --org $groupName".execute(folder)
         "flutter create --org dev.buijs.klutter --template=plugin --platforms=android,ios kompose_app_backend".execute(folder)
 
-        resolve("app/kompose_app_frontend/android")
+        resolve("app/$appName/android")
             .copyRecursively(resolve("app/frontend/android"))
-        resolve("app/kompose_app_frontend/ios")
+        resolve("app/$appName/ios")
             .copyRecursively(resolve("app/frontend/ios"))
-        resolve("app/kompose_app_frontend/lib")
+        resolve("app/$appName/lib")
             .copyRecursively(resolve("app/frontend/lib"))
-        resolve("app/kompose_app_frontend/.gitignore")
+        resolve("app/$appName/.gitignore")
             .copyTo(resolve("app/frontend/.gitignore"))
-        resolve("app/kompose_app_frontend/.metadata")
+        resolve("app/$appName/.metadata")
             .copyTo(resolve("app/frontend/.metadata"))
-        resolve("app/kompose_app_frontend/.packages")
+        resolve("app/$appName/.packages")
             .copyTo(resolve("app/frontend/.packages"))
-        resolve("app/kompose_app_frontend/pubspec.yaml")
+        resolve("app/$appName/pubspec.yaml")
             .copyTo(resolve("app/frontend/pubspec.yaml"))
-        resolve("app/kompose_app_frontend").deleteRecursively()
+        resolve("app/$appName").deleteRecursively()
 
         resolve("app/kompose_app_backend/android")
             .copyRecursively(resolve("app/backend/android"))
@@ -97,38 +123,8 @@ class ApplicationGeneratorTask(
             .copyTo(resolve("app/backend/pubspec.yaml"))
         resolve("app/kompose_app_backend").deleteRecursively()
 
-//        this.resolve("app/frontend/pubspec.yaml").writeText("""
-//            |name: kompose_app_frontend
-//            |description: Generated Flutter UI
-//            |
-//            |publish_to: 'none'
-//            |
-//            |environment:
-//            |  sdk: ">=2.17.5 <3.0.0"
-//            |
-//            |dependencies:
-//            |  flutter:
-//            |    sdk: flutter
-//            |
-//            |  kompose_app_backend:
-//            |    path: ../backend
-//            |
-//            |  cupertino_icons: ^1.0.2
-//            |  flutter_platform_widgets: ^$platformWidgetsVersion
-//            |  klutter: ^$klutterPubVersion
-//            |
-//            |dev_dependencies:
-//            |  flutter_test:
-//            |    sdk: flutter
-//            |  flutter_lints: ^2.0.0
-//            |
-//            |flutter:
-//            |  uses-material-design: true
-//        """.trimMargin())
-
-        // TODO replace with above
         this.resolve("app/frontend/pubspec.yaml").writeText("""
-            |name: kompose_app_frontend
+            |name: $appName
             |description: Generated Flutter UI
             |
             |publish_to: 'none'
@@ -145,8 +141,7 @@ class ApplicationGeneratorTask(
             |
             |  cupertino_icons: ^1.0.2
             |  flutter_platform_widgets: ^$platformWidgetsVersion
-            |  klutter: 
-            |     path: ../../../../klutter-dart
+            |  klutter: ^$klutterPubVersion
             |
             |dev_dependencies:
             |  flutter_test:
@@ -157,37 +152,6 @@ class ApplicationGeneratorTask(
             |  uses-material-design: true
         """.trimMargin())
 
-//        this.resolve("app/backend/pubspec.yaml").writeText("""
-//            |name: kompose_app_backend
-//            |description: Generated Flutter plugin to access Platform
-//            |version: 0.0.1
-//            |
-//            |environment:
-//            |  sdk: ">=2.17.5 <3.0.0"
-//            |  flutter: ">=2.5.0"
-//            |
-//            |dependencies:
-//            |  flutter:
-//            |    sdk: flutter
-//            |
-//            |  klutter: ^$klutterPubVersion
-//            |
-//            |dev_dependencies:
-//            |  flutter_test:
-//            |    sdk: flutter
-//            |  flutter_lints: ^2.0.0
-//            |
-//            |flutter:
-//            |  plugin:
-//            |    platforms:
-//            |      android:
-//            |        package: dev.buijs.klutter.kompose_app_backend
-//            |        pluginClass: KomposeAppBackendPlugin
-//            |      ios:
-//            |        pluginClass: KomposeAppBackendPlugin
-//        """.trimMargin())
-
-        // TODO replace with above
         this.resolve("app/backend/pubspec.yaml").writeText("""
             |name: kompose_app_backend
             |description: Generated Flutter plugin to access Platform
@@ -201,8 +165,7 @@ class ApplicationGeneratorTask(
             |  flutter:
             |    sdk: flutter
             |
-            |  klutter: 
-            |    path: ../../../../klutter-dart
+            |  klutter: ^$klutterPubVersion
             |
             |dev_dependencies:
             |  flutter_test:

@@ -26,7 +26,6 @@ import dev.buijs.klutter.core.KlutterPrinter
 import dev.buijs.klutter.core.shared.Method
 import dev.buijs.klutter.core.shared.maybePostfixToKJson
 import dev.buijs.klutter.core.shared.postFix
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 internal class AndroidAdapter(
     private val pluginPackageName: String,
@@ -113,7 +112,7 @@ internal class AndroidAdapter(
         .joinToString("\n") { "import $it" }
 
     private fun List<Method>.asFunctionBodyString(): String? =
-        ifNotEmpty {
+        if(isEmpty()) { null } else  {
             joinToString("\n") { it.print() }
                 .postFix(" \n                else -> result.notImplemented()")
         }

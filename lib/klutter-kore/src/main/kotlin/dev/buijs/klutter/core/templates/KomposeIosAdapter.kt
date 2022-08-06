@@ -23,9 +23,7 @@
 package dev.buijs.klutter.core.templates
 
 import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.shared.Method
-import dev.buijs.klutter.core.shared.maybePostfixToKJson
-import org.jetbrains.kotlin.util.prefixIfNot
+import dev.buijs.klutter.core.shared.prefixIfNot
 
 internal class KomposeIosAdapter(
     private val pluginClassName: String,

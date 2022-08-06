@@ -34,6 +34,12 @@ internal fun String.maybePostfixToKJson() =
  */
 internal fun String.postFix(value: String) = "$this$value"
 
+internal fun String.prefixIfNot(prefix: String) =
+    if(startsWith(prefix)) this else "$prefix$this"
+
+internal fun String.removeSuffixIfPresent(suffix: String) =
+    if(endsWith(suffix)) this.substringBeforeLast(suffix) else this
+
 /**
  * Convert a String to camelCase.
  */

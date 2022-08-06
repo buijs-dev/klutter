@@ -27,7 +27,6 @@ import dev.buijs.klutter.core.KlutterTask
 import dev.buijs.klutter.core.project.*
 import dev.buijs.klutter.core.shared.*
 import dev.buijs.klutter.core.templates.*
-import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 /**

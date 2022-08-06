@@ -1,4 +1,4 @@
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.gradle
 
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe

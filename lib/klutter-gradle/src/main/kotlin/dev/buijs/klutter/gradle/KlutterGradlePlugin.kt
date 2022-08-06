@@ -19,27 +19,18 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.gradle
 
 import dev.buijs.klutter.core.KlutterException
 import dev.buijs.klutter.core.project.*
-import dev.buijs.klutter.plugins.gradle.tasks.*
-import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidAndIosWithFlutter
-import dev.buijs.klutter.plugins.gradle.tasks.BuildAndroidWithFlutter
-import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
-import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
-import dev.buijs.klutter.plugins.gradle.tasks.GenerateUI
+import dev.buijs.klutter.gradle.tasks.*
 import mu.KotlinLogging
-import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
 
 private val log = KotlinLogging.logger { }
 

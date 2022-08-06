@@ -1,10 +1,10 @@
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.gradle
 
 import dev.buijs.klutter.core.shared.FileUtilsKt
 import dev.buijs.klutter.core.project.Platform
 import dev.buijs.klutter.core.test.TestPlugin
-import dev.buijs.klutter.plugins.gradle.tasks.ExcludeArchsPlatformPodspec
-import dev.buijs.klutter.plugins.gradle.tasks.GenerateAdapters
+import dev.buijs.klutter.gradle.tasks.ExcludeArchsPlatformPodspec
+import dev.buijs.klutter.gradle.tasks.GenerateAdapters
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.testfixtures.ProjectBuilder

@@ -19,20 +19,16 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.gradle.tasks
 
-package dev.buijs.klutter.plugins.gradle.tasks
-
-import dev.buijs.klutter.core.shared.execute
-import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+import dev.buijs.klutter.core.shared.excludeArm64
+import dev.buijs.klutter.gradle.KlutterGradleTask
 
 /**
- * Task to stop the appium server.
+ * Task to edit the podspec file in the root/platform folder.
  */
-internal open class AppiumServerStop : KlutterGradleTask() {
-
+internal open class ExcludeArchsPlatformPodspec: KlutterGradleTask() {
     override fun describe() {
-        """pkill -9 -f appium""".execute(project().root.folder)
+        project().platform.podspec().excludeArm64("ios.deployment_target")
     }
-
 }
-

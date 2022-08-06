@@ -19,14 +19,11 @@
  * SOFTWARE.
  *
  */
-
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
-import dev.buijs.klutter.plugins.gradle.klutterExtension
-import dev.buijs.klutter.ui.tasks.AndroidArtifactBuildTask
-import dev.buijs.klutter.ui.tasks.IosArtifactBuildTask
+import dev.buijs.klutter.gradle.KlutterGradleTask
+import dev.buijs.klutter.gradle.klutterExtension
 import org.gradle.api.Project
 
 /**

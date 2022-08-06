@@ -1,4 +1,4 @@
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.gradle
 
 import dev.buijs.klutter.core.test.TestUtil
 import dev.buijs.klutter.core.test.TestPlugin

@@ -19,35 +19,49 @@
  * SOFTWARE.
  *
  */
-
-package dev.buijs.klutter.plugins.gradle
+package dev.buijs.klutter.gradle
 
 import dev.buijs.klutter.core.shared.KlutterDSL
 import dev.buijs.klutter.core.shared.KlutterDSLBuilder
 import dev.buijs.klutter.core.shared.KlutterDTO
+import java.io.File
 
 @DslMarker
-internal annotation class KlutterPluginDSLMarker
+internal annotation class KlutterApplicationDSLMarker
 
-@KlutterPluginDSLMarker
-class KlutterPluginDSL: KlutterDSL<KlutterPluginBuilder> {
-    override fun configure(lambda: KlutterPluginBuilder.() -> Unit): KlutterPluginDTO {
-        return KlutterPluginBuilder().apply(lambda).build()
+@KlutterApplicationDSLMarker
+class KlutterApplicationDSL: KlutterDSL<KlutterApplicationBuilder> {
+    override fun configure(lambda: KlutterApplicationBuilder.() -> Unit): KlutterApplicationDTO {
+        return KlutterApplicationBuilder().apply(lambda).build()
     }
 }
 
-@KlutterPluginDSLMarker
-class KlutterPluginBuilder: KlutterDSLBuilder {
+@KlutterApplicationDSLMarker
+class KlutterApplicationBuilder: KlutterDSLBuilder {
 
     var name: String = ""
+    var root: File? = null
+    var uiBuildFolder: File? = null
+    var uiOutputFolder: File? = null
+    var uiTestFolder: File? = null
 
-    override fun build() = KlutterPluginDTO(name = name)
+    override fun build() = KlutterApplicationDTO(
+        name = name,
+        root = root,
+        buildFolder = uiBuildFolder,
+        outputFolder = uiOutputFolder,
+        uiTestFolder = uiTestFolder,
+    )
 
 }
 
 /**
  * DTO for storing shared plugin configuration.
  */
-data class KlutterPluginDTO(
+data class KlutterApplicationDTO(
     val name: String,
+    val root: File?,
+    val buildFolder: File?,
+    val outputFolder: File?,
+    val uiTestFolder: File?,
 ): KlutterDTO

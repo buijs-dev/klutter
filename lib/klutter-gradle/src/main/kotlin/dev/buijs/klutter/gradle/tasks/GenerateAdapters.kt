@@ -19,11 +19,10 @@
  * SOFTWARE.
  *
  */
-
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.tasks.AdapterGeneratorTask
-import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
+import dev.buijs.klutter.gradle.KlutterGradleTask
 
 /**
  * Task to generate method-channel boilerplate in ios and android folders.

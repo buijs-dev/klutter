@@ -19,12 +19,11 @@
  * SOFTWARE.
  *
  */
-
-package dev.buijs.klutter.plugins.gradle.tasks
+package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.core.shared.execute
-import dev.buijs.klutter.plugins.gradle.KlutterGradleTask
-import dev.buijs.klutter.plugins.gradle.klutterExtension
+import dev.buijs.klutter.gradle.KlutterGradleTask
+import dev.buijs.klutter.gradle.klutterExtension
 
 /**
  * Task to build a Klutter project.

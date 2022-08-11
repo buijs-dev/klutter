@@ -21,9 +21,8 @@
  */
 package dev.buijs.klutter.ui.builder.klutterui
 
-import dev.buijs.klutter.core.shared.KlutterDSLBuilder
+import dev.buijs.klutter.kore.shared.KlutterDSLBuilder
 import dev.buijs.klutter.ui.KomposeLocale
-
 
 @DslMarker
 internal annotation class KomposeLocaleDSLMarker

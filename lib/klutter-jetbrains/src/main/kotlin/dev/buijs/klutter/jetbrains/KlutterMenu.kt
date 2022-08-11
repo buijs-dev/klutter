@@ -60,12 +60,12 @@ private val projectTypeObservable = observable(
 )
 
 private val appNameObservable = observable(
-    get = { data.appName?:"" },
+    get = { data.appName ?: "my_plugin" },
     set = { value -> data.appName = value }
 )
 
 private val groupNameObservable = observable(
-    get = { data.groupName?:"" },
+    get = { data.groupName ?: "com.example" },
     set = { value -> data.groupName = value }
 )
 

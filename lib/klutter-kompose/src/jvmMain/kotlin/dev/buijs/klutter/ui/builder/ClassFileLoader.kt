@@ -22,8 +22,6 @@
 package dev.buijs.klutter.ui.builder
 
 import mu.KotlinLogging
-import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.io.File
 import java.lang.reflect.Type
 import java.net.URL
@@ -79,10 +77,19 @@ object ClassFileLoader: ClassLoader(findClassLoader()) {
         }
     }
 
+    private fun tryLoadClass(name: String): Class<*>? {
+        log.info("Try loading: $name")
+        return try {
+            super.loadClass(name)
+        } catch (e: Throwable) {
+            log.info("Failed to load: $name", e); null
+        }
+    }
+
     /**
      * Load all classes from a build/classes folder.
      */
-    internal fun loadBuild(pathToClasses: File) {
+    fun loadBuild(pathToClasses: File) {
         log.info("Creating new ClassFileLoader to find UIBuilders.")
         log.info("Lookup all files in {}", pathToClasses)
         set(
@@ -90,7 +97,6 @@ object ClassFileLoader: ClassLoader(findClassLoader()) {
                 .map { if(!it.isFile) null else it }
                 .filterNotNull()
                 .filter { it.name.endsWith(".class") }
-//            .filter { it.readText().contains(KomposeView::class.java.name) }
                 .map { ClassFile(it, it.name.substringBeforeLast(".")) }
                 .map { cf -> // Load the class
                     val clazz = load(cf)
@@ -111,7 +117,7 @@ object ClassFileLoader: ClassLoader(findClassLoader()) {
     /**
      * Load all classes from a Jar file.
      */
-    internal fun loadJar(pathToJar: String) {
+    fun loadJar(pathToJar: String) {
         val jarFile = JarFile(pathToJar)
         val e: Enumeration<JarEntry> = jarFile.entries()
 
@@ -147,6 +153,6 @@ private fun findClassLoader(): ClassLoader {
         log.debug { "Current Thread Context has no classloader" }
     }
 
-    return UIBuilderCollector::class.java.safeClassLoader
+    return UIBuilderCollector::class.java.classLoader
 
 }

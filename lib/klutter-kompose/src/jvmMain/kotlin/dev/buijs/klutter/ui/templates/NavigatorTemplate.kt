@@ -22,13 +22,13 @@
 
 package dev.buijs.klutter.ui.templates
 
-import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.ui.KomposeRoute
 
 /**
  *
  */
-internal class NavigatorTemplate(
+class NavigatorTemplate(
     private val routes: List<KomposeRoute>,
 ): KlutterPrinter {
 

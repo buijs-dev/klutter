@@ -22,8 +22,8 @@
 package dev.buijs.klutter.ui.builder.klutterui
 
 import dev.buijs.klutter.ui.Kompose
-import dev.buijs.klutter.core.shared.KlutterDSLBuilder
-import dev.buijs.klutter.core.shared.KlutterDSL
+import dev.buijs.klutter.kore.shared.KlutterDSLBuilder
+import dev.buijs.klutter.kore.shared.KlutterDSL
 import dev.buijs.klutter.ui.KomposeAppBar
 
 @DslMarker

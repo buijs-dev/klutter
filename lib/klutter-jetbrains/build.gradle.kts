@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     id("org.jetbrains.intellij") version "1.8.0"
     id("java")
     id("maven-publish")
@@ -52,5 +52,6 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:2.1.23")
 
     // Project
+    implementation(project(":lib:klutter-tasks"))
     implementation(project(":lib:klutter-kore"))
 }

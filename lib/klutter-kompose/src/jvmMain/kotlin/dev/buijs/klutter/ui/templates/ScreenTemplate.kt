@@ -22,7 +22,7 @@
 
 package dev.buijs.klutter.ui.templates
 
-import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.ui.Kompose
 import dev.buijs.klutter.ui.KomposeBody
 import dev.buijs.klutter.ui.controller.NoController

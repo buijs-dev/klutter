@@ -21,8 +21,8 @@
  */
 package dev.buijs.klutter.ui.builder.jetlag
 
-import dev.buijs.klutter.core.shared.KlutterDSLBuilder
-import dev.buijs.klutter.core.shared.KlutterDSL
+import dev.buijs.klutter.kore.shared.KlutterDSLBuilder
+import dev.buijs.klutter.kore.shared.KlutterDSL
 import dev.buijs.klutter.ui.KomposeApp
 import dev.buijs.klutter.ui.KomposeBody
 import dev.buijs.klutter.ui.KomposeLocale

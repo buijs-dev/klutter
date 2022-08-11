@@ -19,15 +19,14 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.ui.templates
 
-import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.kore.KlutterPrinter
 
 /**
- * Print the main.dart file which runs the KomposableApp.
+ * Print the 'main.dart' file which runs the KomposableApp.
  */
-internal class MainTemplate: KlutterPrinter {
+class MainTemplate: KlutterPrinter {
 
     override fun print(): String {
         return """ 

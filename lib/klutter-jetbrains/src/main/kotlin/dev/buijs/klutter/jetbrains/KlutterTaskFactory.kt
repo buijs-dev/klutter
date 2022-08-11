@@ -25,8 +25,11 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.core.tasks.ApplicationGeneratorTask
+import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.tasks.GenerateKlutterApplicationProjectTask
+import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
+import java.io.File
 
 internal object KlutterTaskFactory {
     fun build(
@@ -38,8 +41,8 @@ internal object KlutterTaskFactory {
             createKlutterPluginTask(
                 project = project,
                 pathToRoot = pathToRoot,
-                name = config.appName,
-                group = config.groupName,
+                name = config.appName ?: klutterPluginDefaultName,
+                group = config.groupName ?: klutterPluginDefaultGroup,
             )
         }
         KlutterProjectType.APPLICATION -> {
@@ -56,14 +59,23 @@ internal object KlutterTaskFactory {
 internal fun createKlutterPluginTask(
     project: Project,
     pathToRoot: String,
-    name: String? = null,
-    group: String? = null,
+    name: String,
+    group: String,
 ) = createKlutterTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        //TODO create task
-        println("Should generate a Producer project!")
+        GenerateKlutterPluginProjectTask(
+            pathToRoot = pathToRoot,
+            appName = name,
+            groupName = group,
+        ).run().also {
+            File(pathToRoot).let { root ->
+                val subRoot = root.resolve(name)
+                subRoot.copyRecursively(root)
+                subRoot.deleteRecursively()
+            }
+        }
     }
 )
 
@@ -76,7 +88,7 @@ internal fun createKlutterApplicationTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        ApplicationGeneratorTask(
+        GenerateKlutterApplicationProjectTask(
             pathToRoot = pathToRoot,
             appName = name,
             groupName = group,

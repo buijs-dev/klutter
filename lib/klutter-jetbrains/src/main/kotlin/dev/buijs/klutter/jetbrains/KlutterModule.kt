@@ -30,7 +30,7 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
-import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.jetbrains.KlutterIcons.logo
 
 

@@ -21,41 +21,46 @@
  */
 package dev.buijs.klutter.ui
 
-import dev.buijs.klutter.core.KlutterException
-import dev.buijs.klutter.core.KlutterPrinter
-import dev.buijs.klutter.core.shared.KlutterDTO
+import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.KlutterPrinter
+import dev.buijs.klutter.kore.shared.KlutterDTO
 import dev.buijs.klutter.ui.builder.ClassFileLoader
 import dev.buijs.klutter.ui.event.KlutterEvent
 import mu.KotlinLogging
-import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
+import java.lang.reflect.ParameterizedType
 import kotlin.reflect.KClass
-import kotlin.reflect.javaType
 
+private const val clazz = "class"
 
-@OptIn(ExperimentalStdlibApi::class)
 sealed class Kompose<T : KlutterEvent<*, *>>(
     internal val event: KClass<T>,
 ) : KlutterDTO, KlutterPrinter {
 
     private val log = KotlinLogging.logger { }
 
-    private val types = event.supertypes.firstOrNull()
-        ?.javaType
-        ?.parameterizedTypeArguments
+    private val abc = ClassFileLoader.get(event.javaObjectType)
+    private val abc3 = abc?.genericSuperclass as? ParameterizedType
+    private val abc4 = abc3?.actualTypeArguments
+
+
+    private val types = ClassFileLoader.get(event.javaObjectType)
+        ?.let { it.genericSuperclass as? ParameterizedType }
+        ?.actualTypeArguments
         ?:throw KlutterException("Failed to process KlutterEvent impl.")
 
-    val eventType: String = types[0].typeName.removePrefix("class ")
+    val eventType: String = types[0].typeName.removePrefix("$clazz ")
         .also { log.debug { "Kompose is bound to event '$it'" } }
 
-    val controllerType: String = types[1].typeName.removePrefix("class ")
+    val controllerType: String = types[1].typeName.removePrefix("$clazz ")
         .also { log.debug { "Kompose is bound to controller '$it'" } }
 
-    internal fun stateType() = types[1].let { ClassFileLoader.get(it)}
-        ?.genericSuperclass
-        ?.parameterizedTypeArguments
+    internal fun stateType() = types[1]
+        .let { ClassFileLoader.get(it) }
+        .let { it?.genericSuperclass as? ParameterizedType}
+        .let { it?.actualTypeArguments }
         ?.firstOrNull()
         ?.typeName
-        ?.removePrefix("class ")
+        ?.removePrefix("$clazz ")
         ?: throw KlutterException("Failed to determine type of state for controller '${controllerType}'")
 
     abstract fun hasChild(): Boolean
@@ -67,9 +72,7 @@ sealed class Kompose<T : KlutterEvent<*, *>>(
     abstract fun children(): List<Kompose<*>>
 
     internal fun printStateMethod(): String {
-        val stateType: String = stateType()
-            .substringAfterLast(".")
-        return "_update${stateType}State"
+        return "_update${stateType().substringAfterLast(".")}State"
     }
 }
 

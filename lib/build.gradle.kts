@@ -63,7 +63,7 @@ tasks.koverMergedXmlReport {
 
     excludes = listOf(
         // A test-only module
-        "dev.buijs.klutter.core.test.*",
+        "dev.buijs.klutter.kore.test.*",
     )
 
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))

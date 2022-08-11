@@ -21,9 +21,9 @@
  */
 package dev.buijs.klutter.ui.builder.notswiftui
 
-import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.ui.Kompose
-import dev.buijs.klutter.core.shared.KlutterDSLBuilder
+import dev.buijs.klutter.kore.shared.KlutterDSLBuilder
 import dev.buijs.klutter.ui.KomposeScaffold
 
 

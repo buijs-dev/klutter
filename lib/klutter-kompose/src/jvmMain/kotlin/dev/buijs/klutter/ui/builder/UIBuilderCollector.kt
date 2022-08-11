@@ -23,12 +23,7 @@ package dev.buijs.klutter.ui.builder
 
 import dev.buijs.klutter.annotations.KomposeView
 import mu.KotlinLogging
-import java.io.File
-import java.net.URL
-import java.net.URLClassLoader
 import java.util.*
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
 
 private val log = KotlinLogging.logger { }
 
@@ -45,7 +40,7 @@ class UIBuilderCollector {
 
     private fun toUIBuilder(clazz: Class<*>): UIBuilder? {
         return try {
-            log.info("Constructing new UIBuilder from Class<?>.")
+            log.info { "Constructing new UIBuilder from Class<?>." }
             clazz.getDeclaredConstructor().newInstance() as UIBuilder
         } catch (e: Throwable) {
             log.info("Constructing new UIBuilder failed.", e)

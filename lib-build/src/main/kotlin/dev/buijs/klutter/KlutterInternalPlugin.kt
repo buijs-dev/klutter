@@ -42,6 +42,7 @@ object ProjectVersions {
     val pub = versions("plugin.pub.version")
     val kitty = versions("test.version")
     val jetbrains = versions("plugin.jetbrains.version")
+    val tasks = versions("tasks.version")
 }
 
 object Repository {

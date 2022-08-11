@@ -1,8 +1,8 @@
 package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.core.test.TestUtil
-import dev.buijs.klutter.core.test.TestPlugin
-import dev.buijs.klutter.core.test.TestResource
+import dev.buijs.klutter.kore.test.TestUtil
+import dev.buijs.klutter.kore.test.TestPlugin
+import dev.buijs.klutter.kore.test.TestResource
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification

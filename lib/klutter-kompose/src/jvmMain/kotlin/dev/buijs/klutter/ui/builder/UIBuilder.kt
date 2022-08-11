@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.ui.builder
 
-import dev.buijs.klutter.core.KlutterPrinter
+import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.ui.KomposeBody
 import dev.buijs.klutter.ui.builder.jetlag.JetlagBuilder
 import dev.buijs.klutter.ui.builder.klutterui.KlutterUIBuilder

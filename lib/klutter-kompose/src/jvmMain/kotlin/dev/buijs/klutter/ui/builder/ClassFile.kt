@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.ui.builder
 
-import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.kore.KlutterException
 import java.io.File
 import java.nio.file.Files
 

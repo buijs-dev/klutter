@@ -24,7 +24,8 @@ Coming soon...
 - [Kompose](lib/klutter-kompose/module.md)
 - [Test Kit](lib/klutter-test/module.md)
 - [Plugin Gradle](lib/klutter-gradle/module.md)
+- [Plugin Intellij/Android Studio](lib/klutter-jetbrains/module.md)
 - [Plugin Pub](https://github.com/buijs-dev/klutter-dart)
 
 ### Kdocs
-https://buijs-dev.github.io/klutter/
+- [Documentation](https://buijs-dev.github.io/klutter/)

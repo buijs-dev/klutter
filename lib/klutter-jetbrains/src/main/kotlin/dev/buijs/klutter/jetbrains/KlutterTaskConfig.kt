@@ -21,7 +21,11 @@
  */
 package dev.buijs.klutter.jetbrains
 
-import dev.buijs.klutter.core.KlutterException
+import dev.buijs.klutter.kore.KlutterException
+
+internal val klutterPluginDefaultName = "my_plugin"
+
+internal val klutterPluginDefaultGroup = "com.example"
 
 internal data class KlutterTaskConfig(
     var appName: String? = null,

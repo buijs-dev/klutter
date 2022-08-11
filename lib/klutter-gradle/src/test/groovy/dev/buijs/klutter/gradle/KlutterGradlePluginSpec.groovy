@@ -1,12 +1,6 @@
 package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.core.shared.FileUtilsKt
-import dev.buijs.klutter.core.project.Platform
-import dev.buijs.klutter.core.test.TestPlugin
-import dev.buijs.klutter.gradle.tasks.ExcludeArchsPlatformPodspec
-import dev.buijs.klutter.gradle.tasks.GenerateAdapters
-import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionContainer
+
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
@@ -46,7 +40,7 @@ class KlutterGradlePluginSpec extends Specification {
         def arr = taskContainer.toArray()
 
         and:
-        arr.size() == 9
+        arr.size() == 11
 
     }
 
@@ -70,134 +64,5 @@ class KlutterGradlePluginSpec extends Specification {
     private def static i = 0
 
     private static increment() { i = 1 }
-
-    def "Verify KlutterGradleTask project() returns ext.root if set"() {
-
-        given:
-        def plugin = new TestPlugin()
-
-        def extension = new KlutterGradleExtension(Mock(Project))
-        extension.root = plugin.root
-
-        def container = Mock(ExtensionContainer) {
-            getByName("klutter") >> extension
-        }
-
-        def gradleProject = Mock(Project) {
-            adapter() >> extension
-            it.extensions >> container
-        }
-
-        and:
-        def sut = Mock(KlutterGradleTask) {
-            project >> gradleProject
-        }
-
-        when:
-        def project = sut.project()
-
-        then:
-        project.root.folder.absolutePath == plugin.root.absolutePath
-
-    }
-
-    def "Verify KlutterGradleTask project() returns rootProject dir if no root is set"() {
-
-        given:
-        def plugin = new TestPlugin()
-
-        def extension = new KlutterGradleExtension(Mock(Project))
-
-        def container = Mock(ExtensionContainer) {
-            getByName("klutter") >> extension
-        }
-
-        def gradleRootProject = Mock(Project) {
-            it.projectDir >> plugin.root
-        }
-
-        def gradleProject = Mock(Project) {
-            adapter() >> extension
-            it.extensions >> container
-            it.rootProject >> gradleRootProject
-        }
-
-        and:
-        def sut = Mock(KlutterGradleTask) {
-            project >> gradleProject
-        }
-
-        when:
-        def project = sut.project()
-
-        then:
-        project.root.folder.absolutePath == plugin.root.absolutePath
-
-    }
-
-    def "Verify ExcludeArchsPlatformPodspec task"() {
-
-        given:
-        def podspec = GroovyMock(FileUtilsKt) {
-            it.excludeArm64(_, _) >> decrement()
-        }
-
-        def platform = GroovyMock(Platform) {
-            it.podspec() >> podspec
-        }
-
-        def plugin = GroovyMock(dev.buijs.klutter.core.project.Project) {
-            it.platform >> platform
-        }
-
-        and:
-        def sut = Mock(ExcludeArchsPlatformPodspec) {
-            it.project() >> plugin
-        }
-
-        when:
-        sut.execute()
-
-        then:
-        1 * sut.describe()
-
-        and:
-        j == 0
-
-    }
-
-    private def static j = 1
-
-    private static decrement() { j = 0 }
-
-    def "Verify GenerateAdapters task"() {
-
-        given:
-        def plugin = GroovyMock(dev.buijs.klutter.core.project.Project) {
-            it.ios >> add()
-            it.root >> add()
-            it.android >> add()
-            it.platform >> add()
-        }
-
-        and:
-        def sut = Mock(GenerateAdapters) {
-            it.project() >> plugin
-        }
-
-        when:
-        sut.execute()
-
-        then:
-        1 * sut.describe()
-
-        and:
-        k == 4
-
-    }
-
-    private def static k = 0
-
-    private static add() { k +=1 }
 
 }

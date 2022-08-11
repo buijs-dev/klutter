@@ -26,17 +26,19 @@ jobs:
           java-version: 11
           cache: gradle
 
-      - uses: gradle/gradle-build-action@v2
       - uses: actions/checkout@v3
       - uses: actions/cache@v1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.0.5'
           channel: 'stable'
           gradle-version: 7.4.2
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+      - uses: gradle/gradle-build-action@v2
+        with:
           arguments: gradle clean build sonarqube --info
 
     env:

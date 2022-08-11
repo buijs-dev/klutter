@@ -36,9 +36,9 @@ jobs:
         with:
           flutter-version: '3.0.5'
           channel: 'stable'
-          gradle-version: 7.4.2
       - uses: gradle/gradle-build-action@v2
         with:
+          gradle-version: 7.4.2
           arguments: gradle clean build sonarqube --info
 
     env:

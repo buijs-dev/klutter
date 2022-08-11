@@ -27,6 +27,11 @@ jobs:
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.0.5'
+          channel: 'stable'
 
       # Generate the HTML documentation pages
       - name: Generate documentation

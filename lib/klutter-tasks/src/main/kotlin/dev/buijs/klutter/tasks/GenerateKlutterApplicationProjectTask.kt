@@ -123,65 +123,6 @@ class GenerateKlutterApplicationProjectTask(
             .copyTo(resolve("app/backend/pubspec.yaml"))
         resolve("app/kompose_app_backend").deleteRecursively()
 
-//        this.resolve("app/frontend/pubspec.yaml").writeText("""
-//            |name: $appName
-//            |description: Generated Flutter UI
-//            |
-//            |publish_to: 'none'
-//            |
-//            |environment:
-//            |  sdk: ">=2.17.5 <3.0.0"
-//            |
-//            |dependencies:
-//            |  flutter:
-//            |    sdk: flutter
-//            |
-//            |  kompose_app_backend:
-//            |    path: ../backend
-//            |
-//            |  cupertino_icons: ^1.0.2
-//            |  flutter_platform_widgets: ^$platformWidgetsVersion
-//            |  klutter: ^$klutterPubVersion
-//            |
-//            |dev_dependencies:
-//            |  flutter_test:
-//            |    sdk: flutter
-//            |  flutter_lints: ^2.0.0
-//            |
-//            |flutter:
-//            |  uses-material-design: true
-//        """.trimMargin())
-//
-//        this.resolve("app/backend/pubspec.yaml").writeText("""
-//            |name: kompose_app_backend
-//            |description: Generated Flutter plugin to access Platform
-//            |version: 0.0.1
-//            |
-//            |environment:
-//            |  sdk: ">=2.17.5 <3.0.0"
-//            |  flutter: ">=2.5.0"
-//            |
-//            |dependencies:
-//            |  flutter:
-//            |    sdk: flutter
-//            |
-//            |  klutter: ^$klutterPubVersion
-//            |
-//            |dev_dependencies:
-//            |  flutter_test:
-//            |    sdk: flutter
-//            |  flutter_lints: ^2.0.0
-//            |
-//            |flutter:
-//            |  plugin:
-//            |    platforms:
-//            |      android:
-//            |        package: dev.buijs.klutter.kompose_app_backend
-//            |        pluginClass: KomposeAppBackendPlugin
-//            |      ios:
-//            |        pluginClass: KomposeAppBackendPlugin
-//        """.trimMargin())
-
         this.resolve("app/frontend/pubspec.yaml").writeText("""
             |name: $appName
             |description: Generated Flutter UI
@@ -200,8 +141,7 @@ class GenerateKlutterApplicationProjectTask(
             |
             |  cupertino_icons: ^1.0.2
             |  flutter_platform_widgets: ^$platformWidgetsVersion
-            |  klutter:
-            |   path: /Users/buijs/repos/klutter-dart
+            |  klutter: ^$klutterPubVersion
             |
             |dev_dependencies:
             |  flutter_test:
@@ -225,8 +165,7 @@ class GenerateKlutterApplicationProjectTask(
             |  flutter:
             |    sdk: flutter
             |
-            |  klutter: 
-            |   path: /Users/buijs/repos/klutter-dart
+            |  klutter: ^$klutterPubVersion
             |
             |dev_dependencies:
             |  flutter_test:

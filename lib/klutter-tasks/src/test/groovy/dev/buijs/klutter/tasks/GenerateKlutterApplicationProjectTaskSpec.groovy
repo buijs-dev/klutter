@@ -21,9 +21,11 @@
  */
 package dev.buijs.klutter.tasks
 
+import spock.lang.Ignore
 import spock.lang.Specification
 import java.nio.file.Files
 
+@Ignore
 class GenerateKlutterApplicationProjectTaskSpec extends Specification {
 
     def "Verify kompose app is generated"() {

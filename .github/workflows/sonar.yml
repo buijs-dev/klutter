@@ -27,18 +27,18 @@ jobs:
           cache: gradle
 
       - uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 7.4.2
-
-      # Upload Sonar analysis
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v1
+      - uses: subosito/flutter-action@v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Build and analyze
-        run: gradle clean build sonarqube --info
+          flutter-version: '3.0.5'
+          channel: 'stable'
+          gradle-version: 7.4.2
+          arguments: gradle clean build sonarqube --info
+
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

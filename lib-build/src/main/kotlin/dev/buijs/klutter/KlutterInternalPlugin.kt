@@ -52,9 +52,9 @@ object Repository {
 }
 
 object Signing {
-    val certificateChain = System.getenv("") ?: signing("certificate_chain")
-    val privateKey = System.getenv("") ?: signing("private_key")
-    val privateKeyPassword = System.getenv("") ?: signing("private_key_password")
+    val certificateChain = System.getenv("KLUTTER_JETBRAINS_CERTIFICATE_CHAINS") ?: signing("certificate_chain")
+    val privateKey = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY") ?: signing("private_key")
+    val privateKeyPassword = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD") ?: signing("private_key_password")
 }
 fun versions(key: String): String = Properties().also {
     it.load(KlutterInternalPlugin::class.java.classLoader

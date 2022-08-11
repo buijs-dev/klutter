@@ -1,6 +1,3 @@
-<img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo_animated3.gif?raw=true" width="300" alt="buijs software logo" />
-
-# Klutter
 [![GitHub](https://img.shields.io/github/license/buijs-dev/klutter?color=black&style=for-the-badge)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter.gradle?color=darkgreen&label=Gradle%20Plugin&logo=gradle&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter.gradle)
 [![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter?logo=codecov&style=for-the-badge)](https://codecov.io/gh/buijs-dev/klutter)
@@ -8,8 +5,13 @@
 [![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27235)
 
 
+<br>
+
+<img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo.png?raw=true" alt="buijs software logo" />
+
 Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
 It can be used to create Flutter plugins or standalone apps.
+
 
 ### Getting started
 - The preferred way of creating and/or using Flutter plugins with Klutter is by 
@@ -27,5 +29,5 @@ Coming soon...
 - [Plugin Intellij/Android Studio](lib/klutter-jetbrains/module.md)
 - [Plugin Pub](https://github.com/buijs-dev/klutter-dart)
 
-### Kdocs
-- [Documentation](https://buijs-dev.github.io/klutter/)
+### Documentation
+- [KDocs](https://buijs-dev.github.io/klutter/)

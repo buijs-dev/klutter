@@ -3,7 +3,6 @@ plugins {
     id("org.jetbrains.intellij") version "1.8.0"
     id("java")
     id("maven-publish")
-    id("groovy")
     id("klutter")
 }
 
@@ -15,9 +14,10 @@ repositories {
 }
 
 intellij {
-    version.set("2022.1.1")
+    //version.set("2022.1.1")
+    version.set("2021.2.4")
     type.set("IC") // Intellij Community Edition
-    plugins.set(listOf("com.intellij.gradle"))
+    plugins.set(listOf("com.intellij.gradle","android"))
 }
 
 tasks {
@@ -44,6 +44,7 @@ tasks {
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
+
 }
 
 dependencies {
@@ -54,4 +55,12 @@ dependencies {
     // Project
     implementation(project(":lib:klutter-tasks"))
     implementation(project(":lib:klutter-kore"))
+
+    // Kotlin Test
+    @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

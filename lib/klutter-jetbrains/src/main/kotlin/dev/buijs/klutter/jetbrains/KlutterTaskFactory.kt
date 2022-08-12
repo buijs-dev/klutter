@@ -25,7 +25,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.tasks.GenerateKlutterApplicationProjectTask
 import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
@@ -104,6 +103,7 @@ private fun createKlutterTask(
 ) = object: Task.Modal(project, "Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
         val progressIndicator =  ProgressManager.getInstance().progressIndicator
+        progressIndicator.isIndeterminate = false
         progressIndicator.text = "Loading..."
         progressIndicator.fraction = 0.1
         progressIndicator.fraction = 0.2

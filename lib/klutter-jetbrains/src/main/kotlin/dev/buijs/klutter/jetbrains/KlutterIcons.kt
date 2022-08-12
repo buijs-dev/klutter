@@ -26,6 +26,6 @@ import javax.swing.*
 
 object KlutterIcons {
 
-    val logo: Icon = IconLoader.getIcon("/META-INF/pluginIcon20_20.png", KlutterModuleType::class.java)
+    val logo: Icon = IconLoader.getIcon("/META-INF/pluginIcon16_12.png", KlutterModuleType::class.java)
 
 }

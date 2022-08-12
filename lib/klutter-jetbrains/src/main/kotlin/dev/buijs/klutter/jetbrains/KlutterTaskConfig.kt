@@ -23,17 +23,17 @@ package dev.buijs.klutter.jetbrains
 
 import dev.buijs.klutter.kore.KlutterException
 
-internal val klutterPluginDefaultName = "my_plugin"
-
-internal val klutterPluginDefaultGroup = "com.example"
+internal const val klutterPluginDefaultName = "my_plugin"
+internal const val klutterPluginDefaultGroup = "com.example"
 
 internal data class KlutterTaskConfig(
     var appName: String? = null,
     var groupName: String? = null,
-    var projectType: KlutterProjectType = KlutterProjectType.APPLICATION,
+    var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,
 )
 
 internal enum class KlutterProjectType(val displayName: String) {
+    // Application coming soon...
     APPLICATION("Application"),
     PLUGIN("Plugin");
 

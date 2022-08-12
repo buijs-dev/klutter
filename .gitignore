@@ -85,3 +85,4 @@ hs_err_pid*
 /lib-build/src/main/resources/repository.properties
 /lib/klutter-gradle/src/main/resources/publish.properties
 /lib-build/src/main/resources/signing.properties
+/notes

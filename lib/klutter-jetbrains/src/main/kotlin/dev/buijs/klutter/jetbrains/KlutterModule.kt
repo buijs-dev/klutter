@@ -50,7 +50,7 @@ class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
         return "Klutter awesomeness let's go!"
     }
 
-    override fun getPresentableName() = "Klutter Framework Module"
+    override fun getPresentableName() = "Klutter"
 
     override fun getGroupName() = "Klutter Framework"
 

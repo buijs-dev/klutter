@@ -22,28 +22,39 @@
 package dev.buijs.klutter.jetbrains
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.observable.properties.ObservableMutableProperty
-import com.intellij.ui.dsl.builder.bindItem
-import com.intellij.ui.dsl.builder.bindText
-import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.layout.GrowPolicy
+import com.intellij.ui.layout.PropertyBinding
+import com.intellij.ui.layout.panel
 
 private val data: KlutterTaskConfig = KlutterTaskConfig()
 
 class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep() {
 
     override fun getComponent() = panel {
-        indent {
+        // Kotlin UI DSL v2: indent
+        row {
             row("Name:") {
-                textField().bindText(appNameObservable)
+                cell(isFullWidth = true) {
+                    textField(appNameObservable, 1)
+                        .withLargeLeftGap()
+                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
+                }
             }
+
             row("Group:") {
-                textField().bindText(groupNameObservable)
+                cell(isFullWidth = true) {
+                    textField(groupNameObservable, 1)
+                        .withLargeLeftGap()
+                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
+                }
             }
-            row {
-                comboBox(KlutterProjectType.values().map { it.displayName }.toList())
-                    .label("Project:")
-                    .bindItem(projectTypeObservable)
+
+            row("Type:") {
+                cell(isFullWidth = true) {
+                    label("plugin")
+                        .withLargeLeftGap()
+                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
+                }
             }
         }
     }
@@ -52,37 +63,21 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
         builder.config = data
     }
 
+    override fun validate(): Boolean {
+        if(builder.config != null) {
+            return builder.config!!.validate()
+        }
+        return super.validate()
+    }
+
 }
 
-private val projectTypeObservable = observable(
-    get = { data.projectType.displayName },
-    set = { value -> data.projectType = KlutterProjectType.from(value) }
-)
-
-private val appNameObservable = observable(
+private val appNameObservable = PropertyBinding(
     get = { data.appName ?: "my_plugin" },
     set = { value -> data.appName = value }
 )
 
-private val groupNameObservable = observable(
+private val groupNameObservable = PropertyBinding(
     get = { data.groupName ?: "com.example" },
     set = { value -> data.groupName = value }
 )
-
-private fun <T> observable(
-    get: () -> T,
-    set: (T) -> Unit,
-) = object : ObservableMutableProperty<T> {
-
-    override fun set(value: T) { set.invoke(value) }
-
-    override fun get() = get.invoke()
-
-    override fun afterChange(listener: (T) -> Unit) {
-        // nothing
-    }
-    override fun afterChange(listener: (T) -> Unit, parentDisposable: Disposable) {
-        // nothing
-    }
-
-}

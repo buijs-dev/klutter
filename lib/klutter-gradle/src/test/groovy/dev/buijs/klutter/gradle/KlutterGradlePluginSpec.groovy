@@ -40,7 +40,7 @@ class KlutterGradlePluginSpec extends Specification {
         def arr = taskContainer.toArray()
 
         and:
-        arr.size() == 7
+        arr.size() == 8
 
     }
 

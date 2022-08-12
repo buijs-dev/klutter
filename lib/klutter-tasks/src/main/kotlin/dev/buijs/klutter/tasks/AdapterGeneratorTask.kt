@@ -136,7 +136,7 @@ open class AdapterGeneratorTask(
 }
 
 /**
- * Utility to scan a Klutter project and collect it's metadata.
+ * Utility to scan a Klutter project and collect its metadata.
  *
  * The metadata is required to generate method channel code in:
  * - root/lib

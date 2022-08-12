@@ -1,7 +1,19 @@
 # CHANGELOG
 
 ## v2022.r6-8.alpha
-
+- Merged annotations-kmp and annotations-jvm to klutter-annotations.
+- Renamed package core to kore.
+- Renamed package plugin.gradle to gradle.
+- Added dependency handler for easier dependency management.
+- Added task klutterBuildAndroid which builds a flutter debug .apk for Android.
+- Added task klutterBuildAndroidIos which executes klutterBuildAndroid and klutterBuildAndroidIos.
+- Added task klutterBuildIos which builds a flutter debug Runner.app for iOS.
+- Added task klutterCopyAarFile which copies the platform .aar file to android folder.
+- Added task klutterIosFramework which copies the platform Framework to ios folder.
+- Added iosSimulatorArm64 to platform build.gradle.kts for running app on Mac M1/M2 devices.
+- Added module klutter-jetbrains to build Intellij and Android Studio plugin.
+- Added module klutter-tasks.
+- Added new Klutter logo to README (hooray).
 
 ## v2022.r6-7.alpha
 - [Bugfix] Fixed adding exclusions to Podfile when they are already partially present.

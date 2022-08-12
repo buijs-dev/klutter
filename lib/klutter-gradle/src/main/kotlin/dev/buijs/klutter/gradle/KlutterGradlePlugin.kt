@@ -30,7 +30,6 @@ import org.gradle.api.Project
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         project.extensions.add("klutter", KlutterGradleExtension(project))
-        project.tasks.register("klutterBuild", BuildKlutterProjectGradleTask::class.java)
         project.tasks.register("klutterBuildAndroid", BuildAndroidWithFlutterGradleTask::class.java)
         project.tasks.register("klutterBuildAndroidIos", BuildAndroidAndIosWithFlutterGradleTask::class.java)
         project.tasks.register("klutterBuildIos", BuildIosWithFlutterGradleTask::class.java)
@@ -38,8 +37,5 @@ class KlutterGradlePlugin: Plugin<Project> {
         project.tasks.register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
         project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspecGradleTask::class.java)
         project.tasks.register("klutterGenerateAdapters", AdapterGeneratorGradleTask::class.java)
-        project.tasks.register("klutterGenerateUI", UiGeneratorGradleTask::class.java)
-        project.tasks.register("klutterStartAppiumServer", AppiumServerStartGradleTask::class.java)
-        project.tasks.register("klutterStopAppiumServer", AppiumServerStopGradleTask::class.java)
     }
 }

@@ -25,34 +25,23 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GenerateKlutterApplicationProjectTask
 import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
 internal object KlutterTaskFactory {
+
     fun build(
         project: Project,
         pathToRoot: String,
         config: KlutterTaskConfig,
-    ): Task = when(config.projectType) {
-        KlutterProjectType.PLUGIN -> {
-            createKlutterPluginTask(
-                project = project,
-                pathToRoot = pathToRoot,
-                name = config.appName ?: klutterPluginDefaultName,
-                group = config.groupName ?: klutterPluginDefaultGroup,
-            )
-        }
-        KlutterProjectType.APPLICATION -> {
-            createKlutterApplicationTask(
-                project = project,
-                pathToRoot = pathToRoot,
-                name = config.appName,
-                group = config.groupName,
-            )
-        }
-    }
+    ): Task = createKlutterPluginTask(
+        project = project,
+        pathToRoot = pathToRoot,
+        name = config.appName ?: klutterPluginDefaultName,
+        group = config.groupName ?: klutterPluginDefaultGroup,
+    )
+
 }
 
 internal fun createKlutterPluginTask(
@@ -78,31 +67,14 @@ internal fun createKlutterPluginTask(
     }
 )
 
-internal fun createKlutterApplicationTask(
-    project: Project,
-    pathToRoot: String,
-    name: String? = null,
-    group: String? = null,
-) = createKlutterTask(
-    pathToRoot = pathToRoot,
-    project = project,
-    task = {
-        GenerateKlutterApplicationProjectTask(
-            pathToRoot = pathToRoot,
-            appName = name,
-            groupName = group,
-        ).run()
-    }
-)
-
 @Suppress("DialogTitleCapitalization")
 private fun createKlutterTask(
     project: Project,
     pathToRoot: String,
     task: () -> Unit,
-) = object: Task.Modal(project, "Initializing project", false) {
+) = object : Task.Modal(project, "Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
-        val progressIndicator =  ProgressManager.getInstance().progressIndicator
+        val progressIndicator = ProgressManager.getInstance().progressIndicator
         progressIndicator.isIndeterminate = false
         progressIndicator.text = "Loading..."
         progressIndicator.fraction = 0.1

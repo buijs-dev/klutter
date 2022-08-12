@@ -109,17 +109,8 @@ dependencies {
     implementation(project(":lib:klutter-kore"))
     implementation(project(":lib:klutter-tasks"))
 
-    // Kotlin
-//    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-//    implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
-
     // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
-
-    // Jackson for XML
-//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
-//    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
-//    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
 
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.0-alpha7")

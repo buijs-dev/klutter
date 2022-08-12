@@ -94,39 +94,11 @@ internal abstract class KlutterGradleTask: DefaultTask() {
         ?.uiTestFolder
         ?:project.rootProject.rootDir.resolve("lib-test")
 
-    fun pathToApplicationBuildFolder(): File = project
-        .klutterExtension()
-        .application
-        ?.buildFolder
-        ?: project
-            .rootProject
-            .project(":lib")
-            .buildDir.resolve("libs/kompose-jvm.jar")
-
-    fun pathToApplicationOutputFolder() = project
-        .klutterExtension()
-        .application
-        ?.outputFolder
-        ?: project.rootProject.rootDir.resolve("app/frontend/lib")
-
 }
 
 
 internal open class AdapterGeneratorGradleTask: KlutterGradleTask() {
     override fun describe() = AdapterGeneratorTask.from(project()).run()
-
-}
-
-internal open class AppiumServerStartGradleTask: KlutterGradleTask() {
-    override fun describe() = AppiumServerStartTask(
-        pathToRootFolder = project().root.folder,
-        pathToTestFolder = pathToTestFolder(),
-    ).run()
-
-}
-
-internal open class AppiumServerStopGradleTask: KlutterGradleTask() {
-    override fun describe() = AppiumServerStopTask(project()).run()
 
 }
 
@@ -152,43 +124,6 @@ internal open class BuildIosWithFlutterGradleTask: KlutterGradleTask() {
         pathToTestFolder = pathToTestFolder(),
     ).run()
 
-}
-
-internal open class BuildKlutterProjectGradleTask: KlutterGradleTask() {
-    override fun describe() = if(project.klutterExtension().application != null) {
-        BuildKlutterApplicationProjectTask(
-            project = project(),
-            pathToBuild = pathToApplicationBuildFolder(),
-            pathToOutput = pathToApplicationOutputFolder(),
-        ).run()
-    } else {
-        BuildKlutterPluginProjectTask(project()).run()
-    }
-
-}
-
-/**
- * Task to generate a Flutter UI.
- *
- * Views can be constructed using a Klutter Kompose DSL, being one of:
- * - JetlagUI
- * - KlutterUI
- * - NotSwiftUI
- *
- * KlutterUI is the default DSL which resembles Flutter the most.
- * JetlagUI is a DSL which is inspired by Jetpack Compose.
- * NotSwiftUI is a DSL which is inspired by SwiftUI.
- *
- */
-internal open class UiGeneratorGradleTask : KlutterGradleTask() {
-    override fun describe() {
-        project.klutterExtension().application?.let {
-            UiGeneratorTask(
-                pathToBuild = pathToApplicationBuildFolder(),
-                pathToOutput = pathToApplicationOutputFolder()
-            ).run()
-        } ?: throw KlutterException("Missing application config in klutter block.")
-    }
 }
 
 internal open class CopyAndroidAarFileGradleTask: KlutterGradleTask() {

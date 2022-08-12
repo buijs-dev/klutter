@@ -26,6 +26,8 @@ import dev.buijs.klutter.kore.shared.execute
 import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 
+private const val klutterPubVersion = "0.2.0"
+
 /**
  * Task to generate a klutter plugin project.
  */

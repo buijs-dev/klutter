@@ -30,10 +30,6 @@ sourceSets {
     }
 }
 
-sonarqube {
-    isSkipProject = true
-}
-
 publishing {
 
     repositories {

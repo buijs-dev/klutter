@@ -1,0 +1,38 @@
+plugins {
+    kotlin("jvm")
+    id("dev.buijs.klutter.gradle")
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://repsy.io/mvn/buijs-dev/klutter-private")
+        credentials {
+            username = "buijs-dev"
+            password = "LoginRepsy89!"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs("${projectDir.absolutePath}/src")
+        }
+    }
+}
+
+dependencies {
+    implementation("dev.buijs.klutter:kompose:0.14.1")
+    implementation("dev.buijs.klutter:core:0.14.1")
+    implementation("dev.buijs.klutter:annotations-jvm:0.14.1")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+}

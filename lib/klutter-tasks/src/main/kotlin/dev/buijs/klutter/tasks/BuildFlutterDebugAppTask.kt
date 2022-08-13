@@ -1,0 +1,74 @@
+/* Copyright (c) 2021 - 2022 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+package dev.buijs.klutter.tasks
+
+import dev.buijs.klutter.kore.KlutterTask
+import java.io.File
+
+/**
+ * Task to build debug .apk for Android and Runner.app for IOS.
+ */
+open class BuildAndroidAndIosWithFlutterTask(
+    private val pathToFlutterApp: File,
+    private val pathToTestFolder: File,
+) : KlutterTask {
+    override fun run() {
+        buildAndroid(pathToTestFolder, pathToFlutterApp)
+        buildIos(pathToTestFolder, pathToFlutterApp)
+    }
+}
+
+/**
+ * Task to build debug .apk Android artifact.
+ */
+open class BuildAndroidWithFlutterTask(
+    private val pathToTestFolder: File,
+    private val pathToFlutterApp: File,
+) : KlutterTask {
+    override fun run() = buildAndroid(pathToTestFolder, pathToFlutterApp)
+}
+
+/**
+ * Task to build Runner.app IOS artifact.
+ */
+open class BuildIosWithFlutterTask(
+    private val pathToTestFolder: File,
+    private val pathToFlutterApp: File,
+) : KlutterTask {
+    override fun run() = buildIos(pathToTestFolder, pathToFlutterApp)
+}
+
+private fun buildIos(
+    pathToTestFolder: File,
+    pathToToFlutterApp: File,
+) = IosArtifactBuildTask(
+    pathToFlutterApp = pathToToFlutterApp,
+    pathToOutput = pathToTestFolder.resolve("src/test/resources"),
+).run()
+
+private fun buildAndroid(
+    pathToTestFolder: File,
+    pathToToFlutterApp: File,
+) = AndroidArtifactBuildTask(
+    pathToFlutterApp = pathToToFlutterApp,
+    pathToOutput = pathToTestFolder.resolve("src/test/resources"),
+).run()

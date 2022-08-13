@@ -6,6 +6,9 @@ env:
   KLUTTER_PRIVATE_USERNAME: ${{ secrets.KLUTTER_PRIVATE_USERNAME }}
   KLUTTER_PRIVATE_PASSWORD: ${{ secrets.KLUTTER_PRIVATE_PASSWORD }}
   KLUTTER_PRIVATE_URL: ${{ secrets.KLUTTER_PRIVATE_URL }}
+  KLUTTER_JETBRAINS_CERTIFICATE_CHAINS: ${{ secrets.KLUTTER_JETBRAINS_CERTIFICATE_CHAINS }}
+  KLUTTER_JETBRAINS_PRIVATE_KEY: ${{ secrets.KLUTTER_JETBRAINS_PRIVATE_KEY }}
+  KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD: ${{ secrets.KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD }}
 
 jobs:
   gradle:
@@ -24,6 +27,11 @@ jobs:
       # Setup Gradle
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.0.5'
+          channel: 'stable'
 
       # Generate the HTML documentation pages
       - name: Generate documentation
@@ -33,7 +41,7 @@ jobs:
       - uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
-          build_dir: build/dokkaSite
+          build_dir: lib/build/dokkaSite
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

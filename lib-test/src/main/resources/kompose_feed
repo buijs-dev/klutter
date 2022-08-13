@@ -1,0 +1,31 @@
+import dev.buijs.klutter.annotations.jvm.KomposeView
+import dev.buijs.klutter.dev.buijs.klutter.ui.*
+import dev.buijs.klutter.dev.buijs.klutter.ui.builder.KlutterScreen
+import dev.buijs.klutter.dev.buijs.klutter.ui.builder.KlutterUI
+import dev.buijs.klutter.dev.buijs.klutter.ui.viewmodel.Navigator
+
+@KomposeView
+class Feed: KlutterUI(name = "Feed") {
+
+    override fun screen(): KlutterScreen = {
+        SafeArea {
+            Scaffold {
+                Center {
+                    Column {
+                        children(
+                            Text("Feed"),
+                            TextButton(
+                                model = Navigator(),
+                                text = "Go to home",
+                            ) {
+                                route = "home"
+                                arguments = "Data from feed"
+                            },
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+}

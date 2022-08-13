@@ -94,23 +94,7 @@ internal abstract class KlutterGradleTask: DefaultTask() {
         ?.uiTestFolder
         ?:project.rootProject.rootDir.resolve("lib-test")
 
-    fun pathToApplicationBuildFolder(): File = project
-        .klutterExtension()
-        .application
-        ?.buildFolder
-        ?: project
-            .rootProject
-            .project(":lib")
-            .buildDir.resolve("libs/kompose-jvm.jar")
-
-    fun pathToApplicationOutputFolder() = project
-        .klutterExtension()
-        .application
-        ?.outputFolder
-        ?: project.rootProject.rootDir.resolve("app/frontend/lib")
-
 }
-
 
 internal open class AdapterGeneratorGradleTask: KlutterGradleTask() {
     override fun describe() = AdapterGeneratorTask.from(project()).run()

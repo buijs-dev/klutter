@@ -22,8 +22,6 @@
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.KlutterPrinter
-import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.maybePostfixToKJson
 
 class KomposeAndroidAdapter(
     private val pluginPackageName: String,
@@ -121,9 +119,5 @@ class KomposeAndroidAdapter(
         |   }
         |}
         |""".trimMargin()
-
-    private fun List<Method>.asImportString(): String = map { it.import }
-        .distinct()
-        .joinToString("\n") { "import $it" }
 
 }

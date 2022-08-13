@@ -27,6 +27,7 @@ import java.io.File
 private val regex = """@Controller.*?class([^:]+?):KomposeController<""".toRegex()
 
 /**
+ * Find the name of classes annotated with @Controller which extend KomposeController.
  */
 fun List<File>.toControllerNames(): List<String> = this
     .map { file -> file.findControllers() }
@@ -48,9 +49,6 @@ private fun File.findControllers(): List<String> {
 
 }
 
-/**
- */
-private fun String.toControllers(): List<String> {
-    return regex.findAll(this.replace("""[\s\n]""".toRegex(), ""))
-        .map { it.groupValues[1] }.toList()
-}
+private fun String.toControllers(): List<String> = regex
+    .findAll(this.replace("""(\n|\s)""".toRegex(), ""))
+    .map { it.groupValues[1] }.toList()

@@ -53,53 +53,11 @@ class KomposeFlutterAdapter(
             |class $pluginClassName {
             |  static const MethodChannel _channel = MethodChannel('$methodChannelName');
             |  
-            |    static Future<dynamic> fireEvent({
-            |       required String widget,
-            |       required String event,
-            |       required String data,
-            |       required String controller,
-            |   }) async {
-            |       return await _channel.invokeMethod("kompose_event_trigger",
-            |        {
-            |          "widget" : widget,
-            |          "event" : event,
-            |          "controller": controller,
-            |          "data": data,
-            |        }
-            |    );
-            |  }
+            |${printMethod("fireEvent", "kompose_event_trigger")}  
             |  
-            |    static Future<dynamic> initController({
-            |       required String widget,
-            |       required String event,
-            |       required String data,
-            |       required String controller,
-            |   }) async {
-            |       return await _channel.invokeMethod("kompose_init_controller",
-            |        {
-            |          "widget" : widget,
-            |          "event" : event,
-            |          "controller": controller,
-            |          "data": data,
-            |        }
-            |    );
-            |  }
-            |  
-            |  static Future<void> disposeController({
-            |    required String widget,
-            |    required String event,
-            |    required String data,
-            |    required String controller,
-            |  }) async {
-            |    await _channel.invokeMethod("kompose_dispose_controller",
-            |        {
-            |          "widget" : widget,
-            |          "event" : event,
-            |          "controller": controller,
-            |          "data": data,
-            |        }
-            |    );
-            |  }
+            |${printMethod("initController", "kompose_init_controller")}    
+            | 
+            |${printMethod("disposeController", "kompose_dispose_controller")}   
             |  
             |}
             |
@@ -110,6 +68,24 @@ class KomposeFlutterAdapter(
             """.trimMargin()
 
 }
+
+private fun printMethod(name: String, invokes: String): String = """
+    |    static Future<dynamic> $name({
+    |       required String widget,
+    |       required String event,
+    |       required String data,
+    |       required String controller,
+    |   }) async {
+    |       return await _channel.invokeMethod("$invokes",
+    |        {
+    |          "widget" : widget,
+    |          "event" : event,
+    |          "controller": controller,
+    |          "data": data,
+    |        }
+    |    );
+    |  }
+    """
 
 private fun List<DartMessage>.asMessagesString(): String {
     return joinToString(BR + BR) {

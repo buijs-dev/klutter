@@ -22,7 +22,6 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.execute
 import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 

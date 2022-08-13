@@ -1,10 +1,10 @@
-package dev.buijs.klutter.kore.shared
+package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-fun String.execute(runFrom: File): String {
+internal fun String.execute(runFrom: File): String {
     val process = ProcessBuilder()
         .command(split(" "))
         .directory(runFrom)

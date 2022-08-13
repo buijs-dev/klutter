@@ -23,7 +23,6 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.Project
-import dev.buijs.klutter.kore.shared.execute
 
 /**
  * Task to build a Klutter plugin project.

@@ -23,8 +23,6 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.execute
-import mu.KotlinLogging
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream

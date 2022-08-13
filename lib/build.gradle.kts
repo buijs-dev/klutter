@@ -41,7 +41,7 @@ sonarqube {
         property("sonar.host.url", "https://sonarcloud.io")
         property(
             "sonar.coverage.jacoco.xmlReportPaths",
-            rootProject.buildDir.resolve("koverage.xml").absolutePath
+            project.buildDir.resolve("koverage.xml").absolutePath
         )
     }
 }

@@ -4,14 +4,22 @@ package dev.buijs.klutter.kore.shared
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.shared.DartFieldKt
 import dev.buijs.klutter.kore.shared.Data
+import mu.KLogger
 import spock.lang.Specification
 
 @SuppressWarnings("GroovyAccessibility")
 class DartFieldSpec extends Specification {
 
     def "Processing a a String that does not match the regex returns null"() {
-        expect:
+        given:
+        def logger = Stub(KLogger)
+
+        when:
+        DartFieldKt.log = logger
+
+        then:
         DartFieldKt.toDartField(line) == null
+        logger.debug { _ }
 
         where:
         line << ["", "WHAT", "WOULD", "BATMAN", "DO?", "val foo!=mc2"]

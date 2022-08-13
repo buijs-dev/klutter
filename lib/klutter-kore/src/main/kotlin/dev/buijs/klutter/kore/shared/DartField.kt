@@ -27,7 +27,7 @@ import mu.KotlinLogging
 
 private val regex = """val ([^:]+?): (.+)""".toRegex()
 
-private val log = KotlinLogging.logger { }
+private var log = KotlinLogging.logger { }
 
 /**
  * Data type defined in Dart language.
@@ -62,7 +62,7 @@ fun String.toDartField(): DartField? {
         this.isBlank() -> null
 
         match == null -> {
-            log.debug {"Invalid field declaration: $this" }; null
+            log.debug { "Invalid field declaration: $this" }; null
         }
 
         else -> {

@@ -26,7 +26,7 @@ import dev.buijs.klutter.kore.KlutterException
 internal const val klutterPluginDefaultName = "my_plugin"
 internal const val klutterPluginDefaultGroup = "com.example"
 
-internal data class KlutterTaskConfig(
+internal class KlutterTaskConfig(
     var appName: String? = null,
     var groupName: String? = null,
     var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,

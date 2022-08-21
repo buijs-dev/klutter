@@ -22,40 +22,32 @@
 package dev.buijs.klutter.jetbrains
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
-import com.intellij.ui.layout.GrowPolicy
-import com.intellij.ui.layout.PropertyBinding
-import com.intellij.ui.layout.panel
-
-private val data: KlutterTaskConfig = KlutterTaskConfig()
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.observable.properties.ObservableMutableProperty
+import com.intellij.openapi.options.ConfigurationException
+import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.bindText
+import com.intellij.ui.dsl.builder.panel
 
 class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep() {
 
+    private val data: KlutterTaskConfig = KlutterTaskConfig()
+
     override fun getComponent() = panel {
-        // Kotlin UI DSL v2: indent
-        row {
+        indent {
             row("Name:") {
-                cell(isFullWidth = true) {
-                    textField(appNameObservable, 1)
-                        .withLargeLeftGap()
-                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
-                }
+                textField().bindText(appNameObservable)
             }
-
             row("Group:") {
-                cell(isFullWidth = true) {
-                    textField(groupNameObservable, 1)
-                        .withLargeLeftGap()
-                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
-                }
+                textField().bindText(groupNameObservable)
             }
-
-            row("Type:") {
-                cell(isFullWidth = true) {
-                    label("plugin")
-                        .withLargeLeftGap()
-                        .growPolicy(GrowPolicy.MEDIUM_TEXT)
-                }
-            }
+            row {
+                comboBox(KlutterProjectType.values()
+                    .filter { it == KlutterProjectType.PLUGIN } // application not yet supported
+                    .map { it.displayName }.toList())
+                    .label("Project:")
+                    .bindItem(projectTypeObservable)
+            }.comment("Generate a plugin project. Application project support is coming soon...")
         }
     }
 
@@ -64,20 +56,47 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
     }
 
     override fun validate(): Boolean {
-        if(builder.config != null) {
-            return builder.config!!.validate()
+        val validConfig = data.validate()
+
+        if(!validConfig) {
+            // TODO collect information about whats invalid and display it.
+            throw ConfigurationException("Invalid!")
         }
+
         return super.validate()
     }
 
+    private val projectTypeObservable = observable(
+        get = { data.projectType.displayName },
+        set = { value -> data.projectType = KlutterProjectType.from(value) }
+    )
+
+    private val appNameObservable = observable(
+        get = { data.appName ?: klutterPluginDefaultName },
+        set = { value -> data.appName = value }
+    )
+
+    private val groupNameObservable = observable(
+        get = { data.groupName ?: klutterPluginDefaultGroup },
+        set = { value -> data.groupName = value }
+    )
+
+    private fun <T> observable(
+        get: () -> T,
+        set: (T) -> Unit,
+    ) = object : ObservableMutableProperty<T> {
+
+        override fun set(value: T) { set.invoke(value) }
+
+        override fun get() = get.invoke()
+
+        override fun afterChange(listener: (T) -> Unit) {
+            // nothing
+        }
+        override fun afterChange(listener: (T) -> Unit, parentDisposable: Disposable) {
+            // nothing
+        }
+
+    }
 }
 
-private val appNameObservable = PropertyBinding(
-    get = { data.appName ?: "my_plugin" },
-    set = { value -> data.appName = value }
-)
-
-private val groupNameObservable = PropertyBinding(
-    get = { data.groupName ?: "com.example" },
-    set = { value -> data.groupName = value }
-)

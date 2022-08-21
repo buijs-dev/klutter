@@ -25,7 +25,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
+import dev.buijs.klutter.tasks.GeneratePluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
@@ -53,15 +53,42 @@ internal fun createKlutterPluginTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        GenerateKlutterPluginProjectTask(
+        GeneratePluginProjectTask(
             pathToRoot = pathToRoot,
-            appName = name,
+            pluginName = name,
             groupName = group,
         ).run().also {
             File(pathToRoot).let { root ->
-                val subRoot = root.resolve(name)
-                subRoot.copyRecursively(root)
-                subRoot.deleteRecursively()
+                root.resolve(name).let { subRoot ->
+                    subRoot.copyRecursively(root)
+                    subRoot.deleteRecursively()
+                }
+
+                root.resolve("gradlew.bat").let { gradlew ->
+                    gradlew.setExecutable(true, false)
+                    gradlew.setReadable(true, false)
+                    gradlew.setWritable(true, false)
+                }
+
+                root.resolve("gradlew").let { gradlew ->
+                    gradlew.setExecutable(true, false)
+                    gradlew.setReadable(true, false)
+                    gradlew.setWritable(true, false)
+                }
+
+                // Adjust the path in the .klutter-plugins file because it is
+                // an absolute path which is now incorrect due to moving the entire
+                // generated folder to a parent folder.
+                root.resolve("example/.klutter-plugins").let { registry ->
+                    registry.writeText(
+                        registry
+                            .readText()
+                            .replace(
+                                oldValue = "${root.absolutePath.substringAfterLast("/")}/$name",
+                                newValue = "untitled"
+                            )
+                    )
+                }
             }
         }
     }

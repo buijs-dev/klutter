@@ -15,6 +15,12 @@
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
         <p>The Klutter plugin provides support for the Klutter Framework in IntelliJ IDEA and Android Studio.</p>
+        <p>Klutter is a framework which interconnects Flutter and Kotlin Multiplatform. It can be used to create Flutter plugins or standalone apps.</p>
+        <p>
+            <a href="https://buijs.dev/klutter-3/">Getting Started in Intellij IDEA</a><br/>
+            <a href="https://buijs.dev/klutter-4/">Getting Started in Android Studio</a><br/>
+            <a href="https://github.com/buijs-dev/klutter">Klutter on Github</a><br/>
+        </p>
     ]]></description>
 
     <!-- Product and plugin compatibility requirements.

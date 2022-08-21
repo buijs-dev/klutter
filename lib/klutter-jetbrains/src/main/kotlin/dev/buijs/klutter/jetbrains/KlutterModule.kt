@@ -31,7 +31,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.jetbrains.KlutterIcons.logo
+import dev.buijs.klutter.jetbrains.KlutterIcons.logo16x16
 
 
 class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
@@ -44,11 +44,11 @@ class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 
     override fun getBuilderId(): String = "buijs_software_klutter"
 
-    override fun getNodeIcon() = logo
+    override fun getNodeIcon() = logo16x16
 
-    override fun getDescription(): String {
-        return "Klutter awesomeness let's go!"
-    }
+    override fun getDescription(): String = "" +
+            "Klutter is a framework which interconnects Flutter and Kotlin Multiplatform. " +
+            "It can be used to create Flutter plugins or standalone apps."
 
     override fun getPresentableName() = "Klutter"
 
@@ -110,6 +110,6 @@ class KlutterModuleType : ModuleType<KlutterModuleBuilder>("KLUTTER_MODULE") {
 
     override fun getDescription() = "Add support for the Klutter Framework"
 
-    override fun getNodeIcon(isOpened: Boolean) = logo
+    override fun getNodeIcon(isOpened: Boolean) = logo16x16
 
 }

@@ -102,6 +102,15 @@ publishing {
             url = dev.buijs.klutter.Repository.endpoint
         }
     }
+
+    publications.withType<MavenPublication> {
+        if (name == "kotlinMultiplatform") {
+            artifactId = "annotations"
+        } else {
+            artifactId = "annotations-$name"
+        }
+    }
+
 }
 
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {

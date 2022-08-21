@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     id("klutter")
     id("groovy")
     id("maven-publish")
@@ -25,7 +25,7 @@ sourceSets {
             srcDirs(
                 "${projectDir.absolutePath}/src/test/kotlin",
                 "${projectDir.absolutePath}/src/test/groovy"
-                )
+            )
         }
 
     }
@@ -33,7 +33,8 @@ sourceSets {
 
 dependencies {
 
-    // Jackson for XML
+    // Jackson for XML and YAML
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
@@ -61,13 +62,13 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
-            artifactId = "klutter-kore"
+            artifactId = "kore"
             version = dev.buijs.klutter.ProjectVersions.core
             artifact("$projectDir/build/libs/klutter-kore.jar")
 
             pom {
-                name.set("Klutter: Core")
-                description.set("Klutter Framework core module")
+                name.set("Klutter: Kore")
+                description.set("Klutter Framework kore module")
                 url.set("https://buijs.dev/klutter/")
 
                 licenses {

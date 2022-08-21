@@ -14,8 +14,8 @@ repositories {
 }
 
 intellij {
-    //version.set("2022.1.1")
-    version.set("2021.2.4")
+    version.set("2022.1.1")
+//    version.set("2021.2.4")
     type.set("IC") // Intellij Community Edition
     plugins.set(listOf("com.intellij.gradle","android"))
 }
@@ -63,4 +63,8 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.buildSearchableOptions {
+    enabled = false
 }

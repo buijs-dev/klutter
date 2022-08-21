@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     id("com.gradle.plugin-publish") version "0.16.0"
     id("java-gradle-plugin")
     id("java-library")
@@ -51,7 +51,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
-            artifactId = "klutter-gradle"
+            artifactId = "gradle"
             version = dev.buijs.klutter.ProjectVersions.gradle
             artifact("$projectDir/build/libs/klutter-gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
 
@@ -111,6 +111,12 @@ dependencies {
 
     // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+
+    // Jackson XML/YAML parsing
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
 
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.0-alpha7")

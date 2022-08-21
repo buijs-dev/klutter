@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm")
     id("java-library")
     id("maven-publish")
     id("groovy")
@@ -45,13 +45,13 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
-            artifactId = "klutter-gradle"
-            version = dev.buijs.klutter.ProjectVersions.gradle
-            artifact("$projectDir/build/libs/klutter-gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
+            artifactId = "tasks"
+            version = dev.buijs.klutter.ProjectVersions.tasks
+            artifact("$projectDir/build/libs/klutter-tasks-${dev.buijs.klutter.ProjectVersions.tasks}.jar")
 
             pom {
-                name.set("Klutter: Gradle Plugin")
-                description.set("Gradle plugin for the Klutter Framework")
+                name.set("Klutter: Tasks")
+                description.set("Collection of Klutter tasks to be executed through Gradle, Flutter and/or Jetbrains IDE.")
                 url.set("https://buijs.dev/klutter/")
 
                 licenses {

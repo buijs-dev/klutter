@@ -40,8 +40,29 @@ class KlutterGradlePluginSpec extends Specification {
         def arr = taskContainer.toArray()
 
         and:
-        arr.size() == 8
+        arr.size() == 11
 
     }
+
+    def "Verify KlutterGradleTask task action executes describe method"() {
+
+        given:
+        def sut = Mock(KlutterGradleTask) {
+            describe() >> increment()
+        }
+
+        when:
+        sut.execute()
+
+        then:
+        1 * sut.describe()
+
+        and:
+        i == 1
+    }
+
+    private def static i = 0
+
+    private static increment() { i = 1 }
 
 }

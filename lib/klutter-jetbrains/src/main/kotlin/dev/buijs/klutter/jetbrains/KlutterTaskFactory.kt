@@ -25,23 +25,34 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GeneratePluginProjectTask
+import dev.buijs.klutter.tasks.GenerateKlutterApplicationProjectTask
+import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
 internal object KlutterTaskFactory {
-
     fun build(
         project: Project,
         pathToRoot: String,
         config: KlutterTaskConfig,
-    ): Task = createKlutterPluginTask(
-        project = project,
-        pathToRoot = pathToRoot,
-        name = config.appName ?: klutterPluginDefaultName,
-        group = config.groupName ?: klutterPluginDefaultGroup,
-    )
-
+    ): Task = when(config.projectType) {
+        KlutterProjectType.PLUGIN -> {
+            createKlutterPluginTask(
+                project = project,
+                pathToRoot = pathToRoot,
+                name = config.appName ?: klutterPluginDefaultName,
+                group = config.groupName ?: klutterPluginDefaultGroup,
+            )
+        }
+        KlutterProjectType.APPLICATION -> {
+            createKlutterApplicationTask(
+                project = project,
+                pathToRoot = pathToRoot,
+                name = config.appName,
+                group = config.groupName,
+            )
+        }
+    }
 }
 
 internal fun createKlutterPluginTask(
@@ -53,44 +64,34 @@ internal fun createKlutterPluginTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        GeneratePluginProjectTask(
+        GenerateKlutterPluginProjectTask(
             pathToRoot = pathToRoot,
-            pluginName = name,
+            appName = name,
             groupName = group,
         ).run().also {
             File(pathToRoot).let { root ->
-                root.resolve(name).let { subRoot ->
-                    subRoot.copyRecursively(root)
-                    subRoot.deleteRecursively()
-                }
-
-                root.resolve("gradlew.bat").let { gradlew ->
-                    gradlew.setExecutable(true, false)
-                    gradlew.setReadable(true, false)
-                    gradlew.setWritable(true, false)
-                }
-
-                root.resolve("gradlew").let { gradlew ->
-                    gradlew.setExecutable(true, false)
-                    gradlew.setReadable(true, false)
-                    gradlew.setWritable(true, false)
-                }
-
-                // Adjust the path in the .klutter-plugins file because it is
-                // an absolute path which is now incorrect due to moving the entire
-                // generated folder to a parent folder.
-                root.resolve("example/.klutter-plugins").let { registry ->
-                    registry.writeText(
-                        registry
-                            .readText()
-                            .replace(
-                                oldValue = "${root.absolutePath.substringAfterLast("/")}/$name",
-                                newValue = "untitled"
-                            )
-                    )
-                }
+                val subRoot = root.resolve(name)
+                subRoot.copyRecursively(root)
+                subRoot.deleteRecursively()
             }
         }
+    }
+)
+
+internal fun createKlutterApplicationTask(
+    project: Project,
+    pathToRoot: String,
+    name: String? = null,
+    group: String? = null,
+) = createKlutterTask(
+    pathToRoot = pathToRoot,
+    project = project,
+    task = {
+        GenerateKlutterApplicationProjectTask(
+            pathToRoot = pathToRoot,
+            appName = name,
+            groupName = group,
+        ).run()
     }
 )
 
@@ -99,9 +100,9 @@ private fun createKlutterTask(
     project: Project,
     pathToRoot: String,
     task: () -> Unit,
-) = object : Task.Modal(project, "Initializing project", false) {
+) = object: Task.Modal(project, "Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
-        val progressIndicator = ProgressManager.getInstance().progressIndicator
+        val progressIndicator =  ProgressManager.getInstance().progressIndicator
         progressIndicator.isIndeterminate = false
         progressIndicator.text = "Loading..."
         progressIndicator.fraction = 0.1

@@ -19,38 +19,40 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.gradle.tasks
+package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.Platform
 import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.project.plugin
+import dev.buijs.klutter.tasks.*
 import mu.KotlinLogging
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
 private val log = KotlinLogging.logger { }
 
-internal typealias project = org.gradle.api.Project
-
 /**
  * Parent of all Gradle Tasks.
  */
-internal abstract class AbstractTask(): DefaultTask() {
+internal abstract class KlutterGradleTask: DefaultTask() {
 
-    init { group = "klutter" }
+    init {
+        group = "klutter"
+    }
 
-    internal abstract fun klutterTask(): KlutterTask
+    /**
+     * The implementing class must describe what the task does by implementing this function.
+     */
+    abstract fun describe()
 
     @TaskAction
-    fun execute() = klutterTask().run()
+    fun execute() = describe()
 
     fun project(): Project {
         val ext = project.klutterExtension()
+
         val root = ext.root ?: project.rootProject.projectDir
         val plugin = ext.plugin
         val application = ext.application
@@ -86,24 +88,156 @@ internal abstract class AbstractTask(): DefaultTask() {
 
     }
 
-    internal fun pathToFlutterApp(): File = project
-        .rootProject
-        .rootDir
-        .resolve("app/frontend")
+    fun pathToFlutterApp(): File = project.rootProject.rootDir.resolve("app/frontend")
 
-    internal fun pathToTestFolder() = project.klutterExtension().application
+    fun pathToTestFolder() = project.klutterExtension().application
         ?.uiTestFolder
         ?:project.rootProject.rootDir.resolve("lib-test")
 
-    @Internal
-    internal fun isApplication() = project
+    fun pathToApplicationBuildFolder(): File = project
         .klutterExtension()
-        .application != null
+        .application
+        ?.buildFolder
+        ?: project
+            .rootProject
+            .project(":lib")
+            .buildDir.resolve("libs/kompose-jvm.jar")
+
+    fun pathToApplicationOutputFolder() = project
+        .klutterExtension()
+        .application
+        ?.outputFolder
+        ?: project.rootProject.rootDir.resolve("app/frontend/lib")
+
 }
 
-internal fun org.gradle.api.Project.klutterExtension(): KlutterGradleDSL {
+
+internal open class AdapterGeneratorGradleTask: KlutterGradleTask() {
+    override fun describe() = AdapterGeneratorTask.from(project()).run()
+
+}
+
+internal open class AppiumServerStartGradleTask: KlutterGradleTask() {
+    override fun describe() = AppiumServerStartTask(
+        pathToRootFolder = project().root.folder,
+        pathToTestFolder = pathToTestFolder(),
+    ).run()
+
+}
+
+internal open class AppiumServerStopGradleTask: KlutterGradleTask() {
+    override fun describe() = AppiumServerStopTask(project()).run()
+
+}
+
+internal open class BuildAndroidAndIosWithFlutterGradleTask: KlutterGradleTask() {
+    override fun describe() = BuildAndroidAndIosWithFlutterTask(
+        pathToFlutterApp = pathToFlutterApp(),
+        pathToTestFolder = pathToTestFolder(),
+    ).run()
+
+}
+
+internal open class BuildAndroidWithFlutterGradleTask: KlutterGradleTask() {
+    override fun describe() = BuildAndroidWithFlutterTask(
+        pathToFlutterApp = pathToFlutterApp(),
+        pathToTestFolder = pathToTestFolder(),
+    ).run()
+
+}
+
+internal open class BuildIosWithFlutterGradleTask: KlutterGradleTask() {
+    override fun describe() = BuildIosWithFlutterTask(
+        pathToFlutterApp = pathToFlutterApp(),
+        pathToTestFolder = pathToTestFolder(),
+    ).run()
+
+}
+
+internal open class BuildKlutterProjectGradleTask: KlutterGradleTask() {
+    override fun describe() = if(project.klutterExtension().application != null) {
+        BuildKlutterApplicationProjectTask(
+            project = project(),
+            pathToBuild = pathToApplicationBuildFolder(),
+            pathToOutput = pathToApplicationOutputFolder(),
+        ).run()
+    } else {
+        BuildKlutterPluginProjectTask(project()).run()
+    }
+
+}
+
+/**
+ * Task to generate a Flutter UI.
+ *
+ * Views can be constructed using a Klutter Kompose DSL, being one of:
+ * - JetlagUI
+ * - KlutterUI
+ * - NotSwiftUI
+ *
+ * KlutterUI is the default DSL which resembles Flutter the most.
+ * JetlagUI is a DSL which is inspired by Jetpack Compose.
+ * NotSwiftUI is a DSL which is inspired by SwiftUI.
+ *
+ */
+internal open class UiGeneratorGradleTask : KlutterGradleTask() {
+    override fun describe() {
+        project.klutterExtension().application?.let {
+            UiGeneratorTask(
+                pathToBuild = pathToApplicationBuildFolder(),
+                pathToOutput = pathToApplicationOutputFolder()
+            ).run()
+        } ?: throw KlutterException("Missing application config in klutter block.")
+    }
+}
+
+internal open class CopyAndroidAarFileGradleTask: KlutterGradleTask() {
+    override fun describe() {
+        if(project.klutterExtension().application != null) {
+            CopyAndroidAarFileTask(
+                pathToAndroidAarFile = project.rootDir.resolve("lib/build/outputs/aar/lib-release.aar"),
+                copyAndRenameTo = project.rootDir.resolve("app/backend/android/klutter/platform.aar"),
+            ).run()
+        } else {
+            val pluginName = project.klutterExtension().plugin?.name
+            CopyAndroidAarFileTask(
+                pathToAndroidAarFile = project.rootDir.resolve("platform/build/outputs/aar/$pluginName-release.aar"),
+                copyAndRenameTo = project.rootDir.resolve("android/klutter/platform.aar"),
+            ).run()
+        }
+    }
+
+}
+
+internal open class CopyIosFrameworkGradleTask: KlutterGradleTask() {
+
+    override fun describe() {
+        if(project.klutterExtension().application != null) {
+            CopyIosFrameworkTask(
+                pathToIosFramework = project.rootDir.resolve("platform/build/fat-framework/release"),
+                copyTo = project.rootDir.resolve("ios/Klutter"),
+            ).run()
+        } else {
+            CopyIosFrameworkTask(
+                pathToIosFramework = project.rootDir.resolve("lib/build/fat-framework/release"),
+                copyTo = project.rootDir.resolve("app/backend/ios/Klutter"),
+            ).run()
+        }
+    }
+
+}
+
+internal open class ExcludeArchsPlatformPodspecGradleTask: KlutterGradleTask() {
+
+    override fun describe() {
+        ExcludeArchsPlatformPodspecTask(project()).run()
+    }
+
+}
+
+internal fun org.gradle.api.Project.klutterExtension(): KlutterGradleExtension {
     return extensions.getByName("klutter").let {
-        if (it is KlutterGradleDSL) { it } else {
+        if (it is KlutterGradleExtension) { it } else {
             throw IllegalStateException("klutter extension is not of the correct type")
         }
     }

@@ -1,13 +1,10 @@
 plugins {
-    kotlin("jvm")
+    kotlin("jvm") version "1.7.10"
+    id("klutter")
+    id("groovy")
     id("java-library")
     id("maven-publish")
-    id("groovy")
-    id("klutter")
 }
-
-group = "dev.buijs.klutter"
-version = dev.buijs.klutter.ProjectVersions.tasks
 
 java {
     withJavadocJar()
@@ -25,9 +22,33 @@ sourceSets {
 
     test {
         java {
-            srcDirs("${projectDir.absolutePath}/src/test/kotlin")
+            srcDirs(
+                "${projectDir.absolutePath}/src/test/kotlin",
+                "${projectDir.absolutePath}/src/test/groovy"
+                )
         }
+
     }
+}
+
+dependencies {
+    implementation("io.appium:java-client:8.1.1")
+    implementation("org.seleniumhq.selenium:selenium-support:4.3.0")
+
+    //Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
+    implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
+
+    //Jackson for XML
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2")
+
+    //Logging
+    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
+    implementation("io.github.microutils:kotlin-logging:2.1.23")
+
+    testImplementation(project(":lib-test"))
 }
 
 publishing {
@@ -45,13 +66,13 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
-            artifactId = "tasks"
-            version = dev.buijs.klutter.ProjectVersions.tasks
-            artifact("$projectDir/build/libs/klutter-tasks-${dev.buijs.klutter.ProjectVersions.tasks}.jar")
+            artifactId = "klutter-test"
+            version = dev.buijs.klutter.ProjectVersions.kitty
+            artifact("$projectDir/build/libs/klutter-test.jar")
 
             pom {
-                name.set("Klutter: Tasks")
-                description.set("Collection of Klutter tasks to be executed through Gradle, Flutter and/or Jetbrains IDE.")
+                name.set("Klutter: Kitty")
+                description.set("Klutter Framework integration-test module")
                 url.set("https://buijs.dev/klutter/")
 
                 licenses {
@@ -77,19 +98,6 @@ publishing {
             }
         }
     }
-}
-
-dependencies {
-    // Project
-    implementation(project(":lib:klutter-kore"))
-    implementation(project(":lib:klutter-kompose"))
-    implementation(project(":lib:klutter-annotations"))
-
-    // Logging
-    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
-    implementation("io.github.microutils:kotlin-logging:2.1.23")
-
-    testImplementation(project(":lib-test"))
 }
 
 tasks.named<Test>("test") {

@@ -86,3 +86,5 @@ hs_err_pid*
 /lib/klutter-gradle/src/main/resources/publish.properties
 /lib-build/src/main/resources/signing.properties
 /notes
+/lib-test/rune2e.txt
+/lib-test/rune2e.properties

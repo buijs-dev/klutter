@@ -19,28 +19,28 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.project.Project
+import dev.buijs.klutter.tasks.CopyAndroidAarFileKlutterTask
+import dev.buijs.klutter.tasks.CopyIosFrameworkKlutterTask
 
 /**
- * Task to build a Klutter plugin project.
- *
- * Executes the following steps:
- * - clean platform module
- * - build platform module
- * - klutterCopyAarFile
- * - klutterCopyFramework
- *
+ * Execute task [CopyAndroidAarFileGradleTask] from Gradle.
  */
-open class BuildKlutterPluginProjectTask(private val project: Project) : KlutterTask {
-
-    override fun run() {
-        """./gradlew clean build -p "platform" """.execute(project.root.folder)
-        """./gradlew klutterCopyAarFile""".execute(project.root.folder)
-        """./gradlew klutterCopyFramework""".execute(project.root.folder)
-    }
-
+internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
+    override fun klutterTask() = CopyAndroidAarFileKlutterTask(
+        isApplication = isApplication(),
+        pathToRoot = project.rootDir,
+        pluginName = project.klutterExtension().plugin?.name,
+    )
 }
 
+/**
+ * Execute task [CopyIosFrameworkKlutterTask] from Gradle.
+ */
+internal open class CopyIosFrameworkGradleTask: AbstractTask() {
+    override fun klutterTask() = CopyIosFrameworkKlutterTask(
+        isApplication = isApplication(),
+        pathToRoot = project.rootDir,
+    )
+}

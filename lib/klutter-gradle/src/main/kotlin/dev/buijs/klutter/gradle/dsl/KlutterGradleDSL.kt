@@ -19,14 +19,65 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.KlutterException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import java.io.File
 import java.util.*
+
+/**
+ * Glue for the DSL used in a build.gradle(.kts) file and the Klutter tasks.
+ */
+open class KlutterGradleDSL(project: Project) {
+
+    private var handler = KlutterDependencyHandler(project)
+
+    var root: File? = null
+
+    @Internal
+    internal var plugin: KlutterPluginDTO? = null
+
+    @Internal
+    internal var application: KlutterApplicationDTO? = null
+
+    /**
+     * Configure the Gradle Plugin for a klutter plugin (consumer or producer).
+     */
+    fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
+        plugin = KlutterPluginBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Configure the Gradle Plugin for a klutter application using Kompose for the UI.
+     */
+    fun application(lambda: KlutterApplicationBuilder.() -> Unit) {
+        application = KlutterApplicationBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Add klutter implementation dependency to this project.
+     */
+    fun include(simpleModuleName: String, version: String? = null, test: Boolean = false) {
+        if(test) {
+            includeTest(simpleModuleName, version)
+        } else {
+            handler.addImplementation(simpleModuleName, version)
+        }
+    }
+
+    /**
+     * Add klutter testImplementation dependency to this project.
+     */
+    fun includeTest(simpleModuleName: String, version: String? = null) {
+        handler.addTestImplementation(simpleModuleName, version)
+    }
+
+}
 
 /**
  * A Jetbrains 'kotlin' inspired dependency handler which makes it easier
@@ -86,7 +137,7 @@ class KlutterDependencyHandler(private val project: Project) {
 
     private fun create(simpleModuleName: String, version: String? = null): ExternalModuleDependency =
         project.dependencies.create(
-            "dev.buijs.klutter:klutter-$simpleModuleName:" + (version ?: KlutterVersion.byName(simpleModuleName))
+            "dev.buijs.klutter:$simpleModuleName:" + (version ?: KlutterVersion.byName(simpleModuleName))
         ) as ExternalModuleDependency
 
     private fun addKotlinMultiplatformDependency(

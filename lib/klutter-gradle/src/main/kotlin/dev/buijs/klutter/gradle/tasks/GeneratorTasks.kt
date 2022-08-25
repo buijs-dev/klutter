@@ -19,20 +19,16 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.verifyExists
-import java.io.File
+import dev.buijs.klutter.tasks.GenerateAdaptersTask
 
 /**
- * Task to build debug .apk for Android and Runner.app for IOS.
+ * Execute task [GenerateAdaptersTask] from Gradle.
  */
-open class CopyIosFrameworkTask(
-    private val pathToIosFramework: File,
-    private val copyTo: File,
-): KlutterTask {
-    override fun run() {
-        pathToIosFramework.verifyExists().copyTo(copyTo)
-    }
+internal open class GenerateAdaptersGradleTask: AbstractTask() {
+    override fun klutterTask() = GenerateAdaptersTask(
+        project = project(),
+        isApplication = isApplication(),
+    )
 }

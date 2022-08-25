@@ -19,20 +19,13 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.verifyExists
-import java.io.File
+import dev.buijs.klutter.tasks.ExcludeArchsPlatformPodspecTask
 
 /**
- * Task to copy and rename an Android .aar file to a Klutter module.
+ * Execute task [ExcludeArchsPlatformPodspecTask] from Gradle.
  */
-open class CopyAndroidAarFileTask(
-    private val pathToAndroidAarFile: File,
-    private val copyAndRenameTo: File,
-): KlutterTask {
-    override fun run() {
-        pathToAndroidAarFile.verifyExists().renameTo(copyAndRenameTo)
-    }
+internal open class ExcludeArchsPlatformPodspecGradleTask: AbstractTask() {
+    override fun klutterTask() = ExcludeArchsPlatformPodspecTask(project())
 }

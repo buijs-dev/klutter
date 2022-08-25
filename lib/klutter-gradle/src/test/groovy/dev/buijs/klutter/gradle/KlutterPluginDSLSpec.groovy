@@ -1,5 +1,6 @@
 package dev.buijs.klutter.gradle
 
+import dev.buijs.klutter.gradle.dsl.KlutterPluginBuilder
 import spock.lang.Specification
 
 class KlutterPluginDSLSpec extends Specification {

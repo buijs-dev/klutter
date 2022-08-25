@@ -19,36 +19,13 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.gradle
+package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.shared.KlutterDSLBuilder
 import dev.buijs.klutter.kore.shared.KlutterDTO
-import java.io.File
-
-@DslMarker
-internal annotation class KlutterApplicationDSLMarker
 
 @DslMarker
 internal annotation class KlutterPluginDSLMarker
-
-@KlutterApplicationDSLMarker
-class KlutterApplicationBuilder: KlutterDSLBuilder {
-
-    var name: String = ""
-    var root: File? = null
-    var uiBuildFolder: File? = null
-    var uiOutputFolder: File? = null
-    var uiTestFolder: File? = null
-
-    override fun build() = KlutterApplicationDTO(
-        name = name,
-        root = root,
-        buildFolder = uiBuildFolder,
-        outputFolder = uiOutputFolder,
-        uiTestFolder = uiTestFolder,
-    )
-
-}
 
 @KlutterPluginDSLMarker
 class KlutterPluginBuilder: KlutterDSLBuilder {
@@ -58,17 +35,6 @@ class KlutterPluginBuilder: KlutterDSLBuilder {
     override fun build() = KlutterPluginDTO(name = name)
 
 }
-
-/**
- * DTO for storing Klutter application config.
- */
-data class KlutterApplicationDTO(
-    val name: String,
-    val root: File?,
-    val buildFolder: File?,
-    val outputFolder: File?,
-    val uiTestFolder: File?,
-): KlutterDTO
 
 /**
  * DTO for storing Klutter plugin configuration.

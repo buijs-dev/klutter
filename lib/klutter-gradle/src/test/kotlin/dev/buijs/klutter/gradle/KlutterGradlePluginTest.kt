@@ -1,5 +1,7 @@
 package dev.buijs.klutter.gradle
 
+import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
+import dev.buijs.klutter.gradle.tasks.klutterExtension
 import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
@@ -30,7 +32,7 @@ internal class KlutterGradlePluginTest: WordSpec({
         }
 
         "Return extension if correct class is found" {
-            val extension: KlutterGradleExtension = mock()
+            val extension: KlutterGradleDSL = mock()
             val container: ExtensionContainer = mock()
             val project: GradleProject = mock()
 
@@ -49,7 +51,7 @@ internal class KlutterGradlePluginTest: WordSpec({
     "Verify KlutterGradleExtension class" should {
 
         val project: org.gradle.api.Project = mock {  }
-        val extension = KlutterGradleExtension(project)
+        val extension = KlutterGradleDSL(project)
 
         "All values default to null" {
             extension.root shouldBe null

@@ -21,6 +21,8 @@
  */
 package dev.buijs.klutter.gradle
 
+import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
+import dev.buijs.klutter.gradle.tasks.*
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -29,7 +31,7 @@ import org.gradle.api.Project
  */
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
-        project.extensions.add("klutter", KlutterGradleExtension(project))
+        project.extensions.add("klutter", KlutterGradleDSL(project))
         project.tasks.register("klutterBuild", BuildKlutterProjectGradleTask::class.java)
         project.tasks.register("klutterBuildAndroid", BuildAndroidWithFlutterGradleTask::class.java)
         project.tasks.register("klutterBuildAndroidIos", BuildAndroidAndIosWithFlutterGradleTask::class.java)
@@ -37,6 +39,6 @@ class KlutterGradlePlugin: Plugin<Project> {
         project.tasks.register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
         project.tasks.register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
         project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspecGradleTask::class.java)
-        project.tasks.register("klutterGenerateAdapters", AdapterGeneratorGradleTask::class.java)
+        project.tasks.register("klutterGenerateAdapters", GenerateAdaptersGradleTask::class.java)
     }
 }

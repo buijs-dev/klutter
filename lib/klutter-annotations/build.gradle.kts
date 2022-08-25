@@ -104,10 +104,10 @@ publishing {
     }
 
     publications.withType<MavenPublication> {
-        if (name == "kotlinMultiplatform") {
-            artifactId = "annotations"
+        artifactId = if (name == "kotlinMultiplatform") {
+            "annotations"
         } else {
-            artifactId = "annotations-$name"
+            "annotations-$name"
         }
     }
 

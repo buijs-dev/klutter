@@ -25,111 +25,31 @@ import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.shared.*
-import dev.buijs.klutter.kore.templates.*
 import java.io.File
 
 /**
  * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
  */
-open class AdapterGeneratorTask(
-    private val android: Android,
-    private val ios: IOS,
-    private val root: Root,
-    private val platform: Platform,
-) : KlutterTask{
-
-    companion object {
-        fun from(project: Project) = AdapterGeneratorTask(
-            ios = project.ios,
-            root = project.root,
-            android = project.android,
-            platform = project.platform,
-        )
-    }
-
-    private val methodChannelName = root.toPubspec().toChannelName()
+class GenerateAdaptersTask(
+    private val project: Project,
+    private val isApplication: Boolean,
+) : KlutterTask {
 
     override fun run() {
-        platform.collect().let {
-            it.flutter(root)
-            it.android(android)
-            it.ios(ios)
-        }
-    }
-
-    private fun AdapterData.flutter(root: Root){
-        if(controllers.isNotEmpty()) {
-            root.pathToLib.maybeCreate().write(
-                KomposeFlutterAdapter(
-                    pluginClassName = root.pluginClassName,
-                    methodChannelName = methodChannelName,
-                    messages = messages,
-                    enumerations = enumerations,
-                )
-            )
+        if(isApplication) {
+            GenerateAdaptersForApplicationTask(
+                ios = project.ios,
+                root = project.root,
+                android = project.android,
+                platform = project.platform,
+            ).run()
         } else {
-            root.pathToLib.maybeCreate().write(
-                FlutterAdapter(
-                    pluginClassName = root.pluginClassName,
-                    methodChannelName = methodChannelName,
-                    methods = methods,
-                    messages = messages,
-                    enumerations = enumerations,
-                )
-            )
-        }
-    }
-
-    private fun AdapterData.ios(ios: IOS){
-        ios.podspec().excludeArm64("dependency'Flutter'")
-        if(controllers.isNotEmpty()) {
-            ios.pathToPlugin.maybeCreate().write(
-                KomposeIosAdapter(
-                    pluginClassName = ios.pluginClassName,
-                    methodChannelName = methodChannelName,
-                    controllers = controllers,
-                )
-            )
-            ios.pathToClasses.resolve("SwiftKomposeAppState.swift").write(
-                IosAdapterState(controllers)
-            )
-
-        } else {
-            ios.pathToPlugin.maybeCreate().write(
-                IosAdapter(
-                    pluginClassName = ios.pluginClassName,
-                    methodChannelName = methodChannelName,
-                    methods = methods,
-                )
-            )
-        }
-    }
-
-    private fun AdapterData.android(android: Android){
-        if(controllers.isNotEmpty()) {
-            android.pathToPlugin.maybeCreate().write(
-                KomposeAndroidAdapter(
-                    pluginClassName = android.pluginClassName,
-                    pluginPackageName = android.pluginPackageName,
-                    methodChannelName = methodChannelName,
-                )
-            )
-
-            android.pathToPluginPackage.resolve("KomposeAppState.kt").write(
-                AndroidAdapterState(
-                    pluginPackageName = android.pluginPackageName,
-                    fullyQualifiedControllers = controllers
-                )
-            )
-        } else {
-            android.pathToPlugin.maybeCreate().write(
-                AndroidAdapter(
-                    pluginClassName = android.pluginClassName,
-                    pluginPackageName = android.pluginPackageName,
-                    methodChannelName = methodChannelName,
-                    methods = methods,
-                )
-            )
+            GenerateAdaptersForPluginTask(
+                ios = project.ios,
+                root = project.root,
+                android = project.android,
+                platform = project.platform,
+            ).run()
         }
     }
 

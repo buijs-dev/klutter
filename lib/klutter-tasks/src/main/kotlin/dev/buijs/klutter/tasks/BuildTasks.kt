@@ -23,6 +23,7 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.project.Project
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -30,9 +31,96 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
+ * Task to build a Klutter plugin project.
+ *
+ * Executes the following steps:
+ * - clean platform module
+ * - build platform module
+ * - create XCFramework
+ * - klutterCopyAarFile
+ * - klutterCopyFramework
  *
  */
-sealed class ArtifactBuildTask(
+class BuildKlutterPluginProjectTask(
+    private val project: Project,
+    private val executor: CliExecutor = CliExecutor(),
+) : KlutterTask {
+
+    override fun run() {
+        executor.execute(
+            command = """./gradlew clean build assemblePlatformReleaseXCFramework -p platform""",
+            runFrom = project.root.folder,
+        )
+
+        executor.execute(
+            command = """./gradlew klutterCopyAarFile""",
+            runFrom = project.root.folder,
+            timeout = 30
+        )
+
+        executor.execute(
+            command = """./gradlew klutterCopyFramework""",
+            runFrom = project.root.folder,
+            timeout = 30
+        )
+
+    }
+
+}
+
+/**
+ * Task to build debug .apk for Android and Runner.app for IOS.
+ */
+class BuildAndroidAndIosWithFlutterTask(
+    private val pathToFlutterApp: File,
+    private val pathToTestFolder: File,
+) : KlutterTask {
+    override fun run() {
+        buildAndroid(pathToTestFolder, pathToFlutterApp)
+        buildIos(pathToTestFolder, pathToFlutterApp)
+    }
+}
+
+/**
+ * Task to build debug .apk Android artifact.
+ */
+class BuildAndroidWithFlutterTask(
+    private val pathToTestFolder: File,
+    private val pathToFlutterApp: File,
+) : KlutterTask {
+    override fun run() = buildAndroid(pathToTestFolder, pathToFlutterApp)
+}
+
+/**
+ * Task to build Runner.app IOS artifact.
+ */
+class BuildIosWithFlutterTask(
+    private val pathToTestFolder: File,
+    private val pathToFlutterApp: File,
+) : KlutterTask {
+    override fun run() = buildIos(pathToTestFolder, pathToFlutterApp)
+}
+
+private fun buildIos(
+    pathToTestFolder: File,
+    pathToToFlutterApp: File,
+) = IosArtifactBuildTask(
+    pathToFlutterApp = pathToToFlutterApp,
+    pathToOutput = pathToTestFolder.resolve("src/test/resources"),
+).run()
+
+private fun buildAndroid(
+    pathToTestFolder: File,
+    pathToToFlutterApp: File,
+) = AndroidArtifactBuildTask(
+    pathToFlutterApp = pathToToFlutterApp,
+    pathToOutput = pathToTestFolder.resolve("src/test/resources"),
+).run()
+
+/**
+ *
+ */
+private sealed class ArtifactBuildTask(
 
     /**
      * Path to the Flutter frontend folder.
@@ -46,14 +134,14 @@ sealed class ArtifactBuildTask(
 
     ) : KlutterTask {
 
-    internal fun pathToFlutterApp(): File {
+    fun pathToFlutterApp(): File {
         if (!pathToFlutterApp.exists()) {
             throw KlutterException("Missing directory: $pathToFlutterApp.")
         }
         return pathToFlutterApp
     }
 
-    internal fun pathToOutputFolder(): File {
+    fun pathToOutputFolder(): File {
         if (!pathToOutput.exists()) {
             throw KlutterException("Missing output directory: $pathToOutput.")
         }
@@ -62,16 +150,20 @@ sealed class ArtifactBuildTask(
 }
 
 /**
- *
+ * Task to build debug app with flutter.
  */
-class AndroidArtifactBuildTask(
+private class AndroidArtifactBuildTask(
     pathToFlutterApp: File,
     pathToOutput: File,
+    private val executor: CliExecutor = CliExecutor(),
 ): ArtifactBuildTask(pathToFlutterApp, pathToOutput) {
 
     override fun run() {
         // Build the artifact using Flutter.
-        """flutter build apk --debug""".execute(pathToFlutterApp())
+        executor.execute(
+            command = """flutter build apk --debug""",
+            runFrom = pathToFlutterApp(),
+        )
 
         // Check if artifact exists and fail if not.
         val artifact = pathToFlutterApp().resolve("build/app/outputs/flutter-apk/app-debug.apk").also {
@@ -88,16 +180,20 @@ class AndroidArtifactBuildTask(
 }
 
 /**
- *
+ * Task to build Runner.app with Flutter.
  */
-class IosArtifactBuildTask(
+private class IosArtifactBuildTask(
     pathToFlutterApp: File,
     pathToOutput: File,
+    private val executor: CliExecutor = CliExecutor(),
 ): ArtifactBuildTask(pathToFlutterApp, pathToOutput) {
 
     override fun run() {
         // Build the artifact using Flutter.
-        """flutter build ios --no-codesign --debug""".execute(pathToFlutterApp())
+        executor.execute(
+            command = """flutter build ios --no-codesign --debug""",
+            runFrom = pathToFlutterApp(),
+        )
 
         // Check if artifact exists and fail if not.
         val artifact = pathToFlutterApp().resolve("build/ios/iphonesimulator/Runner.app").also {

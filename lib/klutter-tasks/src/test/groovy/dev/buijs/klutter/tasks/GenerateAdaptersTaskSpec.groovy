@@ -22,70 +22,13 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.ProjectKt
 import dev.buijs.klutter.kore.shared.DartEnum
 import dev.buijs.klutter.kore.shared.DartField
 import dev.buijs.klutter.kore.shared.DartMessage
-import dev.buijs.klutter.kore.test.TestPlugin
-import dev.buijs.klutter.kore.test.TestResource
 import dev.buijs.klutter.kore.test.TestUtil
-import spock.lang.Shared
 import spock.lang.Specification
 
-class AdapterGeneratorTaskSpec extends Specification {
-
-    @Shared
-    def resources = new TestResource()
-
-    def "Verify adapters are generated correctly for a plugin project"() {
-
-        given:
-        def sut = new TestPlugin()
-
-        and:
-        resources.copyAll([
-                "platform_source_code"  : sut.platformSourceFile,
-                "android_app_manifest"  : sut.manifest,
-                "build_gradle_plugin"   : sut.platformBuildGradle,
-                "settings_gradle_plugin": sut.rootSettingsGradle,
-                "plugin_pubspec"        : sut.pubspecYaml,
-                "plugin_ios_podspec"    : sut.iosPodspec,
-        ])
-
-        when:
-        with(ProjectKt.plugin(sut.root, sut.pluginName)) { project ->
-            new AdapterGeneratorTask(
-                    project.android,
-                    project.ios,
-                    project.root,
-                    project.platform,
-            ).run()
-        }
-
-        then: "Verify lib/plugin.dart file is created"
-        with(new File("${sut.libFolder}/${sut.pluginName}.dart")) {
-            it.exists()
-            TestUtil.verify(it.text, resources.load("flutter_plugin_library"))
-        }
-
-        and: "Verify SuperAwesomePlugin.kt file is generated in android folder"
-        with(new File("${sut.androidSrcMain}/kotlin/foo/bar/${sut.pluginName}/${sut.pluginClassName}.kt")) {
-            it.exists()
-            TestUtil.verify(it.text, resources.load("android_plugin_class"))
-        }
-
-        and: "Verify SwiftSuperAwesomePlugin.kt file is generated in ios folder"
-        with(new File("${sut.iosClasses.absolutePath}/Swift${sut.pluginClassName}.swift")) {
-            it.exists()
-            TestUtil.verify(it.text, resources.load("ios_swift_plugin"))
-        }
-
-        and: "Verify ios podspec has excluded SDK"
-        with(new File("${sut.ios.absolutePath}/${sut.pluginName}.podspec")) {
-            it.exists()
-            TestUtil.verify(it.text, resources.load("plugin_ios_podspec_excluded"))
-        }
-    }
+class GenerateAdaptersTaskSpec extends Specification {
 
     def "Validate throws exception if customDataType list is not empty after validating"() {
         given:
@@ -98,7 +41,7 @@ class AdapterGeneratorTaskSpec extends Specification {
         )
 
         when:
-        AdapterGeneratorTaskKt.validate([message1, message2], [])
+        GenerateAdaptersTaskKt.validate([message1, message2], [])
 
         then:
         KlutterException e = thrown()
@@ -142,7 +85,7 @@ class AdapterGeneratorTaskSpec extends Specification {
         def enum1 = new DartEnum("GruMood", ["BAD, GOOD, CARING, HATING, CONQUER_THE_WORLD"], [])
 
         then:
-        AdapterGeneratorTaskKt.validate([message1, message2, message3], [enum1])
+        GenerateAdaptersTaskKt.validate([message1, message2, message3], [enum1])
 
     }
 }

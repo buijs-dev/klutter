@@ -4,6 +4,7 @@
 - Merged annotations-kmp and annotations-jvm to klutter-annotations.
 - Renamed package core to kore.
 - Renamed package plugin.gradle to gradle.
+- Renamed Gradle ID to dev.buijs.klutter.
 - Added dependency handler for easier dependency management.
 - Added task klutterBuildAndroid which builds a flutter debug .apk for Android.
 - Added task klutterBuildAndroidIos which executes klutterBuildAndroid and klutterBuildAndroidIos.

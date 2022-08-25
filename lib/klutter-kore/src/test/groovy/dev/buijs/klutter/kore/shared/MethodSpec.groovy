@@ -1,15 +1,7 @@
 package dev.buijs.klutter.kore.shared
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.Pubspec
-import dev.buijs.klutter.kore.project.PubspecFlutter
-import dev.buijs.klutter.kore.project.PubspecPlugin
-import dev.buijs.klutter.kore.project.PubspecPluginClass
-import dev.buijs.klutter.kore.project.PubspecPluginPlatforms
-import dev.buijs.klutter.kore.shared.DartKotlinMap
-import dev.buijs.klutter.kore.shared.Language
-import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.MethodKt
+import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.test.TestResource
 import spock.lang.Shared
 import spock.lang.Specification
@@ -109,7 +101,7 @@ class MethodSpec extends Specification {
         "Int"           | "int"             | Language.DART
         "Double"        | "double"          | Language.DART
         "Boolean  "     | "bool"            | Language.DART
-        "  String?"      | "String"          | Language.DART
+        "  String?"     | "String"          | Language.DART
         "int"           | "int"             | Language.DART
         "double"        | "double"          | Language.DART
         "bool"          | "bool"            | Language.DART
@@ -130,7 +122,10 @@ class MethodSpec extends Specification {
         resources.copy("platform_source_code", file.absolutePath)
 
         expect:
-        !MethodKt.toMethods(file, Language.KOTLIN).isEmpty()
+        !MethodKt.toMethods(file, lang).isEmpty()
+
+        where:
+        lang << [Language.KOTLIN, Language.DART]
     }
 
     def "[toMethod] throws an exception if a return type contains Lists with null values"() {

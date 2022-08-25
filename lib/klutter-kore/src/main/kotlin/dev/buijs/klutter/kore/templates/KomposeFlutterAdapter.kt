@@ -26,8 +26,6 @@ import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.shared.DartEnum
 import dev.buijs.klutter.kore.shared.DartMessage
 
-private const val BR = "\n"
-
 /**
  * Output the main dart file which delegates platform calls to the Kotlin Multiplatform code.
  */
@@ -86,15 +84,3 @@ private fun printMethod(name: String, invokes: String): String = """
     |    );
     |  }
     """
-
-private fun List<DartMessage>.asMessagesString(): String {
-    return joinToString(BR + BR) {
-        MessagePrinter(it).print()
-    }
-}
-
-private fun List<DartEnum>.asEnumerationsString(): String {
-    return joinToString(BR + BR) {
-        EnumerationPrinter(it).print()
-    }
-}

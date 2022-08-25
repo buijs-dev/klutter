@@ -19,7 +19,6 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.KlutterPrinter
@@ -151,5 +150,4 @@ class KomposeIosAdapter(
             """
         }
     }
-
 }

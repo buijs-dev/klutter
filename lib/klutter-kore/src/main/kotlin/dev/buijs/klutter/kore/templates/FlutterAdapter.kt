@@ -19,7 +19,6 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.shared.DartField
@@ -75,17 +74,7 @@ class FlutterAdapter(
             |
             """.trimMargin()
 
-    private fun List<DartMessage>.asMessagesString(): String {
-        return joinToString(BR + BR) {
-            MessagePrinter(it).print()
-        }
-    }
 
-    private fun List<DartEnum>.asEnumerationsString(): String {
-        return joinToString(BR + BR) {
-            EnumerationPrinter(it).print()
-        }
-    }
 
     private fun Method.asFunctionString(): String {
 
@@ -191,7 +180,6 @@ class FlutterAdapter(
             "json$q${getCastMethod(this)}"
         }
     }
-
 }
 
 /**
@@ -225,6 +213,18 @@ internal class EnumerationPrinter(private val message: DartEnum): KlutterPrinter
             "  static const ${entry.key.toCamelCase()} = ${name}._('${entry.value}');" }
         .joinToString(BR) { it }
 
+}
+
+internal fun List<DartMessage>.asMessagesString(): String {
+    return joinToString(BR + BR) {
+        MessagePrinter(it).print()
+    }
+}
+
+internal fun List<DartEnum>.asEnumerationsString(): String {
+    return joinToString(BR + BR) {
+        EnumerationPrinter(it).print()
+    }
 }
 
 /**

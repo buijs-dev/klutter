@@ -24,10 +24,21 @@ package dev.buijs.klutter.jetbrains
 /**
  * Validate a [KlutterTaskConfig] instance.
  */
-internal fun KlutterTaskConfig.validate(): Boolean = listOf(
-    (appName ?: klutterPluginDefaultName).validateAppName(),
-    (groupName ?: klutterPluginDefaultGroup).validateGroupName(),
-).all { it }
+internal fun KlutterTaskConfig.validate(): ValidationResult {
+    val messages = mutableListOf<String>()
+
+    val appName = appName ?: klutterPluginDefaultName
+    if(!appName.isValidAppName()) {
+        messages.add("Invalid app name")
+    }
+
+    val groupName = groupName ?: klutterPluginDefaultGroup
+    if(!groupName.isValidGroupName()) {
+        messages.add("Invalid group name")
+    }
+
+    return ValidationResult(messages)
+}
 
 /**
  * Validate a Klutter app name with the following constraints:
@@ -37,17 +48,22 @@ internal fun KlutterTaskConfig.validate(): Boolean = listOf(
  * - '_'
  * - Should start with an alphabetic character
  */
-internal fun String.validateAppName(): Boolean =
+internal fun String.isValidAppName(): Boolean =
     """^[a-z][a-z0-9_]+$""".toRegex().matches(this)
 
 /**
  * Validate a Klutter group name with the following constraints:
  * - All characters are lowercase
- * - All characters are alphabetic, '.' or '_'
+ * - All characters are:
+ * - alphabetic or
+ * - numeric or
+ * - '_' or
+ * - '.'
+ *
  * - Group contains at least 2 parts (e.g. there is minimally 1 dot)
  * - Should start with an alphabetic character
  */
-internal fun String.validateGroupName(): Boolean {
+internal fun String.isValidGroupName(): Boolean {
 
     // Group should contain at least 2 group parts.
     if(!this.contains(".")) return false
@@ -61,4 +77,13 @@ internal fun String.validateGroupName(): Boolean {
     // Name should be lowercase alphabetic separated by dots.
     return """^[a-z][a-z0-9._]+[a-z]$""".toRegex().matches(this)
 
+}
+
+/**
+ * Result returned after validating user input.
+ */
+internal data class ValidationResult(
+    val messages: List<String>,
+) {
+    val isValid: Boolean = messages.isEmpty()
 }

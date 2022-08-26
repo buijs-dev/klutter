@@ -28,6 +28,12 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.ui.dsl.builder.bindItem
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.gridLayout.HorizontalAlign
+import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import java.awt.Dimension
+import java.awt.Graphics
+import javax.swing.JPanel
+
 
 class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep() {
 
@@ -35,11 +41,18 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
 
     override fun getComponent() = panel {
         indent {
-            row("Name:") {
-                textField().bindText(appNameObservable)
+            row {
+                cell(Banner).verticalAlign(VerticalAlign.CENTER)
             }
-            row("Group:") {
-                textField().bindText(groupNameObservable)
+            row("Name: ") {
+                textField()
+                    .bindText(appNameObservable)
+                    .horizontalAlign(HorizontalAlign.LEFT)
+            }
+            row("Group: ") {
+                textField()
+                    .bindText(groupNameObservable)
+                    .horizontalAlign(HorizontalAlign.LEFT)
             }
             row {
                 comboBox(KlutterProjectType.values()
@@ -47,7 +60,9 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
                     .map { it.displayName }.toList())
                     .label("Project:")
                     .bindItem(projectTypeObservable)
-            }.comment("Generate a plugin project. Application project support is coming soon...")
+                    .horizontalAlign(HorizontalAlign.LEFT)
+            }
+            row {}.comment("Generate a plugin project. Application project support is coming soon...")
         }
     }
 
@@ -56,11 +71,12 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
     }
 
     override fun validate(): Boolean {
-        val validConfig = data.validate()
+        val validation = data.validate()
 
-        if(!validConfig) {
-            // TODO collect information about whats invalid and display it.
-            throw ConfigurationException("Invalid!")
+        if(!validation.isValid) {
+            throw ConfigurationException(
+                validation.messages.joinToString("\n") { "- $it" }
+            )
         }
 
         return super.validate()
@@ -100,3 +116,13 @@ class KlutterMenu(private val builder: KlutterModuleBuilder) : ModuleWizardStep(
     }
 }
 
+private object Banner : JPanel() {
+
+    override fun getPreferredSize(): Dimension =
+        Dimension(500, 150)
+
+    override fun paintComponent(g: Graphics) {
+        super.paintComponent(g)
+        KlutterIcons.banner.paintIcon(this, g, 0, 25)
+    }
+}

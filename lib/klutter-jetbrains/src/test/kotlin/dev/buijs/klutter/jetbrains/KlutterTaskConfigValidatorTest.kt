@@ -8,14 +8,14 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
     "Verify validate" should {
 
         "Use default values if app- and groupname are null" {
-            KlutterTaskConfig().validate() shouldBe  true
+            KlutterTaskConfig().validate().isValid shouldBe  true
         }
 
         "Use app- and groupname from KlutterTaskConfig if not null" {
             KlutterTaskConfig(
                 appName = "my_plugin_project",
                 groupName = "com.example.my_plugin.project"
-            ).validate() shouldBe  true
+            ).validate().isValid shouldBe  true
         }
 
         "Return false if one or more validations fail" {
@@ -27,7 +27,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
             )
 
             // expect validation to fail
-            config.validate() shouldBe  false
+            config.validate().isValid shouldBe  false
 
             // given a valid app name and invalid group name
             config = KlutterTaskConfig(
@@ -36,7 +36,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
             )
 
             // expect validation to fail
-            config.validate() shouldBe false
+            config.validate().isValid shouldBe false
 
             // given an invalid app name and invalid group name
             config = KlutterTaskConfig(
@@ -45,7 +45,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
             )
 
             // expect validation to fail
-            config.validate() shouldBe false
+            config.validate().isValid shouldBe false
 
         }
 
@@ -65,7 +65,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
 
             // expect all to be valid
             for(name in names) {
-                name.validateAppName().also {
+                name.isValidAppName().also {
                     if(!it) println("expected app name to be valid => $name")
                     it shouldBe true
                 }
@@ -85,7 +85,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
 
             // expect all to be invalid
             for(name in names) {
-                name.validateAppName().also {
+                name.isValidAppName().also {
                     if(it) println("expected app name to be invalid => $name")
                     it shouldBe false
                 }
@@ -108,7 +108,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
 
             // expect all to be valid
             for(name in names) {
-                name.validateGroupName().also {
+                name.isValidGroupName().also {
                     if(!it) println("expected group name to be valid => $name")
                     it shouldBe true
                 }
@@ -129,7 +129,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
 
             // expect all to be invalid
             for(name in names) {
-                name.validateGroupName().also {
+                name.isValidGroupName().also {
                     if(it) println("expected group to be invalid => $name")
                     it shouldBe false
                 }

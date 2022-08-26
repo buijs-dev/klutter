@@ -25,7 +25,7 @@ import com.intellij.openapi.util.IconLoader
 import javax.swing.*
 
 object KlutterIcons {
-
     val logo16x16: Icon = IconLoader.getIcon("/META-INF/pluginIcon16x16.png", KlutterModuleType::class.java)
     val logo20x20: Icon = IconLoader.getIcon("/META-INF/pluginIcon20x20.png", KlutterModuleType::class.java)
+    val banner = IconLoader.getIcon("META-INF/klutterBanner.svg", KlutterModuleType::class.java)
 }

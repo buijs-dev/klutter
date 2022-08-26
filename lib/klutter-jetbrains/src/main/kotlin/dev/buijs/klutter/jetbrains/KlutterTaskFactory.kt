@@ -25,8 +25,8 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GenerateKlutterApplicationProjectTask
-import dev.buijs.klutter.tasks.GenerateKlutterPluginProjectTask
+import dev.buijs.klutter.tasks.GenerateApplicationProjectTask
+import dev.buijs.klutter.tasks.GeneratePluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
@@ -64,15 +64,20 @@ internal fun createKlutterPluginTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        GenerateKlutterPluginProjectTask(
+        GeneratePluginProjectTask(
             pathToRoot = pathToRoot,
-            appName = name,
+            pluginName = name,
             groupName = group,
         ).run().also {
             File(pathToRoot).let { root ->
-                val subRoot = root.resolve(name)
-                subRoot.copyRecursively(root)
-                subRoot.deleteRecursively()
+                root.resolve(name).let { subRoot ->
+                    // Change subRoot name just in case root and subRoot name are identicial.
+                    File("${subRoot.parent}/klutterTempFolderName").let { temp ->
+                        subRoot.renameTo(temp)
+                        temp.copyRecursively(root, overwrite = true)
+                        temp.deleteRecursively()
+                    }
+                }
             }
         }
     }
@@ -87,7 +92,7 @@ internal fun createKlutterApplicationTask(
     pathToRoot = pathToRoot,
     project = project,
     task = {
-        GenerateKlutterApplicationProjectTask(
+        GenerateApplicationProjectTask(
             pathToRoot = pathToRoot,
             appName = name,
             groupName = group,

@@ -22,12 +22,10 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.execute
 import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 
-internal const val klutterGradleVersion = "2022.r8-alpha"
-internal const val klutterPubVersion = "0.1.3"
+internal const val klutterGradleVersion = "2022.r6-9.alpha"
 internal const val platformWidgetsVersion = "2.0.0"
 internal const val kotlinVersion = "1.7.10"
 internal const val kotlinSerializationVersion = "1.7.0"
@@ -43,7 +41,7 @@ internal const val gradleWrapperDistributionUrl = "https\\://services.gradle.org
 /**
  * Task to generate a klutter plugin project.
  */
-class GenerateKlutterApplicationProjectTask(
+class GenerateApplicationProjectTask(
     /**
      * Path to the folder where to create the new project.
      */
@@ -69,6 +67,7 @@ class GenerateKlutterApplicationProjectTask(
      */
     groupName: String? = null,
 
+    private val executor: CliExecutor = CliExecutor(),
 ) : KlutterTask {
 
     private val appName: String = appName ?: "kompose_app_frontend"
@@ -218,6 +217,11 @@ class GenerateKlutterApplicationProjectTask(
         resolve("app/backend/android/build.gradle").addDependenciesToAndroidBuildGradle()
     }
 
+    /**
+     * Execute a CLI command in the given folder.
+     */
+    private fun String.execute(runFrom: File) =
+        executor.execute(runFrom = runFrom, command = this)
 }
 
 internal fun File.addDependenciesToAndroidBuildGradle() {
@@ -606,7 +610,7 @@ private fun File.addGradleWrapper() {
  */
 private fun File.writeBuildGradleFile() = resolve("build.gradle.kts").writeText("""
     |plugins {
-    |    id("dev.buijs.klutter.gradle") version "$klutterGradleVersion"
+    |    id("dev.buijs.klutter") version "$klutterGradleVersion"
     |}
     |
     |buildscript {

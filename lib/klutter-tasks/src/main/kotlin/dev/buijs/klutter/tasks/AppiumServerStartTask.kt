@@ -23,7 +23,6 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.shared.execute
 import java.io.File
 
 /**
@@ -32,6 +31,7 @@ import java.io.File
 open class AppiumServerStartTask(
     private val pathToRootFolder: File,
     private val pathToTestFolder: File,
+    private val executor: CliExecutor = CliExecutor(),
 ) : KlutterTask {
 
     override fun run() {
@@ -63,11 +63,15 @@ open class AppiumServerStartTask(
             .resolve("build/test-logging")
             .also { if(it.exists()) it.deleteRecursively(); it.mkdirs() }
 
-        """export ANDROID_HOME="$androidSdk"
-           export ANDROID_SDK_ROOT="$androidSdk"
-           appium --default-capabilities ${pathToCapabilities.absolutePath} 
-           --log-level debug 
-           --log ${pathToLogFolder.resolve("appium-server.log")}""".execute(pathToRootFolder)
+        executor.execute(
+            runFrom = pathToRootFolder,
+            command = """export ANDROID_HOME="$androidSdk"
+                         export ANDROID_SDK_ROOT="$androidSdk"
+                         appium --default-capabilities ${pathToCapabilities.absolutePath} 
+                         --log-level debug 
+                         --log ${pathToLogFolder.resolve("appium-server.log")}"""
+        )
+
     }
 
 }

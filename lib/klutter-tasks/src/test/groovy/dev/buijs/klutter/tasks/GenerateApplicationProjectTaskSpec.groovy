@@ -26,7 +26,7 @@ import spock.lang.Specification
 import java.nio.file.Files
 
 @Ignore
-class GenerateKlutterApplicationProjectTaskSpec extends Specification {
+class GenerateApplicationProjectTaskSpec extends Specification {
 
     def "Verify kompose app is generated"() {
 
@@ -34,7 +34,7 @@ class GenerateKlutterApplicationProjectTaskSpec extends Specification {
         def pathToRoot = Files.createTempDirectory("").toFile().absolutePath
 
         when:
-        new GenerateKlutterApplicationProjectTask(pathToRoot, null, null).run()
+        new GenerateApplicationProjectTask(pathToRoot, null, null, new CliExecutor()).run()
 
         then:
         def appFolder = new File("${pathToRoot}/app")
@@ -51,7 +51,7 @@ class GenerateKlutterApplicationProjectTaskSpec extends Specification {
         file.write(buildGradle)
 
         when:
-        GenerateKlutterApplicationProjectTaskKt.addDependenciesToAndroidBuildGradle(file)
+        GenerateApplicationProjectTaskKt.addDependenciesToAndroidBuildGradle(file)
 
         then:
         with(file.text) {
@@ -181,9 +181,9 @@ class GenerateKlutterApplicationProjectTaskSpec extends Specification {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
                 implementation "dev.buijs.klutter:core:0.16.32"
                 implementation project(":klutter:kompose_app_backend")
-                implementation "dev.buijs.klutter:kompose:${GenerateKlutterApplicationProjectTaskKt.klutterGradleVersion}"
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:${GenerateKlutterApplicationProjectTaskKt.kotlinxSerializationVersion}"
-                implementation "dev.buijs.klutter:annotations:${GenerateKlutterApplicationProjectTaskKt.klutterGradleVersion}"
+                implementation "dev.buijs.klutter:kompose:${GenerateApplicationProjectTaskKt.klutterGradleVersion}"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:${GenerateApplicationProjectTaskKt.kotlinxSerializationVersion}"
+                implementation "dev.buijs.klutter:annotations:${GenerateApplicationProjectTaskKt.klutterGradleVersion}"
             }
             
             java {

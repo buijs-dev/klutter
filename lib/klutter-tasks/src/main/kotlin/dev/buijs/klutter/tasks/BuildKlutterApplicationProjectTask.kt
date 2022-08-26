@@ -23,7 +23,6 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.Project
-import dev.buijs.klutter.kore.shared.execute
 import java.io.File
 
 /**
@@ -42,15 +41,22 @@ open class BuildKlutterApplicationProjectTask(
     private val project: Project,
     private val pathToBuild: File,
     private val pathToOutput: File,
+    private val executor: CliExecutor = CliExecutor(),
 ) : KlutterTask {
 
     override fun run() {
         """./gradlew clean build""".execute(project.root.folder)
-        AdapterGeneratorTask.from(project).run()
+        GenerateAdaptersTask(project = project, isApplication = true).run()
         """./gradlew klutterCopyAarFile""".execute(project.root.folder)
         """./gradlew klutterCopyFramework""".execute(project.root.folder)
         UiGeneratorTask(pathToBuild, pathToOutput).run()
     }
 
+    private fun String.execute(runFrom: File) {
+        executor.execute(
+            runFrom = runFrom,
+            command = this,
+        )
+    }
 }
 

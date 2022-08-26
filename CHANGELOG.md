@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## v2022.r6-9.alpha
+- Ignore all unknown properties in pubspec.yaml.
+
 ## v2022.r6-8.alpha
 - Merged annotations-kmp and annotations-jvm to klutter-annotations.
 - Renamed package core to kore.

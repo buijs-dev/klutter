@@ -175,7 +175,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
           flutter: ">=2.5.0"
         
         dependencies:
-          klutter: ^0.2.0
+          klutter: ^0.2.3
           flutter:
             sdk: flutter
           plugin_platform_interface: ^2.0.2
@@ -234,7 +234,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
           sdk: ">=2.17.5 <3.0.0"
         
         dependencies:
-          klutter: ^0.2.0
+          klutter: ^0.2.3
           flutter:
             sdk: flutter
         

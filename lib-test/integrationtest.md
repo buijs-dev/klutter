@@ -4,7 +4,7 @@ The Klutter Framework project consists of klutter (this project) and klutter-dar
 There is a small amount of circular dependencies between the 2 project which should be resolved
 when the time is right. In the current phase it is to uncertain what abstraction is the best fit
 so for now this will have to do. The following steps verify the framework as a whole and should
-all be passed successfully before publishing a new release (based of version 2022.r6-8.alpha).
+all be passed successfully before publishing a new release (based of version 2022.r6-9.alpha).
 
 ## Prerequisites
 - Both klutter/lib and klutter-dart projects builds successfully without ignored tests (comply or explain if tests are disabled).

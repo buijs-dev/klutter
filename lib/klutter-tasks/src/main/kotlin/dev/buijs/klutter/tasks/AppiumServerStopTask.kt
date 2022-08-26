@@ -23,16 +23,20 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.Project
-import dev.buijs.klutter.kore.shared.execute
-
 
 /**
  * Task to stop the appium server.
  */
-open class AppiumServerStopTask(private val project: Project) : KlutterTask {
+open class AppiumServerStopTask(
+    private val project: Project,
+    private val executor: CliExecutor = CliExecutor(),
+): KlutterTask {
 
     override fun run() {
-        """pkill -9 -f appium""".execute(project.root.folder)
+        executor.execute(
+            runFrom = project.root.folder,
+            command = """pkill -9 -f appium""",
+        )
     }
 
 }

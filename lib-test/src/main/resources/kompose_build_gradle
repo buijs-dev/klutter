@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("dev.buijs.klutter.gradle")
+    id("dev.buijs.klutter")
 }
 
 repositories {

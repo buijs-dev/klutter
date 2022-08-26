@@ -146,6 +146,7 @@ data class Pubspec(
  *          ios:
  *              pluginClass: SuperAwesomePlugin
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class PubspecFlutter(
     @JsonProperty("plugin")
     val plugin: PubspecPlugin?,
@@ -160,6 +161,7 @@ data class PubspecFlutter(
  *          ios:
  *              pluginClass: SuperAwesomePlugin
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class PubspecPlugin(
     @JsonProperty("platforms")
     val platforms: PubspecPluginPlatforms?,
@@ -173,6 +175,7 @@ data class PubspecPlugin(
  *      ios:
  *         pluginClass: SuperAwesomePlugin
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class PubspecPluginPlatforms(
     @JsonProperty("android")
     val android: PubspecPluginClass?,
@@ -188,6 +191,7 @@ data class PubspecPluginPlatforms(
  *      ios:
  *         pluginClass: SuperAwesomePlugin
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class PubspecPluginClass(
     @JsonProperty("package")
     val pluginPackage: String?,

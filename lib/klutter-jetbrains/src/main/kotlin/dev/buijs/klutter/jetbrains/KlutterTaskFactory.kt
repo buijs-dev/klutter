@@ -69,6 +69,7 @@ internal fun createKlutterPluginTask(
             pluginName = name,
             groupName = group,
         ).run().also {
+            ////
             File(pathToRoot).let { root ->
                 root.resolve(name).let { subRoot ->
                     // Change subRoot name just in case root and subRoot name are identicial.
@@ -77,8 +78,28 @@ internal fun createKlutterPluginTask(
                         temp.copyRecursively(root, overwrite = true)
                         temp.deleteRecursively()
                     }
+
+                    // Adjust the path in the .klutter-plugins file because it is
+                    // an absolute path which is now incorrect due to moving the entire
+                    // generated folder to a parent folder.
+                    root.resolve("example/.klutter-plugins")
+                        .writeText(":klutter:$name=${root.absolutePath}/android/klutter")
                 }
+
+                root.resolve("gradlew.bat").let { gradlew ->
+                    gradlew.setExecutable(true, false)
+                    gradlew.setReadable(true, false)
+                    gradlew.setWritable(true, false)
+                }
+
+                root.resolve("gradlew").let { gradlew ->
+                    gradlew.setExecutable(true, false)
+                    gradlew.setReadable(true, false)
+                    gradlew.setWritable(true, false)
+                }
+
             }
+
         }
     }
 )

@@ -178,7 +178,6 @@ class GeneratePluginProjectTaskSpec extends Specification {
           klutter: ^0.2.3
           flutter:
             sdk: flutter
-          plugin_platform_interface: ^2.0.2
         
         dev_dependencies:
           flutter_test:

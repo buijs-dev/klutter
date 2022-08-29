@@ -19,28 +19,29 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.ui.builder
+package dev.buijs.klutter.jetbrains.shared
 
 import dev.buijs.klutter.kore.KlutterException
-import java.io.File
-import java.nio.file.Files
 
-/**
- * Helper class to convert a File to byte[]
- * which the [ClassFileLoader] uses
- * to add a Class to the classpath.
- */
-internal data class ClassFile(
-    private val file: File, val className: String,
-) {
-    val classContent: ByteArray = file.toByteArray()
-}
+const val klutterPluginDefaultName = "my_plugin"
+const val klutterPluginDefaultGroup = "com.example"
 
-/**
- * Convert File to byte[].
- */
-private fun File.toByteArray(): ByteArray = try {
-    Files.readAllBytes(toPath())
-} catch (e: Exception) {
-    throw KlutterException("Unable to read File: ${e.message}")
+class KlutterTaskConfig(
+    var appName: String? = null,
+    var groupName: String? = null,
+    var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,
+)
+
+enum class KlutterProjectType(val displayName: String) {
+    // Application coming soon...
+    APPLICATION("Application"),
+    PLUGIN("Plugin");
+
+    companion object {
+        fun from(value: String) = KlutterProjectType
+            .values()
+            .firstOrNull { it.displayName == value }
+            ?: throw KlutterException("Invalid KlutterProjectType: '$value'")
+    }
+
 }

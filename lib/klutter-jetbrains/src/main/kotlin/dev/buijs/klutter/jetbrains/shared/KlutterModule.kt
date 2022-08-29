@@ -19,28 +19,22 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains
+package dev.buijs.klutter.jetbrains.shared
 
-import com.intellij.ide.util.projectWizard.*
-import com.intellij.openapi.Disposable
+import com.intellij.ide.util.projectWizard.ModuleBuilder
+import com.intellij.ide.util.projectWizard.ModuleBuilderListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
+import dev.buijs.klutter.jetbrains.shared.KlutterIcons.logo16x16
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.jetbrains.KlutterIcons.logo16x16
 
+abstract class AbstractKlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 
-class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
-
-    internal var config: KlutterTaskConfig? = null
-
-    init {
-        addListener(this)
-    }
+    var config: KlutterTaskConfig? = null
 
     override fun getBuilderId(): String = "buijs_software_klutter"
 
@@ -53,13 +47,6 @@ class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
     override fun getPresentableName() = "Klutter"
 
     override fun getGroupName() = "Klutter Framework"
-
-    override fun getCustomOptionsStep(
-        context: WizardContext?,
-        parentDisposable: Disposable?,
-    ): ModuleWizardStep {
-        return KlutterMenu(this)
-    }
 
     @Throws(ConfigurationException::class)
     override fun setupRootModel(rootModel: ModifiableRootModel) {
@@ -75,10 +62,6 @@ class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
 
         compilerModuleExtension.inheritCompilerOutputPath(true)
 
-    }
-
-    override fun getModuleType(): ModuleType<*> {
-        return KlutterModuleType()
     }
 
     override fun moduleCreated(module: Module) {
@@ -100,16 +83,4 @@ class KlutterModuleBuilder : ModuleBuilder(), ModuleBuilderListener {
         }
 
     }
-}
-
-class KlutterModuleType : ModuleType<KlutterModuleBuilder>("KLUTTER_MODULE") {
-
-    override fun createModuleBuilder() = KlutterModuleBuilder()
-
-    override fun getName() = "Buijs Software Klutter Framework"
-
-    override fun getDescription() = "Add support for the Klutter Framework"
-
-    override fun getNodeIcon(isOpened: Boolean) = logo16x16
-
 }

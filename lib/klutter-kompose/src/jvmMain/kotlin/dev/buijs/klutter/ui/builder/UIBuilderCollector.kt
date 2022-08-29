@@ -22,8 +22,8 @@
 package dev.buijs.klutter.ui.builder
 
 import dev.buijs.klutter.annotations.KomposeView
+import dev.buijs.klutter.kore.shared.ClassFileLoader
 import mu.KotlinLogging
-import java.util.*
 
 private val log = KotlinLogging.logger { }
 

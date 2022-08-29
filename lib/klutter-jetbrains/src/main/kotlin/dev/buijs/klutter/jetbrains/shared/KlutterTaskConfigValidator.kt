@@ -19,12 +19,12 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains
+package dev.buijs.klutter.jetbrains.shared
 
 /**
  * Validate a [KlutterTaskConfig] instance.
  */
-internal fun KlutterTaskConfig.validate(): ValidationResult {
+fun KlutterTaskConfig.validate(): ValidationResult {
     val messages = mutableListOf<String>()
 
     val appName = appName ?: klutterPluginDefaultName
@@ -48,7 +48,7 @@ internal fun KlutterTaskConfig.validate(): ValidationResult {
  * - '_'
  * - Should start with an alphabetic character
  */
-internal fun String.isValidAppName(): Boolean =
+fun String.isValidAppName(): Boolean =
     """^[a-z][a-z0-9_]+$""".toRegex().matches(this)
 
 /**
@@ -63,7 +63,7 @@ internal fun String.isValidAppName(): Boolean =
  * - Group contains at least 2 parts (e.g. there is minimally 1 dot)
  * - Should start with an alphabetic character
  */
-internal fun String.isValidGroupName(): Boolean {
+fun String.isValidGroupName(): Boolean {
 
     // Group should contain at least 2 group parts.
     if(!this.contains(".")) return false
@@ -82,7 +82,7 @@ internal fun String.isValidGroupName(): Boolean {
 /**
  * Result returned after validating user input.
  */
-internal data class ValidationResult(
+data class ValidationResult(
     val messages: List<String>,
 ) {
     val isValid: Boolean = messages.isEmpty()

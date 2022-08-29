@@ -22,18 +22,39 @@
             <a href="https://github.com/buijs-dev/klutter">Klutter on Github</a><br/>
         </p>
     ]]></description>
-
-    <!-- Product and plugin compatibility requirements.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.gradle</depends>
+    <depends>org.jetbrains.android</depends>
 
+    <!-- This adds a klutter menu option to the standard new project wizard (Intellij IDEA + Android Studio) -->
     <extensions defaultExtensionNs="com.intellij">
-        <moduleType id="KLUTTER_MODULE_TYPE" implementationClass="dev.buijs.klutter.jetbrains.KlutterModuleType"/>
-        <moduleBuilder builderClass="dev.buijs.klutter.jetbrains.KlutterModuleBuilder"
+        <moduleType id="KLUTTER_MODULE_TYPE" implementationClass="dev.buijs.klutter.jetbrains.shared.KlutterModuleType"/>
+        <moduleBuilder builderClass="dev.buijs.klutter.jetbrains.shared.KlutterModuleBuilder"
                        id="KLUTTER_MODULE_STEP"
                        order="first"/>
     </extensions>
 
+<!--    &lt;!&ndash; This adds a template option in the Android Studio new project wizard &ndash;&gt;-->
+<!--    <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">-->
+<!--        <wizardTemplateProvider implementation="dev.buijs.klutter.jetbrains.studio.KlutterWizardTemplateProvider"/>-->
+<!--    </extensions>-->
+
+    <!-- These are Android Studio actions -->
+    <actions>
+        <!-- Define the 'New Klutter Project' menu item-->
+        <action id="klutter.NewProject" class="dev.buijs.klutter.jetbrains.studio.KlutterNewProjectAction"
+                text="New Klutter Project..."
+                description="Create a new Klutter project">
+            <add-to-group group-id="JavaNewProjectOrModuleGroup" anchor="after" relative-to-action="NewProject"/>
+        </action>
+        <!--The icon isn't being used here, but it is set by the action -->
+        <!--suppress PluginXmlValidity -->
+        <action id="klutter.NewProject.welcome" class="dev.buijs.klutter.jetbrains.studio.KlutterNewProjectAction"
+                icon="NotUsed"
+                text="Create New Klutter Project"
+                description="Create a new Klutter project">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
+        </action>
+    </actions>
 
 </idea-plugin>

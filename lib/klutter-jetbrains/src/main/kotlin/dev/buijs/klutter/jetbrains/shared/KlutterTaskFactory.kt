@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains
+package dev.buijs.klutter.jetbrains.shared
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -30,24 +30,24 @@ import dev.buijs.klutter.tasks.GeneratePluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
-internal object KlutterTaskFactory {
+object KlutterTaskFactory {
     fun build(
-        project: Project,
         pathToRoot: String,
         config: KlutterTaskConfig,
+        project: Project? = null,
     ): Task = when(config.projectType) {
         KlutterProjectType.PLUGIN -> {
             createKlutterPluginTask(
-                project = project,
                 pathToRoot = pathToRoot,
+                project = project,
                 name = config.appName ?: klutterPluginDefaultName,
                 group = config.groupName ?: klutterPluginDefaultGroup,
             )
         }
         KlutterProjectType.APPLICATION -> {
             createKlutterApplicationTask(
-                project = project,
                 pathToRoot = pathToRoot,
+                project = project,
                 name = config.appName,
                 group = config.groupName,
             )
@@ -56,10 +56,10 @@ internal object KlutterTaskFactory {
 }
 
 internal fun createKlutterPluginTask(
-    project: Project,
     pathToRoot: String,
     name: String,
     group: String,
+    project: Project? = null,
 ) = createKlutterTask(
     pathToRoot = pathToRoot,
     project = project,
@@ -69,7 +69,9 @@ internal fun createKlutterPluginTask(
             pluginName = name,
             groupName = group,
         ).run().also {
-            ////
+
+            println("Running GeneratePluginProjectTask")
+
             File(pathToRoot).let { root ->
                 root.resolve(name).let { subRoot ->
                     // Change subRoot name just in case root and subRoot name are identicial.
@@ -105,10 +107,10 @@ internal fun createKlutterPluginTask(
 )
 
 internal fun createKlutterApplicationTask(
-    project: Project,
     pathToRoot: String,
     name: String? = null,
     group: String? = null,
+    project: Project? = null,
 ) = createKlutterTask(
     pathToRoot = pathToRoot,
     project = project,
@@ -123,10 +125,10 @@ internal fun createKlutterApplicationTask(
 
 @Suppress("DialogTitleCapitalization")
 private fun createKlutterTask(
-    project: Project,
+    project: Project? = null,
     pathToRoot: String,
     task: () -> Unit,
-) = object: Task.Modal(project, "Initializing project", false) {
+) = object: Task.Modal(null,"Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
         val progressIndicator =  ProgressManager.getInstance().progressIndicator
         progressIndicator.isIndeterminate = false
@@ -136,7 +138,10 @@ private fun createKlutterTask(
         progressIndicator.fraction = 0.3
         task.invoke()
         progressIndicator.fraction = 0.8
-        GradleUnlinkedProjectAware().linkAndLoadProject(project, pathToRoot)
+        project?.let {
+            GradleUnlinkedProjectAware()
+                .linkAndLoadProject(it, pathToRoot)
+        }
         progressIndicator.fraction = 1.0
     }
 }

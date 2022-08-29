@@ -1,5 +1,6 @@
-package dev.buijs.klutter.jetbrains
+package dev.buijs.klutter.jetbrains.shared
 
+import dev.buijs.klutter.jetbrains.shared.KlutterIcons
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 

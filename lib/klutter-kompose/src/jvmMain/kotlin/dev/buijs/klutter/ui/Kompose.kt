@@ -24,7 +24,7 @@ package dev.buijs.klutter.ui
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.shared.KlutterDTO
-import dev.buijs.klutter.ui.builder.ClassFileLoader
+import dev.buijs.klutter.kore.shared.ClassFileLoader
 import dev.buijs.klutter.ui.event.KlutterEvent
 import mu.KotlinLogging
 import java.lang.reflect.ParameterizedType

@@ -21,15 +21,22 @@
  */
 package dev.buijs.klutter.jetbrains.shared
 
-import com.intellij.openapi.util.IconLoader
-import javax.swing.Icon
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.wm.impl.welcomeScreen.NewWelcomeScreen
 
-object KlutterIcons {
+class NewProjectAction : AnAction("New Klutter Project"), DumbAware {
+    override fun update(e: AnActionEvent) {
+        if (NewWelcomeScreen.isNewWelcomeScreen(e)) {
+            e.presentation.icon = AllIcons.Welcome.CreateNewProjectTab
+            e.presentation.text = "New Klutter Project"
+        }
+    }
 
-    val logo16x16: Icon = IconLoader.getIcon("/pluginIcon16x16.png", KlutterIcons::class.java)
-
-    val logo20x20: Icon = IconLoader.getIcon("/pluginIcon20x20.png", KlutterIcons::class.java)
-
-    val banner = IconLoader.getIcon("/klutterBanner.svg", KlutterIcons::class.java)
+    override fun actionPerformed(e: AnActionEvent) {
+        NewProjectDialog().show()
+    }
 
 }

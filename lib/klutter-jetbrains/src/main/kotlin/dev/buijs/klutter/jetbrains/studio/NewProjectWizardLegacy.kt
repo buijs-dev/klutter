@@ -2,16 +2,16 @@ package dev.buijs.klutter.jetbrains.studio
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.openapi.options.ConfigurationException
-import dev.buijs.klutter.jetbrains.shared.AbstractKlutterModuleBuilder
-import dev.buijs.klutter.jetbrains.shared.KlutterTaskConfig
+import dev.buijs.klutter.jetbrains.shared.NewProjectBuilder
+import dev.buijs.klutter.jetbrains.shared.NewProjectConfig
 import dev.buijs.klutter.jetbrains.shared.validate
 import javax.swing.JPanel
 
-class NewKlutterProjectWizardLegacy(
-    private val builder: AbstractKlutterModuleBuilder,
+class NewProjectWizardLegacy(
+    private val builder: NewProjectBuilder,
 ) : ModuleWizardStep() {
 
-    private val data: KlutterTaskConfig = KlutterTaskConfig()
+    private val data: NewProjectConfig = NewProjectConfig()
 
     override fun getComponent() = JPanel()
 

@@ -55,6 +55,13 @@ tasks {
         enabled = false
     }
 
+    runIde {
+        ideDir.set(file(
+            "/Users/buijs/Library/Application Support" +
+                    "/JetBrains/Toolbox/apps/AndroidStudio" +
+                    "/ch-0/212.5712.43.2112.8815526/Android Studio.app/Contents"))
+    }
+
 }
 
 repositories {

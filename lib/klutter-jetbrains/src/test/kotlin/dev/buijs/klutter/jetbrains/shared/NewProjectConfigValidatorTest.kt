@@ -3,16 +3,16 @@ package dev.buijs.klutter.jetbrains.shared
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
-internal class KlutterTaskConfigValidatorTest: WordSpec({
+internal class NewProjectConfigValidatorTest: WordSpec({
 
     "Verify validate" should {
 
         "Use default values if app- and groupname are null" {
-            KlutterTaskConfig().validate().isValid shouldBe  true
+            NewProjectConfig().validate().isValid shouldBe  true
         }
 
         "Use app- and groupname from KlutterTaskConfig if not null" {
-            KlutterTaskConfig(
+            NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com.example.my_plugin.project"
             ).validate().isValid shouldBe  true
@@ -21,7 +21,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
         "Return false if one or more validations fail" {
 
             // given an invalid app name and valid group name
-            var config = KlutterTaskConfig(
+            var config = NewProjectConfig(
                 appName = "_invalid_project.name!!!",
                 groupName = "com.example.my_plugin.project"
             )
@@ -30,7 +30,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
             config.validate().isValid shouldBe  false
 
             // given a valid app name and invalid group name
-            config = KlutterTaskConfig(
+            config = NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com_._!example.my_plugin.project"
             )
@@ -39,7 +39,7 @@ internal class KlutterTaskConfigValidatorTest: WordSpec({
             config.validate().isValid shouldBe false
 
             // given an invalid app name and invalid group name
-            config = KlutterTaskConfig(
+            config = NewProjectConfig(
                 appName = "_invalid_project!!!",
                 groupName = "com_._!example.my_plugin.project"
             )

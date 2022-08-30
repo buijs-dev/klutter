@@ -21,27 +21,20 @@
  */
 package dev.buijs.klutter.jetbrains.shared
 
-import dev.buijs.klutter.kore.KlutterException
+object KlutterBundle {
 
-const val klutterPluginDefaultName = "my_plugin"
-const val klutterPluginDefaultGroup = "com.example"
+    const val moduleId: String = "KLUTTER_MODULE"
 
-class KlutterTaskConfig(
-    var appName: String? = null,
-    var groupName: String? = null,
-    var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,
-)
+    const val bundleId: String = "buijs_software_klutter"
 
-enum class KlutterProjectType(val displayName: String) {
-    // Application coming soon...
-    APPLICATION("Application"),
-    PLUGIN("Plugin");
+    const val presentableName: String = "Klutter"
 
-    companion object {
-        fun from(value: String) = KlutterProjectType
-            .values()
-            .firstOrNull { it.displayName == value }
-            ?: throw KlutterException("Invalid KlutterProjectType: '$value'")
-    }
+    const val groupName: String = "Klutter Framework"
+
+    const val descriptionShort: String = "Add support for the Klutter Framework"
+
+    const val descriptionLong: String = "" +
+            "Klutter is a framework which interconnects Flutter and Kotlin Multiplatform. " +
+            "It can be used to create Flutter plugins or standalone apps."
 
 }

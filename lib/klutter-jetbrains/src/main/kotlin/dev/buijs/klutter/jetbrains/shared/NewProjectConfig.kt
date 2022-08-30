@@ -21,10 +21,55 @@
  */
 package dev.buijs.klutter.jetbrains.shared
 
+import dev.buijs.klutter.kore.KlutterException
+
+const val klutterPluginDefaultName = "my_plugin"
+const val klutterPluginDefaultGroup = "com.example"
+
 /**
- * Validate a [KlutterTaskConfig] instance.
+ * Wrapper for data used to create a new project.
  */
-fun KlutterTaskConfig.validate(): ValidationResult {
+class NewProjectConfig(
+    /**
+     * Name of the app (or plugin).
+     *
+     * Will be set in the flutter pubspec.yaml.
+     */
+    var appName: String? = null,
+
+    /**
+     * Name of the group/organisation/package.
+     *
+     * Used as package name in Android.
+     */
+    var groupName: String? = null,
+
+    /**
+     * Type of project to be created, one of [KlutterProjectType].
+     */
+    var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,
+)
+
+/**
+ * Type of Klutter project to be created.
+ */
+enum class KlutterProjectType(val displayName: String) {
+    // Application coming soon...
+    APPLICATION("Application"),
+    PLUGIN("Plugin");
+
+    companion object {
+        fun from(value: String) = KlutterProjectType.values()
+            .firstOrNull { it.displayName == value }
+            ?: throw KlutterException("Invalid KlutterProjectType: '$value'")
+    }
+
+}
+
+/**
+ * Validate a [NewProjectConfig] instance.
+ */
+fun NewProjectConfig.validate(): ValidationResult {
     val messages = mutableListOf<String>()
 
     val appName = appName ?: klutterPluginDefaultName

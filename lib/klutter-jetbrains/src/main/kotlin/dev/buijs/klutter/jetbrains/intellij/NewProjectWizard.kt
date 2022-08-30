@@ -11,11 +11,11 @@ import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import dev.buijs.klutter.jetbrains.shared.*
 
-class NewKlutterProjectWizard(
-    private val builder: AbstractKlutterModuleBuilder,
+class NewProjectWizard(
+    private val builder: NewProjectBuilder,
 ) : ModuleWizardStep() {
 
-    private val data: KlutterTaskConfig = KlutterTaskConfig()
+    private val data: NewProjectConfig = NewProjectConfig()
 
     override fun getComponent() = panel {
         indent {

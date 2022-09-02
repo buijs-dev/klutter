@@ -46,15 +46,21 @@ object ProjectVersions {
 }
 
 object Repository {
-    val endpoint: URI = URI(System.getenv("KLUTTER_PRIVATE_URL") ?: repository("repo.endpoint"))
-    val username = System.getenv("KLUTTER_PRIVATE_USERNAME") ?: repository("repo.username")
-    val password = System.getenv("KLUTTER_PRIVATE_PASSWORD") ?: repository("repo.password")
+    val endpoint: URI = URI(System.getenv("KLUTTER_PRIVATE_URL")
+        ?: repository("repo.endpoint"))
+    val username = System.getenv("KLUTTER_PRIVATE_USERNAME")
+        ?: repository("repo.username")
+    val password = System.getenv("KLUTTER_PRIVATE_PASSWORD")
+        ?: repository("repo.password")
 }
 
 object Signing {
-    val certificateChain = System.getenv("KLUTTER_JETBRAINS_CERTIFICATE_CHAINS") ?: signing("certificate_chain")
-    val privateKey = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY") ?: signing("private_key")
-    val privateKeyPassword = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD") ?: signing("private_key_password")
+    val certificateChain = System.getenv("KLUTTER_JETBRAINS_CERTIFICATE_CHAINS")
+        ?: signing("certificate_chain")
+    val privateKey = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY")
+        ?: signing("private_key")
+    val privateKeyPassword = System.getenv("KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD")
+        ?: signing("private_key_password")
 }
 fun versions(key: String): String = Properties().also {
     it.load(KlutterInternalPlugin::class.java.classLoader

@@ -33,7 +33,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.4.2
-          arguments: runIdeForUiTests &
+          arguments: runIdeForUiTests
 
       # Wait for IDEA to be started
       - name: Health Check

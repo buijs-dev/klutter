@@ -4,21 +4,11 @@ on:
 
 jobs:
   testUI:
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            runIde: |
-              export DISPLAY=:99.0
-              Xvfb -ac :99 -screen 0 1920x1080x16 &
-              gradle runIdeForUiTests &
-          - os: windows-latest
-            runIde: start gradlew.bat runIdeForUiTests
-          - os: macos-latest
-            runIde: ./gradlew runIdeForUiTests &
-
+        os: [ macos-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
 
       # Check out current repository
@@ -33,8 +23,10 @@ jobs:
           java-version: 11
 
       # Run IDEA prepared for UI testing
-      - name: Run IDE
-        run: ${{ matrix.runIde }}
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.4.2
+          arguments: runIdeForUiTests &
 
       # Wait for IDEA to be started
       - name: Health Check
@@ -45,5 +37,7 @@ jobs:
           retry-delay: 30s
 
       # Run tests
-      - name: Tests
-        run: ./gradlew clean build test -p "lib/klutter-jetbrains"
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.4.2
+          arguments: clean test -p "lib/klutter-jetbrains"

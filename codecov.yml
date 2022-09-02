@@ -6,3 +6,5 @@ ignore:
   - lib/klutter-gradle/src/main/kotlin/dev/buijs/klutter/gradle
   # Mostly tested through UI (e2e) tests for which coverage is not recorded
   - lib/klutter-jetbrains/src/main/kotlin/dev/buijs/klutter/jetbrains
+  # Integration test tooling
+  - lib/klutter-test/src/main/kotlin/dev/buijs/klutter/test

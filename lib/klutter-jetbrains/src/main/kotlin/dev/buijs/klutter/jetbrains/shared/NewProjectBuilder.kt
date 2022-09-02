@@ -32,54 +32,34 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
-import dev.buijs.klutter.jetbrains.intellij.NewProjectWizard
-import dev.buijs.klutter.jetbrains.studio.NewProjectWizardLegacy
 import dev.buijs.klutter.kore.KlutterException
 import mu.KotlinLogging
 
-/**
- * Builder which returns a wizard to input project details
- * with which a new klutter project is created.
- *
- * Will return [NewProjectWizard] for newer IDE versions (Intellij latest)
- * or [NewProjectWizardLegacy] for older IDE's which do net yet
- * support the new Kotlin DSL.
- */
-class NewProjectBuilder : ModuleBuilder(), ModuleBuilderListener {
+private val log = KotlinLogging.logger { }
 
-    private val log = KotlinLogging.logger { }
+/**
+ * Builder which returns a wizard to input project details with which a new klutter project is created.
+ *
+ * This builder is added in the resources/META-INF/plugin.xml as an extension.
+ */
+class NewProjectBuilder(
+    var config: NewProjectConfig? = null
+) : ModuleBuilder(), ModuleBuilderListener {
 
     init { addListener(this) }
 
-    var config: NewProjectConfig? = null
-
-    private fun getModuleWizardStep() =
-        // A bit hacky but this way the plugin can be identical for Intellij and Android Studio.
-        //
-        // As of now 30-08-2022 Android Studio does not support the new Kotlin DSL yet.
-        // The tryLoadWizard will either return the NewKlutterProjectWizard or null if Kotlin DSL
-        // classes could not be loaded.
-        //
-        // In case the new Kotlin DSL is not supported then fallback to the legacy UI.
-        tryLoadWizard() ?: NewProjectWizardLegacy(this)
-
+    /**
+     * Load the [NewProjectWizardStep] where the user can enter the Klutter project configuration.
+     */
     override fun getCustomOptionsStep(
         context: WizardContext?,
         parentDisposable: Disposable?,
-    ) = getModuleWizardStep()
+    ) = tryLoadWizard()
+        ?: throw KlutterException("Unsupported Intellij Platform version")
 
-    override fun getModuleType(): ModuleType<*> = KlutterModuleType()
-
-    override fun getBuilderId(): String = KlutterBundle.bundleId
-
-    override fun getNodeIcon() = KlutterIcons.logo16x16
-
-    override fun getDescription(): String = KlutterBundle.descriptionLong
-
-    override fun getPresentableName() = KlutterBundle.presentableName
-
-    override fun getGroupName() = KlutterBundle.groupName
-
+    /**
+     * Configure Java SDK.
+     */
     @Throws(ConfigurationException::class)
     override fun setupRootModel(rootModel: ModifiableRootModel) {
         rootModel.getModuleExtension(CompilerModuleExtension::class.java).let {
@@ -95,6 +75,9 @@ class NewProjectBuilder : ModuleBuilder(), ModuleBuilderListener {
         }
     }
 
+    /**
+     * Generate the actual project.
+     */
     override fun moduleCreated(module: Module) {
 
         val pathToRoot = super.getContentEntryPath()
@@ -115,17 +98,28 @@ class NewProjectBuilder : ModuleBuilder(), ModuleBuilderListener {
 
     }
 
-    /**
-     * Try to create an instance of [NewProjectWizard] and catch all exceptions
-     * so that the builder can fall back to an older [NewProjectWizardLegacy] wizard.
-     */
-    private fun tryLoadWizard() = try {
-        log.info("Try loading the NewKlutterProjectWizard")
-        NewProjectWizard(this)
-    } catch (e: Throwable) {
-        log.info("Failed to load: NewKlutterProjectWizard", e); null
-    }
+    override fun getModuleType(): ModuleType<*> = KlutterModuleType()
 
+    override fun getBuilderId(): String = KlutterBundle.bundleId
+
+    override fun getNodeIcon() = KlutterIcons.logo16x16
+
+    override fun getDescription(): String = KlutterBundle.descriptionLong
+
+    override fun getPresentableName() = KlutterBundle.presentableName
+
+    override fun getGroupName() = KlutterBundle.groupName
+
+}
+
+/**
+ * Try to create an instance of [NewProjectWizardStep].
+ */
+private fun NewProjectBuilder.tryLoadWizard() = try {
+    log.info("Try loading the NewKlutterProjectWizard")
+    NewProjectWizardStep(this)
+} catch (e: Throwable) {
+    log.info("Failed to load: NewKlutterProjectWizard", e); null
 }
 
 /**

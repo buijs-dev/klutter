@@ -21,6 +21,12 @@
  */
 package dev.buijs.klutter.jetbrains.shared
 
+import com.intellij.openapi.util.IconLoader
+import javax.swing.Icon
+
+/**
+ * Common text messages.
+ */
 object KlutterBundle {
 
     const val moduleId: String = "KLUTTER_MODULE"
@@ -37,4 +43,12 @@ object KlutterBundle {
             "Klutter is a framework which interconnects Flutter and Kotlin Multiplatform. " +
             "It can be used to create Flutter plugins or standalone apps."
 
+}
+
+/**
+ * Klutter Logo's in Icon format.
+ */
+object KlutterIcons {
+    val logo16x16: Icon = IconLoader.getIcon("/pluginIcon16x16.png", KlutterIcons::class.java)
+    val logo20x20: Icon = IconLoader.getIcon("/pluginIcon20x20.png", KlutterIcons::class.java)
 }

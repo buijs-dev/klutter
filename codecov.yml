@@ -3,4 +3,6 @@ github_checks:
 
 ignore:
   # These classes contain glue code for which code coverage is not recorded
-  - lib/plugin-gradle/src/main/kotlin/dev/buijs/klutter/plugins/gradle/tasks
+  - lib/klutter-gradle/src/main/kotlin/dev/buijs/klutter/gradle
+  # Mostly tested through UI (e2e) tests for which coverage is not recorded
+  - lib/klutter-jetbrains/src/main/kotlin/dev/buijs/klutter/jetbrains

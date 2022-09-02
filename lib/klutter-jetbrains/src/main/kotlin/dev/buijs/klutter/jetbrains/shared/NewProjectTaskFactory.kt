@@ -108,8 +108,6 @@ private fun String.moveUpFolder(pluginName: String) {
  */
 private fun File.makeExecutable() {
     this.setExecutable(true, false)
-    this.setReadable(true, false)
-    this.setWritable(true, false)
 }
 
 /**

@@ -7,8 +7,8 @@ internal class NewProjectConfigValidatorTest: WordSpec({
 
     "Verify validate" should {
 
-        "Use default values if app- and groupname are null" {
-            NewProjectConfig().validate().isValid shouldBe  true
+        "Return !isValid if group and name are not set" {
+            NewProjectConfig().validate().isValid shouldBe  false
         }
 
         "Use app- and groupname from KlutterTaskConfig if not null" {

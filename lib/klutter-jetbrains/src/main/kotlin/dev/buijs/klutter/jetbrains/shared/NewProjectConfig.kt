@@ -66,21 +66,28 @@ enum class KlutterProjectType(val displayName: String) {
 
 }
 
+internal const val INVALID_APP_NAME = "Invalid app name"
+internal const val MISSING_APP_NAME = "Missing app name"
+internal const val INVALID_GROUP_NAME = "Invalid group name"
+internal const val MISSING_GROUP_NAME = "Missing group name"
+
 /**
  * Validate a [NewProjectConfig] instance.
  */
 fun NewProjectConfig.validate(): ValidationResult {
     val messages = mutableListOf<String>()
 
-    val appName = appName ?: klutterPluginDefaultName
-    if(!appName.isValidAppName()) {
-        messages.add("Invalid app name")
-    }
+    if(appName == null)
+        messages.add(MISSING_APP_NAME)
 
-    val groupName = groupName ?: klutterPluginDefaultGroup
-    if(!groupName.isValidGroupName()) {
-        messages.add("Invalid group name")
-    }
+    else if(!appName!!.isValidAppName())
+        messages.add(INVALID_APP_NAME)
+
+    if(groupName == null)
+        messages.add(MISSING_GROUP_NAME)
+
+    else if(!groupName!!.isValidGroupName())
+        messages.add(INVALID_GROUP_NAME)
 
     return ValidationResult(messages)
 }

@@ -21,7 +21,9 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
+import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.tasks.GenerateAdaptersTask
+import dev.buijs.klutter.tasks.UiGeneratorTask
 
 /**
  * Execute task [GenerateAdaptersTask] from Gradle.
@@ -31,4 +33,26 @@ internal open class GenerateAdaptersGradleTask: AbstractTask() {
         project = project(),
         isApplication = isApplication(),
     )
+}
+
+/**
+ * Task to generate a Flutter UI.
+ *
+ * Views can be constructed using a Klutter Kompose DSL, being one of:
+ * - JetlagUI
+ * - KlutterUI
+ * - NotSwiftUI
+ *
+ * KlutterUI is the default DSL which resembles Flutter the most.
+ * JetlagUI is a DSL which is inspired by Jetpack Compose.
+ * NotSwiftUI is a DSL which is inspired by SwiftUI.
+ *
+ */
+internal open class UiGeneratorGradleTask : AbstractTask() {
+    override fun klutterTask() = project.klutterExtension().application?.let {
+        UiGeneratorTask(
+            pathToBuild = pathToApplicationBuildFolder(),
+            pathToOutput = pathToApplicationOutputFolder()
+        )
+    } ?: throw KlutterException("Missing application config in klutter block.")
 }

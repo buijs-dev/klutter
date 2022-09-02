@@ -12,7 +12,7 @@ class KlutterGradlePluginSpec extends Specification {
         def project = ProjectBuilder.builder().build()
 
         when:
-        project.pluginManager.apply("dev.buijs.klutter.gradle")
+        project.pluginManager.apply("dev.buijs.klutter")
 
         and:
         def plugin = project.plugins.getPlugin(KlutterGradlePlugin.class)
@@ -28,7 +28,7 @@ class KlutterGradlePluginSpec extends Specification {
         def project = ProjectBuilder.builder().build()
 
         when:
-        project.pluginManager.apply("dev.buijs.klutter.gradle")
+        project.pluginManager.apply("dev.buijs.klutter")
 
         then:
         def taskContainer = project.getTasks()
@@ -40,8 +40,7 @@ class KlutterGradlePluginSpec extends Specification {
         def arr = taskContainer.toArray()
 
         and:
-        arr.size() == 8
+        arr.size() != 0
 
     }
-
 }

@@ -26,7 +26,7 @@ import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 
 
-private const val klutterPubVersion = "0.2.0"
+const val klutterPubVersion = "0.2.3"
 
 /**
  * Task to generate a klutter plugin project.
@@ -76,7 +76,10 @@ class GeneratePluginProjectTask(
         for(pubspec in pubspecs) {
             val updated = mutableListOf<String>().also {
                 pubspec.verifyExists().readLines().forEach { line ->
-                    it.add(line)
+                    if(!line.contains("plugin_platform_interface:")) {
+                        it.add(line)
+                    }
+
                     if (line.trim().startsWith("dependencies:")) {
                         it.add("  klutter: ^$klutterPubVersion")
                     }
@@ -113,7 +116,7 @@ class GeneratePluginProjectTask(
             if(readme.exists()) readme.delete()
             readme.createNewFile()
             readme.writeText("""
-                # $pluginName
+                |# $pluginName
                 |A new Klutter plugin project. 
                 |Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
                 |

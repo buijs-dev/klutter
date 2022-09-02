@@ -1,0 +1,50 @@
+#name: Run Jetbrains UI Tests
+#on:
+#  push:
+#env:
+#  KLUTTER_PRIVATE_USERNAME: ${{ secrets.KLUTTER_PRIVATE_USERNAME }}
+#  KLUTTER_PRIVATE_PASSWORD: ${{ secrets.KLUTTER_PRIVATE_PASSWORD }}
+#  KLUTTER_PRIVATE_URL: ${{ secrets.KLUTTER_PRIVATE_URL }}
+#  KLUTTER_JETBRAINS_CERTIFICATE_CHAINS: ${{ secrets.KLUTTER_JETBRAINS_CERTIFICATE_CHAINS }}
+#  KLUTTER_JETBRAINS_PRIVATE_KEY: ${{ secrets.KLUTTER_JETBRAINS_PRIVATE_KEY }}
+#  KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD: ${{ secrets.KLUTTER_JETBRAINS_PRIVATE_KEY_PASSWORD }}
+#
+#jobs:
+#  testUI:
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [ macos-latest ]
+#    runs-on: ${{ matrix.os }}
+#    steps:
+#
+#      # Check out current repository
+#      - name: Fetch Sources
+#        uses: actions/checkout@v3
+#
+#      # Setup Java 11 environment for the next steps
+#      - name: Setup Java
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: zulu
+#          java-version: 11
+#
+#      # Run IDEA prepared for UI testing
+#      - uses: gradle/gradle-build-action@v2
+#        with:
+#          gradle-version: 7.4.2
+#          arguments: runIdeForUiTests
+#
+#      # Wait for IDEA to be started
+#      - name: Health Check
+#        uses: jtalk/url-health-check-action@v2
+#        with:
+#          url: http://127.0.0.1:8082
+#          max-attempts: 15
+#          retry-delay: 30s
+#
+#      # Run tests
+#      - uses: gradle/gradle-build-action@v2
+#        with:
+#          gradle-version: 7.4.2
+#          arguments: clean test -p "lib/klutter-jetbrains"

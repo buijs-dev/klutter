@@ -86,6 +86,21 @@ internal abstract class AbstractTask(): DefaultTask() {
 
     }
 
+    internal fun pathToApplicationBuildFolder(): File = project
+        .klutterExtension()
+        .application
+        ?.buildFolder
+        ?: project
+            .rootProject
+            .project(":lib")
+            .buildDir.resolve("libs/kompose-jvm.jar")
+
+    internal fun pathToApplicationOutputFolder() = project
+        .klutterExtension()
+        .application
+        ?.outputFolder
+        ?: project.rootProject.rootDir.resolve("app/frontend/lib")
+
     internal fun pathToFlutterApp(): File = project
         .rootProject
         .rootDir

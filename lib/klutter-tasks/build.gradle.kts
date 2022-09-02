@@ -82,6 +82,7 @@ publishing {
 dependencies {
     // Project
     implementation(project(":lib:klutter-kore"))
+    implementation(project(":lib:klutter-kompose"))
     implementation(project(":lib:klutter-annotations"))
 
     // Logging

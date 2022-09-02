@@ -40,5 +40,8 @@ class KlutterGradlePlugin: Plugin<Project> {
         project.tasks.register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
         project.tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspecGradleTask::class.java)
         project.tasks.register("klutterGenerateAdapters", GenerateAdaptersGradleTask::class.java)
+        project.tasks.register("klutterGenerateUI", UiGeneratorGradleTask::class.java)
+        project.tasks.register("klutterStartAppiumServer", AppiumServerStartGradleTask::class.java)
+        project.tasks.register("klutterStopAppiumServer", AppiumServerStopGradleTask::class.java)
     }
 }

@@ -37,7 +37,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
 
     //Logging
-    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
+    implementation("org.slf4j:slf4j-api:2.0.0")
     implementation("io.github.microutils:kotlin-logging:2.1.23")
 
     // Gradle

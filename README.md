@@ -22,8 +22,10 @@ Coming soon...
 
 ### Framework
 - [Annotations](lib/klutter-annotations/module.md)
+- [Kompose](lib/klutter-kompose/module.md)
 - [Kore](lib/klutter-kore/module.md)
 - [Tasks](lib/klutter-tasks/module.md)
+- [Test Kit](lib/klutter-test/module.md)
 - [Plugin: Gradle](lib/klutter-gradle/module.md)
 - [Plugin: Flutter](https://github.com/buijs-dev/klutter-dart)
 - [Plugin: Jetbrains (Intellij, Android Studio)](lib/klutter-jetbrains/module.md)

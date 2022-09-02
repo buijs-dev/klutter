@@ -36,7 +36,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
                 implementation(project(":lib:klutter-annotations"))
             }
         }
@@ -58,8 +58,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
                 implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
-                //implementation("org.jetbrains.kotlin:kotlin-compiler:1.7.10")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
                 implementation(project(":lib:klutter-kore"))
                 implementation(project(":lib:klutter-annotations"))
             }

@@ -109,8 +109,6 @@ dependencies {
     testImplementation("com.intellij.remoterobot:remote-robot:$robotVersion")
     testImplementation("com.intellij.remoterobot:remote-fixtures:$robotVersion")
     testImplementation("com.intellij.remoterobot:ide-launcher:$robotVersion")
-
-    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     testImplementation("com.squareup.okhttp3:okhttp:4.10.0")
 
 }

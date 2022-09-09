@@ -11,9 +11,9 @@ It can be used to create Flutter plugins or standalone apps.
 
 
 ### Getting started
-- The preferred way of creating and/or using Flutter plugins with Klutter is by 
-using the [pub plugin](https://github.com/buijs-dev/klutter-dart). 
-- For a step-by-step guide, see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+- Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin. 
+This plugin will create a new Flutter plugin and setup Klutter automatically.
+- For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
 - Creating a standalone application with Klutter is an unfinished incubating feature.
 Coming soon...
 

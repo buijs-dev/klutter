@@ -25,7 +25,6 @@ import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 
-
 const val klutterPubVersion = "0.2.3"
 
 /**
@@ -57,10 +56,7 @@ class GeneratePluginProjectTask(
     ) : KlutterTask {
 
     override fun run() {
-        File(pathToRoot).also { root ->
-            root.verifyExists()
-            root.createApp()
-        }
+        File(pathToRoot).verifyExists().createApp()
     }
 
     private fun File.createApp() {

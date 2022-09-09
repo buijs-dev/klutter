@@ -43,29 +43,28 @@ open class CliExecutor {
          * Maximum time in seconds to wait for the command to be executed.
          */
         timeout: Long? = null,
-    ): String {
+    ): String = ProcessBuilder()
+        .command(split(" "))
+        .directory(runFrom)
+        .start()
+        .finish(timeout)
 
-        val process = ProcessBuilder()
-            .command(split(" "))
-            .directory(runFrom)
-            .start()
-
+    fun Process.finish(timeout: Long?): String {
         if(timeout == null) {
-            process.waitFor()
+            waitFor()
         } else {
-            process.waitFor(timeout, TimeUnit.SECONDS)
+            waitFor(timeout, TimeUnit.SECONDS)
         }
 
-        if(process.exitValue() != 0) {
+        if(exitValue() != 0) {
             throw KlutterException(
                 "Failed to execute command: \n${
-                    process.errorStream.reader().readText()
+                    errorStream.reader().readText()
                 }"
             )
         }
 
-        return process.inputStream.readBytes().decodeToString()
-
+        return inputStream.readBytes().decodeToString()
     }
 
 }

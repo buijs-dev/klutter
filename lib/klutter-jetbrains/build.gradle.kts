@@ -20,9 +20,9 @@ group = "dev.buijs.klutter"
 version = dev.buijs.klutter.ProjectVersions.jetbrains
 
 intellij {
-    version.set("2022.1.4")
+    version.set("2022.2.1")
     type.set("IC") // Intellij Community Edition
-    plugins.set(listOf("com.intellij.gradle","android"))
+    plugins.set(listOf("java", "com.intellij.gradle","android"))
 }
 
 sonarqube {
@@ -45,8 +45,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("212")
-        untilBuild.set("222.*")
+        sinceBuild.set("213.*")
     }
 
     signPlugin {

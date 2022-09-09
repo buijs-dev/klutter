@@ -4,9 +4,6 @@
 [![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
 [![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27235)
 
-
-<br>
-
 <img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo.png?raw=true" alt="buijs software logo" />
 
 Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.

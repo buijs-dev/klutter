@@ -24,6 +24,7 @@
     ]]></description>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.gradle</depends>
+    <depends>com.intellij.modules.java</depends>
     <depends>org.jetbrains.android</depends>
     <!-- This adds a klutter menu option to the standard new project wizard (Intellij IDEA + Android Studio) -->
     <extensions defaultExtensionNs="com.intellij">

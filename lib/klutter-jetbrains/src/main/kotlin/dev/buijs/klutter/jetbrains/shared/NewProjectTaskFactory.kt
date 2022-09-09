@@ -71,6 +71,7 @@ private fun createKlutterPluginTask(
         pathToRoot = pathToRoot,
         pluginName = name,
         groupName = group,
+        executor = JetbrainsExecutor()
     )
 
     return createKlutterTask(
@@ -125,6 +126,7 @@ private fun createKlutterApplicationTask(
         pathToRoot = pathToRoot,
         appName = name,
         groupName = group,
+        executor = JetbrainsExecutor()
     )
 
     // Return the task wrapped in a Task.Modal

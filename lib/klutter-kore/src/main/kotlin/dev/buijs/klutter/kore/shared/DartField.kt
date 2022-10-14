@@ -23,6 +23,7 @@
 package dev.buijs.klutter.kore.shared
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.ast.StandardTypeMap
 import mu.KotlinLogging
 
 private val regex = """val ([^:]+?): (.+)""".toRegex()
@@ -37,7 +38,7 @@ private var log = KotlinLogging.logger { }
  * @property isOptional [Boolean] value indicating a field is nullable.
  * @property isList [Boolean] value indicating a field is nested in a [List].
  * @property isCustomType [Boolean] value indicating a data type
- * is custom or a standard Dart type as defined in [DartKotlinMap].
+ * is custom or a standard Dart type as defined in [StandardTypeMap].
  *
  */
 data class DartField(
@@ -133,7 +134,7 @@ private fun Data.toDartField(): DartField {
 
     val optional = type.endsWith("?")
 
-    val dataType = DartKotlinMap.toMapOrNull(t)?.dartType
+    val dataType = StandardTypeMap.toMapOrNull(t)?.dartType
 
     return DartField(
         name = name,

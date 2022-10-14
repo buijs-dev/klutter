@@ -1,3 +1,3 @@
 # Klutter UI: Kompose
 
-Write Flutter UI in Kotlin.
+Bind stateless Flutter Widgets to viewmodels in Kotlin.

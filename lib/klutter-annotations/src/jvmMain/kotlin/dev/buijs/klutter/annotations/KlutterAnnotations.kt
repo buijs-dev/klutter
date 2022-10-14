@@ -39,3 +39,13 @@ actual annotation class KlutterResponse()
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 actual annotation class AndroidContext()
+
+/**
+ * Annotation which informs Klutter to implement multiple
+ * method channel calls to pass KlutterEvents to this Controller class.
+ *
+ * Should be used in conjunction with KomposeController super class.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+actual annotation class Controller()

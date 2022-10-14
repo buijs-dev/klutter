@@ -23,6 +23,7 @@ package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.shared.DartField
 import dev.buijs.klutter.kore.KlutterPrinter
+import dev.buijs.klutter.kore.ast.StandardTypeMap
 import dev.buijs.klutter.kore.shared.*
 import dev.buijs.klutter.kore.shared.toCamelCase
 import dev.buijs.klutter.kore.shared.unwrapFromList
@@ -46,7 +47,7 @@ class FlutterAdapter(
      * is needed to convert JSON to an object.
      */
     private val needConvertImport = methods
-        .map { DartKotlinMap.toMapOrNull(it.dataType) }
+        .map { StandardTypeMap.toMapOrNull(it.dataType) }
         .any { dkm -> dkm == null }
 
     override fun print(): String = """
@@ -78,37 +79,48 @@ class FlutterAdapter(
 
     private fun Method.asFunctionString(): String {
 
+        val standardTypeOrNull = StandardTypeMap.toMapOrNull(dataType)
+
         /**
          * Standard types don't need to be decoded.
          */
-        val doJsonDecode = DartKotlinMap.toMapOrNull(dataType) == null
+        val doJsonDecode = standardTypeOrNull == null
+
+        /**
+         * A void function returns null.
+         */
+        val isVoid = standardTypeOrNull == StandardTypeMap.NOTHING
+
+        val invokeMethod = when {
+            doJsonDecode -> {
+                """final jsonResponse = await _channel.invokeMethod('${methodId}');
+                   |      final json = jsonDecode(jsonResponse);
+                   |"""
+            }
+
+            isVoid -> "await _channel.invokeMethod('${methodId}');\n"
+
+            else -> "final json = await _channel.invokeMethod('${methodId}');\n"
+        }
+
+        val serializerOrBlank = if(isVoid) "" else "      final value = ${serializer()};"
 
         return """
-               |  static Future<AdapterResponse<${dataType}>> $command(State caller, {
-               |    void Function(${dataType})? onSuccess,
-               |    void Function(Exception)? onFailure,
-               |    void Function()? onNullValue,
-               |    void Function(AdapterResponse<${dataType}>)? onComplete,
-               |  }) async {
-               |
-               |    try {
-               |    """ +
-                if(doJsonDecode) {
-                    """     
-               final jsonResponse = await _channel.invokeMethod('${command}');
-               |      final json = jsonDecode(jsonResponse);
-               |"""
-                } else {
-                    """final json = await _channel.invokeMethod('${command}');
-                |"""
-                } +
-                """      final value = ${serializer()};
-               |      final AdapterResponse<${dataType}> response = 
-               |          AdapterResponse.success(value);
-               |
-               |      if(caller.mounted) {
-               |        onComplete?.call(response);""" +
-
+                   |  static Future<AdapterResponse<${dataType}>> $command({
+                   |    State? caller,
+                   |    void Function(${if(isVoid) "" else dataType})? onSuccess,
+                   |    void Function(Exception)? onFailure,
+                   |    void Function()? onNullValue,
+                   |    void Function(AdapterResponse<${dataType}>)? onComplete,
+                   |  }) async {
+                   |
+                   |    try {
+                   |    """ + invokeMethod + serializerOrBlank + """      
+                   |      final AdapterResponse<${dataType}> response = 
+                   |          AdapterResponse.success(${if(isVoid) "null" else "value"});
+                   |
+                   |      if(caller?.mounted ?? false) {
+                   |        onComplete?.call(response);""" +
                 if(nullable) {
                     """        
                     |        if(value == null) {
@@ -116,33 +128,36 @@ class FlutterAdapter(
                     |        } else {
                     |          onSuccess?.call(value!);
                     |        }"""
-
+                } else if(isVoid) {
+                    """      
+                    |          onSuccess?.call();
+                    |"""
                 } else {
                     """      
                     |          onSuccess?.call(value);
                     |"""
                 } + """
-               |      }
-               |
-               |      return response;
-               |      
-               |    } catch (e) {
-               |      
-               |      final exception = e is Error 
-               |          ? Exception(e.stackTrace) 
-               |          : e as Exception;
-               |      
-               |      final AdapterResponse<${dataType}> response = 
-               |          AdapterResponse.failure(exception);
-               |
-               |      if(caller.mounted) {
-               |        onComplete?.call(response);
-               |        onFailure?.call(exception);
-               |      }
-               |
-               |      return response;
-               |    }
-               |  }""".trimMargin()
+                   |      }
+                   |
+                   |      return response;
+                   |      
+                   |    } catch (e) {
+                   |      
+                   |      final exception = e is Error 
+                   |          ? Exception(e.stackTrace) 
+                   |          : e as Exception;
+                   |      
+                   |      final AdapterResponse<${dataType}> response = 
+                   |          AdapterResponse.failure(exception);
+                   |
+                   |      if(caller?.mounted ?? false) {
+                   |        onComplete?.call(response);
+                   |        onFailure?.call(exception);
+                   |      }
+                   |
+                   |      return response;
+                   |    }
+                   |  }""".trimMargin()
 
     }
 
@@ -163,7 +178,7 @@ class FlutterAdapter(
 
         val q = if(nullable) "?" else ""
 
-        return if(DartKotlinMap.toMapOrNull(this) == null) {
+        return if(StandardTypeMap.toMapOrNull(this) == null) {
             "List<$this>.from(json$q.map((o) => $this.fromJson(o)))"
         } else {
             "List<$this>.from(json$q.map((o) => o${getCastMethod(this)}))"
@@ -174,7 +189,7 @@ class FlutterAdapter(
 
         val q = if(nullable) "?" else ""
 
-        return if(DartKotlinMap.toMapOrNull(this) == null) {
+        return if(StandardTypeMap.toMapOrNull(this) == null) {
             "$this$q.fromJson(json)"
         } else {
             "json$q${getCastMethod(this)}"
@@ -343,11 +358,13 @@ internal class FactoryPrinter(
 
 }
 
-internal fun getCastMethod(dataType: String) = when(DartKotlinMap.toMap(dataType)) {
-    DartKotlinMap.BOOLEAN -> ""
-    DartKotlinMap.DOUBLE -> ".toDouble()"
-    DartKotlinMap.INTEGER -> ".toInt()"
-    DartKotlinMap.STRING -> ".toString()"
+internal fun getCastMethod(dataType: String) = when(StandardTypeMap.toMap(dataType)) {
+    StandardTypeMap.DOUBLE -> ".toDouble()"
+    StandardTypeMap.INTEGER -> ".toInt()"
+    StandardTypeMap.STRING -> ".toString()"
+    StandardTypeMap.NOTHING -> ""
+    StandardTypeMap.BOOLEAN -> ""
+    else -> throw Exception("not implemented yet") // TODO
 }
 
 /**

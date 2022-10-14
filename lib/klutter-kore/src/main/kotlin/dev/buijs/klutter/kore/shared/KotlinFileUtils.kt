@@ -19,7 +19,6 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.shared
 
 import java.io.File
@@ -42,7 +41,7 @@ internal fun File.toClassBodies(): List<String> {
     // encountered while processing the content of a Class.
     //
     // Counter starts when [isInClass] is true.
-    // Counter is reset when [isInClass is false.
+    // Counter is reset when [isInClass] is false.
     var bracketCount = 0
 
     // The current linenumber
@@ -79,7 +78,12 @@ internal fun File.toClassBodies(): List<String> {
 
     }
 
-    return output
+    return output.also {
+        it.forEach { cd ->
+            println("CB =====")
+            println(cd)
+        }
+    }
 
 }
 

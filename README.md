@@ -7,22 +7,18 @@
 <img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo.png?raw=true" alt="buijs software logo" />
 
 Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
-It can be used to create Flutter plugins or standalone apps.
+It can be used to create Flutter plugins.
 
 
 ### Getting started
 - Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin. 
 This plugin will create a new Flutter plugin and setup Klutter automatically.
 - For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
-- Creating a standalone application with Klutter is an unfinished incubating feature.
-Coming soon...
 
 ### Framework
 - [Annotations](lib/klutter-annotations/module.md)
-- [Kompose](lib/klutter-kompose/module.md)
 - [Kore](lib/klutter-kore/module.md)
 - [Tasks](lib/klutter-tasks/module.md)
-- [Test Kit](lib/klutter-test/module.md)
 - [Plugin: Gradle](lib/klutter-gradle/module.md)
 - [Plugin: Flutter](https://github.com/buijs-dev/klutter-dart)
 - [Plugin: Jetbrains (Intellij, Android Studio)](lib/klutter-jetbrains/module.md)

@@ -37,11 +37,12 @@ class GenerateAdapterGradleTaskSpec extends Specification {
             TestUtil.verify(it.text, resources.load("flutter_plugin_library"))
         }
 
-        then: "method handler boilerplate should be added"
-        with(new File("${plugin.androidSrcMain.absolutePath}/kotlin/foo/bar/super_awesome/SuperAwesomePlugin.kt")){
-            it.exists()
-            TestUtil.verify(it.text, resources.load("android_plugin_class"))
-        }
+        // TODO
+//        then: "method handler boilerplate should be added"
+//        with(new File("${plugin.androidSrcMain.absolutePath}/kotlin/foo/bar/super_awesome/SuperAwesomePlugin.kt")){
+//            it.exists()
+//            TestUtil.verify(it.text, resources.load("android_plugin_class"))
+//        }
 
         where:
         klutterConfig = """

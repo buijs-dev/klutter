@@ -25,7 +25,6 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GenerateApplicationProjectTask
 import dev.buijs.klutter.tasks.GeneratePluginProjectTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
@@ -38,23 +37,12 @@ object NewProjectTaskFactory {
         pathToRoot: String,
         config: NewProjectConfig,
         project: Project? = null,
-    ): Task = when(config.projectType) {
-
-        KlutterProjectType.PLUGIN -> createKlutterPluginTask(
+    ): Task = createKlutterPluginTask(
             pathToRoot = pathToRoot,
             project = project,
             name = config.appName ?: klutterPluginDefaultName,
             group = config.groupName ?: klutterPluginDefaultGroup,
-        )
-
-        KlutterProjectType.APPLICATION -> createKlutterApplicationTask(
-            pathToRoot = pathToRoot,
-            project = project,
-            name = config.appName,
-            group = config.groupName,
-        )
-
-    }
+    )
 }
 
 /**
@@ -109,34 +97,6 @@ private fun String.moveUpFolder(pluginName: String) {
  */
 private fun File.makeExecutable() {
     this.setExecutable(true, false)
-}
-
-/**
- * Create a Klutter application project.
- */
-private fun createKlutterApplicationTask(
-    pathToRoot: String,
-    name: String? = null,
-    group: String? = null,
-    project: Project? = null,
-): Task.Modal {
-
-    // The task that actually creates a new project
-    val task = GenerateApplicationProjectTask(
-        pathToRoot = pathToRoot,
-        appName = name,
-        groupName = group,
-        executor = JetbrainsExecutor()
-    )
-
-    // Return the task wrapped in a Task.Modal
-    // which will display a loading dialog.
-    return createKlutterTask(
-        pathToRoot = pathToRoot,
-        project = project,
-        task = { task.run() }
-    )
-
 }
 
 /**

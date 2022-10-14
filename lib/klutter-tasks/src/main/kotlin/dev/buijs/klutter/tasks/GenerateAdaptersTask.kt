@@ -23,7 +23,8 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.project.*
+import dev.buijs.klutter.kore.project.Platform
+import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.shared.*
 import java.io.File
 
@@ -32,25 +33,15 @@ import java.io.File
  */
 class GenerateAdaptersTask(
     private val project: Project,
-    private val isApplication: Boolean,
 ) : KlutterTask {
 
     override fun run() {
-        if(isApplication) {
-            GenerateAdaptersForApplicationTask(
-                ios = project.ios,
-                root = project.root,
-                android = project.android,
-                platform = project.platform,
-            ).run()
-        } else {
-            GenerateAdaptersForPluginTask(
-                ios = project.ios,
-                root = project.root,
-                android = project.android,
-                platform = project.platform,
-            ).run()
-        }
+        GenerateAdaptersForPluginTask(
+            ios = project.ios,
+            root = project.root,
+            android = project.android,
+            platform = project.platform,
+        ).run()
     }
 
 }
@@ -69,7 +60,7 @@ internal fun Platform.collect(): AdapterData {
 
     val methods = source.methods()
 
-    val controllers = source.controllers().toControllerNames()
+    val controllers = source.controllers().toControllerData()
 
     val responses = source.responses()
 
@@ -80,6 +71,7 @@ internal fun Platform.collect(): AdapterData {
     validate(
         messages = messages,
         enumerations = enumerations,
+        controllers = controllers,
     )
 
     return AdapterData(
@@ -113,7 +105,7 @@ internal data class AdapterData(
     /**
      * List of controller classes annotated with @Controller defined in the platform module.
      */
-    val controllers: List<String>,
+    val controllers: List<ControllerData>,
 )
 
 /**
@@ -126,11 +118,12 @@ internal data class AdapterData(
 internal fun validate(
     messages: List<DartMessage>,
     enumerations: List<DartEnum>,
+    controllers: List<ControllerData>,
 ) {
 
-    val customDataTypes = mutableListOf<String>()
+    val customDataTypes = mutableSetOf<String>()
 
-    //Collect all custom data types.
+    // Collect all custom data types from the messages.
     for (message in messages) {
         for (field in message.fields) {
             if (field.isCustomType) {
@@ -139,19 +132,24 @@ internal fun validate(
         }
     }
 
-    //Iterate the enumeration names and match it to the custom data types.
-    //Remove from custom data types list if matched.
+    // Collect all custom data types from the controllers.
+    for (controller in controllers) {
+        customDataTypes.add(controller.dataType)
+    }
+
+    // Iterate the enumeration names and match it to the custom data types.
+    // Remove from custom data types list if matched.
     enumerations.map { it.name }.forEach {
         customDataTypes.removeAll { cdt -> cdt == it }
     }
 
-    //Iterate the message names and match it to the custom data types.
-    //Remove from custom data types list if matched.
+    // Iterate the message names and match it to the custom data types.
+    // Remove from custom data types list if matched.
     messages.map { it.name }.forEach {
         customDataTypes.removeAll { cdt -> cdt == it }
     }
 
-    //Any custom data type name left in the list means there is no class definition found by this name
+    // Any custom data type name left in the list means there is no class definition found by this name
     if (customDataTypes.isNotEmpty()) {
         throw KlutterException(
             """ |Processing annotation '@KlutterResponse' failed, caused by:
@@ -206,3 +204,20 @@ internal fun File.collectAnnotatedWith(
             .map { it.prefixIfNot("@") }
             .any { file.readText().contains(it) }
     }
+
+private val controller_regex = """@Controller.*?class([^:]+?):KlutterBroadcast<([^>]+?)>""".toRegex()
+
+/**
+ * Find the name of classes annotated with @Controller which extend KlutterBroadcast.
+ */
+private fun List<File>.toControllerData(): List<ControllerData> = this
+    .map { it.toControllerData() }.flatten()
+
+private fun File.toControllerData(): List<ControllerData> = controller_regex
+    .findAll(this.readText().replace("""(\n|\s)""".toRegex(), ""))
+    .map {
+        ControllerData(
+            name = it.groupValues[1],
+            dataType = it.groupValues[2],
+        )
+    }.toList()

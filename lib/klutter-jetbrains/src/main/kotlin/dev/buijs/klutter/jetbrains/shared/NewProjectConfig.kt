@@ -54,8 +54,6 @@ class NewProjectConfig(
  * Type of Klutter project to be created.
  */
 enum class KlutterProjectType(val displayName: String) {
-    // Application coming soon...
-    APPLICATION("Application"),
     PLUGIN("Plugin");
 
     companion object {

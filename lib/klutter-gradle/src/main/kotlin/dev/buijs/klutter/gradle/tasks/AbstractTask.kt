@@ -22,16 +22,12 @@
 package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
-import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.project.Platform
 import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.project.plugin
 import mu.KotlinLogging
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 private val log = KotlinLogging.logger { }
 
@@ -40,7 +36,7 @@ internal typealias project = org.gradle.api.Project
 /**
  * Parent of all Gradle Tasks.
  */
-internal abstract class AbstractTask(): DefaultTask() {
+internal abstract class AbstractTask: DefaultTask() {
 
     init { group = "klutter" }
 
@@ -52,68 +48,10 @@ internal abstract class AbstractTask(): DefaultTask() {
     fun project(): Project {
         val ext = project.klutterExtension()
         val root = ext.root ?: project.rootProject.projectDir
-        val plugin = ext.plugin
-        val application = ext.application
-
-        return when {
-            plugin != null && application != null -> {
-                throw KlutterException(
-                    "Both plugin and application are set in klutter DSL but only 1 can be used."
-                )
-            }
-
-            application != null -> {
-                log.info { "Klutter Gradle configured as application." }
-                val appRoot = application.root ?: project.rootProject.rootDir.resolve("app/backend")
-                log.info { "Processing Klutter app with root: ${appRoot.absolutePath}" }
-                val appProject = appRoot.plugin()
-                Project(
-                    root = appProject.root,
-                    ios = appProject.ios,
-                    android = appProject.android,
-                    platform = Platform(
-                        folder = root.resolve("lib"),
-                        pluginName = "lib"
-                    ),
-                )
-            }
-
-            else -> {
-                log.info { "Klutter Gradle configured as plugin." }
-                root.plugin()
-            }
-        }
-
+        log.info { "Klutter Gradle configured as plugin." }
+        return root.plugin()
     }
 
-    internal fun pathToApplicationBuildFolder(): File = project
-        .klutterExtension()
-        .application
-        ?.buildFolder
-        ?: project
-            .rootProject
-            .project(":lib")
-            .buildDir.resolve("libs/kompose-jvm.jar")
-
-    internal fun pathToApplicationOutputFolder() = project
-        .klutterExtension()
-        .application
-        ?.outputFolder
-        ?: project.rootProject.rootDir.resolve("app/frontend/lib")
-
-    internal fun pathToFlutterApp(): File = project
-        .rootProject
-        .rootDir
-        .resolve("app/frontend")
-
-    internal fun pathToTestFolder() = project.klutterExtension().application
-        ?.uiTestFolder
-        ?:project.rootProject.rootDir.resolve("lib-test")
-
-    @Internal
-    internal fun isApplication() = project
-        .klutterExtension()
-        .application != null
 }
 
 internal fun org.gradle.api.Project.klutterExtension(): KlutterGradleDSL {

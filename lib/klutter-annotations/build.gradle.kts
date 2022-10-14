@@ -140,3 +140,7 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
         }
     }
 }
+
+tasks.named("iosX64Test", org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java).configure {
+    deviceId = "iPhone 14 Pro Max"
+}

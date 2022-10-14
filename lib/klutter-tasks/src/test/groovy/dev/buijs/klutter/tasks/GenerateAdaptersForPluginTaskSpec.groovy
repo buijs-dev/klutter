@@ -41,7 +41,7 @@ class GenerateAdaptersForPluginTaskSpec extends Specification {
         )
 
         when:
-        GenerateAdaptersTaskKt.validate([message1, message2], [])
+        GenerateAdaptersTaskKt.validate([message1, message2], [], [])
 
         then:
         KlutterException e = thrown()
@@ -85,7 +85,7 @@ class GenerateAdaptersForPluginTaskSpec extends Specification {
         def enum1 = new DartEnum("GruMood", ["BAD, GOOD, CARING, HATING, CONQUER_THE_WORLD"], [])
 
         then:
-        GenerateAdaptersTaskKt.validate([message1, message2, message3], [enum1])
+        GenerateAdaptersTaskKt.validate([message1, message2, message3], [enum1], [])
 
     }
 }

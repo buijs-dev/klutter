@@ -22,6 +22,7 @@
 package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.project.Project
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.tasks.Internal
@@ -40,10 +41,7 @@ open class KlutterGradleDSL(project: Project) {
     var root: File? = null
 
     @Internal
-    internal var plugin: KlutterPluginDTO? = null
-
-    @Internal
-    internal var application: KlutterApplicationDTO? = null
+    internal var plugin: Dto? = null
 
     /**
      * Configure the Gradle Plugin for a klutter plugin (consumer or producer).
@@ -53,15 +51,9 @@ open class KlutterGradleDSL(project: Project) {
     }
 
     /**
-     * Configure the Gradle Plugin for a klutter application using Kompose for the UI.
-     */
-    fun application(lambda: KlutterApplicationBuilder.() -> Unit) {
-        application = KlutterApplicationBuilder().apply(lambda).build()
-    }
-
-    /**
      * Add klutter implementation dependency to this project.
      */
+    @Suppress("unused")
     fun include(simpleModuleName: String, version: String? = null, test: Boolean = false) {
         if(test) {
             includeTest(simpleModuleName, version)
@@ -171,12 +163,6 @@ internal object KlutterVersion {
     val gradle: String = properties.getProperty("plugin.gradle.version")
         ?: throw KlutterException("Missing 'plugin.gradle.version' in Klutter Gradle Jar.")
 
-    val kompose: String = properties.getProperty("kompose.version")
-        ?: throw KlutterException("Missing 'kompose.version' in Klutter Gradle Jar.")
-
-    val test: String = properties.getProperty("test.version")
-        ?: throw KlutterException("Missing 'test.version' in Klutter Gradle Jar.")
-
     val tasks: String = properties.getProperty("tasks.version")
         ?: throw KlutterException("Missing 'tasks.version' in Klutter Gradle Jar.")
 }
@@ -185,8 +171,6 @@ internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simp
     "annotations" -> annotations
     "kore" -> kore
     "gradle" -> gradle
-    "kompose" -> kompose
-    "test" -> test
     "tasks" -> tasks
     else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
 }

@@ -19,15 +19,16 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.shared
+
+import dev.buijs.klutter.kore.ast.StandardTypeMap
 
 /**
  * Return the current String value post-fixed with '.toKJson()'
  * if Method dataType is not a standard Dart/Kotlin type.
  */
 fun String.maybePostfixToKJson() =
-    DartKotlinMap.toMapOrNull(this)?.let { "" } ?: ".toKJson()"
+    StandardTypeMap.toMapOrNull(this)?.let { "" } ?: ".toKJson()"
 
 /**
  * Return the current String value post-fixed with the given value.

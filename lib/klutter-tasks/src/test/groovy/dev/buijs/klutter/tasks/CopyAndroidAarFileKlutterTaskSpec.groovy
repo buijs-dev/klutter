@@ -27,32 +27,6 @@ import java.nio.file.Files
 
 class CopyAndroidAarFileKlutterTaskSpec extends Specification {
 
-    def "For application copies lib-release.aar from lib to app/android/klutter folder"() {
-        given:
-        def root = Files.createTempDirectory("")
-                .toAbsolutePath()
-                .toFile()
-
-        def target = new File("${root.absolutePath}/app/backend/android/klutter")
-        target.mkdirs()
-
-        def buildFolder = new File("${root.absolutePath}/lib/build/outputs/aar")
-        buildFolder.mkdirs()
-
-        def aarFile = new File("${buildFolder.absolutePath}/lib-release.aar")
-        aarFile.createNewFile()
-        aarFile.write("TC1")
-
-        when:
-        new CopyAndroidAarFileKlutterTask(true, root, null).run()
-
-        then:
-        with(target.absolutePath) {
-            new File("${it}/platform.aar").exists()
-            new File("${it}/platform.aar").text == "TC1"
-        }
-    }
-
     def "For plugin copies platform-release.aar from platform to root/android/klutter folder"() {
         given:
         def root = Files.createTempDirectory("")
@@ -70,7 +44,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC2")
 
         when:
-        new CopyAndroidAarFileKlutterTask(false, root, null).run()
+        new CopyAndroidAarFileKlutterTask(root, null).run()
 
         then:
         with(target.absolutePath) {
@@ -97,7 +71,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC2")
 
         when:
-        new CopyAndroidAarFileKlutterTask(false, root, pluginName).run()
+        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
 
         then:
         with(target.absolutePath) {
@@ -117,7 +91,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         target.mkdirs()
 
         when:
-        new CopyAndroidAarFileKlutterTask(false, root, pluginName).run()
+        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
 
         then:
         KlutterException e = thrown()
@@ -140,7 +114,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC4")
 
         when:
-        new CopyAndroidAarFileKlutterTask(false, root, pluginName).run()
+        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
 
         then:
         KlutterException e = thrown()

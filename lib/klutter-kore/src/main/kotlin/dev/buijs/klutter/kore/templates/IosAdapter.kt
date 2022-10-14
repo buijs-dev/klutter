@@ -23,6 +23,7 @@
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.*
+import dev.buijs.klutter.kore.shared.ControllerData
 import dev.buijs.klutter.kore.shared.Method
 import dev.buijs.klutter.kore.shared.maybePostfixToKJson
 
@@ -30,6 +31,7 @@ class IosAdapter(
     private val pluginClassName: String,
     private val methodChannelName: String,
     private val methods: List<Method>,
+    private val controllers: List<ControllerData>,
 ): KlutterPrinter {
 
     override fun print() = """
@@ -37,34 +39,73 @@ class IosAdapter(
             |import UIKit
             |import Platform
             |
-            |public class Swift$pluginClassName: NSObject, FlutterPlugin {
-            |  public static func register(with registrar: FlutterPluginRegistrar) {
-            |    let channel = FlutterMethodChannel(name: "$methodChannelName", binaryMessenger: registrar.messenger())
-            |    let instance = Swift$pluginClassName()
-            |    registrar.addMethodCallDelegate(instance, channel: channel)
+            |public class Swift$pluginClassName: NSObject, FlutterPlugin, FlutterStreamHandler {
+            ${controllers.printControllerInstance()}
+            |    public static func register(with registrar: FlutterPluginRegistrar) {
+            |        let channel = FlutterMethodChannel(name: "$methodChannelName", binaryMessenger: registrar.messenger())
+            |        let instance = Swift$pluginClassName()
+            ${controllers.printInstanceControllerSetter()}
+            |        registrar.addMethodCallDelegate(instance, channel: channel)
+            |        FlutterEventChannel(name: "$methodChannelName/stream", binaryMessenger: registrar.messenger())
+            |                .setStreamHandler(instance)
             |  }
             |
             |  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
             |    switch call.method {
-            |${methods.asFunctionBodyString()}
-            |        default:
-            |            result(FlutterMethodNotImplemented)
-            |        }
+            ${methods.printFunctionBodies()}
+            |    default:
+            |         result(FlutterMethodNotImplemented)
+            |    }
             |  }
+            ${methods.joinToString("\n\n") { it.print() }}  
+            |    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
             |
-            |${methods.joinToString("\n\n") { it.print() }}  
+            ${controllers.printBroadcastReceivers()}
+            |
+            |       return nil
+            |    }
+            |
+            |    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+            ${controllers.printControllerCancellers()}
+            |        return nil
+            |    }
             |}
             |""".trimMargin()
 
-    private fun List<Method>.asFunctionBodyString() = joinToString("\n") {
-        """ |       case "${it.command}":
-            |            self.${it.command}(result: result)""".trimMargin()
-    }
+}
 
-    private fun Method.print(): String {
-        val method = method.replace("(context)", """(context: "")""")
-        return if(async) {
-            """|    func ${command}(result: @escaping FlutterResult) {
+internal fun ControllerData.lowercaseName() = this.name.lowercase()
+
+private fun List<ControllerData>.printControllerInstance() =
+    this.joinToString("\n") { "    private var ${it.lowercaseName()}: ${it.name}?" }
+
+private fun List<ControllerData>.printInstanceControllerSetter() =
+    this.joinToString("\n") { "    instance.${it.lowercaseName()} = ${it.name}()" }
+
+private fun List<ControllerData>.printControllerCancellers() =
+    this.joinToString("\n") { "        ${it.lowercaseName()}?.cancel()" }
+
+private fun List<ControllerData>.printBroadcastReceivers() =
+    this.joinToString("\n") { """
+    |        ${it.lowercaseName()}?.receiveBroadcastIOS().collect(
+    |            onEach: { value in
+    |                events(value.toKJson())
+    |            },
+    |            onCompletion: { error in
+    |                events("ERROR: \("error")")
+    |            }
+    |       )
+    """.trimMargin() }
+
+private fun List<Method>.printFunctionBodies() = joinToString("\n") {
+    """ |       case "${it.methodId}":
+            |            self.${it.command}(result: result)""".trimMargin()
+}
+
+private fun Method.print(): String {
+    val method = method.replace("(context)", """(context: "")""")
+    return if(async) {
+        """|    func ${command}(result: @escaping FlutterResult) {
                |        ${method.removeSuffix("()")} { data, error in
                |            if let response = data { result(response${dataType.maybePostfixToKJson()}) }
                |                     
@@ -72,12 +113,11 @@ class IosAdapter(
                |        }   
                |    }                                      
             """.trimMargin()
-        } else {
-            """|    func ${command}(result: @escaping FlutterResult) {
+    } else {
+        """|    func ${command}(result: @escaping FlutterResult) {
                |        result(${method}${dataType.maybePostfixToKJson()})
                |    }
             """.trimMargin()
-        }
-
     }
+
 }

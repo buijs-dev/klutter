@@ -21,21 +21,21 @@
  */
 package dev.buijs.klutter.kore.template
 
+import dev.buijs.klutter.kore.TestData
 import dev.buijs.klutter.kore.templates.IosAdapter
 import dev.buijs.klutter.kore.test.TestUtil
-import dev.buijs.klutter.kore.TestData
 import spock.lang.Specification
 
 class IosAdapterSpec extends Specification {
 
-    def "IosAdapter should create a valid Swift class"() {
+    def "IosBroadcastAdapter should create a valid Swift class"() {
         given:
-        def pluginName = "SuperAwesomePlugin"
+        def pluginName = "MyAwesomeAppPlugin"
         def channelName = "foo.bar.super_awesome"
         def methods = TestData.complexityMethods
 
         and: "The printer as SUT"
-        def adapter = new IosAdapter(pluginName, channelName, methods)
+        def adapter = new IosAdapter(pluginName, channelName, methods, [])
 
         expect:
         TestUtil.verify(adapter.print(), classBody)
@@ -46,20 +46,24 @@ class IosAdapterSpec extends Specification {
                     import UIKit
                     import Platform
                     
-                    public class SwiftSuperAwesomePlugin: NSObject, FlutterPlugin {
+                    public class SwiftMyAwesomeAppPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
+                    
                       public static func register(with registrar: FlutterPluginRegistrar) {
                         let channel = FlutterMethodChannel(name: "foo.bar.super_awesome", binaryMessenger: registrar.messenger())
-                        let instance = SwiftSuperAwesomePlugin()
+                        let instance = SwiftMyAwesomeAppPlugin()
+                        
                         registrar.addMethodCallDelegate(instance, channel: channel)
+                        FlutterEventChannel(name: "foo.bar.super_awesome/stream", binaryMessenger: registrar.messenger())
+                                .setStreamHandler(instance)
                       }
                     
                       public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
                         switch call.method {
-                            case "doFooBar":
+                            case "_#!foobar!#_doFooBar":
                                 self.doFooBar(result: result)
-                            case "notDoFooBar":
+                            case "_#!foobar!#_notDoFooBar":
                                 self.notDoFooBar(result: result)
-                            case "complexityGetter":
+                            case "_#!complexfoo!#_complexityGetter":
                                 self.complexityGetter(result: result)
                             default:
                                 result(FlutterMethodNotImplemented)
@@ -79,8 +83,19 @@ class IosAdapterSpec extends Specification {
                                 if let response = data { result(response.toKJson()) }
                     
                                 if let failure = error { result(failure) }
+                            }
                          }
-                         }
+                         
+                         public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
+            
+                               return nil
+                            }
+                        
+                        public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+        
+                            return nil
+                        }
+
                         }"""
     }
 

@@ -17,17 +17,8 @@ java {
 }
 
 sourceSets {
-    main {
-        java {
-            srcDirs("${projectDir.absolutePath}/src/main/kotlin")
-        }
-    }
-
-    test {
-        java {
-            srcDirs("${projectDir.absolutePath}/src/test/kotlin")
-        }
-    }
+    main { java { srcDirs("${projectDir.absolutePath}/src/main/kotlin") } }
+    test { java { srcDirs("${projectDir.absolutePath}/src/test/kotlin") } }
 }
 
 publishing {
@@ -82,12 +73,11 @@ publishing {
 dependencies {
     // Project
     implementation(project(":lib:klutter-kore"))
-    implementation(project(":lib:klutter-kompose"))
     implementation(project(":lib:klutter-annotations"))
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.0-alpha7")
-    implementation("io.github.microutils:kotlin-logging:2.1.23")
+    implementation("org.slf4j:slf4j-api:2.0.1")
+    implementation("io.github.microutils:kotlin-logging:3.0.0")
 
     testImplementation(project(":lib-test"))
 }

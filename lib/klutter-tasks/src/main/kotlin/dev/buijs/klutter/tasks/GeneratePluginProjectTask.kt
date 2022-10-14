@@ -22,10 +22,14 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.shared.maybeCreate
 import dev.buijs.klutter.kore.shared.verifyExists
 import java.io.File
 
-const val klutterPubVersion = "0.2.3"
+/**
+ * The version of the Klutter Pub Plugin.
+ */
+const val klutterPubVersion = "0.3.0"
 
 /**
  * Task to generate a klutter plugin project.
@@ -134,5 +138,4 @@ class GeneratePluginProjectTask(
      */
     private fun String.execute(runFrom: File) =
         executor.execute(runFrom = runFrom, command = this)
-
 }

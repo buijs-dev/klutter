@@ -175,7 +175,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
           flutter: ">=2.5.0"
         
         dependencies:
-          klutter: ^0.2.3
+          klutter: ^0.3.0
           flutter:
             sdk: flutter
         
@@ -233,7 +233,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
           sdk: ">=2.17.5 <3.0.0"
         
         dependencies:
-          klutter: ^0.2.3
+          klutter: ^0.3.0
           flutter:
             sdk: flutter
         
@@ -271,7 +271,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
         private def expectations = new HashMap<String,List<String>>()
 
         @Override
-        String execute(String command, File runFrom, Long timeout) {
+        String execute(String command, File runFrom, Long timeout, Map<String, String> env) {
             if(expectations.containsKey(runFrom.absolutePath)) {
                 if(expectations[runFrom.absolutePath].contains(command)) {
                     return ""

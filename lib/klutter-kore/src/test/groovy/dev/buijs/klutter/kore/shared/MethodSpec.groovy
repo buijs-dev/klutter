@@ -1,6 +1,7 @@
 package dev.buijs.klutter.kore.shared
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.ast.StandardTypeMap
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.test.TestResource
 import spock.lang.Shared
@@ -32,54 +33,6 @@ class MethodSpec extends Specification {
             !it.nullable
             !it.stateful
         }
-    }
-
-    def "[DartKotlinMap] returns a valid Dart data type"() {
-        expect:
-        DartKotlinMap.toDartType("Double") == "double"
-        DartKotlinMap.toDartType("Int") == "int"
-        DartKotlinMap.toDartType("Boolean") == "bool"
-        DartKotlinMap.toDartType("String") == "String"
-    }
-
-    def "[DartKotlinMap] returns a valid Kotlin data type"() {
-        expect:
-        DartKotlinMap.toKotlinType("double") == "Double"
-        DartKotlinMap.toKotlinType("int") == "Int"
-        DartKotlinMap.toKotlinType("bool") == "Boolean"
-        DartKotlinMap.toKotlinType("String") == "String"
-    }
-
-    def "[DartKotlinMap] an exception is thrown when a Kotlin type does not exist"() {
-        when:
-        DartKotlinMap.toKotlinType("Stttttring!")
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
-    }
-
-    def "[DartKotlinMap] an exception is thrown when a Dart type does not exist"() {
-        when:
-        DartKotlinMap.toDartType("Stttttring!")
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
-    }
-
-    def "[DartKotlinMap] an exception is thrown when a Dart/Kotlin type does not exist"() {
-        when:
-        DartKotlinMap.toMap("Stttttring!")
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage() == "No such type in KotlinDartMap: Stttttring!"
-    }
-
-    def "[DartKotlinMap] null is returned when a Dart/Kotlin type does not exist"() {
-        expect:
-        DartKotlinMap.toMapOrNull("Stttttring!") == null
     }
 
     def "[asDataType] #dataType is returned as #expected"() {
@@ -315,4 +268,45 @@ class MethodSpec extends Specification {
                 "Batman!",
         ]
     }
+
+    def "[toMethod] returns NOTHING type correctly"() {
+        given:
+        def file = Files.createTempFile("", "").toFile()
+        file.write(fileContent)
+
+        when:
+        def methods = MethodKt.toMethods(file, Language.DART)
+
+        then:
+        methods.size() == 1
+
+        and:
+        with(methods.first()) {
+            it.dataType == "void"
+        }
+
+        where:
+        fileContent << [
+                '''
+                    package com.example
+        
+                    class Greeting {
+                        @KlutterAdaptee(name = "stopBroadcast")
+                        fun stopBroadcast() {
+                            _shouldBroadcast = false
+                        }
+                    }
+                ''',
+                '''
+                    package com.example
+        
+                    class Greeting {
+                        @KlutterAdaptee(name = "stopBroadcast")
+                        fun stopBroadcast(): Unit {
+                            _shouldBroadcast = false
+                        }
+                    }
+                ''']
+    }
+
 }

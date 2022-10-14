@@ -79,3 +79,13 @@ abstract class KlutterJSON<T> {
     abstract fun strategy(): SerializationStrategy<T>
 
 }
+
+/**
+ * Annotation which informs Klutter to implement multiple
+ * method channel calls to pass KlutterEvents to this Controller class.
+ *
+ * Should be used in conjunction with KomposeController super class.
+ */
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+expect annotation class Controller()

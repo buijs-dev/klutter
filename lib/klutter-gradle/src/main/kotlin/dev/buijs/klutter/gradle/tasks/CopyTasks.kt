@@ -29,7 +29,6 @@ import dev.buijs.klutter.tasks.CopyIosFrameworkKlutterTask
  */
 internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
     override fun klutterTask() = CopyAndroidAarFileKlutterTask(
-        isApplication = isApplication(),
         pathToRoot = project.rootDir,
         pluginName = project.klutterExtension().plugin?.name,
     )
@@ -40,7 +39,6 @@ internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
  */
 internal open class CopyIosFrameworkGradleTask: AbstractTask() {
     override fun klutterTask() = CopyIosFrameworkKlutterTask(
-        isApplication = isApplication(),
         pathToRoot = project.rootDir,
     )
 }

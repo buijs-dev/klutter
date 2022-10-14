@@ -28,6 +28,8 @@ import dev.buijs.klutter.kore.shared.DartMessage
 import dev.buijs.klutter.kore.test.TestUtil
 import spock.lang.Specification
 
+import java.nio.file.Files
+
 class GenerateAdaptersTaskSpec extends Specification {
 
     def "Validate throws exception if customDataType list is not empty after validating"() {
@@ -41,7 +43,7 @@ class GenerateAdaptersTaskSpec extends Specification {
         )
 
         when:
-        GenerateAdaptersTaskKt.validate([message1, message2], [])
+        GenerateAdaptersTaskKt.validate([message1, message2], [], [])
 
         then:
         KlutterException e = thrown()
@@ -85,7 +87,65 @@ class GenerateAdaptersTaskSpec extends Specification {
         def enum1 = new DartEnum("GruMood", ["BAD, GOOD, CARING, HATING, CONQUER_THE_WORLD"], [])
 
         then:
-        GenerateAdaptersTaskKt.validate([message1, message2, message3], [enum1])
+        GenerateAdaptersTaskKt.validate([message1, message2, message3], [enum1], [])
+
+    }
+
+    def "Verify toControllerData returns correct Controller name"() {
+
+        given:
+        def file = Files.createTempFile("", "").toFile()
+
+        and:
+        file.write(clazz)
+
+        when:
+        def controller = GenerateAdaptersTaskKt.toControllerData([file]).first()
+
+        then:
+        controller.name == "GreetingController"
+        controller.dataType == "Greeting123"
+
+        where:
+        clazz = """
+            package dev.buijs.klutter.kompose_app.platform
+
+            import dev.buijs.klutter.annotations.*
+            import dev.buijs.klutter.annotations.KomposeState.*
+            import dev.buijs.klutter.ui.controller.KomposeController
+            import dev.buijs.klutter.ui.event.KlutterEvent
+            import kotlinx.serialization.Serializable
+            
+            @Controller
+            class GreetingController: KlutterBroadcast<Greeting123>(
+                state = Greeting123(
+                    count = 0,
+                    greeting = "Hello World!!!",
+                )
+            ) {
+            
+                override fun onEvent(event: String, data: Any?) {
+                    when(event) {
+                        GreetingSetMessage::class.qualifiedName -> {
+                            state = Greeting123(
+                                count = state.count,
+                                greeting = data as String,
+                            )
+                        }
+            
+                        GreetingIncrementCount::class.qualifiedName -> {
+                            state = Greeting123(
+                                count = state.count + 1,
+                                greeting = state.greeting,
+                            )
+                        }
+            
+                        else -> { }
+                    }
+                }
+            
+            }
+         """
 
     }
 }

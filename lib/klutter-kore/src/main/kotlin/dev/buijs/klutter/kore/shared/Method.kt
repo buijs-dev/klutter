@@ -23,6 +23,7 @@
 package dev.buijs.klutter.kore.shared
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.ast.StandardTypeMap
 import dev.buijs.klutter.kore.project.Pubspec
 import java.io.File
 
@@ -32,6 +33,7 @@ typealias Lang = Language
  * Data class to contain information about analyzed Kotlin (Platform) code
  * which is used to generate Dart code in the Flutter lib folder.
  */
+@Suppress("unused")
 data class Method(
 
     /**
@@ -61,7 +63,7 @@ data class Method(
      * override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
      *    mainScope.launch {
      *      when (call.method) {
-     *"         greeting" -> {
+     *         "greeting" -> {
      *              result.success(Greeting().greeting())
      *          }
      *          else -> result.notImplemented()
@@ -82,7 +84,7 @@ data class Method(
     /**
      * The type of data returned when calling the [method].
      *
-     * Can be a standard Kotlin/Dart type as defined in [DartKotlinMap]
+     * Can be a standard Kotlin/Dart type as defined in [StandardTypeMap]
      * or a custom defined type.
      */
     val dataType: String,
@@ -101,7 +103,9 @@ data class Method(
      * method calls (if any).
      */
     val stateful: Boolean = false,
-)
+) {
+    val methodId = "_#!${method.substringBefore("(").lowercase()}!#_$command"
+}
 
 private const val ANNOTATIONS = """(@AndroidContext|)(@KlutterAdaptee\([^\)]+?\))(@AndroidContext|)()"""
 private const val METHOD_SIGNATURE = """(suspend|)fun([^\(]+?)\((|[^\)]+?)\)(:|)([^{=]+|)"""
@@ -252,7 +256,7 @@ private fun List<String>.toMethod(
 /**
  * Extract the package name to be used as import statement in generated code.
  */
-internal fun String.packageName(): String {
+fun String.packageName(): String {
 
     val result = """package(.*)""".toRegex().find(this)
 
@@ -260,11 +264,10 @@ internal fun String.packageName(): String {
 
 }
 
-
 /**
  * Converts the data type if possible.
  *
- * If the value is found in [DartKotlinMap]:
+ * If the value is found in [StandardTypeMap]:
  * - for [language] DART returns the standard Dart type.
  * - for [language] KOTLIN returns the standard Kotlin type.
  *
@@ -275,14 +278,18 @@ private fun String.asDataType(language: Lang): String {
     /**
      * Remove any whitespaces if present.
      */
-    val value = this.trim().verifyListWithoutNull().removeSuffixIfPresent("?")
+    val value = this
+        .trim()
+        .verifyListWithoutNull()
+        .removeSuffixIfPresent("?")
+        .ifBlank { StandardTypeMap.NOTHING.kotlinType }
 
     /**
-     * Lookup this [String] value in the DartKotlinMap.
+     * Lookup this [String] value in the StandardTypeMap.
      *
-     * If no value is found in DartKotlinMap then return this.
+     * If no value is found in StandardTypeMap then return this.
      */
-    val dartKotlinType = DartKotlinMap.toMapOrNull(value)
+    val dartKotlinType = StandardTypeMap.toMapOrNull(value)
 
     return when {
 

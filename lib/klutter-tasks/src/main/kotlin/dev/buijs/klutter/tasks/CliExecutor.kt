@@ -28,9 +28,15 @@ open class CliExecutor {
          * The command to be executed.
          */
         command: String,
+
+        /**
+         * Any environment variable to add.
+         */
+        environment: Map<String,String> = emptyMap(),
     ): String = command.execute(
         runFrom = runFrom,
         timeout = timeout,
+        environment = environment,
     )
 
     open fun String.execute(
@@ -43,9 +49,15 @@ open class CliExecutor {
          * Maximum time in seconds to wait for the command to be executed.
          */
         timeout: Long? = null,
+
+        /**
+         * Any environment variable to add.
+         */
+        environment: Map<String,String> = emptyMap(),
     ): String = ProcessBuilder()
         .command(split(" "))
         .directory(runFrom)
+        .also { it.environment().putAll(environment)}
         .start()
         .finish(timeout)
 

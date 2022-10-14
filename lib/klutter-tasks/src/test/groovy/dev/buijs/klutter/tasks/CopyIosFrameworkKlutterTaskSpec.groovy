@@ -28,37 +28,6 @@ import java.nio.file.Files
 
 class CopyIosFrameworkKlutterTaskSpec extends Specification {
 
-    def "For application copies Platform.xcframework from lib to app folder"() {
-        given:
-        def root = Files.createTempDirectory("")
-                .toAbsolutePath()
-                .toFile()
-
-        // root/app/backend/ios/Klutter exists
-        // root/app/backend/ios/Klutter/Platform.xcframework does not exist
-        def target = new File("${root.absolutePath}/app/backend/ios/Klutter")
-        target.mkdirs()
-
-        // root/lib/build/XCFrameworks/release/Platform.xcframework exists
-        def xcframework = new File("${root.absolutePath}/lib/build/XCFrameworks/release/Platform.xcframework")
-        xcframework.mkdirs()
-
-        def plist = new File("${xcframework.absolutePath}/Info.plist")
-        plist.createNewFile()
-        plist.write("TC1")
-
-        when:
-        new CopyIosFrameworkKlutterTask(true, root).run()
-
-        then:
-        with(target.absolutePath) {
-            new File("${it}/Platform.xcframework").exists()
-            new File("${it}/Platform.xcframework/Info.plist").exists()
-            new File("${it}/Platform.xcframework/Info.plist").text == "TC1"
-        }
-
-    }
-
     def "For plugin copies Platform.xcframework from platform to root/ios folder"() {
         given:
         def root = Files.createTempDirectory("")
@@ -79,7 +48,7 @@ class CopyIosFrameworkKlutterTaskSpec extends Specification {
         plist.write("TC2")
 
         when:
-        new CopyIosFrameworkKlutterTask(false, root).run()
+        new CopyIosFrameworkKlutterTask(root).run()
 
         then:
         with(target.absolutePath) {
@@ -97,29 +66,12 @@ class CopyIosFrameworkKlutterTaskSpec extends Specification {
                 .toFile()
 
         when:
-        new CopyIosFrameworkKlutterTask(false, root).run()
+        new CopyIosFrameworkKlutterTask(root).run()
 
         then:
         KlutterException e = thrown()
         e.message.startsWith("Path does not exist:")
         e.message.endsWith("/ios/Klutter")
-    }
-
-    def "If ios/Klutter folder does not exist then an exception is thrown"() {
-        given:
-        def root = Files.createTempDirectory("")
-                .toAbsolutePath()
-                .toFile()
-
-        new File("${root.absolutePath}/app/backend/ios/Klutter").mkdirs()
-
-        when:
-        new CopyIosFrameworkKlutterTask(true, root).run()
-
-        then:
-        KlutterException e = thrown()
-        e.message.startsWith("Path does not exist:")
-        e.message.endsWith("Platform.xcframework")
     }
 
 }

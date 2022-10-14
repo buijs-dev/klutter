@@ -1,11 +1,11 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'klutter_kompose'
-    spec.version                  = '2022.r6-9.alpha'
+    spec.version                  = '0.19.1'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = 'Klutter UI module'
+    spec.summary                  = 'Klutter Kompose module'
     spec.vendored_frameworks      = 'build/cocoapods/framework/Kompose.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target = '14.1'

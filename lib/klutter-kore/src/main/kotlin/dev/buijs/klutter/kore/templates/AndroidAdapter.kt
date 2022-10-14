@@ -19,12 +19,11 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.KlutterPrinter
+import dev.buijs.klutter.kore.shared.ControllerData
 import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.maybePostfixToKJson
 import dev.buijs.klutter.kore.shared.postFix
 
 class AndroidAdapter(
@@ -32,56 +31,53 @@ class AndroidAdapter(
     private val pluginClassName: String,
     private val methodChannelName: String,
     private val methods: List<Method>,
+    private val controllers: List<ControllerData>,
 ): KlutterPrinter {
 
     override fun print(): String = """
         |package $pluginPackageName
         |
-        |${methods.asImportString()}
-        |import androidx.annotation.NonNull
+        |${methods.printImports()}
         |import android.app.Activity
-        |import android.content.Context
+        |import androidx.annotation.NonNull
+        |import io.flutter.embedding.engine.plugins.FlutterPlugin
         |import io.flutter.embedding.engine.plugins.activity.ActivityAware
         |import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-        |import io.flutter.embedding.engine.plugins.FlutterPlugin
+        |import io.flutter.plugin.common.EventChannel
         |import io.flutter.plugin.common.MethodCall
-        |import io.flutter.plugin.common.MethodChannel
         |import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-        |import io.flutter.plugin.common.MethodChannel.Result
         |import kotlinx.coroutines.CoroutineScope
         |import kotlinx.coroutines.Dispatchers
         |import kotlinx.coroutines.launch
         |
         |/** $pluginClassName */
-        |class ${pluginClassName}: FlutterPlugin, MethodCallHandler, ActivityAware {
-        |  /// The MethodChannel that will the communication between Flutter and native Android
-        |  ///
-        |  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-        |  /// when the Flutter Engine is detached from the Activity
-        |  private lateinit var channel : MethodChannel
-        |   
-        |  private val mainScope = CoroutineScope(Dispatchers.Main) 
-        |   
-        |  private lateinit var context: Context
+        |class ${pluginClassName}: FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, ActivityAware {
+        |
+        |    private lateinit var channel : MethodChannel
+        |    
+        |    private val mainScope = CoroutineScope(Dispatchers.Main)
         |     
-        |  private lateinit var activity: Activity
-        |  
+        |    private lateinit var activity: Activity
+        ${controllers.printControllerInstance()}
+        ${controllers.printControllerEventChannel()}
+        |
         |  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        |    context = flutterPluginBinding.applicationContext
         |    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "$methodChannelName")
         |    channel.setMethodCallHandler(this)
+        ${controllers.printControllerEventChannelSetter()}
         |  }
         |
         |  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        |        val method = call.method
         |        mainScope.launch {
-        |           when (call.method) {
-        |${methods.asFunctionBodyString() ?: "             return result.notImplemented()"}
+        |           when (method) {
+        ${methods.printFunctionBodies() ?: "             return result.notImplemented()"}
         |           }
         |        }
         |  }
         |
         |  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        |    channel.setMethodCallHandler(null)
+        |        channel.setMethodCallHandler(null)
         |  }
         |  
         |  override fun onDetachedFromActivity() {
@@ -99,22 +95,57 @@ class AndroidAdapter(
         |  override fun onDetachedFromActivityForConfigChanges() {
         |    // nothing
         |   }
+        |   
+        |   override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink?) {
+        ${controllers.printControllerListeners()}
+        |    }
+        |
+        |    override fun onCancel(arguments: Any?) {
+        ${controllers.printControllerCancellers()}
+        |    }
         |}
         |""".trimMargin()
 
-    private fun Method.print(): String = """                
-        "$command" -> {
-              result.success(${method}${dataType.maybePostfixToKJson()})
-        }"""
-
-    private fun List<Method>.asImportString(): String = map { it.import }
-        .distinct()
-        .joinToString("\n") { "import $it" }
-
-    private fun List<Method>.asFunctionBodyString(): String? =
-        if(isEmpty()) { null } else  {
-            joinToString("\n") { it.print() }
-                .postFix(" \n                else -> result.notImplemented()")
-        }
-
+    private fun List<ControllerData>.printControllerEventChannelSetter() =
+        this.joinToString("\n") { """|
+        |        ${it.lowercaseName()}EventsChannel = EventChannel(flutterPluginBinding.binaryMessenger, "${methodChannelName}/stream/${it.lowercaseName()}")
+        |        ${it.lowercaseName()}EventsChannel.setStreamHandler(this)
+    """.trimMargin() }
 }
+
+private fun List<Method>.printImports(): String = map { it.import }
+    .distinct()
+    .joinToString("\n") { "import $it" }
+
+private fun List<Method>.printFunctionBodies(): String? =
+    if(isEmpty()) { null } else  {
+        joinToString("\n") { """
+                |                "${it.methodId}" ->
+                |                    result.success(${it.method
+                                                        .replaceFirst("(", "")
+                                                        .replaceFirst(")", "")
+                                                        .replaceFirstChar { char -> char.lowercase() }})
+            """.trimMargin()}
+            .postFix(" \n                else -> result.notImplemented()")
+    }
+
+private fun List<ControllerData>.printControllerInstance() =
+    this.joinToString("\n") { "    private val ${it.lowercaseName()} = ${it.name}()" }
+
+private fun List<ControllerData>.printControllerEventChannel() =
+    this.joinToString("\n") { "    private lateinit var ${it.lowercaseName()}EventsChannel : EventChannel" }
+
+private fun List<ControllerData>.printControllerCancellers() =
+    this.joinToString("\n") { """|
+        |        ${it.lowercaseName()}EventsChannel.setStreamHandler(null)
+        |        ${it.lowercaseName()}.cancel()
+    """.trimMargin() }
+
+private fun List<ControllerData>.printControllerListeners() =
+    this.joinToString("\n") { """|
+        |        mainScope.launch {
+        |            ${it.lowercaseName()}.receiveBroadcastAndroid().collect { value ->
+        |                eventSink?.success(value?.toKJson())
+        |            }
+        |       }
+    """.trimMargin() }

@@ -37,7 +37,9 @@ class Root(val pluginName: String, file: File) {
             file.absoluteFile
         }
 
-    val pathToLib = resolve("lib/$pluginName.dart")
+    val pathToLibFolder = resolve("lib")
+
+    val pathToLibFile = resolve("lib/$pluginName.dart")
 
     val pluginClassName = pluginName
         .toCamelCase()

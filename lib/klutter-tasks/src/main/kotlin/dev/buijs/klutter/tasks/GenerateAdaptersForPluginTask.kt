@@ -27,9 +27,7 @@ import dev.buijs.klutter.kore.shared.excludeArm64
 import dev.buijs.klutter.kore.shared.maybeCreate
 import dev.buijs.klutter.kore.shared.toChannelName
 import dev.buijs.klutter.kore.shared.write
-import dev.buijs.klutter.kore.templates.AndroidAdapter
-import dev.buijs.klutter.kore.templates.FlutterAdapter
-import dev.buijs.klutter.kore.templates.IosAdapter
+import dev.buijs.klutter.kore.templates.*
 
 /**
  * Task to generate the boilerplate code required to let Kotlin Multiplatform and Flutter communicate.
@@ -52,7 +50,7 @@ internal class GenerateAdaptersForPluginTask(
     }
 
     private fun AdapterData.flutter(root: Root){
-        root.pathToLib.maybeCreate().write(
+        root.pathToLibFile.maybeCreate().write(
             FlutterAdapter(
                 pluginClassName = root.pluginClassName,
                 methodChannelName = methodChannelName,
@@ -61,6 +59,18 @@ internal class GenerateAdaptersForPluginTask(
                 enumerations = enumerations,
             )
         )
+        controllers.forEach { controller ->
+            root.pathToLibFolder
+                .resolve("${controller.name.lowercase()}_stream.dart")
+                .maybeCreate()
+                .write(
+                    FlutterReceiverWidget(
+                        channelName = methodChannelName,
+                        controllerName = controller.name,
+                        dataType = controller.dataType,
+                    )
+                )
+        }
     }
 
     private fun AdapterData.ios(ios: IOS){
@@ -70,6 +80,7 @@ internal class GenerateAdaptersForPluginTask(
                 pluginClassName = ios.pluginClassName,
                 methodChannelName = methodChannelName,
                 methods = methods,
+                controllers = controllers,
             )
         )
     }
@@ -81,6 +92,7 @@ internal class GenerateAdaptersForPluginTask(
                 pluginPackageName = android.pluginPackageName,
                 methodChannelName = methodChannelName,
                 methods = methods,
+                controllers = controllers,
             )
         )
     }

@@ -30,22 +30,16 @@ import java.io.File
  * to the plugin android/Klutter folder.
  */
 class CopyAndroidAarFileKlutterTask(
-    private val isApplication: Boolean,
     private val pathToRoot: File,
     private val pluginName: String? = null,
 ): KlutterTask {
 
-    private val pathToTarget: String =
-        if(isApplication) "app/backend" else ""
+    private val pathToTarget: String = ""
 
-    private val pathToSource: String =
-        if(isApplication) "lib" else "platform"
+    private val pathToSource: String = "platform"
 
     override fun run() {
         val name = when {
-            isApplication -> {
-                "lib"
-            }
             pluginName != null -> {
                 pluginName
             }
@@ -75,15 +69,12 @@ class CopyAndroidAarFileKlutterTask(
  * to the plugin ios/Klutter folder.
  */
 class CopyIosFrameworkKlutterTask(
-    isApplication: Boolean,
     private val pathToRoot: File,
 ): KlutterTask {
 
-    private val pathToTarget: String =
-        if(isApplication) "app/backend" else ""
+    private val pathToTarget: String = ""
 
-    private val pathToSource: String =
-        if(isApplication) "lib" else "platform"
+    private val pathToSource: String = "platform"
 
     override fun run() {
         val target = pathToRoot

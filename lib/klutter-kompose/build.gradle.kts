@@ -24,7 +24,7 @@ kotlin {
     iosSimulatorArm64()
 
     cocoapods {
-        summary = "Klutter UI module"
+        summary = "Klutter Kompose module"
         homepage = "https://buijs.dev"
         ios.deploymentTarget = "14.1"
         framework {
@@ -37,6 +37,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
                 implementation(project(":lib:klutter-annotations"))
             }
         }
@@ -57,7 +58,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-                implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+                implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
                 implementation(project(":lib:klutter-kore"))
                 implementation(project(":lib:klutter-annotations"))
@@ -92,8 +93,16 @@ publishing {
             url = dev.buijs.klutter.Repository.endpoint
         }
     }
-}
 
+    publications.withType<MavenPublication> {
+        artifactId = if (name == "kotlinMultiplatform") {
+            "kompose"
+        } else {
+            "kompose-$name"
+        }
+    }
+
+}
 tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
 
     outputDirectory.set(buildDir.resolve("dokka"))

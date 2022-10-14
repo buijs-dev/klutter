@@ -142,5 +142,8 @@ tasks.withType<org.jetbrains.dokka.gradle.DokkaTask>().configureEach {
 }
 
 tasks.named("iosX64Test", org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest::class.java).configure {
-    deviceId = "iPhone 14 Pro Max"
+    // ENV VAR is set in GH where iPhone 14 is not available
+    if(System.getenv("KLUTTER_PRIVATE_URL") == null) {
+        deviceId = "iPhone 14 Pro Max"
+    }
 }

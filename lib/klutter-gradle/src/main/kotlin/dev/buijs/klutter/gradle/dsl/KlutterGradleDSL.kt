@@ -22,7 +22,6 @@
 package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.Project
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.tasks.Internal

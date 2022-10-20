@@ -30,12 +30,12 @@ import java.io.File
  * Regex to find al valid KlutterResponse definitions.
  */
 private val klutterJsonRegex = ("""""" +
-        """((@Serializable|@KlutterResponse)*.+?)""" +
-        """open.+?class\s+(.+?[^(]+?)""" +
-        """\((""" +
+        """((^@Serializable$|^@KlutterResponse$)*.+?)""" +
+        """open.+?class\s+(.*?[^(]+?)""" +
+        """\(([^\)]*?""" +
         """(val\s*([^:]+?):\s*([^,\)]+)(,|\)))*""" +
-        """[^)]+?)\)""" +
-        """:\s+?KlutterJSON<[^>]+?>"""
+        """)\)""" +
+        """:\s+?KlutterJSON<([^>]+?)>"""
         ).toRegex()
 
 /**
@@ -59,14 +59,14 @@ internal typealias KlutterResponseScanning =
 /**
  * Error indicating a class is missing the @KlutterResponse annotation.
  */
-private val missingKlutterResponseAnnotation =
-    InvalidAbstractType("Class is missing @KlutterResponse annotation.")
+private fun missingKlutterResponseAnnotation(name: String) =
+    InvalidAbstractType("Class is missing @KlutterResponse annotation: $name")
 
 /**
  * Error indicating a class is missing the @KlutterResponse annotation.
  */
-private val missingSerializableAnnotation =
-    InvalidAbstractType("Class is missing '@Serializable' annotation.")
+private fun missingSerializableAnnotation(name: String) =
+    InvalidAbstractType("Class is missing @Serializable annotation: $name")
 
 /**
  * Error indicating a KlutterResponse class has no members.
@@ -103,7 +103,8 @@ private fun processingError(msg: String) =
 fun List<File>.findKlutterResponses(): KlutterResponseScanning {
 
     val result = this
-        .flatMap { it.findResponseBodies() }
+        .map { it to it.packageName() }
+        .flatMap { it.first.findResponseBodies(it.second) }
 
     val errors = result
         .filterIsInstance<InvalidAbstractType>()
@@ -117,7 +118,7 @@ fun List<File>.findKlutterResponses(): KlutterResponseScanning {
         .filterIsInstance<CustomType>()
 
     val duplicateTypes = types
-        .groupBy { it.name }
+        .groupBy { it.className }
         .filter { it.value.size > 1 }
         .map { it.key }
 
@@ -128,12 +129,12 @@ fun List<File>.findKlutterResponses(): KlutterResponseScanning {
         .filterDuplicates(types)
 
     val unknownTypes = distinctTypes
-        .map { it.name }
-        .filter { types.none { type -> type.name == it } }
+        .map { it.className }
+        .filter { types.none { type -> type.className == it } }
 
     val emptyTypes = distinctTypes
         .filter { it.fields.isEmpty() }
-        .map { it.name }
+        .map { it.className }
 
     return when {
         unknownTypes.isNotEmpty() ->
@@ -158,7 +159,7 @@ private fun CustomType.distinctCustomTypes(
     if(output.contains(this)) return output
 
     // CustomType without fields is empty so replace with current.
-    output.removeIf { it.name == this.name && it.fields.isEmpty()}
+    output.removeIf { it.className == this.className && it.fields.isEmpty()}
     output.add(this)
 
     // Add all fields of type CustomType.
@@ -193,7 +194,7 @@ private fun Set<CustomType>.filterDuplicates(
      * The CustomType Set contains top level types + CustomTypes which are found in TypeMembers.
      */
     types: List<CustomType>
-): Set<CustomType> = groupBy { it.name }
+): Set<CustomType> = groupBy { it.className }
     // Get a CustomType that contains fields or use the first entry
     .map { it.value.firstOrNull { value -> value.fields.isNotEmpty() } ?: it.value.first() }
     .map {
@@ -204,9 +205,9 @@ private fun Set<CustomType>.filterDuplicates(
 
                     type.fields.isNotEmpty() -> field
 
-                    types.none { t -> t.name == type.name } -> field
+                    types.none { t -> t.className == type.className } -> field
 
-                    else -> TypeMember(field.name, types.first { t -> t.name == type.name })
+                    else -> TypeMember(field.name, types.first { t -> t.className == type.className })
                 }
             }
         }
@@ -216,11 +217,11 @@ private fun Set<CustomType>.filterDuplicates(
 /**
  * Read the content of a Kotlin class File and return all classes as CustomType.
  */
-private fun File.findResponseBodies() = this
+private fun File.findResponseBodies(packageName: String) = this
     .readText()
-    .replace("[\\s\\n]+".toRegex(), " ")
+    .replace("""\s+""".toRegex(), " ")
     .let { klutterJsonRegex.findAll(it) }
-    .map { it.procesResponseBody() }
+    .map { it.procesResponseBody(packageName) }
     .toList()
 
 /**
@@ -248,12 +249,18 @@ private fun File.findResponseBodies() = this
  * }
  * ```
  */
-private fun MatchResult.procesResponseBody(): Either<String, AbstractType> {
+private fun MatchResult.procesResponseBody(packageName: String): Either<String, AbstractType> {
     val values = groupValues
 
-    val className = values[3].trim()
+    val className = values[3].trim().also {
+        if(it != values.last()) {
+            return processingError(
+                msg = "KlutterJSON TypeParameter does not match class name: $it | ${values.last()}"
+            )
+        }
+    }
 
-    values[1].verifyAnnotationsPresent()
+    values[1].verifyAnnotationsPresent(className)
         ?.let { return it }
 
     val maybeFields = values[4]
@@ -271,7 +278,13 @@ private fun MatchResult.procesResponseBody(): Either<String, AbstractType> {
         .filterIsInstance<InvalidTypeMember>()
 
     return if(errors.isEmpty()) {
-        Either.ok(data = CustomType(className, fields))
+        Either.ok(
+            data = CustomType(
+                className = className,
+                packageName = packageName,
+                fields = fields
+            )
+        )
     } else {
         processingError(msg = errors.joinToString { it.data })
     }
@@ -282,7 +295,10 @@ private fun MatchResult.procesResponseBody(): Either<String, AbstractType> {
  *
  * Returns [Either.nok] if an annotation is missing and otherwise null.
  */
-private fun String.verifyAnnotationsPresent(): Either<String, AbstractType>? {
+private fun String.verifyAnnotationsPresent(
+    className: String
+): Either<String, AbstractType>? {
+
     val annotations = this
         .split(" ")
         .toMutableList()
@@ -290,10 +306,10 @@ private fun String.verifyAnnotationsPresent(): Either<String, AbstractType>? {
         .filter { it.isNotBlank() }
 
     if(!annotations.contains("@KlutterResponse"))
-        return missingKlutterResponseAnnotation
+        return missingKlutterResponseAnnotation(name = className)
 
     if(!annotations.contains("@Serializable"))
-        return missingSerializableAnnotation
+        return missingSerializableAnnotation(name = className)
 
     return null
 }

@@ -130,26 +130,28 @@ internal open class NullableDoubleArrayType: DoubleArrayType(), Nullable
  * A not null List [StandardType].
  */
 internal open class ListType(
-    val child: AbstractType,
+    val child: AbstractType? = null,
 ): StandardType(type = StandardTypeMap.LIST), Nested
 
 /**
  * A nullable List [StandardType].
  */
-internal open class NullableListType(child: AbstractType): ListType(child), Nullable
+internal open class NullableListType(
+    child: AbstractType? = null
+): ListType(child), Nullable
 
 /**
  * A not null Map [StandardType].
  */
 internal open class MapType(
-    val key: AbstractType,
-    val value: AbstractType,
+    val key: AbstractType? = null,
+    val value: AbstractType? = null,
 ): StandardType(type = StandardTypeMap.MAP), Nested
 
 /**
  * A nullable LongArray [StandardType].
  */
 internal open class NullableMapType(
-    key: AbstractType,
-    value: AbstractType,
+    key: AbstractType? = null,
+    value: AbstractType? = null,
 ): MapType(key, value), Nullable

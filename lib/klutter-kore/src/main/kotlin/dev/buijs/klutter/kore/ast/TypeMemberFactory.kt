@@ -65,7 +65,7 @@ internal fun String.toTypeMember(): Either<String, TypeMember> {
 
     val name = values[2].trim()
 
-    val type = TypeData(values[3]).toAbstactType()
+    val type = TypeData(values[3]).toAbstractType()
 
     return if(type is ValidAbstractType) {
         ValidTypeMember(data = TypeMember(name, type.data))

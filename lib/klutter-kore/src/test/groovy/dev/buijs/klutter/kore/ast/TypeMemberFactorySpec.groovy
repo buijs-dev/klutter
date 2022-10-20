@@ -53,7 +53,7 @@ class TypeMemberFactorySpec extends Specification {
             it.data.name == name
             if(isCustom) {
                 it.data.type instanceof CustomType
-                it.data.type.name == typeName
+                it.data.type.className == typeName
             } else {
                 it.data.type instanceof StandardType
                 it.data.type.kotlinType == typeName

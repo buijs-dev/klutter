@@ -234,16 +234,6 @@ class MethodSpec extends Specification {
         ]
     }
 
-    def "[packageName] returns null if file contains no package name"() {
-        expect:
-        MethodKt.packageName("") == ""
-    }
-
-    def "[packageName] package name is returned"() {
-        expect:
-        MethodKt.packageName("package a.b.c") == "a.b.c"
-    }
-
     def "[toChannelName] pluginPackage name is returned"() {
         given:
         Pubspec pubspec = new Pubspec("Na!", new PubspecFlutter(plugin))

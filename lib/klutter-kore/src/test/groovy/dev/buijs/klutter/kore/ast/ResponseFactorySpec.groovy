@@ -16,7 +16,7 @@ class ResponseFactorySpec extends Specification {
         file.write(classBody)
 
         when:
-        def result = ResponseFactoryKt.findKlutterResponses([file])
+        def result = ResponseScannerKt.findKlutterResponses([file])
 
         then:
         result instanceof EitherOk<List<String>, List<AbstractType>>
@@ -26,21 +26,21 @@ class ResponseFactorySpec extends Specification {
 
         and:
         CustomType something = datatypes[0] as CustomType
-        something.name == "Something"
+        something.className == "Something"
         something.fields.size() == 2
         something.fields[0].name == "x"
         something.fields[0].type instanceof NullableStringType
         something.fields[1].name == "y"
         something.fields[1].type instanceof CustomType
         CustomType somethingElseMember = something.fields[1].type as CustomType
-        somethingElseMember.name == "SomethingElse"
+        somethingElseMember.className == "SomethingElse"
         somethingElseMember.fields.size() == 2
 
         //CustomType 'SomethingElse' with fields:
         // [TypeMember(name=a, type=NullableIntType),
         // TypeMember(name=b, type=ListType)]
         CustomType somethingElse = datatypes[1] as CustomType
-        somethingElse.name == "SomethingElse"
+        somethingElse.className == "SomethingElse"
         somethingElse.fields.size() == 2
         somethingElse.fields[0].type instanceof NullableIntType
         somethingElse.fields[1].type instanceof ListType
@@ -85,7 +85,7 @@ class ResponseFactorySpec extends Specification {
         file.write(classBody)
 
         when:
-        def result = ResponseFactoryKt.findKlutterResponses([file])
+        def result = ResponseScannerKt.findKlutterResponses([file])
 
         then:
         result instanceof EitherNok<List<String>, List<AbstractType>>
@@ -110,7 +110,37 @@ class ResponseFactorySpec extends Specification {
             }"""
     }
 
-    // TODO klutterResponse without fields
+    def "If a KlutterResponse has no fields then Either.nok is returned."() {
+        given:
+        def file = Files.createTempFile("SomeFile", ".kt").toFile()
+
+        and:
+        file.write(classBody)
+
+        when:
+        def result = ResponseScannerKt.findKlutterResponses([file])
+
+        then:
+        result instanceof EitherNok<List<String>, List<AbstractType>>
+
+        and:
+        result.data.size() == 1
+        result.data[0] == "KlutterResponse contract violation! Some classes have no fields: [Something]"
+
+        where:
+        classBody = """
+            @Serializable
+            @KlutterResponse
+            open class Something(): KlutterJSON<Something>() {
+        
+                override fun data() = this
+        
+                override fun strategy() = serializer()
+        
+            }
+            
+            """
+    }
 
     def "If multiple KlutterResponse are found with identical names then Either.nok is returned."() {
         given:
@@ -120,7 +150,7 @@ class ResponseFactorySpec extends Specification {
         file.write(classBody)
 
         when:
-        def result = ResponseFactoryKt.findKlutterResponses([file])
+        def result = ResponseScannerKt.findKlutterResponses([file])
 
         then:
         result instanceof EitherNok<List<String>, List<AbstractType>>
@@ -159,8 +189,116 @@ class ResponseFactorySpec extends Specification {
             """
     }
 
-    // TODO missing @Serializable
+    def "If required annotations are missing then Either.nok is returned."() {
+        given:
+        def file = Files.createTempFile("SomeFile", ".kt").toFile()
 
-    // TODO missing @KlutterResponse
+        and:
+        file.write(classBody)
 
+        when:
+        def result = ResponseScannerKt.findKlutterResponses([file])
+
+        then:
+        result instanceof EitherNok<List<String>, List<AbstractType>>
+
+        and:
+        result.data.size() == 2
+        result.data[0] == "Class is missing @KlutterResponse annotation: Something"
+        result.data[1] == "Class is missing @Serializable annotation: SomethingElse"
+
+        where: "invalid because SomethingElse is not found"
+        classBody = """
+            @Serializable
+            open class Something(
+                val x: String?,
+                val y: Boolean,
+            ): KlutterJSON<Something>() {
+        
+                override fun data() = this
+        
+                override fun strategy() = serializer()
+        
+            }
+            
+            @KlutterResponse
+            open class SomethingElse(
+                val x: String?,
+                val y: Boolean,
+            ): KlutterJSON<SomethingElse>() {
+        
+                override fun data() = this
+        
+                override fun strategy() = serializer()
+        
+            }
+            """
+    }
+
+    def "If required annotations are missing then Either.nok is returned."() {
+        given:
+        def file = Files.createTempFile("SomeFile", ".kt").toFile()
+
+        and:
+        file.write(classBody)
+
+        when:
+        def result = ResponseScannerKt.findKlutterResponses([file])
+
+        then:
+        result instanceof EitherNok<List<String>, List<AbstractType>>
+
+        and:
+        result.data.size() == 1
+        result.data[0] == "KlutterResponse class could not be processed: " +
+                "KlutterJSON TypeParameter does not match class name: Something | SomethingX"
+
+        where:
+        classBody = """
+            @Serializable
+            @KlutterResponse
+            open class Something(
+                val x: String?,
+                val y: Boolean,
+            ): KlutterJSON<SomethingX>() {
+        
+                override fun data() = this
+        
+                override fun strategy() = serializer()
+        
+            } """
+    }
+
+    def "If there are invalid TypeMembers then Either.nok is returned."() {
+        given:
+        def file = Files.createTempFile("SomeFile", ".kt").toFile()
+
+        and:
+        file.write(classBody)
+
+        when:
+        def result = ResponseScannerKt.findKlutterResponses([file])
+
+        then:
+        result instanceof EitherNok<List<String>, List<AbstractType>>
+
+        and:
+        result.data.size() == 1
+        result.data[0] == "KlutterResponse class could not be processed: Field member could not be processed: '>'"
+
+        where:
+        classBody = """
+            @Serializable
+            @KlutterResponse
+            open class Something(
+                val x: String?,
+                val y: List<x,>,
+            ): KlutterJSON<Something>() {
+        
+                override fun data() = this
+        
+                override fun strategy() = serializer()
+        
+            } """
+    }
 }

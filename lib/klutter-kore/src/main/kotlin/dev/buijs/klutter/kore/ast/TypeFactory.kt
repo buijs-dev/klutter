@@ -66,9 +66,15 @@ internal data class TypeData(
     val nullable: Boolean,
 
     ) {
+
     constructor(raw: String) : this(
         type = raw.trim().removeSuffixIfPresent("?"),
         nullable = raw.trim().endsWith("?")
+    )
+
+    constructor(type: String, arguments: List<String>, nullable: Boolean) : this(
+        type = if(arguments.isEmpty()) type else "${type}<${arguments.joinToString()}>",
+        nullable = nullable
     )
 }
 
@@ -80,20 +86,20 @@ internal data class TypeData(
  * A StandardType can be valid or invalid.
  * A CustomType is always wrapped in [ValidAbstractType].
  */
-internal fun TypeData.toAbstactType() =
+internal fun TypeData.toAbstractType() =
     findStandardType() ?: toCustomType()
 
 /**
  * Regex to find a Map type, and it's key-value type.
  */
 private val mapTypeRegex =
-    """^(Map)<([^,]*?),([^>]*?)>""".toRegex()
+    """^(Map)(<([^,]*?),([^>]*?)>|)""".toRegex()
 
 /**
  * Regex to find a List type, and it's value type.
  */
 private val listTypeRegex =
-    """^(List)<([^>]*?)>""".toRegex()
+    """^(List)(<([^>]*?)>|)""".toRegex()
 
 /**
  * Regex to verify a class name is valid.
@@ -184,22 +190,25 @@ private fun List<String>.toMapType(
     nullable: Boolean
 ): Either<String, AbstractType> {
 
-    if (this.size < 4)
+    if (this.size < 5)
         return mapTypeRegexFailure()
 
-    val key = TypeData(this[2])
-        .toAbstactType()
+    if(this[2].trim() == "")
+        return ValidAbstractType(if(nullable) NullableMapType() else MapType())
+
+    val key = TypeData(this[3])
+        .toAbstractType()
         .validAbstractTypeOrNull()
 
-    val value = TypeData(this[3])
-        .toAbstactType()
+    val value = TypeData(this[4])
+        .toAbstractType()
         .validAbstractTypeOrNull()
 
     return when {
         key == null ->
-            this[2].invalidMapKey()
+            this[3].invalidMapKey()
         value == null ->
-            this[3].invalidMapValue()
+            this[4].invalidMapValue()
         nullable ->
             ValidAbstractType(data = NullableMapType(key, value))
         else ->
@@ -217,16 +226,19 @@ private fun List<String>.toListType(
     nullable: Boolean
 ): Either<String, AbstractType> {
 
-    if (this.size < 3)
+    if (this.size < 4)
         return listTypeRegexFailure()
 
-    val childType = TypeData(this[2])
-        .toAbstactType()
+    if(this[3].trim() == "")
+        return ValidAbstractType(if(nullable) NullableListType() else ListType())
+
+    val childType = TypeData(this[3])
+        .toAbstractType()
         .validAbstractTypeOrNull()
 
     return when {
         childType == null ->
-            this[2].invalidListValue()
+            this[3].invalidListValue()
         nullable ->
             ValidAbstractType(data = NullableListType(childType))
         else ->

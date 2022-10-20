@@ -41,6 +41,9 @@ interface Nested
 sealed class AbstractType {
     override fun toString(): String =
         this.javaClass.simpleName
+
+    open val className: String =
+        javaClass.simpleName
 }
 
 /**
@@ -49,6 +52,8 @@ sealed class AbstractType {
  * Example:
  *
  * ```
+ * pacakge com.example
+ *
  * class Response(
  *    val foo: Foo
  * )
@@ -56,34 +61,49 @@ sealed class AbstractType {
  *
  * is CustomType:
  * - name: "Response"
+ * - package: "com.example"
  * - fields: []
  *
  */
 open class CustomType(
-    val name: String,
+    override val className: String,
+    val packageName: String? = null,
     val fields: List<TypeMember> = emptyList()
 ): AbstractType() {
 
     open fun copy(fields: List<TypeMember>) =
-        CustomType(name = name, fields = fields)
+        CustomType(
+            className = className,
+            packageName = packageName,
+            fields = fields
+        )
 
-    override fun toString() =
-        "CustomType '$name' with fields: $fields"
+    override fun toString() = print()
+
 }
 
 /**
  * A nullable variant of [CustomType].
  */
 class NullableCustomType(
-    name: String,
+    className: String,
+    packageName: String? = null,
     fields: List<TypeMember> = emptyList()
-): CustomType(name, fields), Nullable {
+): CustomType(
+    className = className,
+    packageName = packageName,
+    fields = fields
+), Nullable {
 
     override fun copy(fields: List<TypeMember>) =
-        NullableCustomType(name = name, fields = fields)
+        NullableCustomType(
+            className = className,
+            packageName = packageName,
+            fields = fields
+        )
 
-    override fun toString() =
-        "NullableCustomType '$name' with fields: $fields"
+    override fun toString() = print()
+
 }
 
 /**
@@ -92,12 +112,15 @@ class NullableCustomType(
 sealed class StandardType(
     private val type: StandardTypeMap,
 ): AbstractType() {
+
     val kotlinType
         get() = type.kotlinType
 
     val dartType
         get() = type.dartType
 
+    override val className: String
+        get() = kotlinType
 }
 
 /**
@@ -107,3 +130,51 @@ data class TypeMember(
     val name: String,
     val type: AbstractType,
 )
+
+private fun CustomType.print() = """
+    |CustomType = $className
+    |Package = ${packageName ?: "NOT_FOUND"}
+    |Fields = ${fields.map { "${it.name}: ${it.type.typeSimplename()}" }}
+    |Nullable = ${this.javaClass.interfaces.map { i -> i.simpleName }.contains(object: Nullable {}.javaClass.simpleName)}
+""".trimMargin()
+
+private fun AbstractType?.typeSimplename(): String {
+    if(this == null) return "#undetermined#"
+
+    val nullable =
+        if(this is Nullable) "?" else ""
+
+    return when (this) {
+
+        is CustomType ->
+            this.className + nullable
+
+        is MapType -> {
+            val type =
+                this.kotlinType
+
+            val keyType =
+                this.key.typeSimplename()
+
+            val valueType =
+                this.value.typeSimplename()
+
+
+            "$type<$keyType,$valueType>$nullable"
+        }
+
+        is ListType -> {
+            val type =
+                this.kotlinType
+
+            val childType =
+                this.child.typeSimplename()
+
+            "$type<$childType>$nullable"
+        }
+
+        is StandardType ->
+            this.kotlinType + nullable
+    }
+
+}

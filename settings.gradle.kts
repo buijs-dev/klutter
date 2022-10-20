@@ -7,5 +7,7 @@ include(":lib:klutter-jetbrains")
 include(":lib:klutter-kompose")
 // Internal Testing library
 include(":lib-test")
+// Internal workload for testing annotations processor
+include(":test-ksp")
 // Internal build properties
 includeBuild("lib-build")

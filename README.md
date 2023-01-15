@@ -1,8 +1,10 @@
-[![GitHub](https://img.shields.io/github/license/buijs-dev/klutter?color=black&style=for-the-badge)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter?color=darkgreen&label=Gradle%20Plugin&logo=gradle&style=for-the-badge)](https://plugins.gradle.org/plugin/dev.buijs.klutter)
-[![Codecov](https://img.shields.io/codecov/c/github/buijs-dev/klutter?logo=codecov&style=for-the-badge)](https://codecov.io/gh/buijs-dev/klutter)
-[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
-[![CodeScene Code Health](https://img.shields.io/badge/CODESCENE-10-brightgreen?style=for-the-badge)](https://codescene.io/projects/27235)
+[![](https://img.shields.io/badge/Buijs-Software-blue)](https://pub.dev/publishers/buijs.dev/packages)
+[![GitHub](https://img.shields.io/github/license/buijs-dev/squint?color=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
+[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter?color=darkgreen&label=Gradle%20Plugin&logo=gradle)](https://plugins.gradle.org/plugin/dev.buijs.klutter)
+[![CodeScene Code Health](https://codescene.io/projects/27235/status-badges/code-health)](https://codescene.io/projects/27235)
+[![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg)](https://codecov.io/gh/buijs-dev/klutter)
+[![SONAR](https://img.shields.io/sonar/alert_status/buijs-dev_klutter?label=SONAR&server=https%3A%2F%2Fsonarcloud.io&logo=sonarcloud)](https://sonarcloud.io/summary/overall?id=buijs-dev_klutter)
+
 
 <img src="https://github.com/buijs-dev/klutter/blob/develop/.github/assets/metadata/icon/klutter_logo.png?raw=true" alt="buijs software logo" />
 

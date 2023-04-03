@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
-    id("org.sonarqube") version "3.4.0.2513"
+    id("org.sonarqube") version "4.0.0.2929"
     id("klutter")
 }
 
@@ -24,10 +24,10 @@ kover {
     disabledProjects = setOf(
         // contains only annotations
         // and breaks Jacoco due to duplicate classes
-        ":lib:klutter-annotations",
+        ":lib:annotations",
 
         // breaks Jacoco due to duplicate classes, haven't found a fix yet...
-        ":lib:klutter-kompose",
+        ":lib:kompose",
 
         // a test-only module
         ":lib-test",

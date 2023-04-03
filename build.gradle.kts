@@ -8,6 +8,9 @@ buildscript {
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven {
+            url = uri("https://download.flutter.io/")
+        }
     }
 
     dependencies {

@@ -15,9 +15,9 @@ echo " ____________
 
 echo "\0/ Klutter: step: build kompose modules"
 echo "------------------"
-./gradlew clean -p "lib/klutter-kompose"
-./gradlew build -p "lib/klutter-kompose"
+./gradlew clean -p "lib/kompose"
+./gradlew build -p "lib/kompose"
 
 echo "\0/ Klutter: step: publish kompose modules"
 echo "------------------"
-./gradlew publish -p "lib/klutter-kompose"
+./gradlew publish -p "lib/kompose"

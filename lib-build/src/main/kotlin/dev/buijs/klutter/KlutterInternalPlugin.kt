@@ -42,6 +42,7 @@ object ProjectVersions {
     val jetbrains = versions("plugin.jetbrains.version")
     val tasks = versions("tasks.version")
     val kompose = versions("kompose.version")
+    val compiler = versions("compiler.version")
 }
 
 object Repository {

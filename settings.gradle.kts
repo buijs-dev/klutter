@@ -1,13 +1,15 @@
 // Project modules
-include(":lib:klutter-annotations")
-include(":lib:klutter-kore")
-include(":lib:klutter-tasks")
-include(":lib:klutter-gradle")
-include(":lib:klutter-jetbrains")
-include(":lib:klutter-kompose")
+include(":lib:annotations")
+include(":lib:compiler")
+include(":lib:gradle")
+include(":lib:jetbrains")
+include(":lib:kompose")
+include(":lib:kore")
+include(":lib:tasks")
 // Internal Testing library
 include(":lib-test")
 // Internal workload for testing annotations processor
 include(":test-ksp")
+include(":test-ksp:platform")
 // Internal build properties
 includeBuild("lib-build")

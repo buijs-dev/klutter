@@ -33,9 +33,9 @@ import java.util.*
 /**
  * Glue for the DSL used in a build.gradle(.kts) file and the Klutter tasks.
  */
-open class KlutterGradleDSL(project: Project) {
+open class KlutterExtension(project: Project) {
 
-    private var handler = KlutterDependencyHandler(project)
+    private val handler = KlutterDependencyHandler(project)
 
     var root: File? = null
 
@@ -68,6 +68,7 @@ open class KlutterGradleDSL(project: Project) {
         handler.addTestImplementation(simpleModuleName, version)
     }
 
+
 }
 
 /**
@@ -77,7 +78,7 @@ open class KlutterGradleDSL(project: Project) {
  * ```
  * klutter {
  *      implementation("annotations")
- *      implementation("annotations", "2022.r8")
+ *      implementation("annotations", version = "2022.r8")
  * }
  * ```
  *
@@ -89,10 +90,10 @@ class KlutterDependencyHandler(private val project: Project) {
 
         if(multiplatform == null) {
             // Not a Multiplatform Project so apply normally.
-            project.dependencies.add("implementation", create(
-                simpleModuleName = simpleModuleName,
-                version = version,
-            ))
+            project.dependencies.add(
+                "implementation",
+                create(simpleModuleName = simpleModuleName, version = version)
+            )
         } else {
             // Multiplatform Project so apply for all sourcesets.
             multiplatform.sourceSets.forEach {
@@ -164,10 +165,14 @@ internal object KlutterVersion {
 
     val tasks: String = properties.getProperty("tasks.version")
         ?: throw KlutterException("Missing 'tasks.version' in Klutter Gradle Jar.")
+
+    val kompose: String = properties.getProperty("kompose.version")
+        ?: throw KlutterException("Missing 'kompose.version' in Klutter Gradle Jar.")
 }
 
 internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simpleModuleName) {
     "annotations" -> annotations
+    "kompose" -> kompose
     "kore" -> kore
     "gradle" -> gradle
     "tasks" -> tasks

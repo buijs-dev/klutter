@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
+import dev.buijs.klutter.gradle.dsl.KlutterExtension
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.project.plugin
@@ -54,9 +54,9 @@ internal abstract class AbstractTask: DefaultTask() {
 
 }
 
-internal fun org.gradle.api.Project.klutterExtension(): KlutterGradleDSL {
+internal fun org.gradle.api.Project.klutterExtension(): KlutterExtension {
     return extensions.getByName("klutter").let {
-        if (it is KlutterGradleDSL) { it } else {
+        if (it is KlutterExtension) { it } else {
             throw IllegalStateException("klutter extension is not of the correct type")
         }
     }

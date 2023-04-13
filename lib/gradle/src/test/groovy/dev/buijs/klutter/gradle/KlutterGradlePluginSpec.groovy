@@ -1,8 +1,9 @@
 package dev.buijs.klutter.gradle
 
-
+import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import org.gradle.testfixtures.ProjectBuilder
-import spock.lang.Ignore
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import spock.lang.Specification
 
 class KlutterGradlePluginSpec extends Specification {
@@ -13,6 +14,7 @@ class KlutterGradlePluginSpec extends Specification {
         def project = ProjectBuilder.builder().build()
 
         when:
+        project.extensions.add("kotlin", KotlinMultiplatformExtension.class)
         project.pluginManager.apply("dev.buijs.klutter")
 
         and:

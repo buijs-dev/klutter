@@ -21,12 +21,14 @@
  */
 package dev.buijs.klutter.gradle
 
-import dev.buijs.klutter.gradle.dsl.KlutterGradleDSL
+import com.google.devtools.ksp.gradle.KspGradleSubplugin
+import dev.buijs.klutter.gradle.dsl.KlutterExtension
 import dev.buijs.klutter.gradle.tasks.CopyAndroidAarFileGradleTask
 import dev.buijs.klutter.gradle.tasks.CopyIosFrameworkGradleTask
-import dev.buijs.klutter.gradle.tasks.ExcludeArchsPlatformPodspecGradleTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.PluginContainer
+import org.gradle.api.tasks.TaskContainer
 
 /**
  * Gradle plugin for Klutter Framework.
@@ -34,12 +36,24 @@ import org.gradle.api.Project
 class KlutterGradlePlugin: Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
-            extensions.add("klutter", KlutterGradleDSL(project))
-            tasks.register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
-            tasks.register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
-            tasks.register("klutterExcludeArchsPlatformPodspec", ExcludeArchsPlatformPodspecGradleTask::class.java)
-            //project.tasks.register("klutterGenerateAdapters", GenerateAdaptersGradleTask::class.java)
-            plugins.apply(com.google.devtools.ksp.gradle.KspGradleSubplugin::class.java)
+            tasks.registerTasks()
+            plugins.applyKspPlugin()
+            extensions.add("klutter", KlutterExtension(project))
         }
     }
+}
+
+/**
+ * Apply KSP Gradle Plugin.
+ */
+private fun PluginContainer.applyKspPlugin() {
+    apply(KspGradleSubplugin::class.java)
+}
+
+/**
+ * Register the custom Klutter tasks.
+ */
+private fun TaskContainer.registerTasks() {
+    register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
+    register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
 }

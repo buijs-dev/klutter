@@ -33,10 +33,8 @@ import java.io.File
 data class ProcessorOptions(
     val metadataFolder: File,
     val outputFolder: File,
-    val copyAarFile: Boolean,
-    val copyFramework: Boolean,
     val generateAdapters: Boolean,
-    val initializeProject: Boolean,
+    val isIntelBasedBuildMachine: Boolean,
 )
 
 /**
@@ -46,10 +44,8 @@ data class ProcessorOptions(
 internal enum class ProcessorOption(val value: String) {
     METADATA_FOLDER("klutterScanFolder"),
     OUTPUT_FOLDER("klutterOutputFolder"),
-    COPY_AAR_FILE("klutterCopyAarFile"),
-    COPY_FRAMEWORK("klutterCopyFramework"),
     GENERATE_ADAPTERS("klutterGenerateAdapters"),
-    INIT_PROJECT("klutterInitialize"),
+    INTEL_BASED_APPLE("intelMac"),
 }
 
 /**
@@ -59,10 +55,8 @@ internal enum class ProcessorOption(val value: String) {
 internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
     metadataFolder = options.metadataFolder(),
     outputFolder = options.outputFolder(),
-    copyAarFile = options.boolean(COPY_AAR_FILE),
-    copyFramework = options.boolean(COPY_FRAMEWORK),
     generateAdapters = options.boolean(GENERATE_ADAPTERS),
-    initializeProject = options.boolean(INIT_PROJECT),
+    isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
 )
 
 /**
@@ -91,20 +85,16 @@ private fun Map<String,String>.metadataFolder(): File {
  */
 private fun Map<String,String>.outputFolder(): File {
     val option = OUTPUT_FOLDER.value
-    val pathToOutputFolder = this[option] ?: "NOT_SET"
-    // TODO throw exception if any generation option is set to true or ignore if all set to false
-
-//        ?: throw KlutterException("""Option $option not set!
-//                |Add this option to the ksp DSL, example:
-//                |```
-//                |ksp {
-//                |    arg("$option", project.buildDir.absolutePath)
-//                |}
-//                |```
-//                |""".trimMargin())
-
-    return File(pathToOutputFolder)
-       // .also { it.verifyExists() }
+    val pathToOutputFolder = this[option]
+        ?: throw KlutterException("""Option $option not set!
+                |Add this option to the ksp DSL, example:
+                |```
+                |ksp {
+                |    arg("$option", project.buildDir.absolutePath)
+                |}
+                |```
+                |""".trimMargin())
+    return File(pathToOutputFolder).also { it.verifyExists() }
 }
 
 /**

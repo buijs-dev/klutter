@@ -171,24 +171,21 @@ internal fun List<Either<String,Controller>>.validateControllers(): ValidationRe
         .filterIsInstance<ValidControllerType>()
         .map { it.data }
 
-    // TODO fix validation.
-//    val duplicateTypes = types.duplicates()
-//
-//    val distinctTypes = types.distinct()
-//
-//    val unknownTypes = distinctTypes.unknown(types)
-//
-//    return when {
-//        unknownTypes.isNotEmpty() ->
-//            unknownKlutterResponseError(unknownTypes)
-//
-//        duplicateTypes.isNotEmpty() ->
-//            duplicateKlutterResponseError(duplicateTypes)
-//
-//        else -> Valid(distinctTypes.filterIsInstance<ControllerType>().toList())
-//    }
+    val duplicateTypes = types.duplicates()
 
-    return Valid(types)
+    val distinctTypes = types.distinct()
+
+    val unknownTypes = distinctTypes.unknown(types)
+
+    return when {
+        unknownTypes.isNotEmpty() ->
+            unknownKlutterResponseError(unknownTypes)
+
+        duplicateTypes.isNotEmpty() ->
+            duplicateKlutterResponseError(duplicateTypes)
+
+        else -> Valid(distinctTypes.toList())
+    }
 }
 
 private fun List<SquintMessageSource>.duplicateSource() = this
@@ -201,12 +198,12 @@ private fun List<CustomType>.duplicates() = this
     .filter { it.value.size > 1 }
     .map { it.key }
 
-private fun List<Controller>.distinct() =
+private fun List<Controller>.distinct(): Set<Controller> =
     mutableSetOf<Controller>().also { set ->
         this.forEach { type ->
             set.addAll(type.distinctCustomTypes().filterIsInstance<Controller>())
         }
-    }.filterDuplicates(this)
+    }
 
 private fun List<SquintMessageSource>.distinctSource() =
     mutableSetOf<CustomType>().also { set ->

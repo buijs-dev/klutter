@@ -33,9 +33,8 @@ sourceSets {
 
 dependencies {
 
-    // Don't forget to add these to the maven POM if making any changes here!
-    implementation(project(":lib:kore"))
-    implementation(project(":lib:tasks"))
+    compileOnly(project(":lib:kore"))
+    compileOnly(project(":lib:tasks"))
 
     // KSP for annotation scanning
     implementation(kotlin("stdlib"))
@@ -54,6 +53,7 @@ dependencies {
 
     // T-t-t-t-testing !
     testImplementation(project(":lib-test"))
+    testImplementation(project(":lib:kore"))
 }
 
 publishing {

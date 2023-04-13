@@ -29,7 +29,6 @@ import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.project.plugin
 import dev.buijs.klutter.tasks.*
-import java.io.File
 
 /**
  * The actual symbol processor which will scan all classes with Klutter annotations
@@ -39,6 +38,9 @@ class Processor(
     private val options: ProcessorOptions,
     private val logger: KSPLogger,
 ): SymbolProcessor {
+
+    private val output = options.outputFolder
+    private val project = output.plugin()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
 
@@ -94,59 +96,20 @@ class Processor(
         controllers: List<Controller>,
         metadata: List<SquintMessageSource>
     ) {
-
-        val output = options.outputFolder
-
-        val project = output.plugin()
-
-        if (options.initializeProject) {
-            logger.info("=============================================================")
-            logger.info("Initializing klutter project")
-            logger.info("Root folder: ${project.root.folder.absolutePath}")
-            logger.info("=============================================================")
-            InitializePluginProjectTask(
-                pluginName = project.root.pluginName,
-                rootFolder = project.root.folder,
-            ).run()
-        } else {
-            logger.info("=============================================================")
-            logger.info("Skipping klutter project initialization")
-            logger.info("=============================================================")
-        }
-
-        if (options.generateAdapters) {
-            logger.info("=============================================================")
-            logger.info("Generating dart code")
-            logger.info("Root folder: ${project.root.folder.absolutePath}")
-            logger.info("Response count: ${metadata.size}")
-            logger.info("Controller count: ${controllers.size}")
-            logger.info("=============================================================")
-            GenerateAdaptersForPluginTask(
-                android = project.android,
-                ios = project.ios,
-                root = project.root,
-                controllers = controllers,
-                metadata = metadata,
-                log = { str -> logger.info("Running dart command:\n$str") },
-            ).run()
-        } else {
-            logger.info("=============================================================")
-            logger.info("Skipping dart code generation")
-            logger.info("=============================================================")
-        }
-
-        if (options.copyAarFile) {
-            CopyAndroidAarFileKlutterTask(
-                pathToRoot = project.root.folder,
-                pluginName = project.root.pluginName,
-            ).run()
-        }
-
-        if (options.copyFramework) {
-            CopyIosFrameworkKlutterTask(
-                pathToRoot = project.root.folder,
-            ).run()
-        }
-
+        logger.info("=============================================================")
+        logger.info("Generating dart code")
+        logger.info("Root folder: ${project.root.folder.absolutePath}")
+        logger.info("Response count: ${metadata.size}")
+        logger.info("Controller count: ${controllers.size}")
+        logger.info("=============================================================")
+        GenerateAdaptersForPluginTask(
+            android = project.android,
+            ios = project.ios,
+            root = project.root,
+            controllers = controllers,
+            metadata = metadata,
+            excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
+            log = { str -> logger.info("Running dart command:\n$str") }
+        ).run()
     }
 }

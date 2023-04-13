@@ -23,10 +23,7 @@ package dev.buijs.klutter.compiler.processor
 
 import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.*
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.ast.SingletonBroadcastController
 import dev.buijs.klutter.kore.ast.Controller
@@ -271,7 +268,9 @@ private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Eit
     if(params.size > 1)
         return InvalidAdaptee("Method has more than 1 parameter but only 0 or 1 is allowed.")
 
-    val requestTypeOrErrorOrNull = params.firstOrNull()
+    val requestParameterOrNull = params.firstOrNull()
+
+    val requestTypeOrErrorOrNull = requestParameterOrNull
         ?.type
         ?.toString()
         ?.let { TypeData(it).toAbstractType() }
@@ -285,9 +284,10 @@ private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Eit
             command = command,
             import = declaration.packageName.asString(),
             method = method,
-            async = false, // TODO determine if false or true
+            async = function.modifiers.any { isSuspendFunctionType },
             responseDataType = (responseTypeOrError as ValidAbstractType).data,
             requestDataType = requestTypeOrErrorOrNull?.let { (it as ValidAbstractType).data },
+            requestParameterName = requestParameterOrNull?.name?.getShortName(),
         )
     )
 }

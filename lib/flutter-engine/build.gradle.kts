@@ -1,5 +1,4 @@
 @file:Suppress("UNUSED_VARIABLE")
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 

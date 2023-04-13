@@ -30,7 +30,7 @@ Instead of getting the klutter-dart library from PUB, the generated project will
 ./gradlew clean build publishToMavenLocal
 ```
 
-Grab a coffee, this willl take a while.
+Grab a coffee, this will take a while.
 
 - In klutter-dart find all references to the buijs.dev repsy repository and replace it with mavenLocal().
 

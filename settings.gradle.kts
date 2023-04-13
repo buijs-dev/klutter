@@ -1,6 +1,7 @@
 // Project modules
 include(":lib:annotations")
 include(":lib:compiler")
+include(":lib:flutter-engine")
 include(":lib:gradle")
 include(":lib:jetbrains")
 include(":lib:kompose")

@@ -43,6 +43,7 @@ object ProjectVersions {
     val tasks = versions("tasks.version")
     val kompose = versions("kompose.version")
     val compiler = versions("compiler.version")
+    val flutterEngine = versions("flutter.engine.version")
 }
 
 object Repository {

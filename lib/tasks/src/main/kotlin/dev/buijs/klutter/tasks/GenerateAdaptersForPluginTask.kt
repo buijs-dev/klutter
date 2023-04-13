@@ -37,6 +37,7 @@ class GenerateAdaptersForPluginTask(
     private val android: Android,
     private val ios: IOS,
     private val root: Root,
+    private val excludeArmArcFromPodspec: Boolean,
     private val controllers: List<Controller>,
     private val metadata: List<SquintMessageSource>,
     private val executor: CliExecutor = CliExecutor(),
@@ -135,7 +136,10 @@ class GenerateAdaptersForPluginTask(
 
         "dart format .".execute(root.folder).also { log(it) }
 
-        ios.podspec().excludeArm64("dependency'Flutter'")
+        if(excludeArmArcFromPodspec) {
+            ios.podspec().excludeArm64("dependency'Flutter'")
+        }
+
         ios.pathToPlugin.maybeCreate().write(
             IosAdapter(
                 pluginClassName = ios.pluginClassName,

@@ -71,8 +71,7 @@ class GeneratePluginProjectTask(
         InitializePluginProjectTask(
             rootFolder = rootFolder.resolve(pluginName),
             pluginName = pluginName,
-            executor = executor,
-            )
+            executor = executor)
 
     /**
      * Execute a CLI command in the given folder.

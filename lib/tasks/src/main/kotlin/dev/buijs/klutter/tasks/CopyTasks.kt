@@ -50,8 +50,10 @@ class CopyAndroidAarFileKlutterTask(
             .resolve(pathToTarget)
             .resolve("android/klutter")
             .verifyExists()
+            .resolve("platform.aar")
+            .also { if(it.exists()) it.delete() }
 
-        pathToAarFile.renameTo(target.resolve("platform.aar"))
+        pathToAarFile.copyTo(target)
     }
 
 }

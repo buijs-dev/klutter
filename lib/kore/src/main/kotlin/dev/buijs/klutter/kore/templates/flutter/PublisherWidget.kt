@@ -63,6 +63,10 @@ fun PublisherWidget.print() = createPrinter().print()
  *     event: "greeting",
  *     message: message,
  *     channel: _channel,
+ *     onSuccess: onSuccess,
+ *     onFailure: onFailure,
+ *     onNullValue: onNullValue,
+ *     onComplete: onComplete,
  *   );
  * }
  *
@@ -78,6 +82,10 @@ fun PublisherWidget.print() = createPrinter().print()
  *   event: "greeting",
  *   message: message,
  *   channel: _channel,
+ *   onSuccess: onSuccess,
+ *   onFailure: onFailure,
+ *   onNullValue: onNullValue,
+ *   onComplete: onComplete,
  * );
  * ```
  */
@@ -175,7 +183,15 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
             |    state: state,
             |    event: "${event.name}",
             |    channel: _channel,
+            |    onSuccess: onSuccess,
+            |    onFailure: onFailure,
+            |    onNullValue: onNullValue,
+            |    onComplete: onComplete,
             """)
+
+        if(requiresMessage) {
+            append("|    message: message,")
+        }
 
         if(requiresRequestEncoder) {
             append("    encode: (${responseType.dataType.className} data) => data.toJson,")

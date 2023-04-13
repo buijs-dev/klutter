@@ -63,55 +63,19 @@ class AndroidAdapter(
         .map{ """private val ${it.replaceFirstChar { char -> char.lowercase() }}: $it = $it()""" }
         .toSet()
 
-    /**
-     * Every BroadcastController returns a Flow which should be handled inside a Coroutine.
-     */
-    private val broadcastControllerScopes = controllers
-        .filterIsInstance<BroadcastController>()
-        .map { "    private val scope${it.className} = CoroutineScope(Dispatchers.Main)" }
-        .toSet()
-
-    /**
-     * Every BroadcastController can have 0 or more subscribers.
-     */
-    private val broadcastControllerSubscribers = controllers
-        .filterIsInstance<BroadcastController>()
-        .map { "    private val subscribers${it.className} = mutableListOf<EventSink>()" }
-        .toSet()
-
-    private val broadcastReceiverFunctions = controllers
-        .filterIsInstance<BroadcastController>()
-        .map { controller ->
-            listOf(
-                "        scope${controller.className}.launch {",
-                "            ${controller.eventHandlerString()}",
-                "                subscribers${controller.className}.forEach { it.success(${controller.eventReturnValue()}) }",
-                "            }",
-                "        }",
-                ""
-            )
-        }
-        .flatten()
-
     private val broadcastSubscriberWhenClauses = controllers
         .filterIsInstance<BroadcastController>()
         .map { controller ->
             listOf(
                 """            "${controller.className.toSnakeCase()}" ->""",
-                """                subscribers${controller.className}.add(eventSink)"""
+                """                 registerEventSink(${controller.instanceOrConstructor()}, eventSink)"""
             )
         }
         .flatten()
 
-    private val broadcastControllerCancellations = controllers
+    private val broadcastCancellations = controllers
         .filterIsInstance<BroadcastController>()
-        .map { controller ->
-            listOf(
-                """        ${controller.className.replaceFirstChar { char -> char.lowercase() }}.cancel()""",
-                """        subscribers${controller.className}.clear()"""
-            )
-        }
-        .flatten()
+        .map { "${it.instance()}.cancel()" }
 
     private val methodChannelHandlerWhenClauses = controllers
         .filter { it.functions.isNotEmpty() }
@@ -143,31 +107,17 @@ class AndroidAdapter(
         appendLine()
         appendLine("class $pluginClassName: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAware {")
         appendLine()
-        appendLine("    private lateinit var activity: Activity")
-        appendLine("    private lateinit var methodChannels: List<MethodChannel>")
-        appendLine("    private lateinit var eventChannels: List<EventChannel>")
-        appendLines(broadcastControllerScopes)
         appendLine("    private val mainScope = CoroutineScope(Dispatchers.Main)")
-        appendLines(broadcastControllerSubscribers)
+        appendLine("    private lateinit var activity: Activity")
+        appendLine("    private lateinit var mcFacade: MethodChannelFacade")
+        appendLine("    private lateinit var ecFacade: EventChannelFacade")
         appendLine()
         appendTemplate(
             """
                     |    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-                    |        this.methodChannels = methodChannelNames.map { name ->
-                    |            val channel = MethodChannel(binding.binaryMessenger, name)
-                    |            channel.setMethodCallHandler(this)
-                    |            channel
-                    |        }
-                    |
-                    |        this.eventChannels = eventChannelNames.map { name ->
-                    |            val channel = EventChannel(binding.binaryMessenger, name)
-                    |            channel.setStreamHandler(this)
-                    |            channel
-                    |        }
+                    |        this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, mcs)
+                    |        this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, ecs)
                     |""")
-        appendLine()
-        appendLines(broadcastReceiverFunctions)
-        appendLine("   }")
         appendLine()
         appendTemplate(
             """
@@ -199,19 +149,14 @@ class AndroidAdapter(
         """)
         appendLine()
         appendLine("    override fun onCancel(arguments: Any?) {")
-        appendLines(broadcastControllerCancellations)
+        appendLines(broadcastCancellations)
+        appendLine("        ecFacade.cancel()")
         appendTemplate("""
-            |        for (stream in eventChannels) {
-            |            stream.setStreamHandler(null)
-            |        }
-            |    }
             |
             |    override fun onDetachedFromEngine(
             |        binding: FlutterPlugin.FlutterPluginBinding
             |    ) {
-            |        for (channel in methodChannels) {
-            |            channel.setMethodCallHandler(null)
-            |        }
+            |        ecFacade.cancel()
             |    }
             |
             |    override fun onAttachedToActivity(
@@ -234,39 +179,30 @@ class AndroidAdapter(
             |        // nothing
             |    }
             |
-            |    fun <T> onEvent(event: String, data: T?, result: Result) {
-            |        try {
-            |            when(event) {
+            |    suspend fun <T> onEvent(event: String, data: T?, result: Result) { 
+            |           try {
+            |               when(event) {
             """)
         appendLine()
         appendLines(methodChannelHandlerWhenClauses)
         appendTemplate("""
-            |                else -> result.notImplemented()
-            |            }
-            |        } catch(e: Exception) {
-            |            result.error("10101", e.message, e.stackTrace)
-            |        }
-            |    }
+            |                   else -> result.notImplemented()
+            |               }
+            |           } catch(e: Exception) {
+            |               result.error("10101", e.message, e.stackTrace)
+            |           }
+            |       }
             |}
             |""")
     }
 
 }
 
-private fun BroadcastController.eventHandlerString(): String =
-    "${(this as Controller).instanceOrConstructor()}.receiveBroadcastAndroid().collect { value ->"
-
-private fun BroadcastController.eventReturnValue(): String = when(this.response) {
-    is StandardType -> "value"
-    is Nullable -> "value?.toKJson()"
-    else -> "value.toKJson()"
-}
-
 private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
 
     val requestArgumentOrEmpty = when(this.requestDataType) {
         null -> ""
-        is StandardType -> "data"
+        is StandardType -> "data as ${this.requestDataType.kotlinType}${if(this.requestDataType is Nullable) "?" else ""}"
         is Nullable -> "data?.toKJson()"
         else -> "data.toKJson()"
     }
@@ -288,3 +224,6 @@ private fun Controller.instanceOrConstructor() = when(this) {
     is Singleton -> className.replaceFirstChar { char -> char.lowercase() }
     else -> "${className}()"
 }
+
+private fun Controller.instance() =
+    className.replaceFirstChar { char -> char.lowercase() }

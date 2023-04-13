@@ -39,8 +39,8 @@ class IOS(
     val pluginClassName: String,
 ) {
 
-    val pathToClasses: File= folder.resolve("Classes")
-    val pathToPlugin: File = pathToClasses.resolve("Swift$pluginClassName.swift")
+    val pathToClasses: File = folder.resolve("Classes")
+    val pathToPlugin: File = pathToClasses.resolve("$pluginClassName.swift")
 
     /**
      * Function to return the location of the PodFile in the ios sub-module.

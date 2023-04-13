@@ -2,12 +2,6 @@ package dev.buijs.klutter.kore.ast
 
 import dev.buijs.klutter.kore.shared.Method
 
-@Deprecated(message = "controller")
-data class ControllerData(
-    val name: String,
-    val dataType: String,
-)
-
 /**
  * Data wrapper for classes annotated with @Controller.
  */
@@ -53,8 +47,8 @@ class SingletonBroadcastController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,
-    override val response: AbstractType,
-): Controller(packageName, className), BroadcastController, Singleton {
+    response: AbstractType,
+): BroadcastController(response, packageName, className), Singleton {
 
     override fun toString() = this.javaClass.simpleName +
             "(packageName=$packageName, " +
@@ -74,8 +68,8 @@ class RequestScopedBroadcastController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,
-    override val response: AbstractType,
-): Controller(packageName, className), BroadcastController, RequestScoped {
+    response: AbstractType,
+): BroadcastController(response, packageName, className), RequestScoped {
 
     override fun toString() = this.javaClass.simpleName +
             "(packageName=$packageName, " +
@@ -91,10 +85,12 @@ class RequestScopedBroadcastController(
 
 }
 
-interface BroadcastController {
-    val response: AbstractType
-    val className: String
-}
+abstract class BroadcastController(
+    val response: AbstractType,
+    packageName: String,
+    className: String
+): Controller(packageName, className)
+
 interface SimpleController
 interface RequestScoped
 interface Singleton

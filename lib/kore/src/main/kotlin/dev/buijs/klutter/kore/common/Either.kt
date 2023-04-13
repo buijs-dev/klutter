@@ -23,8 +23,10 @@ package dev.buijs.klutter.kore.common
 
 sealed class Either<T,R> {
     companion object {
+        @JvmStatic
         fun <T,R>ok(data: R) = EitherOk<T,R>(data)
 
+        @JvmStatic
         fun <T,R>nok(data: T) = EitherNok<T,R>(data)
     }
 }

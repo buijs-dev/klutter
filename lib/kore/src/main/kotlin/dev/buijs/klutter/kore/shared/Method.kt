@@ -91,8 +91,12 @@ data class Method(
      * Can be a standard Kotlin/Dart type as defined in [StandardTypeMap]
      * or a custom defined type.
      */
-    val requestDataType: AbstractType? = null
+    val requestDataType: AbstractType? = null,
 
+    /**
+     * Name of the request parameter (if any).
+     */
+    val requestParameterName: String? = null,
 )
 
 /**

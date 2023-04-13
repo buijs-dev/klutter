@@ -23,11 +23,9 @@
 package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.*
-import dev.buijs.klutter.kore.ast.Controller
-import dev.buijs.klutter.kore.ast.ControllerData
-import dev.buijs.klutter.kore.ast.Singleton
+import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.maybePostfixToKJson
+import dev.buijs.klutter.kore.shared.toSnakeCase
 
 class IosAdapter(
     private val pluginClassName: String,
@@ -39,8 +37,28 @@ class IosAdapter(
     private val imports = setOf(
         "import Flutter",
         "import UIKit",
-        "import Platform"
+        "import Platform",
+        "import FlutterEngine"
     )
+
+    private val methodChannelNames =
+        methodChannels.map { "    $it" }
+
+    private val eventChannelNames =
+        eventChannels.map { "    $it" }
+
+    private val methodChannelHandlerSwitchClauses = controllers
+        .flatMap { it.functions }
+        .map { listOf(
+            """       case "${it.command}":""",
+            """self.${it.command}(result: result, data: data)""")
+        }
+        .flatten()
+
+    private val methodChannelHandlerFunctions = controllers
+        .filter { it.functions.isNotEmpty() }
+        .flatMap { it.functions.flatMap { func -> func.methodHandlerString(it.instanceOrConstructor()) } }
+        .sorted()
 
     private val singletonControllerVariables = controllers
         .filter { it is Singleton }
@@ -48,97 +66,154 @@ class IosAdapter(
         .map { """private val ${it.replaceFirstChar { char -> char.lowercase() }}: $it = $it()""" }
         .toSet()
 
+    private val broadcastControllerReceivers = controllers
+        .filterIsInstance<BroadcastController>()
+        .map { """
+            |     case "${it.className.toSnakeCase()}":
+            |           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(
+            |                  onEach: { value in
+            |                            eventSink(value${it.response.responseDecoderOrEmpty()})
+            |                        },
+            |                  onCompletion: { error in
+            |                             eventSink("ERROR: \("error")")
+            |                        }
+            |                  )
+            |         return nil
+        """ }
+
     override fun print(): String = buildString {
         appendLines(imports)
         appendLine()
-        appendLine("public class Swift$pluginClassName: NSObject, FlutterPlugin, FlutterStreamHandler {")
+        appendLine("public class $pluginClassName: NSObject, FlutterPlugin, FlutterStreamHandler {")
+        appendLine()
+        appendLine("    static let mcs: Set = [")
+        appendLines(methodChannelNames)
+        appendLine("    ]")
+        appendLine()
+        appendLine("    static let ecs: Set = [")
+        appendLines(eventChannelNames)
+        appendLine("    ]")
+        appendLine()
+        appendLine("    var ecFacade: EventChannelFacade!")
+        appendLine("    let methodChannels: Set<FlutterMethodChannel> = []")
         appendLine()
         appendLines(singletonControllerVariables)
         appendLine()
-        appendLine("    public static func register(with registrar: FlutterPluginRegistrar) {")
+        appendTemplate(
+            """
+                |    public static func register(with registrar: FlutterPluginRegistrar) {
+                |        let messenger = registrar.messenger()
+                |        let instance = $pluginClassName()
+                |        
+                |        for name in mcs {
+                |           let channel = FlutterMethodChannel(name: name, binaryMessenger: messenger)
+                |            instance.methodChannels.insert(channel)
+                |            registrar.addMethodCallDelegate(instance, channel: channel)
+                |        }
+                |        
+                |        instance.ecFacade = EventChannelFacade(
+                |            handler: instance,
+                |            channels: Set(ecs.map { FlutterEventChannel(name: ${'$'}0, binaryMessenger: messenger) }) )
+                |   }
+                |       
+                |""")
+        appendLine("    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {")
+        appendLine("        let data = call.arguments")
+        appendLine("        switch call.method {")
+        appendLines(methodChannelHandlerSwitchClauses)
+        appendLine("            default:")
+        appendLine("                result(FlutterMethodNotImplemented)")
+        appendLine("            }")
+        appendLine("        }")
+        appendLine("    }")
+        appendLine()
+        appendLines(methodChannelHandlerFunctions)
+        appendTemplate("""
+            |public func onListen(withArguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
+            |        let topic = withArguments ?? "none"
+            |        switch "\(topic)" {
+           """)
+        appendLines(broadcastControllerReceivers)
+        appendTemplate("""|          case "none":
+            |           eventSink(FlutterError(code: "ERROR_CODE",
+            |                                         message: "Topic not provided!",
+            |                                         details: ""))
+            |       default:
+            |          eventSink(FlutterError(code: "ERROR_CODE",
+            |                               message: "Unknown topic",
+            |                               details: "\(withArguments)"))
+            |       }
+            |        return nil
+            |     }
+            |
+            |    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+            |                myBroadcastController.cancel()
+            |                counter.cancel()
+            |                ecFacade.cancel()
+            |                return nil
+            |    }
+            |
+            |}
+        """)
     }
 
-//    """
-//
-//
-//            |
-//            |        let channel = FlutterMethodChannel(name: "$methodChannelName", binaryMessenger: registrar.messenger())
-//            |        let instance = Swift$pluginClassName()
-//            ${controllers.printInstanceControllerSetter()}
-//            |        registrar.addMethodCallDelegate(instance, channel: channel)
-//            |        FlutterEventChannel(name: "$methodChannelName/stream", binaryMessenger: registrar.messenger())
-//            |                .setStreamHandler(instance)
-//            |  }
-//            |
-//            |  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-//            |    switch call.method {
-//            ${methods.printFunctionBodies()}
-//            |    default:
-//            |         result(FlutterMethodNotImplemented)
-//            |    }
-//            |  }
-//            ${methods.joinToString("\n\n") { it.print() }}
-//            |    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-//            |
-//            ${controllers.printBroadcastReceivers()}
-//            |
-//            |       return nil
-//            |    }
-//            |
-//            |    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-//            ${controllers.printControllerCancellers()}
-//            |        return nil
-//            |    }
-//            |}
-//            |""".trimMargin()
+    private fun Method.methodHandlerString(instanceOrConstuctor: String): List<String> {
+        val method = method.replace("(context)", """(context: "")""")
 
-}
+        val responseDecoderOrEmpty =
+            responseDataType.responseDecoderOrEmpty()
 
-internal fun ControllerData.lowercaseName() = this.name.lowercase()
+        if(this.requestDataType != null) {
+            return methodHandlerWithArgument(instanceOrConstuctor, responseDecoderOrEmpty)
+        }
 
-private fun List<ControllerData>.printControllerInstance() =
-    this.joinToString("\n") { "    private var ${it.lowercaseName()}: ${it.name}?" }
+        return if(async) {
+            listOf(
+                """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
+                   |        ${method.removeSuffix("()")} { maybeData, error in
+                   |            if let response = maybeData result(response$responseDataType) }
+                   |
+                   |            if let failure = error { result(failure) }
+                   |        }
+                   |    }
+                """.trimMargin())
+        } else {
+            listOf(
+                """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
+                   |        result($instanceOrConstuctor.$method()$responseDecoderOrEmpty)
+                   |    }
+                """.trimMargin())
+        }
+    }
 
-private fun List<ControllerData>.printInstanceControllerSetter() =
-    this.joinToString("\n") { "    instance.${it.lowercaseName()} = ${it.name}()" }
+    private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoderOrEmpty: String): List<String> {
+        val requestDecoder = when(requestDataType) {
+            is StringType -> "stringOrNull"
+            else -> ""
+        }
 
-private fun List<ControllerData>.printControllerCancellers() =
-    this.joinToString("\n") { "        ${it.lowercaseName()}?.cancel()" }
+        return listOf(
+            "func ${command}(data: Any?, result: @escaping FlutterResult) {",
+            "   let dataOrNull: String? = TypeHandlerKt.$requestDecoder(data: data)",
+            "    if(dataOrNull == nil) {",
+            "       result(FlutterError(code: \"ERROR_CODE\",",
+            "                           message: \"Expected ${requestDataType?.className} but got \\(dataOrNull)\",",
+            "                           details: nil))",
+            "     } else {",
+            "       result($instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty)",
+            "     }",
+            "}"
+        )
+    }
 
-private fun List<ControllerData>.printBroadcastReceivers() =
-    this.joinToString("\n") { """
-    |        ${it.lowercaseName()}?.receiveBroadcastIOS().collect(
-    |            onEach: { value in
-    |                events(value.toKJson())
-    |            },
-    |            onCompletion: { error in
-    |                events("ERROR: \("error")")
-    |            }
-    |       )
-    """.trimMargin() }
+    private fun Controller.instanceOrConstructor() = when(this) {
+        is Singleton -> className.replaceFirstChar { char -> char.lowercase() }
+        else -> "${className}()"
+    }
 
-private fun List<Method>.printFunctionBodies() = joinToString("\n") {
-//    """ |       case "${it.methodId}":
-//            |            self.${it.command}(result: result)""".trimMargin()
-    ""
-}
-
-private fun Method.print(): String {
-    val method = method.replace("(context)", """(context: "")""")
-//    return if(async) {
-//        """|    func ${command}(result: @escaping FlutterResult) {
-//               |        ${method.removeSuffix("()")} { data, error in
-//               |            if let response = data { result(response${responseDataType.maybePostfixToKJson()}) }
-//               |
-//               |            if let failure = error { result(failure) }
-//               |        }
-//               |    }
-//            """.trimMargin()
-//    } else {
-//        """|    func ${command}(result: @escaping FlutterResult) {
-//               |        result(${method}${responseDataType.maybePostfixToKJson()})
-//               |    }
-//            """.trimMargin()
-//    }
-    return ""
+    private fun AbstractType.responseDecoderOrEmpty() = when(this) {
+        is StandardType -> ""
+        is Nullable -> "?.toKJson()"
+        else -> ".toKJson()"
+    }
 }

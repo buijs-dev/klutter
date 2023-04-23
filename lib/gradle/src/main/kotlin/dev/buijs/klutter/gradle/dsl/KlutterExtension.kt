@@ -19,6 +19,8 @@
  * SOFTWARE.
  *
  */
+@file:Suppress("unused")
+
 package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.KlutterException
@@ -33,6 +35,7 @@ import java.util.*
 /**
  * Glue for the DSL used in a build.gradle(.kts) file and the Klutter tasks.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 open class KlutterExtension(project: Project) {
 
     private val handler = KlutterDependencyHandler(project)
@@ -52,22 +55,36 @@ open class KlutterExtension(project: Project) {
     /**
      * Add klutter implementation dependency to this project.
      */
-    @Suppress("unused")
-    fun include(simpleModuleName: String, version: String? = null, test: Boolean = false) {
-        if(test) {
-            includeTest(simpleModuleName, version)
-        } else {
-            handler.addImplementation(simpleModuleName, version)
+    @JvmOverloads
+    fun include(
+        simpleModuleName: String,
+        version: String? = null,
+        test: Boolean = false
+    ) {
+        when {
+            simpleModuleName == "bill-of-materials" || simpleModuleName == "bom"-> {
+                handler.addImplementation("annotations", version)
+                handler.addImplementation("kompose", version)
+                handler.addImplementation("kore", version)
+                handler.addImplementation("tasks", version)
+                handler.includeCompilerPlugin(version = version)
+            }
+            simpleModuleName == "compiler" ->
+                handler.includeCompilerPlugin(version = version)
+            test ->
+                includeTest(simpleModuleName, version)
+            else ->
+                handler.addImplementation(simpleModuleName, version)
         }
     }
 
     /**
      * Add klutter testImplementation dependency to this project.
      */
+    @JvmOverloads
     fun includeTest(simpleModuleName: String, version: String? = null) {
         handler.addTestImplementation(simpleModuleName, version)
     }
-
 
 }
 
@@ -84,6 +101,21 @@ open class KlutterExtension(project: Project) {
  *
  */
 class KlutterDependencyHandler(private val project: Project) {
+
+    fun includeCompilerPlugin(version: String? = null) {
+        project.dependencies.add(
+            "kspCommonMainMetadata",
+            "dev.buijs.klutter:compiler:${version?:KlutterVersion.byName("compiler")}"
+        )
+        project.dependencies.add(
+            "kspCommonMainMetadata",
+            "dev.buijs.klutter:kore:${version?:KlutterVersion.byName("kore")}"
+        )
+        project.dependencies.add(
+            "kspCommonMainMetadata",
+            "dev.buijs.klutter:tasks:${version?:KlutterVersion.byName("tasks")}"
+        )
+    }
 
     fun addImplementation(simpleModuleName: String, version: String? = null) {
         val multiplatform = findKotlinMultiplatformExtension()
@@ -157,6 +189,9 @@ internal object KlutterVersion {
     val annotations: String = properties.getProperty("annotations.version")
         ?: throw KlutterException("Missing 'annotations.version' in Klutter Gradle Jar.")
 
+    val compiler: String = properties.getProperty("compiler.version")
+        ?: throw KlutterException("Missing 'compiler.version' in Klutter Gradle Jar.")
+
     val kore: String = properties.getProperty("kore.version")
         ?: throw KlutterException("Missing 'kore.version' in Klutter Gradle Jar.")
 
@@ -168,6 +203,9 @@ internal object KlutterVersion {
 
     val kompose: String = properties.getProperty("kompose.version")
         ?: throw KlutterException("Missing 'kompose.version' in Klutter Gradle Jar.")
+
+    val flutterEngine: String = properties.getProperty("flutter.engine.version")
+        ?: throw KlutterException("Missing 'flutter.engine.version' in Klutter Gradle Jar.")
 }
 
 internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simpleModuleName) {
@@ -176,5 +214,7 @@ internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simp
     "kore" -> kore
     "gradle" -> gradle
     "tasks" -> tasks
+    "compiler" -> compiler
+    "flutter-engine-android" -> flutterEngine
     else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
 }

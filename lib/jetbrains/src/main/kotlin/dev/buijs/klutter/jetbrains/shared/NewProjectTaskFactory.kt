@@ -25,7 +25,10 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.tasks.GeneratePluginProjectTask
+import dev.buijs.klutter.tasks.executor
+import dev.buijs.klutter.tasks.input.*
+import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
+import dev.buijs.klutter.tasks.project.ProjectBuilderTask
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
@@ -38,57 +41,53 @@ object NewProjectTaskFactory {
         config: NewProjectConfig,
         project: Project? = null,
     ): Task = createKlutterPluginTask(
-            pathToRoot = pathToRoot,
-            project = project,
-            name = config.appName ?: klutterPluginDefaultName,
-            group = config.groupName ?: klutterPluginDefaultGroup,
-    )
+        project = project,
+        options = ProjectBuilderOptions(
+            rootFolder = toRootFolder(pathToRoot),
+            pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
+            groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup)))
 }
 
 /**
  * Create a Klutter plugin project.
  */
 private fun createKlutterPluginTask(
-    pathToRoot: String,
-    name: String,
-    group: String,
+    options: ProjectBuilderOptions,
     project: Project? = null,
 ): Task.Modal {
 
-    val task = GeneratePluginProjectTask(
-        pathToRoot = pathToRoot,
-        pluginName = name,
-        groupName = group,
-        executor = JetbrainsExecutor()
-    )
-
+    val task = ProjectBuilderTask(options = options)
+    val rootFolder = options.rootFolder.validRootFolderOrThrow()
     return createKlutterTask(
-        pathToRoot = pathToRoot,
+        pathToRoot = rootFolder,
         project = project,
-        task = { task.run(); pathToRoot.moveUpFolder(name) }
+        task = {
+            executor = JetbrainsExecutor()
+            task.run()
+            rootFolder.moveUpFolder(options.pluginName.validPluginNameOrThrow()) }
+
     )
 }
 
 /**
  * Copies the generated project to the root folder.
  */
-private fun String.moveUpFolder(pluginName: String) {
-    File(this).let { root ->
-        root.resolve(pluginName).let { subRoot ->
-            // Change subRoot name just in case root and subRoot name are identicial.
-            File("${subRoot.parent}/klutterTempFolderName").let { temp ->
-                subRoot.renameTo(temp)
-                temp.copyRecursively(root, overwrite = true)
-                temp.deleteRecursively()
-            }
-            // Adjust the path in the .klutter-plugins file because it is
-            // an absolute path which is now incorrect due to moving the entire
-            // generated folder to a parent folder.
-            root.resolve("example/.klutter-plugins")
-                .writeText(":klutter:$pluginName=${root.absolutePath}/android/klutter")
+private fun File.moveUpFolder(pluginName: String) {
+    this.resolve(pluginName).let { subRoot ->
+        // Change subRoot name just in case root and subRoot name are identicial.
+        File("${subRoot.parent}/klutterTempFolderName").let { temp ->
+            subRoot.renameTo(temp)
+            temp.copyRecursively(this, overwrite = true)
+            temp.deleteRecursively()
         }
-        root.resolve("gradlew.bat").makeExecutable()
-        root.resolve("gradlew").makeExecutable()
+
+        // Adjust the path in the .klutter-plugins file because it is
+        // an absolute path which is now incorrect due to moving the entire
+        // generated folder to a parent folder.
+        resolve("example/.klutter-plugins")
+            .writeText(":klutter:$pluginName=${absolutePath}/android/klutter")
+        resolve("gradlew.bat").makeExecutable()
+        resolve("gradlew").makeExecutable()
     }
 }
 
@@ -105,7 +104,7 @@ private fun File.makeExecutable() {
 @Suppress("DialogTitleCapitalization")
 private fun createKlutterTask(
     project: Project? = null,
-    pathToRoot: String,
+    pathToRoot: File,
     task: () -> Unit,
 ) = object: Task.Modal(null,"Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
@@ -119,7 +118,7 @@ private fun createKlutterTask(
         progressIndicator.fraction = 0.8
         project?.let {
             GradleUnlinkedProjectAware()
-                .linkAndLoadProject(it, pathToRoot)
+                .linkAndLoadProject(it, pathToRoot.absolutePath)
         }
         progressIndicator.fraction = 1.0
     }

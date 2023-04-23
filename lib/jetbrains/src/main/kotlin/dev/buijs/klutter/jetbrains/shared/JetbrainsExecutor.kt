@@ -22,16 +22,18 @@
 package dev.buijs.klutter.jetbrains.shared
 
 import com.intellij.execution.configurations.GeneralCommandLine
-import dev.buijs.klutter.tasks.CliExecutor
+import dev.buijs.klutter.tasks.Executor
+import dev.buijs.klutter.tasks.finish
 import java.io.File
 
-class JetbrainsExecutor: CliExecutor() {
+class JetbrainsExecutor: Executor() {
 
-    override fun String.execute(
+    override fun execute(
         runFrom: File,
         timeout: Long?,
+        command: String,
         environment: Map<String, String>,
-    ): String = GeneralCommandLine(this.split(" "))
+    ): String = GeneralCommandLine(command.split(" "))
         .also { it.workDirectory = runFrom }
         .also { it.environment.putAll(environment) }
         .createProcess()

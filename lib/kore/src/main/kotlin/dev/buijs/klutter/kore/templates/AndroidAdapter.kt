@@ -37,6 +37,9 @@ class AndroidAdapter(
     private val importsFramework = setOf(
         "import android.app.Activity",
         "import android.content.Context",
+        "import dev.buijs.klutter.EventChannelFacade",
+        "import dev.buijs.klutter.MethodChannelFacade",
+        "import dev.buijs.klutter.registerEventSink",
         "import io.flutter.embedding.engine.plugins.activity.ActivityAware",
         "import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding",
         "import io.flutter.embedding.engine.plugins.FlutterPlugin",
@@ -75,7 +78,7 @@ class AndroidAdapter(
 
     private val broadcastCancellations = controllers
         .filterIsInstance<BroadcastController>()
-        .map { "${it.instance()}.cancel()" }
+        .map { "        ${it.instance()}.cancel()" }
 
     private val methodChannelHandlerWhenClauses = controllers
         .filter { it.functions.isNotEmpty() }
@@ -95,11 +98,11 @@ class AndroidAdapter(
         appendLines(importsFramework)
         appendLines(importsControllers)
         appendLine()
-        appendLine("private val methodChannelNames = listOf(")
+        appendLine("private val methodChannelNames = setOf(")
         appendLines(methodChannelNames)
         appendLine(")")
         appendLine()
-        appendLine("private val eventChannelNames = listOf(")
+        appendLine("private val eventChannelNames = setOf(")
         appendLines(eventChannelNames)
         appendLine(")")
         appendLine()
@@ -115,8 +118,9 @@ class AndroidAdapter(
         appendTemplate(
             """
                     |    override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-                    |        this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, mcs)
-                    |        this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, ecs)
+                    |        this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, methodChannelNames)
+                    |        this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, eventChannelNames)
+                    |    }        
                     |""")
         appendLine()
         appendTemplate(
@@ -152,11 +156,12 @@ class AndroidAdapter(
         appendLines(broadcastCancellations)
         appendLine("        ecFacade.cancel()")
         appendTemplate("""
+            |    }
             |
             |    override fun onDetachedFromEngine(
             |        binding: FlutterPlugin.FlutterPluginBinding
             |    ) {
-            |        ecFacade.cancel()
+            |        mcFacade.cancel()
             |    }
             |
             |    override fun onAttachedToActivity(

@@ -23,8 +23,6 @@ package dev.buijs.klutter.kore.project
 
 import com.fasterxml.jackson.annotation.*
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
 
 /**
  * The parsed pubspec.yaml file.
@@ -100,9 +98,6 @@ data class Pubspec(
     @JsonProperty("flutter")
     val flutter: PubspecFlutter? = null,
 
-    @JsonProperty("dependencies")
-    val dependencies: PubspecDependencies? = null,
-
 ) {
 
     /**
@@ -134,56 +129,7 @@ data class Pubspec(
     val ios: PubspecPluginClass?
         @JsonIgnore
         get() = platforms?.ios
-
-    @JsonIgnore
-    private val dependencyList: List<PubspecDependency> =
-        dependencies?.dependencies ?: emptyList()
-
-    val flutterSdk: String?
-        @JsonIgnore
-        get() = dependencyList.firstOrNull { it.key == "flutter" }?.nestedValue
-
-    val klutterVersion: String?
-        @JsonIgnore
-        get() = dependencyList.firstOrNull { it.key == "klutter" }?.valueOrSubKey
-
-    val squintVersion: String?
-        @JsonIgnore
-        get() = dependencyList.firstOrNull { it.key == "squint_json" }?.valueOrSubKey
-
 }
-
-@JsonSerialize(using = PubspecDependenciesSerializer::class)
-@JsonDeserialize(using = PubspecDependenciesDeserializer::class)
-data class PubspecDependencies(
-    val dependencies: List<PubspecDependency>?
-)
-
-/**
- * Flexible dependency wrapping which can be (deserialized)
- * with a path dependency value or version.
- *
- * Example with version:
- * ```
- * dependencies:
- *      squint_json: ^0.0.5
- * ```
- *
- * Example with path:
- * ```
- * dependencies:
- *      squint_json:
- *          path: ../../squint_json
- * ```
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonSerialize(using = PubspecDependencySerializer::class)
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class PubspecDependency(
-    val key: String,
-    val valueOrSubKey: String? = null,
-    val nestedValue: String? = null,
-)
 
 /**
  *  environment:

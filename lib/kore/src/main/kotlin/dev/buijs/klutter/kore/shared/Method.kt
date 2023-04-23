@@ -24,7 +24,6 @@ package dev.buijs.klutter.kore.shared
 
 import dev.buijs.klutter.kore.ast.AbstractType
 import dev.buijs.klutter.kore.ast.StandardTypeMap
-import dev.buijs.klutter.kore.project.Pubspec
 
 /**
  * Data class to contain information about analyzed Kotlin (Platform) code
@@ -98,11 +97,3 @@ data class Method(
      */
     val requestParameterName: String? = null,
 )
-
-/**
- * The method-channel name which uses the package name
- * defined in the pubspec.yaml or
- * defaults to <plugin-name>.klutter if not present.
- */
-fun Pubspec.toChannelName(): String =
-    android?.pluginPackage ?: "$name.klutter"

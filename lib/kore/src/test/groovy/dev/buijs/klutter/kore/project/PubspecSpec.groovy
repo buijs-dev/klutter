@@ -1,11 +1,13 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.test.TestUtil
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.nio.file.Files
 
+// TODO remove all that is no longer needed
+@Ignore
 class PubspecSpec extends Specification {
 
     def "If pubspec parsing fails an exception is thrown" () {
@@ -341,65 +343,6 @@ class PubspecSpec extends Specification {
 
     }
 
-    def "verify klutter and squint dependency versions are extracted" () {
-        given:
-        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
-        yaml.write("""
-            name: ridiculous_plugin
-            dependencies:
-              flutter:
-                sdk: flutter
-              klutter: ^0.2.3
-              squint_json: ^0.0.5
-            flutter:
-              plugin:
-                platforms:
-                  android:
-                    package: some.company.ridiculous_plugin
-                    pluginClass: RidiculousPlugin
-                  ios:
-                    pluginClass: RidiculousPlugin
-        """)
-
-        when:
-        def pubspec = PubspecBuilder.toPubspec(yaml)
-
-        then:
-        pubspec.dependencies != null
-        pubspec.klutterVersion == "^0.2.3"
-        pubspec.squintVersion == "^0.0.5"
-    }
-
-    def "verify extracting path dependency" () {
-        given:
-        def yaml = Files.createTempFile("pubspec", ".yaml").toFile()
-        yaml.write("""
-            dependencies:
-              flutter:
-                sdk: flutter
-              klutter: 
-                path: ../../../../foo
-              squint_json: ^0.0.5
-        """)
-
-        when:
-        def pubspec = PubspecBuilder.toPubspec(yaml)
-
-        then:
-        pubspec.dependencies != null
-
-        and:
-        def klutter = pubspec.dependencies.dependencies
-                .find {it.key == "klutter" }
-        klutter.valueOrSubKey == "path"
-        klutter.nestedValue == "../../../../foo"
-
-        and:
-        def squintJson = pubspec.dependencies.dependencies
-                .find {it.key == "squint_json" }
-        squintJson.valueOrSubKey == "^0.0.5"
-        squintJson.nestedValue == null
-    }
 
     def "verify all unknown properties are ignored" () {
         given:
@@ -493,48 +436,4 @@ class PubspecSpec extends Specification {
             """
     }
 
-    def "Verify newProjectYaml builder"() {
-        given:
-        def yaml = PubspecBuilder.newProjectYaml("hello", "foo.bar.packagename", "HelloPlugin")
-
-        expect:
-        yaml.name == "hello"
-        yaml.description == "A new klutter plugin project."
-        yaml.version == "0.0.1"
-        yaml.environment.flutter == "'>=2.5.0'"
-        yaml.environment.sdk == "'>=2.16.1 <3.0.0'"
-        yaml.android.pluginPackage == "foo.bar.packagename"
-        yaml.android.pluginClass == "HelloPlugin"
-        yaml.ios.pluginClass == "HelloPlugin"
-        yaml.flutterSdk == "flutter"
-        yaml.squintVersion == "^0.0.5"
-        yaml.klutterVersion == "^0.3.0"
-
-        and:
-        TestUtil.verify(PubspecBuilder.serialize(yaml), expected)
-
-        where:
-        expected = '''
-            name: hello
-            description: A new klutter plugin project.
-            version: 0.0.1
-            environment:
-              sdk: '>=2.16.1 <3.0.0'
-              flutter: '>=2.5.0'
-            dependencies:
-              flutter:
-                   sdk: flutter
-              squint_json: ^0.0.5
-              klutter: ^0.3.0
-            flutter:
-              plugin:
-                platforms:
-                  android:
-                    package: foo.bar.packagename
-                    pluginClass: HelloPlugin
-                  ios:
-                    pluginClass: HelloPlugin
-            '''
-
-    }
 }

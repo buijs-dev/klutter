@@ -42,44 +42,44 @@ class IosAdapter(
     )
 
     private val methodChannelNames =
-        methodChannels.map { "    $it" }
+        methodChannels.map { """      "$it", """ }
 
     private val eventChannelNames =
-        eventChannels.map { "    $it" }
+        eventChannels.map { """      "$it", """ }
 
     private val methodChannelHandlerSwitchClauses = controllers
         .flatMap { it.functions }
         .map { listOf(
-            """       case "${it.command}":""",
-            """self.${it.command}(result: result, data: data)""")
+            """        case "${it.command}":""",
+            """            self.${it.command}(data: data, result: result)""")
         }
         .flatten()
 
     private val methodChannelHandlerFunctions = controllers
         .filter { it.functions.isNotEmpty() }
         .flatMap { it.functions.flatMap { func -> func.methodHandlerString(it.instanceOrConstructor()) } }
-        .sorted()
 
     private val singletonControllerVariables = controllers
         .filter { it is Singleton }
         .map { it.className }
-        .map { """private val ${it.replaceFirstChar { char -> char.lowercase() }}: $it = $it()""" }
+        .map { """    private let ${it.replaceFirstChar { char -> char.lowercase() }}: $it = $it()""" }
         .toSet()
 
     private val broadcastControllerReceivers = controllers
         .filterIsInstance<BroadcastController>()
-        .map { """
-            |     case "${it.className.toSnakeCase()}":
-            |           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(
-            |                  onEach: { value in
-            |                            eventSink(value${it.response.responseDecoderOrEmpty()})
-            |                        },
-            |                  onCompletion: { error in
-            |                             eventSink("ERROR: \("error")")
-            |                        }
-            |                  )
-            |         return nil
-        """ }
+        .flatMap { listOf(
+            """     case "${it.className.toSnakeCase()}":""",
+            "           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(",
+            "                  onEach: { value in",
+            "                            eventSink(value${it.response.responseDecoderOrEmpty()})",
+            "                        },",
+            "                  onCompletion: { error in",
+            """                             eventSink("ERROR: \("error")")""",
+            "                        }",
+            "                  )",
+            "         return nil"
+           )
+         }
 
     override fun print(): String = buildString {
         appendLines(imports)
@@ -95,7 +95,7 @@ class IosAdapter(
         appendLine("    ]")
         appendLine()
         appendLine("    var ecFacade: EventChannelFacade!")
-        appendLine("    let methodChannels: Set<FlutterMethodChannel> = []")
+        appendLine("    var methodChannels: Set<FlutterMethodChannel> = []")
         appendLine()
         appendLines(singletonControllerVariables)
         appendLine()
@@ -121,11 +121,10 @@ class IosAdapter(
         appendLine("        let data = call.arguments")
         appendLine("        switch call.method {")
         appendLines(methodChannelHandlerSwitchClauses)
-        appendLine("            default:")
-        appendLine("                result(FlutterMethodNotImplemented)")
+        appendLine("         default:")
+        appendLine("            result(FlutterMethodNotImplemented)")
         appendLine("            }")
         appendLine("        }")
-        appendLine("    }")
         appendLine()
         appendLines(methodChannelHandlerFunctions)
         appendTemplate("""
@@ -170,8 +169,8 @@ class IosAdapter(
         return if(async) {
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
-                   |        ${method.removeSuffix("()")} { maybeData, error in
-                   |            if let response = maybeData result(response$responseDataType) }
+                   |        $instanceOrConstuctor.${method.removeSuffix("()")} { maybeData, error in
+                   |            if let response = maybeData { result(response$responseDecoderOrEmpty) }
                    |
                    |            if let failure = error { result(failure) }
                    |        }
@@ -189,6 +188,7 @@ class IosAdapter(
     private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoderOrEmpty: String): List<String> {
         val requestDecoder = when(requestDataType) {
             is StringType -> "stringOrNull"
+            // TODO other standardtypes
             else -> ""
         }
 
@@ -211,9 +211,14 @@ class IosAdapter(
         else -> "${className}()"
     }
 
-    private fun AbstractType.responseDecoderOrEmpty() = when(this) {
-        is StandardType -> ""
-        is Nullable -> "?.toKJson()"
-        else -> ".toKJson()"
+    private fun AbstractType.responseDecoderOrEmpty(alwaysNullable: Boolean = false): String {
+        return when {
+            this is StandardType -> ""
+            this is Nullable -> "?.toKJson()"
+            alwaysNullable -> "?.toKJson()"
+            else -> ".toKJson()"
+        }
     }
+
+
 }

@@ -1,15 +1,7 @@
 package dev.buijs.klutter.kore.ast
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.kore.shared.Language
-import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.MethodKt
-import dev.buijs.klutter.kore.test.TestResource
-import spock.lang.Shared
 import spock.lang.Specification
-
-import java.nio.file.Files
 
 class StandardTypeMapSpec extends Specification {
 

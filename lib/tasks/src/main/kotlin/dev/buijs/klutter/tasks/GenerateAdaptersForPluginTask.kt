@@ -27,7 +27,6 @@ import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.shared.*
 import dev.buijs.klutter.kore.templates.*
 import dev.buijs.klutter.kore.templates.flutter.*
-import java.io.File
 
 /**
  * Task to generate the boilerplate code required to
@@ -37,16 +36,13 @@ class GenerateAdaptersForPluginTask(
     private val android: Android,
     private val ios: IOS,
     private val root: Root,
+    private val methodChannelName: String,
+    private val pluginName: String,
     private val excludeArmArcFromPodspec: Boolean,
     private val controllers: List<Controller>,
     private val metadata: List<SquintMessageSource>,
-    private val executor: CliExecutor = CliExecutor(),
     private val log: (String) -> Unit = {  },
 ) : KlutterTask {
-
-    private val pubspec = root.toPubspec()
-
-    private val methodChannelName = pubspec.toChannelName()
 
     override fun run() {
 
@@ -125,7 +121,7 @@ class GenerateAdaptersForPluginTask(
 
         root.pathToLibFile.maybeCreate().write(
             PackageLib(
-                name = pubspec.name ?: "klutter_generated_library",
+                name = pluginName,
                 exports = srcFolder.walkTopDown()
                     .toList()
                     .filter { it.isFile }
@@ -161,9 +157,4 @@ class GenerateAdaptersForPluginTask(
 
     }
 
-    /**
-     * Execute a CLI command in the given folder.
-     */
-    private fun String.execute(runFrom: File) =
-        executor.execute(runFrom = runFrom, command = this)
 }

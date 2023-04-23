@@ -21,7 +21,10 @@
  */
 package dev.buijs.klutter.tasks
 
+import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.test.TestUtil
+import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
+import dev.buijs.klutter.tasks.project.ProjectBuilderTask
 import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
@@ -30,7 +33,7 @@ import java.nio.file.Files
 
 @Ignore
 // TODO example folder is not generated correctly yet...
-class GeneratePluginProjectTaskSpec extends Specification {
+class ProjectBuilderTaskSpec extends Specification {
 
     @Shared
     def executor = new Exeggutor()
@@ -60,7 +63,9 @@ class GeneratePluginProjectTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
-    def sut = new GeneratePluginProjectTask(pathToRoot, pluginName, groupName, executor)
+    def sut = new ProjectBuilderTask(
+            new ProjectBuilderOptions(Either.ok(pathToRoot), Either.ok(pluginName), Either.ok(groupName))
+    )
 
     @Shared
     def createFlutterPlugin = "flutter create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios"
@@ -77,6 +82,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
     def setupSpec() {
         plugin.mkdirs()
         example.mkdirs()
+        ExecutorKt.executor = executor
     }
 
     def "Verify a new project is created"(){
@@ -264,7 +270,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
           uses-material-design: true
     """
 
-    private static class Exeggutor extends CliExecutor {
+    private static class Exeggutor extends Executor {
 
         /**
          * Map of expected CLI executions.
@@ -275,7 +281,7 @@ class GeneratePluginProjectTaskSpec extends Specification {
         private def expectations = new HashMap<String,List<String>>()
 
         @Override
-        String execute(String command, File runFrom, Long timeout, Map<String, String> env) {
+        String execute(File runFrom, Long timeout, String command, Map<String, String> env) {
             if(expectations.containsKey(runFrom.absolutePath)) {
                 if(expectations[runFrom.absolutePath].contains(command)) {
                     return ""

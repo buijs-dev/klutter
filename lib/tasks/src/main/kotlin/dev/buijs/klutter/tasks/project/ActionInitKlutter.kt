@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,114 +19,62 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.tasks.project
 
-import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.kore.shared.verifyExists
-import java.io.File
+import dev.buijs.klutter.tasks.execute
+import dev.buijs.klutter.tasks.input.PluginName
+import dev.buijs.klutter.tasks.input.RootFolder
+import dev.buijs.klutter.tasks.input.validPluginNameOrThrow
+import dev.buijs.klutter.tasks.input.validRootFolderOrThrow
 
-/**
- * Task to generate a klutter plugin project.
- */
-class GeneratePluginProjectTask(
-    /**
-     * Path to the folder where to create the new project.
-     */
-    private val pathToRoot: String,
+internal fun ProjectBuilderOptions.toInitKlutterAction() =
+    InitKlutter(rootFolder, pluginName)
 
-    /**
-     * Name of the plugin.
-     */
-    private val pluginName: String,
+internal class InitKlutter(
+    private val rootFolder: RootFolder,
+    private val pluginName: PluginName,
+): ProjectBuilderAction {
 
-    /**
-     * Name of the plugin organisation.
-     */
-    private val groupName: String,
+    override fun doAction() {
 
-    /**
-     * Utility to execute the flutter commands.
-     *
-     * Can be swapped for testing purposes.
-     */
-    private val executor: CliExecutor = CliExecutor(),
+        val pluginName = pluginName.validPluginNameOrThrow()
 
-    ) : KlutterTask {
+        val rootFolder = rootFolder.validRootFolderOrThrow().resolve(pluginName)
 
-    override fun run() {
-        File(pathToRoot).verifyExists().let { rootFolder ->
-            createProjectCommand executeFrom rootFolder
-                .also { initializeProjectTask(it).run() }
-        }
-    }
-
-    private val createProjectCommand get () = "" +
-            "flutter create $pluginName " +
-            "--org $groupName " +
-            "--template=plugin " +
-            "--platforms=android,ios"
-
-    private infix fun initializeProjectTask(rootFolder: File) =
-        InitializePluginProjectTask(
-            rootFolder = rootFolder.resolve(pluginName),
-            pluginName = pluginName,
-            executor = executor)
-
-    /**
-     * Execute a CLI command in the given folder.
-     */
-    private infix fun String.executeFrom(runFrom: File) =
-        executor.execute(runFrom = runFrom, command = this)
-}
-
-
-/**
- * Task to generate a klutter plugin project.
- */
-class InitializePluginProjectTask(
-
-    /**
-     * Path to the folder where to create the new project.
-     */
-    private val rootFolder: File,
-
-    /**
-     * Name of the plugin.
-     */
-    private val pluginName: String,
-
-    /**
-     * Utility to execute the flutter commands.
-     *
-     * Can be swapped for testing purposes.
-     */
-    private val executor: CliExecutor = CliExecutor(),
-
-    ) : KlutterTask {
-
-    override fun run() {
-        rootFolder.verifyExists()
         val exampleFolder = rootFolder.resolve("example")
+
         val rootPubspecFile = rootFolder.resolve("pubspec.yaml")
+
         val rootPubspec = rootPubspecFile.toPubspec()
 
-        rootFolder.pubspecInit(
-            name = rootPubspec.name ?: "",
-            androidPackageName = rootPubspec.androidPackageName(),
-            pluginClassName = rootPubspec.androidClassName("")
-        )
+        val klutterConfigFile = rootFolder.resolve("klutter.yaml")
+        val klutterConfig = if(klutterConfigFile.exists()) klutterConfigFile.toKlutterConfig() else null
 
-        "flutter pub get".execute(rootFolder)
-        "flutter pub get".execute(exampleFolder)
-        "flutter pub run klutter:producer init".execute(rootFolder)
-        "flutter pub run klutter:consumer init".execute(exampleFolder)
+        val examplePubspecFile = exampleFolder.resolve("pubspec.yaml")
 
-        rootFolder.resolve("local.properties").let { localProperties ->
-            if(!localProperties.exists()) {
-                rootFolder.resolve("android/local.properties").copyTo(localProperties)
-            }
-        }
+        rootPubspecInit(
+            pubspec = rootPubspec,
+            pubspecFile = rootPubspecFile,
+            config = klutterConfig)
+
+        examplePubspecInit(
+            rootPubspec = rootPubspec,
+            examplePubspecFile = examplePubspecFile,
+            config = klutterConfig)
+
+        println("root~")
+        println(rootPubspecFile.readText())
+        println("example~")
+        println(examplePubspecFile.readText())
+        "flutter pub get" execute rootFolder
+        "flutter pub get" execute exampleFolder
+        "flutter pub run klutter:producer init" execute rootFolder
+        "flutter pub run klutter:consumer init" execute exampleFolder
+
+        val properties = rootFolder.resolve("local.properties")
+        if(!properties.exists())
+            rootFolder.resolve("android/local.properties").copyTo(properties)
 
         // You should test, but we're going to do that with Spock/JUnit
         // in the platform module, not with Dart in the root/test folder.
@@ -134,7 +82,6 @@ class InitializePluginProjectTask(
 
         // Change the README content to explain Klutter plugin development.
         rootFolder.resolve("README.md").let { readme ->
-
             // Seems redundant to delete and then recreate the README.md file.
             // However, the project is created by invoking the Flutter version
             // installed by the end-user. Future versions of Flutter might not
@@ -163,9 +110,4 @@ class InitializePluginProjectTask(
         }
     }
 
-    /**
-     * Execute a CLI command in the given folder.
-     */
-    private fun String.execute(runFrom: File) =
-        executor.execute(runFrom = runFrom, command = this)
 }

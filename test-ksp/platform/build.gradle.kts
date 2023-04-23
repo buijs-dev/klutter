@@ -10,7 +10,6 @@ ksp {
     arg("klutterCopyAarFile", "true")
     arg("klutterCopyFramework", "true")
     arg("klutterGenerateAdapters", "true")
-    arg("klutterInitialize", "false")
 }
 
 buildscript {
@@ -32,6 +31,6 @@ dependencies {
     implementation(project(":lib:kompose"))
     implementation(project(":lib:compiler"))
     ksp(project(":lib:compiler"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 }

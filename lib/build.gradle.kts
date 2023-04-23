@@ -29,8 +29,17 @@ kover {
         // breaks Jacoco due to duplicate classes, haven't found a fix yet...
         ":lib:kompose",
 
+        // wrapper for flutter library, so not interesting...
+        ":lib:flutter-engine",
+
         // a test-only module
         ":lib-test",
+
+        // a test-only module
+        ":test-integration",
+
+        // for KSP testing only
+        ":test-ksp",
     )
 }
 

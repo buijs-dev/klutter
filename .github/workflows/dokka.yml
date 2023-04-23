@@ -35,7 +35,7 @@ jobs:
 
       # Generate the HTML documentation pages
       - name: Generate documentation
-        run: gradle dokkaHtmlMultiModule
+        run: gradle dokkaHtmlMultiModule -p "lib"
 
       # Deploy the HTML documentation to GitHub pages
       - uses: crazy-max/ghaction-github-pages@v2

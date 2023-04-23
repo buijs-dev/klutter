@@ -32,11 +32,11 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.4.2
-          arguments: clean build koverMergedXmlReport
+          arguments: clean build koverMergedXmlReport -p "lib"
 
       - uses: codecov/codecov-action@v2
         with:
-          file: build/koverage.xml
+          file: lib/build/koverage.xml
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

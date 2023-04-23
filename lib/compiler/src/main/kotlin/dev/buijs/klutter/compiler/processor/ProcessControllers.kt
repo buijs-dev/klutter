@@ -240,7 +240,6 @@ private fun Sequence<KSAnnotated>.methods(): List<Either<String, Method>> = this
     .map { node ->
         val function = (node as KSFunctionDeclaration)
         function.returnType?.resolve().toAbstractFunctionType(function)
-
     }.toList()
 
 private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Either<String, Method> {
@@ -284,7 +283,7 @@ private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Eit
             command = command,
             import = declaration.packageName.asString(),
             method = method,
-            async = function.modifiers.any { isSuspendFunctionType },
+            async = function.modifiers.map { "$it"}.any { it == "SUSPEND" },
             responseDataType = (responseTypeOrError as ValidAbstractType).data,
             requestDataType = requestTypeOrErrorOrNull?.let { (it as ValidAbstractType).data },
             requestParameterName = requestParameterOrNull?.name?.getShortName(),

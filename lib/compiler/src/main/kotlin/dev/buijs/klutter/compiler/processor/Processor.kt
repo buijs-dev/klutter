@@ -28,6 +28,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.project.plugin
+import dev.buijs.klutter.kore.project.toPubspec
 import dev.buijs.klutter.tasks.*
 
 /**
@@ -41,6 +42,7 @@ class Processor(
 
     private val output = options.outputFolder
     private val project = output.plugin()
+    private val pubspec = project.root.toPubspec()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
 
@@ -102,6 +104,8 @@ class Processor(
         logger.info("Response count: ${metadata.size}")
         logger.info("Controller count: ${controllers.size}")
         logger.info("=============================================================")
+        val pluginName = pubspec.name ?: "klutter_library"
+        val methodChannelName = pubspec.android?.pluginPackage ?: "$pluginName.klutter"
         GenerateAdaptersForPluginTask(
             android = project.android,
             ios = project.ios,
@@ -109,6 +113,8 @@ class Processor(
             controllers = controllers,
             metadata = metadata,
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
+            methodChannelName = methodChannelName,
+            pluginName = pluginName,
             log = { str -> logger.info("Running dart command:\n$str") }
         ).run()
     }

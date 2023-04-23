@@ -38,22 +38,23 @@ dependencies {
 
     // KSP for annotation scanning
     implementation(kotlin("stdlib"))
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.7.20-1.0.6")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.10-1.0.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
     // Jackson for XML and YAML
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.4")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.3")
-    implementation("io.github.microutils:kotlin-logging:3.0.2")
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // T-t-t-t-testing !
-    testImplementation(project(":lib-test"))
     testImplementation(project(":lib:kore"))
+    testImplementation(project(":lib:tasks"))
+    testImplementation(project(":lib-test"))
 }
 
 publishing {

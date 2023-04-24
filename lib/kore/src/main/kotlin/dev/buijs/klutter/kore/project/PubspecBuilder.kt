@@ -88,7 +88,7 @@ fun File.toPubspec(): Pubspec {
 fun rootPubspecInit(
     pubspecFile: File,
     pubspec: Pubspec,
-    config: KlutterConfig? = null,
+    config: Config? = null,
 ): File {
     pubspecFile.write(createRootPubspecYamlWriter(pubspec, config))
     return pubspecFile
@@ -97,7 +97,7 @@ fun rootPubspecInit(
 fun examplePubspecInit(
     examplePubspecFile: File,
     rootPubspec: Pubspec,
-    config: KlutterConfig? = null,
+    config: Config? = null,
 ): File {
     examplePubspecFile.write(createExamplePubspecYamlWriter(rootPubspec, config))
     return examplePubspecFile

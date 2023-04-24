@@ -48,7 +48,7 @@ private val pathDependencyRegex = """(^local)@(.+/)(.+${'$'})""".toRegex()
  */
 fun createRootPubspecYamlWriter(
     pubspec: Pubspec,
-    config: KlutterConfig?
+    config: Config?
 ): KlutterPrinter {
 
     return object: KlutterPrinter {
@@ -88,7 +88,7 @@ fun createRootPubspecYamlWriter(
  */
 fun createExamplePubspecYamlWriter(
     pubspec: Pubspec,
-    config: KlutterConfig?
+    config: Config?
 ): KlutterPrinter {
 
     return object: KlutterPrinter {
@@ -107,7 +107,7 @@ fun createExamplePubspecYamlWriter(
             appendLine("    ${pubspec.name}:")
             appendLine("        path: ../")
             appendLine("")
-            appendDependency(config?.dependencies?.klutterUi ?: klutterUIPubVersion, name = "klutter_ui")
+            appendDependency(config?.dependencies?.klutterUI ?: klutterUIPubVersion, name = "klutter_ui")
             appendLine("")
             appendDependency(config?.dependencies?.squint ?: squintPubVersion, name = "squint_json")
             appendLine("")

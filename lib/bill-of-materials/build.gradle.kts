@@ -60,7 +60,6 @@ publishing {
 val includeModules = listOf(
     "annotations",
     "compiler",
-    "flutter-engine",
     "gradle",
     "kompose",
     "kore",

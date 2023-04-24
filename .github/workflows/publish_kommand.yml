@@ -22,7 +22,7 @@ jobs:
       - name: 'build distribution'
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 8.1
+          gradle-version: 7.4.2
           arguments: clean distZip
         working-directory: ./lib/kommand
       - name: 'create downloads folder'

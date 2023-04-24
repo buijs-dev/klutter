@@ -27,61 +27,80 @@ import dev.buijs.klutter.tasks.input.PluginName
 import dev.buijs.klutter.tasks.input.RootFolder
 import dev.buijs.klutter.tasks.input.validPluginNameOrThrow
 import dev.buijs.klutter.tasks.input.validRootFolderOrThrow
+import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
-    InitKlutter(rootFolder, pluginName)
+    InitKlutter(rootFolder, pluginName, config)
 
 internal class InitKlutter(
-    private val rootFolder: RootFolder,
-    private val pluginName: PluginName,
+    rootFolder: RootFolder,
+    pluginName: PluginName,
+    configOrNull: Config? = null
 ): ProjectBuilderAction {
 
+    private val name = pluginName.validPluginNameOrThrow()
+    private val root = rootFolder.validRootFolderOrThrow().resolve(name)
+    private val conf = configOrNull
+    private val confContainsBom = conf?.bomVersion != null
+
+    private val rootPubspecFile =
+        root.resolve("pubspec.yaml")
+
+    private val rootPubspec =
+        rootPubspecFile.toPubspec()
+
+    private val exampleFolder =
+        root.resolve("example")
+
+    private val examplePubspecFile =
+        exampleFolder.resolve("pubspec.yaml")
+
     override fun doAction() {
-
-        val pluginName = pluginName.validPluginNameOrThrow()
-
-        val rootFolder = rootFolder.validRootFolderOrThrow().resolve(pluginName)
-
-        val exampleFolder = rootFolder.resolve("example")
-
-        val rootPubspecFile = rootFolder.resolve("pubspec.yaml")
-
-        val rootPubspec = rootPubspecFile.toPubspec()
-
-        val klutterConfigFile = rootFolder.resolve("klutter.yaml")
-        val klutterConfig = if(klutterConfigFile.exists()) klutterConfigFile.toKlutterConfig() else null
-
-        val examplePubspecFile = exampleFolder.resolve("pubspec.yaml")
+        if(confContainsBom)
+            root.writeKlutterYaml(conf!!.bomVersion!!)
 
         rootPubspecInit(
             pubspec = rootPubspec,
             pubspecFile = rootPubspecFile,
-            config = klutterConfig)
+            config = conf)
 
         examplePubspecInit(
             rootPubspec = rootPubspec,
             examplePubspecFile = examplePubspecFile,
-            config = klutterConfig)
+            config = conf)
 
-        println("root~")
-        println(rootPubspecFile.readText())
-        println("example~")
-        println(examplePubspecFile.readText())
-        "flutter pub get" execute rootFolder
+        root.deleteTestFolder()
+        root.clearLibFolder()
+        root.overwriteReadmeFile()
+        root.copyLocalProperties()
+        "flutter pub get" execute root
         "flutter pub get" execute exampleFolder
-        "flutter pub run klutter:producer init" execute rootFolder
+        "flutter pub run klutter:producer init" execute root
         "flutter pub run klutter:consumer init" execute exampleFolder
+    }
 
-        val properties = rootFolder.resolve("local.properties")
-        if(!properties.exists())
-            rootFolder.resolve("android/local.properties").copyTo(properties)
+    /**
+     * Delete test folder and all it's content.
+     *
+     * You should test, but we're going to do that with Spock/JUnit in the platform module,
+     * not with Dart in the root/test folder.
+     */
+    private fun File.deleteTestFolder() {
+        resolve("test").deleteRecursively()
+    }
 
-        // You should test, but we're going to do that with Spock/JUnit
-        // in the platform module, not with Dart in the root/test folder.
-        rootFolder.resolve("test").deleteRecursively()
+    /**
+     * Delete all Files in the root/lib folder.
+     */
+    private fun File.clearLibFolder() {
+        resolve("lib").listFiles()?.forEach { it.deleteRecursively() }
+    }
 
-        // Change the README content to explain Klutter plugin development.
-        rootFolder.resolve("README.md").let { readme ->
+    /**
+     * Change the README content to explain Klutter plugin development.
+     */
+    private fun File.overwriteReadmeFile() {
+        resolve("README.md").let { readme ->
             // Seems redundant to delete and then recreate the README.md file.
             // However, the project is created by invoking the Flutter version
             // installed by the end-user. Future versions of Flutter might not
@@ -90,11 +109,11 @@ internal class InitKlutter(
             //
             // In that case this code won't try to delete a file that does not
             // exist and only create a new file. We do NOT want the task to fail
-            // because of a README.md file now, do we? :-)
+            // because of a README.md file. :-)
             if(readme.exists()) readme.delete()
             readme.createNewFile()
             readme.writeText("""
-                |# $pluginName
+                |# $name
                 |A new Klutter plugin project. 
                 |Klutter is a framework which interconnects Flutter and Kotlin Multiplatform.
                 |
@@ -110,4 +129,16 @@ internal class InitKlutter(
         }
     }
 
+    private fun File.copyLocalProperties() {
+        val properties = resolve("local.properties")
+        if(!properties.exists())
+            resolve("android/local.properties").copyTo(properties)
+    }
+
+    private fun File.writeKlutterYaml(bomVersion: String) {
+        val rootConfigFile = resolve("klutter.yaml")
+        rootConfigFile.createNewFile()
+        rootConfigFile.writeText("bom-version: '$bomVersion'")
+    }
 }
+

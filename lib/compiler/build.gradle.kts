@@ -38,7 +38,7 @@ dependencies {
 
     // KSP for annotation scanning
     implementation(kotlin("stdlib"))
-    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.10-1.0.9")
+    implementation("com.google.devtools.ksp:symbol-processing-api:1.8.20-1.0.11")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
     // Jackson for XML and YAML

@@ -22,43 +22,6 @@ kotlin {
     iosArm64()
     iosArm32()
     iosSimulatorArm64()
-
-//    val myFrameworkDefFilePath = "FlutterFramework.def"
-//
-//    iosArm64 {
-//        val myFrameworkCompilerLinkerOpts =
-//            listOf("-framework", "FlutterFramework", "-F/Users/buijs/tools/flutter2/bin/cache/artifacts/engine/ios/Flutter.xcframework/ios-arm64/")
-//
-//        compilations.getByName("main") {
-//            val FlutterFramework by cinterops.creating {
-//                defFile(myFrameworkDefFilePath)
-//                compilerOpts(myFrameworkCompilerLinkerOpts)
-//                packageName("io.flutter")
-//            }
-//        }
-//
-//        binaries.all {
-//            linkerOpts(myFrameworkCompilerLinkerOpts)
-//        }
-//    }
-//
-//    iosSimulatorArm64 {
-//        val myFrameworkCompilerLinkerOpts =
-//            listOf("-framework", "FlutterFramework", "-F/Users/buijs/tools/flutter2/bin/cache/artifacts/engine/ios/Flutter.xcframework/ios-arm64_x86_64-simulator/")
-//
-//        compilations.getByName("main") {
-//            val FlutterFramework by cinterops.creating {
-//                defFile(myFrameworkDefFilePath)
-//                compilerOpts(myFrameworkCompilerLinkerOpts)
-//                packageName("io.flutter")
-//            }
-//        }
-//
-//        binaries.all {
-//            linkerOpts(myFrameworkCompilerLinkerOpts)
-//        }
-//    }
-
     cocoapods {
         summary = "Klutter Kompose module"
         homepage = "https://buijs.dev"
@@ -72,8 +35,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                 implementation(project(":lib:annotations"))
             }
         }
@@ -81,7 +44,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
-                //implementation(files("/Users/buijs/tools/flutter2/bin/cache/artifacts/engine/android-arm64/flutter.jar"))
             }
         }
         val iosArm32Main by getting
@@ -99,8 +61,8 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-                implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
+                implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
                 implementation(project(":lib:kore"))
                 implementation(project(":lib:annotations"))
             }

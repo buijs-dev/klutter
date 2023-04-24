@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
-    id("org.sonarqube") version "4.0.0.2929"
     id("klutter")
 }
 
@@ -38,18 +37,6 @@ kover {
         // for KSP testing only
         ":test-ksp",
     )
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "buijs-dev_klutter")
-        property("sonar.organization", "buijs-dev")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            project.buildDir.resolve("koverage.xml").absolutePath
-        )
-    }
 }
 
 tasks.withType<DokkaTask>().configureEach {

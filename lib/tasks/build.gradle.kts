@@ -76,8 +76,8 @@ dependencies {
     implementation(project(":lib:annotations"))
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.3")
-    implementation("io.github.microutils:kotlin-logging:3.0.2")
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     testImplementation(project(":lib-test"))
 }

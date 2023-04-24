@@ -25,10 +25,6 @@ intellij {
     plugins.set(listOf("java", "com.intellij.gradle","android"))
 }
 
-sonarqube {
-    isSkipProject = true
-}
-
 tasks {
 
     withType<JavaCompile> {

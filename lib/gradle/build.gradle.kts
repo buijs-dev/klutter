@@ -32,10 +32,6 @@ sourceSets {
     }
 }
 
-sonarqube {
-    isSkipProject = true
-}
-
 publishing {
 
     repositories {
@@ -113,17 +109,17 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
 
     // KSP Compiler plugin
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.8.10-1.0.9")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.8.20-1.0.11")
 
     // Jackson XML/YAML parsing
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.13.3")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.3")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.14.2")
 
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.0")
-    implementation("io.github.microutils:kotlin-logging:2.1.23")
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // Test
     testImplementation(project(":lib-test"))

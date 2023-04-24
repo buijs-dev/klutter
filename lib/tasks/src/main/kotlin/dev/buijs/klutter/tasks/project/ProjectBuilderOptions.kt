@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.tasks.project
 
+import dev.buijs.klutter.kore.project.Config
 import dev.buijs.klutter.tasks.input.GroupName
 import dev.buijs.klutter.tasks.input.PluginName
 import dev.buijs.klutter.tasks.input.RootFolder
@@ -40,4 +41,9 @@ data class ProjectBuilderOptions(
      * Name of the plugin organisation.
      */
     val groupName: GroupName,
+
+    /**
+     * Custom configuration for tweaking project generation.
+     */
+    val config: Config? = null,
 )

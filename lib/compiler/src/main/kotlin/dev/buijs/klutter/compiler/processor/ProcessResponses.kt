@@ -36,10 +36,10 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
- * FQDN for classes annotated with @KlutterResponse.
+ * FQDN for classes annotated with @Response.
  */
-private const val KLUTTER_RESPONSE_ANNOTATION =
-    "dev.buijs.klutter.annotations.KlutterResponse"
+private const val RESPONSE_ANNOTATION =
+    "dev.buijs.klutter.annotations.Response"
 
 /**
  * Alias for [Either] with only right value of type [SquintMessageSource].
@@ -54,7 +54,7 @@ typealias InvalidSquintType =
         EitherNok<String, SquintMessageSource>
 
 /**
- * Error indicating a class is missing the @KlutterResponse annotation.
+ * Error indicating a class is missing the @Response annotation.
  */
 private fun Any.missingSerializableAnnotation() =
     InvalidSquintType("Class is missing @Serializable annotation: $this")
@@ -66,17 +66,17 @@ private fun Any.doesNotExtendKlutterJSON() =
     InvalidSquintType("Class does not extend KlutterJSON: $this")
 
 /**
- * A KlutterResponse is invalid because it has multiple constructors.
+ * A Response is invalid because it has multiple constructors.
  */
 private fun Any.tooManyConstructors() = Either.nok<String, List<TypeMember>>(
-    "KlutterResponse $this has multiple constructors but only 1 is allowed."
+    "Response $this has multiple constructors but only 1 is allowed."
 )
 
 /**
- * A KlutterResponse is invalid because it has no constructor fields.
+ * A Response is invalid because it has no constructor fields.
  */
 private fun Any.emptyConstructor() = Either.nok<String, List<TypeMember>>(
-    "KlutterResponse $this constructor has no fields but atleast 1 is expected."
+    "Response $this constructor has no fields but atleast 1 is expected."
 )
 
 /**
@@ -86,11 +86,11 @@ private fun String.mutabilityError() =
     InvalidTypeMember("TypeMember is mutable: '$this'")
 
 /**
- * Process all class annotated with @KlutterResponse.
+ * Process all class annotated with @Response.
  */
-internal fun Resolver.annotatedWithKlutterResponse(
+internal fun Resolver.annotatedWithResponse(
     outputFolder: File
-): List<Either<String, SquintMessageSource>> = getSymbolsWithAnnotation(KLUTTER_RESPONSE_ANNOTATION)
+): List<Either<String, SquintMessageSource>> = getSymbolsWithAnnotation(RESPONSE_ANNOTATION)
     .filterIsInstance<KSClassDeclaration>()
     .toList()
     .map { it.toAbstractTypeOrFail() }

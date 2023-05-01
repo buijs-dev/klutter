@@ -99,5 +99,5 @@ private fun askForPathToLocal(name: String): String = KInquirer.promptInput(
     default = Paths.get("").absolutePathString())
 
 private fun askForKlutterGradleBomVersion(): String = KInquirer.promptInput(
-    message = "Enter klutter bill-of-materials version:",
+    message = "Enter bill-of-materials version:",
     default = klutterKommanderVersion)

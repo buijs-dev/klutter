@@ -1,6 +1,5 @@
 package dev.buijs.klutter.kore
 
-import dev.buijs.klutter.kore.KlutterException
 import spock.lang.Specification
 
 class ExceptionSpec extends Specification {

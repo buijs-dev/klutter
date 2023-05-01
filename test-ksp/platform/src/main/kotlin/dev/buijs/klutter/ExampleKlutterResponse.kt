@@ -1,13 +1,13 @@
 package dev.buijs.klutter
 
-//import dev.buijs.klutter.annotations.KlutterResponse
+//import dev.buijs.klutter.annotations.Response
 //import kotlinx.serialization.Serializable
 //
 //@Serializable
-//@KlutterResponse
-//class ExampleKlutterResponse {
+//@Response
+//class ExampleResponse {
 //}
 //
-//@KlutterResponse
+//@Response
 //class NotSerializableResponse {
 //}

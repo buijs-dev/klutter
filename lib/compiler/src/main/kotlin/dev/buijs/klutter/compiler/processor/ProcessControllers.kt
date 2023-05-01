@@ -31,7 +31,7 @@ import dev.buijs.klutter.kore.ast.RequestScopedController
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
-import dev.buijs.klutter.kore.shared.Method
+import dev.buijs.klutter.kore.ast.Method
 import java.io.File
 
 /**
@@ -79,7 +79,7 @@ internal typealias InvalidAdaptee =
         EitherNok<String, Method>
 
 /**
- * Process all class annotated with @KlutterResponse.
+ * Process all class annotated with @Controller.
  */
 internal fun Resolver.annotatedWithController(
     outputFolder: File
@@ -193,7 +193,6 @@ private fun KSClassDeclaration.toController(
                         )
                     )
                 }
-
                 else -> {
                     ValidControllerType(
                         data = SingletonBroadcastController(
@@ -207,7 +206,7 @@ private fun KSClassDeclaration.toController(
             }
         } else {
             InvalidControllerType(
-                data = "Publisher has invalid TypeParameter: $typeParameter (not a KlutterResponse class)"
+                data = "Publisher has invalid TypeParameter: $typeParameter (not a Response class)"
             )
         }
     }
@@ -244,13 +243,13 @@ private fun Sequence<KSAnnotated>.methods(): List<Either<String, Method>> = this
 
 private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Either<String, Method> {
     if(this == null)
-        return InvalidAdaptee(data = "KlutterAdaptee is missing a return value.")
+        return InvalidAdaptee(data = "Event is missing a return value.")
 
     val command = function.getCommand()
-        ?: return InvalidAdaptee(data = "KlutterAdaptee is missing value parameter 'name'.")
+        ?: return InvalidAdaptee(data = "Event is missing value parameter 'name'.")
 
     val method = function.qualifiedName?.getShortName()
-        ?: return InvalidAdaptee(data = "Unable to determine method signature of KlutterAdaptee.")
+        ?: return InvalidAdaptee(data = "Unable to determine method signature of Event.")
 
     val responseTypeOrError = TypeData(
         type = function.returnType?.toString() ?: "",
@@ -292,11 +291,11 @@ private fun KSType?.toAbstractFunctionType(function: KSFunctionDeclaration): Eit
 }
 
 private fun KSFunctionDeclaration.getCommand() = annotations
-    .firstOrNull { it.shortName.getShortName() == "KlutterAdaptee"}
+    .firstOrNull { it.shortName.getShortName() == "Event"}
     ?.arguments?.firstOrNull { it.name?.getShortName() == "name" }
     ?.value?.toString()
 
 private fun KSAnnotated.isAdaptee() = annotations
     .map{ it.shortName.getShortName() }
     .toList()
-    .contains("KlutterAdaptee")
+    .contains("Event")

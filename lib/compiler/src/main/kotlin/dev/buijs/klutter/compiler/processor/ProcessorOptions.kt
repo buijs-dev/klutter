@@ -24,7 +24,7 @@ package dev.buijs.klutter.compiler.processor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.compiler.processor.ProcessorOption.*
-import dev.buijs.klutter.kore.shared.verifyExists
+import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
 /**

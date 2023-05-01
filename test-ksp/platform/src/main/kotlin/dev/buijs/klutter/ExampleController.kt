@@ -1,7 +1,6 @@
 package dev.buijs.klutter
 
 import dev.buijs.klutter.annotations.*
-import dev.buijs.klutter.kompose.Listener
 import dev.buijs.klutter.kompose.Publisher
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -10,13 +9,13 @@ import kotlinx.serialization.serializer
 @Controller
 class MySimpleController {
 
-    @KlutterAdaptee(name = "foo")
+    @Event(name = "foo")
     fun foo(): String? = null
 
-    @KlutterAdaptee(name = "getChakka")
+    @Event(name = "getChakka")
     suspend fun chakka() = MyResponse(x = "", y = 1)
 
-    @KlutterAdaptee(name = "setChakka")
+    @Event(name = "setChakka")
     fun setChakka(chakka: String) = MyResponse(x = chakka, y = 1)
 }
 
@@ -39,7 +38,7 @@ class Counter: Publisher<Int>() {
 }
 
 @Serializable
-@KlutterResponse
+@Response
 open class MyResponse(
     val x: String?,
     val y: Int,
@@ -56,7 +55,7 @@ open class MyResponse(
 }
 
 @Serializable
-@KlutterResponse
+@Response
 enum class SomeValue(val x: String) {
     @SerialName("bla")
     BLA("bla!"),

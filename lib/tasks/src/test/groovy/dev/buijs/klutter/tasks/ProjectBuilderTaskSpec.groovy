@@ -182,7 +182,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 dependencies:
                   flutter:
                        sdk: flutter
-                  squint_json: ^0.0.5
+                  squint_json: ^0.0.6
                   klutter: ^0.3.0
                 flutter:
                   plugin:
@@ -243,7 +243,7 @@ class ProjectBuilderTaskSpec extends Specification {
         
         dependencies:
           klutter: ^0.3.0
-          squint_json: ^0.0.5
+          squint_json: ^0.0.6
           flutter:
             sdk: flutter
         

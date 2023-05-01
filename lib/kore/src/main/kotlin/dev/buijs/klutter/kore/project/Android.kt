@@ -23,12 +23,11 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.shared.removeSuffixIfPresent
-import dev.buijs.klutter.kore.shared.verifyExists
+import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
 /**
- * Wrapper class with a file instance pointing to the android sub-module.
+ * Wrapper class with a file instance pointing to the android submodule.
  *
  * @property folder path to the Android folder.
  */

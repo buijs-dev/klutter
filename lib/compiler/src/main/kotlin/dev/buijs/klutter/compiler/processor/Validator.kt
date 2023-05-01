@@ -64,31 +64,31 @@ internal typealias InvalidSquintMessages =
         EitherNok<List<String>, List<SquintMessageSource>>
 
 /**
- * Error indicating multiple KlutterResponse classes have the same class name.
+ * Error indicating multiple Response classes have the same class name.
  */
-private fun duplicateKlutterResponseError(types: List<String>) = Invalid(
-    listOf("KlutterResponse contract violation! Duplicate class names: $types")
+private fun duplicateResponseError(types: List<String>) = Invalid(
+    listOf("Response contract violation! Duplicate class names: $types")
 )
 
 /**
- * Error indicating multiple KlutterResponse classes have the same class name.
+ * Error indicating multiple Response classes have the same class name.
  */
-private fun duplicateKlutterResponseErrorSquint(types: List<String>) = InvalidSquintMessages(
-    listOf("KlutterResponse contract violation! Duplicate class names: $types")
+private fun duplicateResponseErrorSquint(types: List<String>) = InvalidSquintMessages(
+    listOf("Response contract violation! Duplicate class names: $types")
 )
 
 /**
- * Error indicating a KlutterResponse class has a TypeMember of Unknown CustomType.
+ * Error indicating a Response class has a TypeMember of Unknown CustomType.
  */
-private fun unknownKlutterResponseError(types: List<String>) = Invalid(
-    listOf("Unknown KlutterResponse TypeMember: $types")
+private fun unknownResponseError(types: List<String>) = Invalid(
+    listOf("Unknown Response TypeMember: $types")
 )
 
 /**
- * Error indicating a KlutterResponse class has a TypeMember of Unknown CustomType.
+ * Error indicating a Response class has a TypeMember of Unknown CustomType.
  */
-private fun unknownKlutterResponseErrorSquint(types: List<String>) = InvalidSquintMessages(
-    listOf("Unknown KlutterResponse TypeMember: $types")
+private fun unknownResponseErrorSquint(types: List<String>) = InvalidSquintMessages(
+    listOf("Unknown Response TypeMember: $types")
 )
 
 /**
@@ -101,15 +101,15 @@ private fun missingSourceFileErrorSquint(types: List<String>) = InvalidSquintMes
 )
 
 /**
- * Error indicating a KlutterResponse class has no members.
+ * Error indicating a Response class has no members.
  */
-private fun emptyKlutterResponseError(types: List<String>) = InvalidSquintMessages(
-    listOf("KlutterResponse contract violation! Some classes have no fields: $types")
+private fun emptyResponseError(types: List<String>) = InvalidSquintMessages(
+    listOf("Response contract violation! Some classes have no fields: $types")
 )
 
 /**
- * Validate list of KlutterResponse classes.
- * - List of KlutterResponse [AbstractType] if all are valid
+ * Validate list of Response classes.
+ * - List of Response [AbstractType] if all are valid
  * - List of [String] errors if not.
  */
 internal fun List<Either<String,SquintMessageSource>>.validateResponses(): ValidationResultSquintMessages {
@@ -141,13 +141,13 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
             missingSourceFileErrorSquint(unknownTypes)
 
         unknownTypes.isNotEmpty() ->
-            unknownKlutterResponseErrorSquint(unknownTypes)
+            unknownResponseErrorSquint(unknownTypes)
 
         emptyTypes.isNotEmpty() ->
-            emptyKlutterResponseError(emptyTypes)
+            emptyResponseError(emptyTypes)
 
         duplicateTypes.isNotEmpty() ->
-            duplicateKlutterResponseErrorSquint(duplicateTypes)
+            duplicateResponseErrorSquint(duplicateTypes)
 
         else -> ValidSquintMessages(metadata)
     }
@@ -156,7 +156,7 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
 
 /**
  * Find all valid Controller classes.
- * - List of KlutterResponse [AbstractType] if all are valid
+ * - List of Response [AbstractType] if all are valid
  * - List of [String] errors if not.
  */
 internal fun List<Either<String,Controller>>.validateControllers(): ValidationResult {
@@ -179,10 +179,10 @@ internal fun List<Either<String,Controller>>.validateControllers(): ValidationRe
 
     return when {
         unknownTypes.isNotEmpty() ->
-            unknownKlutterResponseError(unknownTypes)
+            unknownResponseError(unknownTypes)
 
         duplicateTypes.isNotEmpty() ->
-            duplicateKlutterResponseError(duplicateTypes)
+            duplicateResponseError(duplicateTypes)
 
         else -> Valid(distinctTypes.toList())
     }

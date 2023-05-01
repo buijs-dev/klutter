@@ -23,8 +23,8 @@ package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.ast.*
-import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.toSnakeCase
+import dev.buijs.klutter.kore.ast.Method
+import dev.buijs.klutter.kore.common.toSnakeCase
 
 class AndroidAdapter(
     private val pluginPackageName: String,
@@ -78,7 +78,7 @@ class AndroidAdapter(
 
     private val broadcastCancellations = controllers
         .filterIsInstance<BroadcastController>()
-        .map { "        ${it.instance()}.cancel()" }
+        .map { "        ${it.instanceOrConstructor()}.cancel()" }
 
     private val methodChannelHandlerWhenClauses = controllers
         .filter { it.functions.isNotEmpty() }
@@ -98,13 +98,25 @@ class AndroidAdapter(
         appendLines(importsFramework)
         appendLines(importsControllers)
         appendLine()
-        appendLine("private val methodChannelNames = setOf(")
-        appendLines(methodChannelNames)
-        appendLine(")")
+
+        if(methodChannelNames.isEmpty()) {
+            appendLine("private val methodChannelNames = emptySet<String>()")
+        } else {
+            appendLine("private val methodChannelNames = setOf(")
+            appendLines(methodChannelNames)
+            appendLine(")")
+        }
+
         appendLine()
-        appendLine("private val eventChannelNames = setOf(")
-        appendLines(eventChannelNames)
-        appendLine(")")
+
+        if(eventChannelNames.isEmpty()) {
+            appendLine("private val eventChannelNames = emptySet<String>()")
+        } else {
+            appendLine("private val eventChannelNames = setOf(")
+            appendLines(eventChannelNames)
+            appendLine(")")
+        }
+
         appendLine()
         appendLines(singletonControllerVariables)
         appendLine()
@@ -218,9 +230,19 @@ private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
         else -> ".toKJson()"
     }
 
-    return """
+    val methodInvocation = "$instanceOrConstuctor.$method($requestArgumentOrEmpty)$responseDecoderOrEmpty"
+    return if(responseDataType is UnitType) {
+        """
+        |                "$command" -> {
+        |                    $methodInvocation
+        |                    result.success(${requestArgumentOrEmpty.ifBlank { """""""" }})
+        |                }
+    """.trimMargin()
+    } else
+
+        """
         |                "$command" ->
-        |                    result.success($instanceOrConstuctor.$method($requestArgumentOrEmpty)$responseDecoderOrEmpty)
+        |                    result.success($methodInvocation)
     """.trimMargin()
 
 }
@@ -229,6 +251,3 @@ private fun Controller.instanceOrConstructor() = when(this) {
     is Singleton -> className.replaceFirstChar { char -> char.lowercase() }
     else -> "${className}()"
 }
-
-private fun Controller.instance() =
-    className.replaceFirstChar { char -> char.lowercase() }

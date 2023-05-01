@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.shared.toCamelCase
+import dev.buijs.klutter.kore.common.toCamelCase
 import java.io.File
 
 /**

@@ -21,24 +21,19 @@
  */
 package dev.buijs.klutter.gradle.dsl
 
-import dev.buijs.klutter.kore.common.DslBuilder
-import dev.buijs.klutter.kore.common.Dto
-
 @DslMarker
 internal annotation class KlutterPluginDSLMarker
 
 @KlutterPluginDSLMarker
-class KlutterPluginBuilder: DslBuilder {
+class KlutterPluginBuilder {
 
     var name: String = ""
 
-    override fun build() = Dto(name = name)
+    fun build() = Dto(name = name)
 
 }
 
 /**
  * DTO for storing Klutter plugin configuration.
  */
-data class Dto(
-    val name: String,
-): Dto
+data class Dto(val name: String)

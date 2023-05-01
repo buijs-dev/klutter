@@ -49,9 +49,9 @@ class Processor(
         val input = options.metadataFolder
 
         val responses = resolver
-            .annotatedWithKlutterResponse(input)
+            .annotatedWithResponse(input)
             .validateResponses()
-            .validMessagesOrNull("@KlutterResponse")
+            .validMessagesOrNull("@Response")
 
         val controllers = resolver
             .annotatedWithController(input)

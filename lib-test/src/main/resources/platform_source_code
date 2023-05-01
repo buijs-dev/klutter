@@ -3,17 +3,17 @@ package foo.bar.baz
 import dev.buijs.klutter.annotations.Annotations
 
 class FakeClass {
-    @KlutterAdaptee(name = "DartMaul")
+    @Event(name = "DartMaul")
     fun foo(): String {
         return "Maul"
     }
 
-    @KlutterAdaptee(name = "BabyYoda")
+    @Event(name = "BabyYoda")
     fun fooBar(): List<String> {
         return listOf("baz")
     }
 
-    @KlutterAdaptee(name = "ObiWan")
+    @Event(name = "ObiWan")
     suspend fun zeta(): List<String> =
         listOf(foo()).map { str ->
             "str = str                "
@@ -24,7 +24,7 @@ class FakeClass {
 }
 
 @Serializable
-@KlutterResponse
+@Response
 enum class {
     @SerialName("boom") BOOM,
     @SerialName("boom boom") BOOM_BOOM,

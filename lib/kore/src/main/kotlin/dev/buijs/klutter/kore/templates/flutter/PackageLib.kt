@@ -22,10 +22,6 @@
 package dev.buijs.klutter.kore.templates.flutter
 
 import dev.buijs.klutter.kore.KlutterPrinter
-import dev.buijs.klutter.kore.ast.AbstractType
-import dev.buijs.klutter.kore.ast.CustomType
-import dev.buijs.klutter.kore.shared.toSnakeCase
-import dev.buijs.klutter.kore.templates.dartType
 
 /**
  * Main package file which exports all generated widgets.

@@ -24,10 +24,10 @@ package dev.buijs.klutter.kore.templates.flutter
 import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.ast.AbstractType
 import dev.buijs.klutter.kore.ast.StandardType
-import dev.buijs.klutter.kore.shared.toSnakeCase
+import dev.buijs.klutter.kore.common.toSnakeCase
 import dev.buijs.klutter.kore.templates.dartType
 
-fun PublisherWidget.print() = createPrinter().print()
+internal fun PublisherWidget.print() = createPrinter().print()
 
 /**
  * Create a [KlutterPrinter] instance which generates a Flutter Producer Widget.
@@ -155,11 +155,11 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         )
 
         if(requiresRequestEncoder) {
-            append("    encode: (${responseType.dataType.className} data) => data.toJson,")
+            append("encode: (${responseType.dataType.className} data) => data.toJson,")
         }
 
         if(requiresResponseDecoder) {
-            append("    decode: (String json) => json.to${responseType.dataType.className},")
+            append("decode: (String json) => json.to${responseType.dataType.className},")
         }
 
         append("""
@@ -194,11 +194,11 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         }
 
         if(requiresRequestEncoder) {
-            append("    encode: (${responseType.dataType.className} data) => data.toJson,")
+            append("encode: (${responseType.dataType.className} data) => data.toJson,")
         }
 
         if(requiresResponseDecoder) {
-            append("    decode: (String json) => json.to${responseType.dataType.className},")
+            append("decode: (String json) => json.to${responseType.dataType.className},")
         }
 
         append("""

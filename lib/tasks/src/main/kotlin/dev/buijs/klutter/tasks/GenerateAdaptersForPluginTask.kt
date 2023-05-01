@@ -21,12 +21,14 @@
  */
 package dev.buijs.klutter.tasks
 
+import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.ast.*
+import dev.buijs.klutter.kore.common.*
 import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.kore.shared.*
 import dev.buijs.klutter.kore.templates.*
 import dev.buijs.klutter.kore.templates.flutter.*
+import java.io.File
 
 /**
  * Task to generate the boilerplate code required to
@@ -155,6 +157,91 @@ class GenerateAdaptersForPluginTask(
             )
         )
 
+    }
+
+}
+
+
+/**
+ * Visitor which adds EXCLUDED_ARCHS for iphone simulator if not present.
+ *
+ * These exclusions are needed to be able to run the app on a simulator.
+ */
+internal fun File.excludeArm64(insertAfter: String) {
+
+    var hasExcludedPod = false
+
+    var hasExcludedUsr = false
+
+    val pod = ".pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
+
+    val usr = ".user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }"
+
+    val text = readText()
+
+    if(text.contains(pod)) {
+        hasExcludedPod = true
+    }
+
+    if(text.contains(usr)) {
+        hasExcludedUsr = true
+    }
+
+    val regex = "Pod::Spec.new.+?do.+?.([^|]+).".toRegex()
+
+    /** Check the prefix used in the podspec or default to 's'.
+     *
+     *  By default, the podspec file uses 's' as prefix.
+     *  In case a podspec does not use this default,
+     *  this regex will find the custom prefix.
+     *
+     *  If not found then 's' is used.
+     */
+    val fromRegex = regex.find(text)
+
+    val prefix = if(fromRegex == null) "s" else fromRegex.groupValues[1]
+
+    // INPUT
+    val lines = readLines()
+
+    // OUTPUT
+    val newLines = mutableListOf<String>()
+
+    for(line in lines){
+        newLines.add(line)
+
+        // Check if line contains Flutter dependency (which should always be present).
+        // If so then add the vendored framework dependency.
+        // This is done so the line is added at a fixed point in the podspec.
+        if(line.filter { !it.isWhitespace() }.contains("$prefix.$insertAfter")) {
+
+            if(!hasExcludedPod) {
+                newLines.add("""  $prefix$pod""")
+                hasExcludedPod = true
+            }
+
+            if(!hasExcludedUsr) {
+                newLines.add("""  $prefix$usr""")
+                hasExcludedUsr = true
+            }
+
+        }
+
+    }
+
+    if(hasExcludedPod && hasExcludedUsr) {
+        // Write the editted line to the podspec file.
+        writeText(newLines.joinToString("\n") { it })
+    } else {
+        throw KlutterException(
+            """
+          |Failed to add exclusions for arm64.
+          |
+          |Unable to find the following line in file $path:
+          |- '$prefix.$insertAfter'
+          |
+          |""".trimMargin(),
+        )
     }
 
 }

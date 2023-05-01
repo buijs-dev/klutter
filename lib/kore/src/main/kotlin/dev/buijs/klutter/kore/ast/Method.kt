@@ -20,7 +20,7 @@
  *
  */
 
-package dev.buijs.klutter.kore.shared
+package dev.buijs.klutter.kore.ast
 
 import dev.buijs.klutter.kore.ast.AbstractType
 import dev.buijs.klutter.kore.ast.StandardTypeMap

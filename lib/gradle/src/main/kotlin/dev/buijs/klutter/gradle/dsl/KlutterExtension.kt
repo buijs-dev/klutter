@@ -20,15 +20,10 @@
  *
  */
 @file:Suppress("unused")
-
 package dev.buijs.klutter.gradle.dsl
 
-import dev.buijs.klutter.kore.KlutterException
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.io.File
 import java.util.*
 
@@ -39,6 +34,8 @@ import java.util.*
 open class KlutterExtension(project: Project) {
 
     private val handler = KlutterDependencyHandler(project)
+
+    private val defaultRoot = project.rootDir
 
     var root: File? = null
 
@@ -63,18 +60,24 @@ open class KlutterExtension(project: Project) {
     ) {
         when {
             simpleModuleName == "bill-of-materials" || simpleModuleName == "bom"-> {
-                handler.addImplementation("annotations", version)
-                handler.addImplementation("kompose", version)
-                handler.addImplementation("kore", version)
-                handler.addImplementation("tasks", version)
+                handler.addKlutterImplementation("annotations", version)
+                handler.addKlutterImplementation("kompose", version)
+                handler.addKlutterImplementation("kore", version)
+                handler.addKlutterImplementation("tasks", version)
                 handler.includeCompilerPlugin(version = version)
+            }
+            simpleModuleName == "embedded" -> {
+                val configFile = (root ?: defaultRoot).resolve("klutter.yaml")
+                configFile.embeddedDependenciesFromConfigFile().forEach {
+                    handler.addImplementation(it)
+                }
             }
             simpleModuleName == "compiler" ->
                 handler.includeCompilerPlugin(version = version)
             test ->
                 includeTest(simpleModuleName, version)
             else ->
-                handler.addImplementation(simpleModuleName, version)
+                handler.addKlutterImplementation(simpleModuleName, version)
         }
     }
 
@@ -83,7 +86,7 @@ open class KlutterExtension(project: Project) {
      */
     @JvmOverloads
     fun includeTest(simpleModuleName: String, version: String? = null) {
-        handler.addTestImplementation(simpleModuleName, version)
+        handler.addKlutterTestImplementation(simpleModuleName, version)
     }
 
 }
@@ -105,116 +108,60 @@ class KlutterDependencyHandler(private val project: Project) {
     fun includeCompilerPlugin(version: String? = null) {
         project.dependencies.add(
             "kspCommonMainMetadata",
-            "dev.buijs.klutter:compiler:${version?:KlutterVersion.byName("compiler")}"
-        )
+            "dev.buijs.klutter:compiler:${version?:KlutterVersion.byName("compiler")}")
         project.dependencies.add(
             "kspCommonMainMetadata",
-            "dev.buijs.klutter:kore:${version?:KlutterVersion.byName("kore")}"
-        )
+            "dev.buijs.klutter:kore:${version?:KlutterVersion.byName("kore")}")
         project.dependencies.add(
             "kspCommonMainMetadata",
-            "dev.buijs.klutter:tasks:${version?:KlutterVersion.byName("tasks")}"
-        )
+            "dev.buijs.klutter:tasks:${version?:KlutterVersion.byName("tasks")}")
     }
 
-    fun addImplementation(simpleModuleName: String, version: String? = null) {
-        val multiplatform = findKotlinMultiplatformExtension()
+    fun addImplementation(dependencyNotation: String) {
+        project.dependencies.add(
+            "implementation",
+            project.createDependency(dependencyNotation))
+    }
+
+    fun addKlutterImplementation(simpleModuleName: String, version: String? = null) {
+        val multiplatform =
+            project.findKotlinMultiplatformExtension()
 
         if(multiplatform == null) {
             // Not a Multiplatform Project so apply normally.
             project.dependencies.add(
                 "implementation",
-                create(simpleModuleName = simpleModuleName, version = version)
-            )
+                project.createKlutterDependency(simpleModuleName = simpleModuleName, version = version))
         } else {
             // Multiplatform Project so apply for all sourcesets.
             multiplatform.sourceSets.forEach {
-                addKotlinMultiplatformDependency(
+                project.addKotlinMultiplatformDependency(
                     sourceset = it,
                     simpleModuleName = simpleModuleName,
-                    version = version ?: KlutterVersion.byName(simpleModuleName),
-                )
+                    version = version ?: KlutterVersion.byName(simpleModuleName))
             }
         }
     }
 
-    fun addTestImplementation(simpleModuleName: String, version: String? = null) {
-        val multiplatform = findKotlinMultiplatformExtension()
+    fun addKlutterTestImplementation(simpleModuleName: String, version: String? = null) {
+        val multiplatform =
+            project.findKotlinMultiplatformExtension()
 
         if(multiplatform == null) {
             // Not a Multiplatform Project so apply normally.
-            project.dependencies.add("testImplementation", create(
+            project.dependencies.add("testImplementation", project.createKlutterDependency(
                 simpleModuleName = simpleModuleName,
-                version = version,
-            ))
+                version = version))
         } else {
             // Multiplatform Project so apply for all sourcesets.
             multiplatform.sourceSets.forEach {
-                addKotlinMultiplatformDependency(
+                project.addKotlinMultiplatformTestDependency(
                     sourceset = it,
                     simpleModuleName = simpleModuleName,
-                    version = version ?: KlutterVersion.byName(simpleModuleName),
-                )
+                    version = version ?: KlutterVersion.byName(simpleModuleName))
             }
         }
     }
 
-    private fun create(simpleModuleName: String, version: String? = null): ExternalModuleDependency =
-        project.dependencies.create(
-            "dev.buijs.klutter:$simpleModuleName:" + (version ?: KlutterVersion.byName(simpleModuleName))
-        ) as ExternalModuleDependency
-
-    private fun addKotlinMultiplatformDependency(
-        sourceset: KotlinSourceSet,
-        simpleModuleName: String,
-        version: String,
-    ) {
-        sourceset.dependencies {
-            implementation(
-                create(simpleModuleName, version)
-            )
-        }
-    }
-
-    private fun findKotlinMultiplatformExtension(): KotlinMultiplatformExtension? =
-        project.extensions.findByType(KotlinMultiplatformExtension::class.java)
-
 }
 
-internal object KlutterVersion {
-    private val properties: Properties = Properties().also {
-        it.load(KlutterDependencyHandler::class.java.classLoader.getResourceAsStream("publish.properties"))
-    }
-
-    val annotations: String = properties.getProperty("annotations.version")
-        ?: throw KlutterException("Missing 'annotations.version' in Klutter Gradle Jar.")
-
-    val compiler: String = properties.getProperty("compiler.version")
-        ?: throw KlutterException("Missing 'compiler.version' in Klutter Gradle Jar.")
-
-    val kore: String = properties.getProperty("kore.version")
-        ?: throw KlutterException("Missing 'kore.version' in Klutter Gradle Jar.")
-
-    val gradle: String = properties.getProperty("plugin.gradle.version")
-        ?: throw KlutterException("Missing 'plugin.gradle.version' in Klutter Gradle Jar.")
-
-    val tasks: String = properties.getProperty("tasks.version")
-        ?: throw KlutterException("Missing 'tasks.version' in Klutter Gradle Jar.")
-
-    val kompose: String = properties.getProperty("kompose.version")
-        ?: throw KlutterException("Missing 'kompose.version' in Klutter Gradle Jar.")
-
-    val flutterEngine: String = properties.getProperty("flutter.engine.version")
-        ?: throw KlutterException("Missing 'flutter.engine.version' in Klutter Gradle Jar.")
-}
-
-internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simpleModuleName) {
-    "annotations" -> annotations
-    "kompose" -> kompose
-    "kore" -> kore
-    "gradle" -> gradle
-    "tasks" -> tasks
-    "compiler" -> compiler
-    "flutter-engine-android" -> flutterEngine
-    else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
-}

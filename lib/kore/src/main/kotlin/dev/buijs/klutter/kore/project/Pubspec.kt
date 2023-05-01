@@ -92,9 +92,6 @@ data class Pubspec(
     @JsonProperty("version")
     val version: String? = null,
 
-    @JsonProperty("environment")
-    val environment: PubspecEnvironment? = null,
-
     @JsonProperty("flutter")
     val flutter: PubspecFlutter? = null,
 
@@ -130,20 +127,6 @@ data class Pubspec(
         @JsonIgnore
         get() = platforms?.ios
 }
-
-/**
- *  environment:
- *      sdk: ">=2.16.1 <3.0.0"
- *      flutter: ">=2.5.0"
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class PubspecEnvironment(
-    @JsonProperty("sdk")
-    val sdk: String?,
-
-    @JsonProperty("flutter")
-    val flutter: String?,
-)
 
 /**
  * flutter:

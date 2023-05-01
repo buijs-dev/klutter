@@ -25,7 +25,7 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.shared.verifyExists
+import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
 /**

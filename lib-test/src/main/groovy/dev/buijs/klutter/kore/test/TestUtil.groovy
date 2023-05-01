@@ -66,6 +66,9 @@ class TestUtil {
             }
         }
 
+        println("Actual String:")
+        println("")
+        println(actual)
         return false
     }
 

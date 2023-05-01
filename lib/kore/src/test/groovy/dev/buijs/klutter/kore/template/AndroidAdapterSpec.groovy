@@ -35,14 +35,12 @@ import dev.buijs.klutter.kore.ast.SingletonBroadcastController
 import dev.buijs.klutter.kore.ast.SingletonController
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.ast.TypeMember
-import dev.buijs.klutter.kore.shared.Method
+import dev.buijs.klutter.kore.ast.UnitType
+import dev.buijs.klutter.kore.ast.Method
 import dev.buijs.klutter.kore.templates.AndroidAdapter
 import dev.buijs.klutter.kore.test.TestUtil
-import spock.lang.Ignore
 import spock.lang.Specification
 
-// TODO fix tests
-@Ignore
 class AndroidAdapterSpec extends Specification {
 
     def "AndroidAdapter should create a valid Kotlin class"() {
@@ -56,7 +54,8 @@ class AndroidAdapterSpec extends Specification {
                                 "sayHiPlease",
                                 false,
                                 new StringType(),
-                                new StringType()
+                                new StringType(),
+                                "message"
                         )
                 ]),
                 new SingletonBroadcastController(packageName, "MyEmittingController", [
@@ -66,6 +65,7 @@ class AndroidAdapterSpec extends Specification {
                                 "startBroadcast",
                                 false,
                                 new BooleanType(),
+                                null,
                                 null
                         )
                 ],
@@ -78,11 +78,13 @@ class AndroidAdapterSpec extends Specification {
         TestUtil.verify(sut.print(), classBody)
 
         where:
-        classBody = """
-package super_plugin
+        classBody = """package super_plugin
 
 import android.app.Activity
 import android.content.Context
+import dev.buijs.klutter.EventChannelFacade
+import dev.buijs.klutter.MethodChannelFacade
+import dev.buijs.klutter.registerEventSink
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -98,11 +100,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import dev.buijs.platform.controller.*
 
-private val methodChannelNames = listOf(
+private val methodChannelNames = setOf(
         "dev.company.plugins/channels/controller",
 )
 
-private val eventChannelNames = listOf(
+private val eventChannelNames = setOf(
         "dev.buijs.plugins/streams/controller",
 )
 
@@ -110,33 +112,15 @@ private val myEmittingController: MyEmittingController = MyEmittingController()
 
 class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAware {
 
-    private lateinit var activity: Activity
-    private lateinit var methodChannels: List<MethodChannel>
-    private lateinit var eventChannels: List<EventChannel>
-    private val scopeMyEmittingController = CoroutineScope(Dispatchers.Main)
     private val mainScope = CoroutineScope(Dispatchers.Main)
-    private val subscribersMyEmittingController = mutableListOf<EventSink>()
+    private lateinit var activity: Activity
+    private lateinit var mcFacade: MethodChannelFacade
+    private lateinit var ecFacade: EventChannelFacade
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        this.methodChannels = methodChannelNames.map { name ->
-            val channel = MethodChannel(binding.binaryMessenger, name)
-            channel.setMethodCallHandler(this)
-            channel
-        }
-
-        this.eventChannels = eventChannelNames.map { name ->
-            val channel = EventChannel(binding.binaryMessenger, name)
-            channel.setStreamHandler(this)
-            channel
-        }
-
-        scopeMyEmittingController.launch {
-            myEmittingController.receiveBroadcastAndroid().collect { value ->
-                subscribersMyEmittingController.forEach { it.success(value.toKJson()) }
-            }
-        }
-
-   }
+       this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, methodChannelNames)
+       this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, eventChannelNames)
+    }    
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         mainScope.launch {
@@ -152,7 +136,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
         when (arguments) {
             "my_emitting_controller" ->
-                subscribersMyEmittingController.add(eventSink)
+                registerEventSink(myEmittingController, eventSink)
             else -> {
                 eventSink.error("Unknown topic", "\$arguments", null)
             }
@@ -161,18 +145,13 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
 
     override fun onCancel(arguments: Any?) {
         myEmittingController.cancel()
-        subscribersMyEmittingController.clear()
-        for (stream in eventChannels) {
-            stream.setStreamHandler(null)
-        }
+        ecFacade.cancel()
     }
 
     override fun onDetachedFromEngine(
         binding: FlutterPlugin.FlutterPluginBinding
     ) {
-        for (channel in methodChannels) {
-            channel.setMethodCallHandler(null)
-        }
+        mcFacade.cancel()
     }
 
     override fun onAttachedToActivity(
@@ -195,11 +174,11 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         // nothing
     }
 
-    fun <T> onEvent(event: String, data: T?, result: Result) {
+    suspend fun <T> onEvent(event: String, data: T?, result: Result) {
             try {
                 when(event) {
                     "sayHi" ->
-                        result.success(MySimpleContollerImpl().sayHiPlease(data))
+                        result.success(MySimpleContollerImpl().sayHiPlease(data as String))
                     "start" ->
                         result.success(myEmittingController.startBroadcast())
                     else -> result.notImplemented()
@@ -216,8 +195,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         expect:
         with(createSut(Set.of(createSingletonBroadcastController([],stringType)))) {
             with(it.print()) { content ->
-                content.contains("mySingletonBroadcastController.receiveBroadcastAndroid().collect { value ->")
-                content.contains("subscribersMySingletonBroadcastController.forEach { it.success(value) }")
+                content.contains("registerEventSink(mySingletonBroadcastController, eventSink)")
             }
         }
     }
@@ -226,8 +204,8 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         expect:
         with(createSut(Set.of(createSingletonBroadcastController([],nullableStringType)))) {
             with(it.print()) { content ->
-                content.contains("mySingletonBroadcastController.receiveBroadcastAndroid().collect { value ->")
-                content.contains("subscribersMySingletonBroadcastController.forEach { it.success(value) }")
+                content.contains("registerEventSink(mySingletonBroadcastController, eventSink)")
+                content.contains("mySingletonBroadcastController.cancel()")
             }
         }
     }
@@ -236,8 +214,8 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         expect:
         with(createSut(Set.of(createSingletonBroadcastController([],myCustomType)))) {
             with(it.print()) { content ->
-                content.contains("mySingletonBroadcastController.receiveBroadcastAndroid().collect { value ->")
-                content.contains("subscribersMySingletonBroadcastController.forEach { it.success(value.toKJson()) }")
+                content.contains("registerEventSink(mySingletonBroadcastController, eventSink)")
+                content.contains("mySingletonBroadcastController.cancel()")
             }
         }
     }
@@ -246,8 +224,8 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         expect:
         with(createSut(Set.of(createRequestScopedBroadcastController([],nullableMyCustomType)))) {
             with(it.print()) { content ->
-                content.contains("MyRequestScopedBroadcastController().receiveBroadcastAndroid().collect { value ->")
-                content.contains("subscribersMyRequestScopedBroadcastController.forEach { it.success(value?.toKJson()) }")
+                content.contains("registerEventSink(MyRequestScopedBroadcastController(), eventSink)")
+                content.contains("MyRequestScopedBroadcastController().cancel()")
             }
         }
     }
@@ -257,7 +235,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createSingletonController([createMethod(stringType, stringType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(mySingletonController.sayHiPlease(data))")
+                content.contains("result.success(mySingletonController.sayHiPlease(data as String))")
             }
         }
     }
@@ -267,7 +245,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createSingletonController([createMethod(nullableStringType, stringType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(mySingletonController.sayHiPlease(data))")
+                content.contains("result.success(mySingletonController.sayHiPlease(data as String?))")
             }
         }
     }
@@ -277,7 +255,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createSingletonController([createMethod(nullableStringType, nullableStringType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(mySingletonController.sayHiPlease(data))")
+                content.contains("result.success(mySingletonController.sayHiPlease(data as String?))")
             }
         }
     }
@@ -322,6 +300,31 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         }
     }
 
+    def "Verify emptySet is used when there are no method channels"() {
+        given:
+        def adapter = new AndroidAdapter("", "", Set.of(), Set.of(), Set.of())
+
+        expect:
+        with(adapter.print()) { content ->
+            content.contains("private val methodChannelNames = emptySet<String>()")
+            content.contains("private val eventChannelNames = emptySet<String>()")
+        }
+    }
+
+    def "Verify request data is returned when invoked method has void return type"() {
+        given:
+        def methodReturningVoid = createMethod(new StringType(), new UnitType())
+        def controllerWithMethod = new SingletonController("foo.bar", "MySingleton", [methodReturningVoid])
+        def adapter = new AndroidAdapter("", "", Set.of("foo/bar"), Set.of(), Set.of(controllerWithMethod))
+
+        expect:
+        with(adapter.print()) { content ->
+            content.contains("mySingleton.sayHiPlease(data as String)")
+            content.contains("result.success(data as String)")
+            !content.contains("result.success(mySingleton.sayHiPlease(data as String))")
+        }
+    }
+
     def static stringType = new StringType()
 
     def static nullableStringType = new NullableStringType()
@@ -350,7 +353,8 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
                 "sayHiPlease",
                 false,
                 response,
-                request
+                request,
+                request == null ? null : "data"
         )
     }
 

@@ -29,8 +29,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.shared.verifyExists
-import dev.buijs.klutter.kore.shared.write
+import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.common.write
 import dev.buijs.klutter.kore.templates.flutter.createExamplePubspecYamlWriter
 import dev.buijs.klutter.kore.templates.flutter.createRootPubspecYamlWriter
 import java.io.File
@@ -53,7 +53,7 @@ const val klutterUIPubVersion = "0.0.1"
 /**
  * The version of the squint_json Pub Plugin.
  */
-const val squintPubVersion = "0.0.5"
+const val squintPubVersion = "0.0.6"
 
 /**
  * Mapper to read/write YAML.
@@ -102,43 +102,6 @@ fun examplePubspecInit(
     examplePubspecFile.write(createExamplePubspecYamlWriter(rootPubspec, config))
     return examplePubspecFile
 }
-
-//
-//internal object PubspecDependenciesDeserializer: JsonDeserializer<PubspecDependencies>() {
-//    override fun deserialize(
-//        parser: JsonParser,
-//        context: DeserializationContext,
-//    ): PubspecDependencies {
-//        val parent = context.readTree(parser)
-//        val dependencies = mutableListOf<PubspecDependency>()
-//        parent.fieldNames().forEach { name ->
-//            val node = parent.get(name)
-//            val dependency = node.toPubspecDependency(name)
-//            dependencies.add(dependency)
-//        }
-//        return PubspecDependencies(dependencies = dependencies.toList())
-//    }
-//}
-
-//private fun JsonNode.toPubspecDependency(name: String): PubspecDependency {
-//    val version = this.textValue()
-//
-//    if(version != null) {
-//        return PubspecDependency(key = name, valueOrSubKey = version)
-//    }
-//
-//    val fieldName =
-//        this.fieldNames().next()
-//
-//    val value =
-//        this.get(fieldName).textValue()
-//
-//    return PubspecDependency(
-//        key = name,
-//        nestedValue = value,
-//        valueOrSubKey = fieldName
-//    )
-//}
 
 fun Pubspec.iosClassName(orElse: String): String {
     return when {

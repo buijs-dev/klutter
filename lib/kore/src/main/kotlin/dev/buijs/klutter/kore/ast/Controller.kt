@@ -1,7 +1,5 @@
 package dev.buijs.klutter.kore.ast
 
-import dev.buijs.klutter.kore.shared.Method
-
 /**
  * Data wrapper for classes annotated with @Controller.
  */
@@ -25,7 +23,7 @@ sealed class Controller(
 
 /**
  * A Simple Controller which is a class with a no-arg constructor
- * and contains one or more @KlutterAdaptee annotated functions.
+ * and contains one or more @Event annotated functions.
  */
 class RequestScopedController(
     override val packageName: String,

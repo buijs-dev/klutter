@@ -67,6 +67,8 @@ fun createRootPubspecYamlWriter(
             appendLine("")
             appendDependency(config?.dependencies?.squint ?: squintPubVersion, name = "squint_json")
             appendLine("")
+            appendDependency(config?.dependencies?.klutterUI ?: klutterUIPubVersion, name = "klutter_ui")
+            appendLine("")
             appendLine("dev_dependencies:")
             appendDependency(config?.dependencies?.klutter ?: klutterPubVersion, name = "klutter")
             appendLine("")

@@ -1,13 +1,10 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.nio.file.Files
 
-// TODO remove all that is no longer needed
-@Ignore
 class PubspecSpec extends Specification {
 
     def "If pubspec parsing fails an exception is thrown" () {
@@ -370,7 +367,7 @@ class PubspecSpec extends Specification {
               flutter:
                 sdk: flutter
               klutter: ^0.2.3
-              squint_json: ^0.0.5
+              squint_json: ^0.0.6
             
             dev_dependencies:
               flutter_test:

@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,8 @@ package dev.buijs.klutter.kore.templates
 
 import dev.buijs.klutter.kore.*
 import dev.buijs.klutter.kore.ast.*
-import dev.buijs.klutter.kore.shared.Method
-import dev.buijs.klutter.kore.shared.toSnakeCase
+import dev.buijs.klutter.kore.ast.Method
+import dev.buijs.klutter.kore.common.toSnakeCase
 
 class IosAdapter(
     private val pluginClassName: String,
@@ -86,11 +86,11 @@ class IosAdapter(
         appendLine()
         appendLine("public class $pluginClassName: NSObject, FlutterPlugin, FlutterStreamHandler {")
         appendLine()
-        appendLine("    static let mcs: Set = [")
+        appendLine("    static let mcs: [String] = [")
         appendLines(methodChannelNames)
         appendLine("    ]")
         appendLine()
-        appendLine("    static let ecs: Set = [")
+        appendLine("    static let ecs: [String] = [")
         appendLines(eventChannelNames)
         appendLine("    ]")
         appendLine()
@@ -123,12 +123,12 @@ class IosAdapter(
         appendLines(methodChannelHandlerSwitchClauses)
         appendLine("         default:")
         appendLine("            result(FlutterMethodNotImplemented)")
-        appendLine("            }")
-        appendLine("        }")
+        appendLine("         }")
+        appendLine("     }")
         appendLine()
         appendLines(methodChannelHandlerFunctions)
         appendTemplate("""
-            |public func onListen(withArguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
+            |    public func onListen(withArguments: Any?, eventSink: @escaping FlutterEventSink) -> FlutterError? {
             |        let topic = withArguments ?? "none"
             |        switch "\(topic)" {
            """)
@@ -137,17 +137,15 @@ class IosAdapter(
             |           eventSink(FlutterError(code: "ERROR_CODE",
             |                                         message: "Topic not provided!",
             |                                         details: ""))
-            |       default:
-            |          eventSink(FlutterError(code: "ERROR_CODE",
+            |        default:
+            |           eventSink(FlutterError(code: "ERROR_CODE",
             |                               message: "Unknown topic",
             |                               details: "\(withArguments)"))
-            |       }
+            |        }
             |        return nil
             |     }
             |
             |    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-            |                myBroadcastController.cancel()
-            |                counter.cancel()
             |                ecFacade.cancel()
             |                return nil
             |    }
@@ -175,12 +173,14 @@ class IosAdapter(
                    |            if let failure = error { result(failure) }
                    |        }
                    |    }
+                   |    
                 """.trimMargin())
         } else {
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
                    |        result($instanceOrConstuctor.$method()$responseDecoderOrEmpty)
                    |    }
+                   |    
                 """.trimMargin())
         }
     }
@@ -188,22 +188,44 @@ class IosAdapter(
     private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoderOrEmpty: String): List<String> {
         val requestDecoder = when(requestDataType) {
             is StringType -> "stringOrNull"
-            // TODO other standardtypes
+            is IntType -> "intOrNull"
+            is DoubleType -> "doubleOrNull"
+            is BooleanType -> "booleanOrNull"
+            is ByteArrayType -> "byteArrayOrNull"
+            is IntArrayType -> "intArrayOrNull"
+            is LongArrayType -> "longArrayOrNull"
+            is FloatArrayType -> "floatArrayOrNull"
+            is DoubleArrayType -> "doubleArrayOrNull"
+            is ListType -> "listOrNull"
+            is MapType -> "mapOrNull"
             else -> ""
         }
 
-        return listOf(
-            "func ${command}(data: Any?, result: @escaping FlutterResult) {",
-            "   let dataOrNull: String? = TypeHandlerKt.$requestDecoder(data: data)",
-            "    if(dataOrNull == nil) {",
-            "       result(FlutterError(code: \"ERROR_CODE\",",
+        val lines = mutableListOf(
+            "    func ${command}(data: Any?, result: @escaping FlutterResult) {",
+            "        let dataOrNull: String? = TypeHandlerKt.$requestDecoder(data: data)",
+            "        if(dataOrNull == nil) {",
+            "           result(FlutterError(code: \"ERROR_CODE\",",
             "                           message: \"Expected ${requestDataType?.className} but got \\(dataOrNull)\",",
             "                           details: nil))",
-            "     } else {",
-            "       result($instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty)",
-            "     }",
-            "}"
-        )
+            "        } else {")
+
+        if(responseDataType is UnitType) {
+            lines.add("           $instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty")
+            if(requestDataType is UnitType) {
+                lines.add("""           result("")""")
+            } else {
+                lines.add("           result(dataOrNull!)")
+            }
+        } else {
+            lines.add("           result($instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty)")
+        }
+
+        lines.add("     }")
+        lines.add("}")
+
+
+        return lines
     }
 
     private fun Controller.instanceOrConstructor() = when(this) {

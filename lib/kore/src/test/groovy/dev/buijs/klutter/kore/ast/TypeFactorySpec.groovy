@@ -127,4 +127,14 @@ class TypeFactorySpec extends Specification {
             }
         }
     }
+
+    def "Verify secondary TypeData constuctor"() {
+        expect:
+        with(TypeFactoryKt.toAbstractType(new TypeData("List", ["String"], true))) {
+            it instanceof EitherOk<String, AbstractType>
+            with(it.data as NullableListType) {
+                it.child instanceof StringType
+            }
+        }
+    }
 }

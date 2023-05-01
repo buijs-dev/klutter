@@ -1,12 +1,12 @@
 package dev.buijs.klutter
 
 import dev.buijs.klutter.annotations.KlutterJSON
-import dev.buijs.klutter.annotations.KlutterResponse
+import dev.buijs.klutter.annotations.Response
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
 @Serializable
-@KlutterResponse
+@Response
 open class Something(
     val x: String,
     val y: SomethingElse
@@ -19,7 +19,7 @@ open class Something(
 }
 
 @Serializable
-@KlutterResponse
+@Response
 open class SomethingElse(
     val a: Int,
     val b: List<Boolean>
@@ -32,7 +32,7 @@ open class SomethingElse(
 }
 
 @Serializable
-@KlutterResponse
+@Response
 open class SomeMap(
     val a: Int,
     val b: Map<String, Int>

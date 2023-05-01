@@ -33,30 +33,20 @@ import kotlinx.serialization.json.Json
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-expect annotation class KlutterAdaptee(
+expect annotation class Event(
     val name: String,
 )
 
 /**
- * Annotation which denotes the annotated class as the adapter
- * for Flutter and KMP. Should be used on the MainActivity in
- * flutter/android/app folder.
- */
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-expect annotation class KlutterAdapter()
-
-
-/**
  * Annotation for data classes in the KMP module which are possibly used
- * by functions annotated with [dev.buijs.klutter.annotations.KlutterAdaptee].
+ * by functions annotated with [dev.buijs.klutter.annotations.Event].
  *
  * The Klutter Plugin will generate Dart classes to enable typesafe communication
  * between Flutter and KMP.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-expect annotation class KlutterResponse()
+expect annotation class Response()
 
 /**
  * Annotation for class which require an instance of Android Context.

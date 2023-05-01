@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,15 +19,31 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.gradle.dsl
 
-package dev.buijs.klutter.kore.common
+import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
-interface Dsl<T> {
-    fun configure(lambda: T.() -> Unit): Dto
+internal fun Project.findKotlinMultiplatformExtension(): KotlinMultiplatformExtension? =
+    extensions.findByType(KotlinMultiplatformExtension::class.java)
+
+internal fun Project.addKotlinMultiplatformDependency(
+    sourceset: KotlinSourceSet,
+    simpleModuleName: String,
+    version: String,
+) {
+    sourceset.dependencies {
+        implementation(createKlutterDependency(simpleModuleName, version))
+    }
 }
 
-interface DslBuilder {
-    fun build(): Dto
+internal fun Project.addKotlinMultiplatformTestDependency(
+    sourceset: KotlinSourceSet,
+    simpleModuleName: String,
+    version: String,
+) {
+    sourceset.dependencies {
+        implementation(createKlutterDependency(simpleModuleName, version))
+    }
 }
-
-interface Dto

@@ -6,18 +6,9 @@ import dev.buijs.klutter.kore.ast.*
  * Return the Dart className of an [AbstractType].
  */
 internal fun AbstractType.dartType() = when(this) {
-    is StandardType ->
-        this.dartType
-    is CustomType ->
-        this.className
-    is EnumType ->
-        this.className
+    is StandardType -> this.dartType
+    else -> this.className
 }
-
-/**
- * Return the Dart className of an [TypeMember].
- */
-internal fun TypeMember.dartType() = type.dartType()
 
 /**
  * Append multiple lines.

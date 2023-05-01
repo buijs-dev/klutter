@@ -24,17 +24,13 @@ package dev.buijs.klutter.annotations
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-actual annotation class KlutterAdaptee(
+actual annotation class Event(
     actual val name: String,
 )
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
-actual annotation class KlutterAdapter()
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class KlutterResponse()
+actual annotation class Response()
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)

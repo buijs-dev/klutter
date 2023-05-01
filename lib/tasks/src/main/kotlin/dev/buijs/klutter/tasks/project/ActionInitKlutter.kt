@@ -57,7 +57,7 @@ internal class InitKlutter(
 
     override fun doAction() {
         if(confContainsBom)
-            root.writeKlutterYaml(conf!!.bomVersion!!)
+            root.writeKlutterYaml(conf!!.bomVersion)
 
         rootPubspecInit(
             pubspec = rootPubspec,
@@ -77,6 +77,8 @@ internal class InitKlutter(
         "flutter pub get" execute exampleFolder
         "flutter pub run klutter:producer init" execute root
         "flutter pub run klutter:consumer init" execute exampleFolder
+        "flutter pub run klutter:consumer add=$name" execute exampleFolder
+        "pod update" execute exampleFolder.resolve("ios")
     }
 
     /**

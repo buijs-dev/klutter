@@ -19,30 +19,53 @@
  * SOFTWARE.
  *
  */
+package dev.buijs.klutter.kore.common
 
-package dev.buijs.klutter.kore.shared
+fun String.prefixIfNot(prefix: String) =
+    if(startsWith(prefix)) this else "$prefix$this"
 
-import dev.buijs.klutter.kore.KlutterException
-
-/**
- * Message/(JSON) response object defined in Dart language.
- *
- * @property name of the class.
- * @property fields list of class members.
- */
-class DartMessage(
-    val name: String,
-    fields: List<DartField>,
-) {
-    val fields: List<DartField> = notEmpty(fields)
-}
+fun String.removeSuffixIfPresent(suffix: String) =
+    if(endsWith(suffix)) this.substringBeforeLast(suffix) else this
 
 /**
- * A DartMessage without any members is not valid and will break generated code.
- *
- * @throws KlutterException if fields isEmpty.
- * @return List<DartField> if not empty.
+ * Convert a String to camelCase.
  */
-private fun notEmpty(fields: List<DartField>): List<DartField> = fields.ifEmpty {
-    throw KlutterException("Invalid DartMessage: List of fields is empty.")
+fun String.toCamelCase(): String {
+
+    var hasUnderscore = false
+
+    return lowercase().map {
+        when {
+
+            it == '_' -> {
+                hasUnderscore = true
+                ""
+            }
+
+            hasUnderscore -> {
+                hasUnderscore = false
+                it.uppercase()
+            }
+
+            else -> it.toString()
+        }
+    }.joinToString("") { it }
+
 }
+
+private val isAlphabeticRegex = """^[a-zA-Z]$""".toRegex()
+
+/**
+ * Convert a String to snake_case.
+ */
+fun String.toSnakeCase(): String = mapIndexed { index, char ->
+    when {
+        index == 0 -> char.lowercase()
+
+        !isAlphabeticRegex.matches("$char") -> char
+
+        char.uppercase() == "$char" -> "_${char.lowercase()}"
+
+        else -> char
+    }
+}.map { "$it" }.joinToString("") { it }

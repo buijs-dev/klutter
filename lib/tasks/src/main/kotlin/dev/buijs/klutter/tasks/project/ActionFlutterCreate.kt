@@ -43,7 +43,8 @@ internal class RunFlutterCreate(
         "flutter create $validPluginName " +
                 "--org $validGroupName " +
                 "--template=plugin " +
-                "--platforms=android,ios" execute validRootFolder
+                "--platforms=android,ios " +
+                "-a kotlin -i swift" execute validRootFolder
     }
 
 }

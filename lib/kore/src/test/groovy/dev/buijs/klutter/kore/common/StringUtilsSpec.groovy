@@ -1,19 +1,9 @@
-package dev.buijs.klutter.kore.shared
+package dev.buijs.klutter.kore.common
 
 
 import spock.lang.Specification
 
 class StringUtilsSpec extends Specification {
-
-    def "[unwrapFromList] returns value if no match found"(){
-        expect:
-        "List<>" == StringUtilsKt.unwrapFromList("List<>")
-    }
-
-    def "[findClassName] returns null if match is not found"(){
-        expect:
-        null == StringUtilsKt.findClassName("")
-    }
 
     def "[prefixIfNot] does nothing when prefix is present"() {
         given:
@@ -33,6 +23,7 @@ class StringUtilsSpec extends Specification {
 
     def "[toSnakeCase] converts camelcase correctly"() {
         expect:
-        StringUtilsKt.toSnakeCase("MyCamelCaseValue") == "my_camel_case_value"
+        StringUtilsKt.toSnakeCase("MyCamelCas1eValue") == "my_camel_cas1e_value"
     }
+
 }

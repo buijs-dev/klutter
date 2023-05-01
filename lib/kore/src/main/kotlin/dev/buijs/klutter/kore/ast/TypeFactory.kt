@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.kore.ast
 
-import dev.buijs.klutter.kore.shared.removeSuffixIfPresent
+import dev.buijs.klutter.kore.common.removeSuffixIfPresent
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
 import dev.buijs.klutter.kore.common.Either

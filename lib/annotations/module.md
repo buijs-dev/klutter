@@ -5,23 +5,16 @@ This module contains annotations for the Klutter Framework.
 ### Use annotations
 The klutterGenerateAdapters task will scan for the following annotations:
 - AndroidContext
-- KlutterAdapter
-- KlutterAdaptee
-- KlutterResponse
+- Event
+- Response
 
 **AndroidContext**\
-This annotation is complementary to the KlutterAdaptee annotation. Adding this annotation to a method in the KMP module
+This annotation is complementary to the Event annotation. Adding this annotation to a method in the KMP module
 enables the usage of Android Context in your platform code. See the battery app [tutorial](https://buijs.dev/klutter-2/)
 for an example of its usage.
 
-**KlutterAdapter**\
-The MainActivity in the flutter/android/app source should be annotated with the **@KlutterAdapter** annotation.
-This will enable the plugin to find the file and add all the needed methods to call into KMP.
-The MainActivity will handle all MethodChannel calls by delegating the request to the GeneratedKlutterAdapter code.
-
-
-**KlutterAdaptee**\
-All corresponding methods in the KMP module should be annotated with **@KlutterAdaptee** and given a corresponding name.
+**Event**\
+All corresponding methods in the KMP module should be annotated with **@Event** and given a corresponding name.
 All methods annotated with this annotation are added to the GeneratedKlutterAdapter. In other words: Adding this annotation
 to a method in KMP will make it visible for the Flutter.
 
@@ -33,7 +26,7 @@ For example this method in your KMP module:
 package dev.foo.bar
         
 class MyClass {
-    @KlutterAdaptee(name = "doPlatformCall")
+    @Event(name = "doPlatformCall")
     fun somePlatformMethod(): String {
         return doSomething().getSomeValue
     }
@@ -53,9 +46,9 @@ Will generate this code and add it to the GeneratedKlutterAdapter class:
 ```
 <br />
 
-**KlutterResponse**\
+**Response**\
 This annotation enables KMP and Flutter to communicate using data transfer objects instead of Strings.
-The KlutterResponse can be used to annotate a simple DTO after which Klutter will generate an equivalent
+The Response can be used to annotate a simple DTO after which Klutter will generate an equivalent
 Dart DTO with all boilerplate code to (de)serialize.
 
 The annotated class should comply with the following rules:
@@ -68,7 +61,7 @@ The annotated class should comply with the following rules:
 
 **Note:** Extending the KlutterJSON class might be no longer needed if a compiler plugin is created.
 
-A KlutterResponse acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
+A Response acts as an interface between Flutter and KMP. These rules are designed to adhere to that function.
 
 Open classes can be extended so the DTO can be used as interface between KMP and Flutter and you can extend it
 to add behaviour designed for frontend or backend respectively. All fields must be immutable. The generated code includes
@@ -81,9 +74,7 @@ This is a functional design choise, not a technical limitation.
 2. Double
 3. Boolean
 4. List
-
-**Maps?**\
-Maps are currently not supported. A DTO is a better/safer option by providing typesafety e.a.
+5. Map
 
 **Enumerations?**\
 Enumerations can be used as datatype but only if the enumeration itself has a no-args constructor.
@@ -94,11 +85,11 @@ The value "none" is a reserved value used to represent null.
 Any field declaration may use another DTO as type but that DTO should comply with before mentioned rules as well.
 
 **What could possibly go wrong?**\
-Any class annotated with KlutterResponse that does not comply will be logged as error and ignored for processing.
+Any class annotated with Response that does not comply will be logged as error and ignored for processing.
 Any other dependent class will also be ignored as result.
 
 **Requirements**\
-To serialize the KlutterResponse kotlinx serialization is used. Add the plugin to the KMP build.gradle.kts:
+To serialize the Response kotlinx serialization is used. Add the plugin to the KMP build.gradle.kts:
 
 ````kotlin
 plugins {
@@ -127,7 +118,7 @@ Example of valid declaration:
 ```kotlin
 
     @Serializable
-    @KlutterResponse
+    @Response
     open class Something(
         val x: String?,
         val y: SomethingElse
@@ -140,7 +131,7 @@ Example of valid declaration:
     }
 
     @Serializable
-    @KlutterResponse
+    @Response
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
@@ -160,7 +151,7 @@ Example of invalid declaration (Mutability):
 ```kotlin
 
     @Serializable
-    @KlutterResponse
+    @Response
     open class Something(
         var x: String?,
         var y: Int,
@@ -180,7 +171,7 @@ Example of invalid declaration (SomethingElse class should not have a body):
 ```kotlin
 
     @Serializable
-    @KlutterResponse
+    @Response
     open class Something(
         val x: String?,
         var y: SomethingElse
@@ -193,7 +184,7 @@ Example of invalid declaration (SomethingElse class should not have a body):
     }
 
     @Serializable
-    @KlutterResponse
+    @Response
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>

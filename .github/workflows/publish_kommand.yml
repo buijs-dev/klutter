@@ -20,7 +20,7 @@ jobs:
           java-version: 11
           cache: gradle
       - name: 'build distribution'
-        uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@2.4.2
         with:
           gradle-version: 7.4.2
           arguments: clean distZip

@@ -1,0 +1,36 @@
+name: Publish Executables
+on:
+  push:
+    branches: [ main ]
+jobs:
+  archive-build-artifacts:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 'checkout source'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: 'install java'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: 11
+          cache: gradle
+      - name: 'build distribution'
+        uses: gradle/gradle-build-action@v2.4.2
+        with:
+          gradle-version: 7.4.2
+          arguments: clean distZip
+        working-directory: ./lib/kommand
+      - name: 'create downloads folder'
+        run: mkdir kommander
+      - name: 'copy zip to downloads folder'
+        run: cp ./lib/kommand/build/distributions/kommand-*.zip kommander
+      - name: 'upload downloads folder'
+        uses: actions/upload-artifact@v2
+        with:
+          name: kommander
+          path: kommander

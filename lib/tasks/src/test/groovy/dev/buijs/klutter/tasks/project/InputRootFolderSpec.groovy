@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,18 +19,32 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks.input
+package dev.buijs.klutter.tasks.project
 
-import dev.buijs.klutter.kore.common.Either
-import java.io.File
+import dev.buijs.klutter.kore.common.EitherNok
+import dev.buijs.klutter.kore.common.EitherOk
+import spock.lang.Specification
 
-typealias RootFolder = Either<String, File>
+import java.nio.file.Files
 
-fun toRootFolder(value: String) = value.toInput()
+class InputRootFolderSpec extends Specification {
 
-private fun String.toInput(): RootFolder {
-    val file = File(this)
-    return if(!file.exists())
-        RootFolder.nok("Root folder does not exist: '$this'")
-    else RootFolder.ok(file)
+     def "If folder does not exist then toRootFolder returns EitherNok"() {
+         expect:
+         with(InputRootFolderKt.toRootFolder("doesNotExist")) {
+             it instanceof EitherNok
+             (it as EitherNok).data == "Root folder does not exist: 'doesNotExist'"
+         }
+     }
+
+    def "If folder exists then toRootFolder returns EitherOk"() {
+        given:
+        def folder = Files.createTempDirectory("").toFile()
+
+        expect:
+        with(InputRootFolderKt.toRootFolder(folder.absolutePath)) {
+            it instanceof EitherOk
+            (it as EitherOk).data == folder
+        }
+    }
 }

@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import java.io.File
  * Copy the platform release aar file build in the platform module
  * to the plugin android/Klutter folder.
  */
-class CopyAndroidAarFileKlutterTask(
+class CopyAarFileTask(
     private val pathToRoot: File,
     private val pluginName: String? = null,
 ): KlutterTask {
@@ -54,36 +54,6 @@ class CopyAndroidAarFileKlutterTask(
             .also { if(it.exists()) it.delete() }
 
         pathToAarFile.copyTo(target)
-    }
-
-}
-
-/**
- * Copy the 'Platform.xcframework' build in the platform module
- * to the plugin ios/Klutter folder.
- */
-class CopyIosFrameworkKlutterTask(
-    private val pathToRoot: File,
-): KlutterTask {
-
-    private val pathToTarget: String = ""
-
-    private val pathToSource: String = "platform"
-
-    override fun run() {
-        val target = pathToRoot
-            .resolve(pathToTarget)
-            .resolve("ios/Klutter")
-            .verifyExists()
-            .resolve("Platform.xcframework")
-            .also { if(it.exists()) it.deleteRecursively() }
-
-        val pathToIosFramework = pathToRoot
-            .resolve(pathToSource)
-            .resolve("build/XCFrameworks/release/Platform.xcframework")
-            .verifyExists()
-
-        pathToIosFramework.copyRecursively(target)
     }
 
 }

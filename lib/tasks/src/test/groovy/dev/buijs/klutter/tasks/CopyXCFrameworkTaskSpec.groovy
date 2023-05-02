@@ -26,7 +26,7 @@ import spock.lang.Specification
 
 import java.nio.file.Files
 
-class CopyIosFrameworkKlutterTaskSpec extends Specification {
+class CopyXCFrameworkTaskSpec extends Specification {
 
     def "For plugin copies Platform.xcframework from platform to root/ios folder"() {
         given:
@@ -48,7 +48,7 @@ class CopyIosFrameworkKlutterTaskSpec extends Specification {
         plist.write("TC2")
 
         when:
-        new CopyIosFrameworkKlutterTask(root).run()
+        new CopyXCFrameworkTask(root).run()
 
         then:
         with(target.absolutePath) {
@@ -66,7 +66,7 @@ class CopyIosFrameworkKlutterTaskSpec extends Specification {
                 .toFile()
 
         when:
-        new CopyIosFrameworkKlutterTask(root).run()
+        new CopyXCFrameworkTask(root).run()
 
         then:
         KlutterException e = thrown()

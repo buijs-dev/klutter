@@ -22,29 +22,45 @@
 package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.Either
+import dev.buijs.klutter.kore.common.EitherNok
+import dev.buijs.klutter.kore.common.EitherOk
 
-internal inline fun <reified T: ProjectBuilderAction> findProjectBuilderAction(
-    options: ProjectBuilderOptions
-): ProjectBuilderAction {
-    return when(T::class.java) {
-        RunFlutterCreate::class.java ->
-            options.toRunFlutterAction()
-
-        InitKlutter::class.java ->
-            options.toInitKlutterAction()
-
-        else -> throw KlutterException("Unknown ProjectBuilderAction: ${T::class.java}")
+fun <T,R> Either<T, R>.inputOrThrow(
+    ok: (EitherOk<T,R>) -> R,
+    nok: (EitherNok<T,R>) -> String
+): R {
+    return when(this) {
+        is EitherOk ->
+            ok.invoke(this)
+        is EitherNok ->
+            throw KlutterException(nok.invoke(this))
     }
 }
 
-internal sealed interface ProjectBuilderAction {
-    fun doAction()
-}
+fun RootFolder.validRootFolderOrThrow() = inputOrThrow(
+    ok = {
+        it.data
+    },
+    nok = {
+        it.data
+    }
+)
 
-// Used for UT only!
-@Suppress("unused")
-private object GroovyHelper {
-    @JvmStatic
-    fun findProjectBuilderAction(options: ProjectBuilderOptions): ProjectBuilderAction =
-        findProjectBuilderAction<ProjectBuilderAction>(options)
-}
+fun PluginName.validPluginNameOrThrow() = inputOrThrow(
+    ok = {
+        it.data
+    },
+    nok = {
+        it.data
+    }
+)
+
+fun GroupName.validGroupNameOrThrow()= inputOrThrow(
+    ok = {
+        it.data
+    },
+    nok = {
+        it.data
+    }
+)

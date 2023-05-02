@@ -25,7 +25,7 @@ import dev.buijs.klutter.kore.KlutterException
 import spock.lang.Specification
 import java.nio.file.Files
 
-class CopyAndroidAarFileKlutterTaskSpec extends Specification {
+class CopyAarFileTaskSpec extends Specification {
 
     def "For plugin copies platform-release.aar from platform to root/android/klutter folder"() {
         given:
@@ -44,7 +44,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC2")
 
         when:
-        new CopyAndroidAarFileKlutterTask(root, null).run()
+        new CopyAarFileTask(root, null).run()
 
         then:
         with(target.absolutePath) {
@@ -71,7 +71,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC2")
 
         when:
-        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
+        new CopyAarFileTask(root, pluginName).run()
 
         then:
         with(target.absolutePath) {
@@ -91,7 +91,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         target.mkdirs()
 
         when:
-        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
+        new CopyAarFileTask(root, pluginName).run()
 
         then:
         KlutterException e = thrown()
@@ -114,7 +114,7 @@ class CopyAndroidAarFileKlutterTaskSpec extends Specification {
         aarFile.write("TC4")
 
         when:
-        new CopyAndroidAarFileKlutterTask(root, pluginName).run()
+        new CopyAarFileTask(root, pluginName).run()
 
         then:
         KlutterException e = thrown()

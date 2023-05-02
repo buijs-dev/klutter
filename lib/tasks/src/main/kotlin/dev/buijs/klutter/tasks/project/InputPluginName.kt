@@ -19,39 +19,27 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks.input
+package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.common.Either
 
-typealias GroupName = Either<String, String>
+typealias PluginName = Either<String, String>
 
-fun toGroupName(value: String) = value.toInput()
+fun toPluginName(value: String) = value.toInput()
 
 /**
- * Validate a Klutter group name with the following constraints:
+ * Validate a Klutter app name with the following constraints:
  * - All characters are lowercase
- * - All characters are:
- * - alphabetic or
+ * - All characters are alphabetic or
  * - numeric or
- * - '_' or
- * - '.'
- *
- * - Group contains at least 2 parts (e.g. there is minimally 1 dot)
+ * - '_'
  * - Should start with an alphabetic character
  */
-private fun String.toInput(): GroupName {
+private fun String.toInput(): PluginName {
+    if(!"""^[a-z][a-z0-9_]+$""".toRegex().matches(this))
+        return PluginName.nok("PluginName error: Should only contain" +
+                " lowercase alphabetic, numeric and or _ characters" +
+                " and start with an alphabetic character ('my_plugin').")
 
-    if(!contains("."))
-        return GroupName.nok("GroupName error: Should contain at least 2 parts ('com.example').")
-
-    if(contains("_."))
-        return GroupName.nok("GroupName error: Characters . and _ can not precede each other.")
-
-    if(contains("._"))
-        return GroupName.nok("GroupName error: Characters . and _ can not precede each other.")
-
-    if(!"""^[a-z][a-z0-9._]+[a-z]$""".toRegex().matches(this))
-        return GroupName.nok("GroupName error: Should be lowercase alphabetic separated by dots ('com.example').")
-
-    return GroupName.ok(this)
+    return PluginName.ok(this)
 }

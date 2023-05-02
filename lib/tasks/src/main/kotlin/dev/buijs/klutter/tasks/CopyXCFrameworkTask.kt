@@ -19,32 +19,38 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks.project
+package dev.buijs.klutter.tasks
 
-import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.common.verifyExists
+import java.io.File
 
-internal inline fun <reified T: ProjectBuilderAction> findProjectBuilderAction(
-    options: ProjectBuilderOptions
-): ProjectBuilderAction {
-    return when(T::class.java) {
-        RunFlutterCreate::class.java ->
-            options.toRunFlutterAction()
+/**
+ * Copy the 'Platform.xcframework' build in the platform module
+ * to the plugin ios/Klutter folder.
+ */
+class CopyXCFrameworkTask(
+    private val pathToRoot: File,
+): KlutterTask {
 
-        InitKlutter::class.java ->
-            options.toInitKlutterAction()
+    private val pathToTarget: String = ""
 
-        else -> throw KlutterException("Unknown ProjectBuilderAction: ${T::class.java}")
+    private val pathToSource: String = "platform"
+
+    override fun run() {
+        val target = pathToRoot
+            .resolve(pathToTarget)
+            .resolve("ios/Klutter")
+            .verifyExists()
+            .resolve("Platform.xcframework")
+            .also { if(it.exists()) it.deleteRecursively() }
+
+        val pathToIosFramework = pathToRoot
+            .resolve(pathToSource)
+            .resolve("build/XCFrameworks/release/Platform.xcframework")
+            .verifyExists()
+
+        pathToIosFramework.copyRecursively(target)
     }
-}
 
-internal sealed interface ProjectBuilderAction {
-    fun doAction()
-}
-
-// Used for UT only!
-@Suppress("unused")
-private object GroovyHelper {
-    @JvmStatic
-    fun findProjectBuilderAction(options: ProjectBuilderOptions): ProjectBuilderAction =
-        findProjectBuilderAction<ProjectBuilderAction>(options)
 }

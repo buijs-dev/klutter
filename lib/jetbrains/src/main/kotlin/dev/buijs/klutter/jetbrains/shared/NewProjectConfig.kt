@@ -23,8 +23,8 @@ package dev.buijs.klutter.jetbrains.shared
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.common.EitherNok
-import dev.buijs.klutter.tasks.input.toGroupName
-import dev.buijs.klutter.tasks.input.toPluginName
+import dev.buijs.klutter.tasks.project.toGroupName
+import dev.buijs.klutter.tasks.project.toPluginName
 
 const val klutterPluginDefaultName = "my_plugin"
 const val klutterPluginDefaultGroup = "com.example"

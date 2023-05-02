@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 import java.nio.file.Files
 
-class ExcludeArm64Spec extends Specification {
+class ExcludeArm64TaskSpec extends Specification {
 
     def "When excludeArm64 regex can not determine prefix value it defaults to 's' "(){
 
@@ -16,7 +16,7 @@ class ExcludeArm64Spec extends Specification {
         file.write("s.dependency'Flutter'")
 
         when:
-        GenerateAdaptersForPluginTaskKt.excludeArm64(file, "dependency'Flutter'")
+        new ExcludeArm64Task(file, "dependency'Flutter'").run()
 
         then:
         with(file.text) {
@@ -35,7 +35,7 @@ class ExcludeArm64Spec extends Specification {
         file.write(podfile)
 
         when:
-        GenerateAdaptersForPluginTaskKt.excludeArm64(file, "dependency'Flutter'")
+        new ExcludeArm64Task(file, "dependency'Flutter'").run()
 
         then:
         KlutterException e = thrown()
@@ -59,7 +59,7 @@ class ExcludeArm64Spec extends Specification {
         file.write(podfile)
 
         when:
-        GenerateAdaptersForPluginTaskKt.excludeArm64(file, "ios.deployment_target")
+        new ExcludeArm64Task(file, "ios.deployment_target").run()
 
         then:
         file.text.replaceAll(" ", "") == expected.replaceAll(" ", "")

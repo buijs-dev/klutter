@@ -106,7 +106,7 @@ class Processor(
         logger.info("=============================================================")
         val pluginName = pubspec.name ?: "klutter_library"
         val methodChannelName = pubspec.android?.pluginPackage ?: "$pluginName.klutter"
-        GenerateAdaptersForPluginTask(
+        GenerateCodeTask(
             android = project.android,
             ios = project.ios,
             root = project.root,

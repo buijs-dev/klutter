@@ -19,27 +19,18 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks.input
+package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.common.Either
+import java.io.File
 
-typealias PluginName = Either<String, String>
+typealias RootFolder = Either<String, File>
 
-fun toPluginName(value: String) = value.toInput()
+fun toRootFolder(value: String) = value.toInput()
 
-/**
- * Validate a Klutter app name with the following constraints:
- * - All characters are lowercase
- * - All characters are alphabetic or
- * - numeric or
- * - '_'
- * - Should start with an alphabetic character
- */
-private fun String.toInput(): PluginName {
-    if(!"""^[a-z][a-z0-9_]+$""".toRegex().matches(this))
-        return PluginName.nok("PluginName error: Should only contain" +
-                " lowercase alphabetic, numeric and or _ characters" +
-                " and start with an alphabetic character ('my_plugin').")
-
-    return PluginName.ok(this)
+private fun String.toInput(): RootFolder {
+    val file = File(this)
+    return if(!file.exists())
+        RootFolder.nok("Root folder does not exist: '$this'")
+    else RootFolder.ok(file)
 }

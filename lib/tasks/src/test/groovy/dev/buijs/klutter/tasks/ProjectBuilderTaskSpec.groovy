@@ -25,14 +25,11 @@ import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.test.TestUtil
 import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
 import dev.buijs.klutter.tasks.project.ProjectBuilderTask
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
 import java.nio.file.Files
 
-@Ignore
-// TODO example folder is not generated correctly yet...
 class ProjectBuilderTaskSpec extends Specification {
 
     @Shared
@@ -60,15 +57,21 @@ class ProjectBuilderTaskSpec extends Specification {
     def example = new File("${pathToPlugin}/example")
 
     @Shared
+    def pathToExampleIos = "${example.absolutePath}/ios"
+
+    @Shared
     def pathToExample = example.absolutePath
 
     @Shared
     def sut = new ProjectBuilderTask(
-            new ProjectBuilderOptions(Either.ok(pathToRoot), Either.ok(pluginName), Either.ok(groupName))
-    )
+            new ProjectBuilderOptions(
+                    Either.ok(new File(pathToRoot)),
+                    Either.ok(pluginName),
+                    Either.ok(groupName),
+                    null))
 
     @Shared
-    def createFlutterPlugin = "flutter create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios"
+    def createFlutterPlugin = "flutter create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
 
     @Shared
     def flutterPubGet = "flutter pub get"
@@ -78,6 +81,12 @@ class ProjectBuilderTaskSpec extends Specification {
 
     @Shared
     def klutterConsumerInit = "flutter pub run klutter:consumer init"
+
+    @Shared
+    def klutterConsumerAdd = "flutter pub run klutter:consumer add=my_awesome_plugin"
+
+    @Shared
+    def iosPodUpdate = "pod update"
 
     def setupSpec() {
         plugin.mkdirs()
@@ -106,14 +115,13 @@ class ProjectBuilderTaskSpec extends Specification {
         executor.putExpectation(pathToExample, flutterPubGet)
         executor.putExpectation(pathToPlugin, klutterProducerInit)
         executor.putExpectation(pathToExample, klutterConsumerInit)
+        executor.putExpectation(pathToExample, klutterConsumerAdd)
+        executor.putExpectation(pathToExampleIos, iosPodUpdate)
 
         when:
         sut.run()
 
         then: "Klutter is added as dependency to pubspec.yaml"
-        println(pubspecInRoot.text)
-        println(pubspecInExample.text)
-
         TestUtil.verify(pubspecInRoot.text, rootPubspecYamlWithKlutter)
         TestUtil.verify(pubspecInExample.text, examplePubspecYamlWithKlutter)
 
@@ -176,106 +184,90 @@ class ProjectBuilderTaskSpec extends Specification {
              """name: my_awesome_plugin
                 description: A new klutter plugin project.
                 version: 0.0.1
+                
                 environment:
                   sdk: '>=2.16.1 <3.0.0'
-                  flutter: '>=2.5.0'
+                  flutter: ">=2.5.0"
+                
                 dependencies:
-                  flutter:
-                       sdk: flutter
-                  squint_json: ^0.0.6
-                  klutter: ^0.3.0
+                    flutter:
+                        sdk: flutter
+                
+                    squint_json: ^0.0.6
+                    klutter_ui: ^0.0.1
+                dev_dependencies:
+                    klutter: ^0.3.0
                 flutter:
                   plugin:
                     platforms:
                       android:
-                        package: 
-                        pluginClass: 
+                        package: null
+                        pluginClass: null
                       ios:
-                        pluginClass: 
+                        pluginClass: null
                             """
 
     @Shared
-    def examplePubspecYaml = """
-        name: my_awesome_plugin_example
+    def examplePubspecYaml =
+            """name: my_awesome_plugin_example
         description: Demonstrates how to use the my_plugin plugin.
-        
         publish_to: 'none' # Remove this line if you wish to publish to pub.dev
         
         environment:
-          sdk: ">=2.17.5 <3.0.0"
+          sdk: '>=2.17.5 <3.0.0'
         
         dependencies:
           flutter:
             sdk: flutter
         
-          my_plugin:
-        
+          my_awesome_plugin:
             path: ../
         
-          cupertino_icons: ^1.0.2
-        
+          klutter_ui: ^0.0.1
+          squint_json: ^0.0.6     
         dev_dependencies:
           flutter_test:
             sdk: flutter
           flutter_lints: ^2.0.0
-        
-        # For information on the generic Dart part of this file, see the
-        # following page: https://dart.dev/tools/pub/pubspec
-        
-        # The following section is specific to Flutter packages.
+          klutter: ^0.3.0
         flutter:
-        
-          # The following line ensures that the Material Icons font is
-          # included with your application, so that you can use the icons in
-          # the material Icons class.
           uses-material-design: true
     """
 
     @Shared
-    def examplePubspecYamlWithKlutter = """
-        name: my_awesome_plugin_example
-        description: Demonstrates how to use the my_plugin plugin.
+    def examplePubspecYamlWithKlutter =
+            """name: my_awesome_plugin_example
+                description: Demonstrates how to use the my_awesome_plugin plugin
+                publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+                
+                environment:
+                  sdk: '>=2.16.1 <3.0.0'
+                
+                dependencies:
+                    flutter:
+                        sdk: flutter
+                
+                    my_awesome_plugin:
+                        path: ../
+                
+                    klutter_ui: ^0.0.1
+                    squint_json: ^0.0.6
+                dev_dependencies:
+                    flutter_test:
+                        sdk: flutter
+                
+                    klutter: ^0.3.0
+                flutter:
+                    uses-material-design: true
         
-        publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-        
-        environment:
-          sdk: ">=2.17.5 <3.0.0"
-        
-        dependencies:
-          klutter: ^0.3.0
-          squint_json: ^0.0.6
-          flutter:
-            sdk: flutter
-        
-          my_plugin:
-        
-            path: ../
-        
-          cupertino_icons: ^1.0.2
-        
-        dev_dependencies:
-          flutter_test:
-            sdk: flutter
-          flutter_lints: ^2.0.0
-        
-        # For information on the generic Dart part of this file, see the
-        # following page: https://dart.dev/tools/pub/pubspec
-        
-        # The following section is specific to Flutter packages.
-        flutter:
-        
-          # The following line ensures that the Material Icons font is
-          # included with your application, so that you can use the icons in
-          # the material Icons class.
-          uses-material-design: true
-    """
+            """
 
     private static class Exeggutor extends Executor {
 
         /**
          * Map of expected CLI executions.
          *
-         * Key: String absolutepath where command is to be executed.
+         * Key: String absolute path where command is to be executed.
          * Value: List<String> commands to be executed.
          */
         private def expectations = new HashMap<String,List<String>>()

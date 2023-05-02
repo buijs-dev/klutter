@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,25 @@
 package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.Either
+import spock.lang.Specification
 
-internal inline fun <reified T: ProjectBuilderAction> findProjectBuilderAction(
-    options: ProjectBuilderOptions
-): ProjectBuilderAction {
-    return when(T::class.java) {
-        RunFlutterCreate::class.java ->
-            options.toRunFlutterAction()
+import static dev.buijs.klutter.tasks.project.GroovyHelper.findProjectBuilderAction
 
-        InitKlutter::class.java ->
-            options.toInitKlutterAction()
+class ProjectBuilderActionsSpec extends Specification {
 
-        else -> throw KlutterException("Unknown ProjectBuilderAction: ${T::class.java}")
+    def "Verify a KlutterException is thrown if no ProjectBuilderAction is found"(){
+        when:
+        findProjectBuilderAction(
+                new ProjectBuilderOptions(
+                        Either.ok(new File("")),
+                        Either.ok(""),
+                        Either.ok(""),
+                        null))
+
+        then:
+        KlutterException e = thrown()
+        e.message == "Unknown ProjectBuilderAction: interface dev.buijs.klutter.tasks.project.ProjectBuilderAction"
     }
-}
 
-internal sealed interface ProjectBuilderAction {
-    fun doAction()
-}
-
-// Used for UT only!
-@Suppress("unused")
-private object GroovyHelper {
-    @JvmStatic
-    fun findProjectBuilderAction(options: ProjectBuilderOptions): ProjectBuilderAction =
-        findProjectBuilderAction<ProjectBuilderAction>(options)
 }

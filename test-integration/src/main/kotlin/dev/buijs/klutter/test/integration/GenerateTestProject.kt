@@ -4,9 +4,9 @@ import dev.buijs.klutter.kore.project.Dependencies
 import dev.buijs.klutter.kore.project.Config
 import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.project.plugin
-import dev.buijs.klutter.tasks.input.toGroupName
-import dev.buijs.klutter.tasks.input.toPluginName
-import dev.buijs.klutter.tasks.input.toRootFolder
+import dev.buijs.klutter.tasks.project.toGroupName
+import dev.buijs.klutter.tasks.project.toPluginName
+import dev.buijs.klutter.tasks.project.toRootFolder
 import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
 import dev.buijs.klutter.tasks.project.ProjectBuilderTask
 import java.nio.file.Files.createTempDirectory

@@ -21,24 +21,24 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.tasks.CopyAndroidAarFileKlutterTask
-import dev.buijs.klutter.tasks.CopyIosFrameworkKlutterTask
+import dev.buijs.klutter.tasks.CopyAarFileTask
+import dev.buijs.klutter.tasks.CopyXCFrameworkTask
 
 /**
  * Execute task [CopyAndroidAarFileGradleTask] from Gradle.
  */
 internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
-    override fun klutterTask() = CopyAndroidAarFileKlutterTask(
+    override fun klutterTask() = CopyAarFileTask(
         pathToRoot = project.rootDir,
         pluginName = project.klutterExtension().plugin?.name,
     )
 }
 
 /**
- * Execute task [CopyIosFrameworkKlutterTask] from Gradle.
+ * Execute task [CopyXCFrameworkTask] from Gradle.
  */
 internal open class CopyIosFrameworkGradleTask: AbstractTask() {
-    override fun klutterTask() = CopyIosFrameworkKlutterTask(
+    override fun klutterTask() = CopyXCFrameworkTask(
         pathToRoot = project.rootDir,
     )
 }

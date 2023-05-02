@@ -20,4 +20,5 @@ echo "------------------"
 
 echo "\0/ Klutter: step: publish bill-of-materials modules"
 echo "------------------"
-./gradlew publish -p "lib/bill-of-materials"
+#./gradlew publish -p "lib/bill-of-materials"
+./gradlew publishToMavenLocal -p "lib/bill-of-materials"

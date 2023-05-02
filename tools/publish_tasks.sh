@@ -20,4 +20,5 @@ echo "------------------"
 
 echo "\0/ Klutter: step: publish tasks modules"
 echo "------------------"
-./gradlew publish -p "lib/tasks"
+#./gradlew publish -p "lib/tasks"
+./gradlew publishToMavenLocal -p "lib/tasks"

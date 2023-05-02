@@ -23,10 +23,6 @@ package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.execute
-import dev.buijs.klutter.tasks.input.PluginName
-import dev.buijs.klutter.tasks.input.RootFolder
-import dev.buijs.klutter.tasks.input.validPluginNameOrThrow
-import dev.buijs.klutter.tasks.input.validRootFolderOrThrow
 import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =

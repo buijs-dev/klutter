@@ -1,7 +1,9 @@
 package dev.buijs.klutter.kommand.input
 
 import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.tasks.input.*
+import dev.buijs.klutter.tasks.project.toGroupName
+import dev.buijs.klutter.tasks.project.toPluginName
+import dev.buijs.klutter.tasks.project.toRootFolder
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.required
@@ -15,5 +17,6 @@ internal fun Array<String>.determineProjectBuilderOptionsByCommand(): ProjectBui
     return ProjectBuilderOptions(
         rootFolder = toRootFolder(root),
         groupName = toGroupName(group),
-        pluginName = toPluginName(name))
+        pluginName = toPluginName(name)
+    )
 }

@@ -22,9 +22,6 @@
 package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.project.Config
-import dev.buijs.klutter.tasks.input.GroupName
-import dev.buijs.klutter.tasks.input.PluginName
-import dev.buijs.klutter.tasks.input.RootFolder
 
 data class ProjectBuilderOptions(
     /**

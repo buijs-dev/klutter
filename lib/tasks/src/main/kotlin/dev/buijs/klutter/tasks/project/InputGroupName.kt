@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,37 @@
  */
 package dev.buijs.klutter.tasks.project
 
-import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.Either
 
-internal inline fun <reified T: ProjectBuilderAction> findProjectBuilderAction(
-    options: ProjectBuilderOptions
-): ProjectBuilderAction {
-    return when(T::class.java) {
-        RunFlutterCreate::class.java ->
-            options.toRunFlutterAction()
+typealias GroupName = Either<String, String>
 
-        InitKlutter::class.java ->
-            options.toInitKlutterAction()
+fun toGroupName(value: String) = value.toInput()
 
-        else -> throw KlutterException("Unknown ProjectBuilderAction: ${T::class.java}")
-    }
-}
+/**
+ * Validate a Klutter group name with the following constraints:
+ * - All characters are lowercase
+ * - All characters are:
+ * - alphabetic or
+ * - numeric or
+ * - '_' or
+ * - '.'
+ *
+ * - Group contains at least 2 parts (e.g. there is minimally 1 dot)
+ * - Should start with an alphabetic character
+ */
+private fun String.toInput(): GroupName {
 
-internal sealed interface ProjectBuilderAction {
-    fun doAction()
-}
+    if(!contains("."))
+        return GroupName.nok("GroupName error: Should contain at least 2 parts ('com.example').")
 
-// Used for UT only!
-@Suppress("unused")
-private object GroovyHelper {
-    @JvmStatic
-    fun findProjectBuilderAction(options: ProjectBuilderOptions): ProjectBuilderAction =
-        findProjectBuilderAction<ProjectBuilderAction>(options)
+    if(contains("_."))
+        return GroupName.nok("GroupName error: Characters . and _ can not precede each other.")
+
+    if(contains("._"))
+        return GroupName.nok("GroupName error: Characters . and _ can not precede each other.")
+
+    if(!"""^[a-z][a-z0-9._]+[a-z]$""".toRegex().matches(this))
+        return GroupName.nok("GroupName error: Should be lowercase alphabetic separated by dots ('com.example').")
+
+    return GroupName.ok(this)
 }

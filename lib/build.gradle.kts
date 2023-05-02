@@ -28,6 +28,9 @@ kover {
         // breaks Jacoco due to duplicate classes, haven't found a fix yet...
         ":lib:kompose",
 
+        // ST can't be run remote (yet)...
+        ":lib:jetbrains",
+
         // a test-only module
         ":lib-test",
 

@@ -26,7 +26,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import dev.buijs.klutter.tasks.executor
-import dev.buijs.klutter.tasks.input.*
 import dev.buijs.klutter.tasks.project.*
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File

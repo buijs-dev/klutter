@@ -19,11 +19,17 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
 import java.io.File
+
+fun GenerateCodeOptions.toExcludeArm64Task() =
+    ExcludeArm64Task(
+        podFile = project.ios.podspec(),
+        insertAfter = "dependency'Flutter'",
+        shouldRun = excludeArmArcFromPodspec)
 
 /**
  * Visitor which adds EXCLUDED_ARCHS for iphone simulator if not present.
@@ -33,9 +39,11 @@ import java.io.File
 class ExcludeArm64Task(
     private val podFile: File,
     private val insertAfter: String,
-): KlutterTask {
+    private val shouldRun: Boolean,
+): KlutterTask, GenerateCodeAction {
 
     override fun run() {
+        if(!shouldRun) return
 
         var hasExcludedPod = false
 
@@ -103,13 +111,12 @@ class ExcludeArm64Task(
         } else {
             throw KlutterException(
                 """
-          |Failed to add exclusions for arm64.
-          |
-          |Unable to find the following line in file ${podFile.path}:
-          |- '$prefix.$insertAfter'
-          |
-          |""".trimMargin(),
-            )
+                  |Failed to add exclusions for arm64.
+                  |
+                  |Unable to find the following line in file ${podFile.path}:
+                  |- '$prefix.$insertAfter'
+                  |
+                  |""".trimMargin())
         }
 
     }

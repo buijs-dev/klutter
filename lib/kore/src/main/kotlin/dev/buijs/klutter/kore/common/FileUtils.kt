@@ -47,6 +47,17 @@ fun File.maybeCreate() = this.also {
 }
 
 /**
+ * Create a new folder if it does not exist.
+ *
+ * @throws [KlutterException] if folder does not exist after creating it.
+ * @returns [File] with path of this String.
+ */
+fun File.maybeCreateFolder() = this.also {
+    if(!it.exists()) it.mkdirs()
+    if(!it.exists()) throw KlutterException("Failed to create folders: $this")
+}
+
+/**
  * Default implementation of [KlutterWriter] which creates a new File and writes [content] to it.
  */
 class FileWriter(
@@ -69,5 +80,5 @@ class FileWriter(
     }
 }
 
-fun File.write(printer: KlutterPrinter) =
+infix fun File.write(printer: KlutterPrinter) =
     FileWriter(this, printer.print()).write()

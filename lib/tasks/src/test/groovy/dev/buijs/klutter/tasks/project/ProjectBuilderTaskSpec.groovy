@@ -19,12 +19,12 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.test.TestUtil
-import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.tasks.project.ProjectBuilderTask
+import dev.buijs.klutter.tasks.Executor
+import dev.buijs.klutter.tasks.ExecutorKt
 import spock.lang.Shared
 import spock.lang.Specification
 

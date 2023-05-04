@@ -29,13 +29,13 @@ class RequestScopedController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,
-): Controller(packageName, className), SimpleController, RequestScoped
+): SimpleController(packageName, className), RequestScoped
 
 class SingletonController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,
-): Controller(packageName, className), SimpleController, Singleton
+): SimpleController(packageName, className), Singleton
 
 /**
  * A Broadcast Controller which is a class with a no-arg constructor
@@ -83,12 +83,16 @@ class RequestScopedBroadcastController(
 
 }
 
-abstract class BroadcastController(
+sealed class BroadcastController(
     val response: AbstractType,
     packageName: String,
     className: String
 ): Controller(packageName, className)
 
-interface SimpleController
+sealed class SimpleController(
+    packageName: String,
+    className: String
+): Controller(packageName, className)
+
 interface RequestScoped
 interface Singleton

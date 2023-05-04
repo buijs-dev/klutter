@@ -75,6 +75,11 @@ dependencies {
     implementation(project(":lib:kore"))
     implementation(project(":lib:annotations"))
 
+    // Jackson for XML
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
+
     // Logging
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("io.github.microutils:kotlin-logging:3.0.5")

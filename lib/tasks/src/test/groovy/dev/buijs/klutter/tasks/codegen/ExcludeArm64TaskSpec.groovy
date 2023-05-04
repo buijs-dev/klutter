@@ -1,4 +1,4 @@
-package dev.buijs.klutter.tasks
+package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterException
 import spock.lang.Specification
@@ -16,7 +16,7 @@ class ExcludeArm64TaskSpec extends Specification {
         file.write("s.dependency'Flutter'")
 
         when:
-        new ExcludeArm64Task(file, "dependency'Flutter'").run()
+        new ExcludeArm64Task(file, "dependency'Flutter'", true).run()
 
         then:
         with(file.text) {
@@ -35,7 +35,7 @@ class ExcludeArm64TaskSpec extends Specification {
         file.write(podfile)
 
         when:
-        new ExcludeArm64Task(file, "dependency'Flutter'").run()
+        new ExcludeArm64Task(file, "dependency'Flutter'", true).run()
 
         then:
         KlutterException e = thrown()
@@ -59,7 +59,7 @@ class ExcludeArm64TaskSpec extends Specification {
         file.write(podfile)
 
         when:
-        new ExcludeArm64Task(file, "ios.deployment_target").run()
+        new ExcludeArm64Task(file, "ios.deployment_target", true).run()
 
         then:
         file.text.replaceAll(" ", "") == expected.replaceAll(" ", "")

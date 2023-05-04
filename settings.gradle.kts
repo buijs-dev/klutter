@@ -13,7 +13,5 @@ include(":lib-test")
 // Internal workload for testing annotations processor
 include(":test-ksp")
 include(":test-ksp:platform")
-// Test generating a new project using the local modules
-include(":test-integration")
 // Internal build properties
 includeBuild("lib-build")

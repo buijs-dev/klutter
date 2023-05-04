@@ -29,7 +29,9 @@ import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.project.plugin
 import dev.buijs.klutter.kore.project.toPubspec
-import dev.buijs.klutter.tasks.*
+import dev.buijs.klutter.tasks.codegen.GenerateCodeOptions
+import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
+import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
 
 /**
  * The actual symbol processor which will scan all classes with Klutter annotations
@@ -104,18 +106,15 @@ class Processor(
         logger.info("Response count: ${metadata.size}")
         logger.info("Controller count: ${controllers.size}")
         logger.info("=============================================================")
-        val pluginName = pubspec.name ?: "klutter_library"
-        val methodChannelName = pubspec.android?.pluginPackage ?: "$pluginName.klutter"
-        GenerateCodeTask(
-            android = project.android,
-            ios = project.ios,
-            root = project.root,
-            controllers = controllers,
-            metadata = metadata,
+
+        val codegenOptions = GenerateCodeOptions(
+            project = project,
+            pubspec = pubspec,
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
-            methodChannelName = methodChannelName,
-            pluginName = pluginName,
-            log = { str -> logger.info("Running dart command:\n$str") }
-        ).run()
+            controllers = controllers,
+            messages = metadata,
+            log = { str -> logger.info("Running dart command:\n$str") })
+
+        findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()
     }
 }

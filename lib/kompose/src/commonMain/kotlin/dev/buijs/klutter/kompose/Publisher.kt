@@ -19,6 +19,8 @@
  * SOFTWARE.
  *
  */
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package dev.buijs.klutter.kompose
 
 import kotlinx.coroutines.*

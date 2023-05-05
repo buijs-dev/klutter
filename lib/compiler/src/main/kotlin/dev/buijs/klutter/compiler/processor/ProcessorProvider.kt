@@ -35,6 +35,7 @@ import dev.buijs.klutter.kore.KlutterException
  *
  * If the <b>klutterScanFolder</b> is not set then a [KlutterException] is thrown.
  * If the folder does not exist then a [KlutterException] is thrown.
+ * See [ProcessorOptions] for all available configuration options.
  */
 class ProcessorProvider : SymbolProcessorProvider {
     override fun create(

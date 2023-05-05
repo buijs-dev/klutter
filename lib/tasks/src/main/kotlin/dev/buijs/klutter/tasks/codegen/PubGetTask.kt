@@ -26,18 +26,18 @@ import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 fun GenerateCodeOptions.toPubGetTask() =
-    PubGetTask(rootFolder = project.root.folder, log = log)
+    PubGetTask(folder = project.root.folder, log = log)
 
 /**
  * Run command 'flutter pub get'  in a folder.
  */
 class PubGetTask(
     private val log: (String) -> Unit = {  },
-    private val rootFolder: File
+    private val folder: File
 ) : KlutterTask, GenerateCodeAction {
 
     override fun run() {
-        "flutter pub get".execute(rootFolder).also { log(it) }
+        "flutter pub get".execute(folder).also { log(it) }
     }
 
 }

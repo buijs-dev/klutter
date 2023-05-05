@@ -35,7 +35,7 @@ class KlutterInternalPlugin: Plugin<Project> {
 }
 
 object ProjectVersions {
-    val core = versions("kore.version")
+    val kore = versions("kore.version")
     val bom = versions("bom.version")
     val annotations = versions("annotations.version")
     val gradle = versions("plugin.gradle.version")

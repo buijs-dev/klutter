@@ -124,7 +124,7 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
         .filterIsInstance<ValidSquintType>()
         .map { it.data }
 
-    val noSourceFile = metadata.filter { it.source == null }
+    val noSourceFile = metadata.filter { it.source == null }.map { it.squintType.className }
 
     val duplicateTypes = metadata.duplicateSource()
 
@@ -138,7 +138,7 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
 
     return when {
         noSourceFile.isNotEmpty() ->
-            missingSourceFileErrorSquint(unknownTypes)
+            missingSourceFileErrorSquint(noSourceFile)
 
         unknownTypes.isNotEmpty() ->
             unknownResponseErrorSquint(unknownTypes)

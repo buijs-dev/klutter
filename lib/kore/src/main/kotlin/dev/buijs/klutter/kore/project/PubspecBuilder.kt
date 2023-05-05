@@ -48,7 +48,7 @@ const val klutterPubVersion = "0.3.0"
 /**
  * The version of the klutter-ui Pub Plugin.
  */
-const val klutterUIPubVersion = "0.0.1"
+const val klutterUIPubVersion = "0.0.2"
 
 /**
  * The version of the squint_json Pub Plugin.

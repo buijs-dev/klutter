@@ -194,7 +194,7 @@ class ProjectBuilderTaskSpec extends Specification {
                         sdk: flutter
                 
                     squint_json: ^0.0.6
-                    klutter_ui: ^0.0.1
+                    klutter_ui: ^0.0.2
                 dev_dependencies:
                     klutter: ^0.3.0
                 flutter:
@@ -223,7 +223,7 @@ class ProjectBuilderTaskSpec extends Specification {
           my_awesome_plugin:
             path: ../
         
-          klutter_ui: ^0.0.1
+          klutter_ui: ^0.0.2
           squint_json: ^0.0.6     
         dev_dependencies:
           flutter_test:
@@ -250,7 +250,7 @@ class ProjectBuilderTaskSpec extends Specification {
                     my_awesome_plugin:
                         path: ../
                 
-                    klutter_ui: ^0.0.1
+                    klutter_ui: ^0.0.2
                     squint_json: ^0.0.6
                 dev_dependencies:
                     flutter_test:
@@ -261,36 +261,5 @@ class ProjectBuilderTaskSpec extends Specification {
                     uses-material-design: true
         
             """
-
-    private static class Exeggutor extends Executor {
-
-        /**
-         * Map of expected CLI executions.
-         *
-         * Key: String absolute path where command is to be executed.
-         * Value: List<String> commands to be executed.
-         */
-        private def expectations = new HashMap<String,List<String>>()
-
-        @Override
-        String execute(File runFrom, Long timeout, String command, Map<String, String> env) {
-            if(expectations.containsKey(runFrom.absolutePath)) {
-                if(expectations[runFrom.absolutePath].contains(command)) {
-                    return ""
-                }
-            }
-
-            throw new RuntimeException("CLI execution failure: $command - $runFrom.absolutePath")
-        }
-
-        def putExpectation(String runFrom, String command) {
-            if(!expectations.containsKey(runFrom)) {
-                expectations.put(runFrom, [command])
-            } else {
-                expectations.get(runFrom).add(command)
-            }
-        }
-
-    }
 
 }

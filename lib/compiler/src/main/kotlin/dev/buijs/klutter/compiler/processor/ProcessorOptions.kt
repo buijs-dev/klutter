@@ -29,6 +29,12 @@ import java.io.File
 
 /**
  * Parsed ksp options used by [Processor].
+ * </br>
+ * Available options are:
+ * - klutterScanFolder: Folder to scan for klutter annotations.
+ * - klutterOutputFolder: Folder where to write analysis results.
+ * - klutterGenerateAdapters: Boolean value indicating if codegen tasks should run during build.
+ * - intelMac: Boolean value indicating if the platform is an Intel-based Mac.
  */
 data class ProcessorOptions(
     val metadataFolder: File,

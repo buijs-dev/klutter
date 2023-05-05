@@ -27,7 +27,9 @@ import java.io.File
 /**
  * Parent for all types that are serializable to a format that dart squint can process.
  */
-sealed interface SquintType
+sealed interface SquintType {
+    val className: String
+}
 
 /**
  * Data class to serialize a Klutter CustomType to JSON,
@@ -56,7 +58,7 @@ sealed interface SquintType
  */
 @Serializable
 class SquintCustomType(
-    val className: String,
+    override val className: String,
     val members: List<SquintCustomTypeMember>,
 ): SquintType
 
@@ -81,7 +83,7 @@ class SquintCustomTypeMember(
 
 @Serializable
 class SquintEnumType(
-    val className: String,
+    override val className: String,
     val values: List<String> = emptyList(),
     val valuesJSON: List<String> = emptyList(),
 ): SquintType

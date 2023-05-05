@@ -70,7 +70,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "dev.buijs.klutter"
             artifactId = "kore"
-            version = dev.buijs.klutter.ProjectVersions.core
+            version = dev.buijs.klutter.ProjectVersions.kore
             artifact("$projectDir/build/libs/kore.jar")
 
             pom {

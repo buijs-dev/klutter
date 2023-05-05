@@ -137,7 +137,7 @@ fun Dependency.getLocalOrProjectGroup() = when {
 
 fun Dependency.getLocalOrProjectVersion() = when(name) {
     "kore" ->
-        dev.buijs.klutter.ProjectVersions.core
+        dev.buijs.klutter.ProjectVersions.kore
     "tasks" ->
         dev.buijs.klutter.ProjectVersions.tasks
     "kotlin-stdlib" ->

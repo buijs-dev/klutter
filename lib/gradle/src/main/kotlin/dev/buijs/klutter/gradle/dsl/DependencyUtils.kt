@@ -19,6 +19,7 @@
  * SOFTWARE.
  *
  */
+@file:Suppress("unused")
 package dev.buijs.klutter.gradle.dsl
 
 import dev.buijs.klutter.kore.project.mapper

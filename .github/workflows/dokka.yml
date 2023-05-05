@@ -16,6 +16,7 @@ jobs:
       matrix:
         os: [ macos-latest ]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     steps:
       - name: 'checkout source'
         uses: actions/checkout@v3

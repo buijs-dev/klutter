@@ -19,8 +19,12 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.compiler.processor
+package dev.buijs.klutter.compiler.validator
 
+import dev.buijs.klutter.compiler.scanner.InvalidController
+import dev.buijs.klutter.compiler.scanner.InvalidSquintType
+import dev.buijs.klutter.compiler.scanner.ValidController
+import dev.buijs.klutter.compiler.scanner.ValidSquintType
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.common.Either
@@ -66,22 +70,15 @@ internal typealias InvalidSquintMessages =
 /**
  * Error indicating multiple Response classes have the same class name.
  */
-private fun duplicateResponseError(types: List<String>) = Invalid(
-    listOf("Response contract violation! Duplicate class names: $types")
-)
-
-/**
- * Error indicating multiple Response classes have the same class name.
- */
 private fun duplicateResponseErrorSquint(types: List<String>) = InvalidSquintMessages(
     listOf("Response contract violation! Duplicate class names: $types")
 )
 
 /**
- * Error indicating a Response class has a TypeMember of Unknown CustomType.
+ * Error indicating a Controller has an unknown request and/or response Type.
  */
-private fun unknownResponseError(types: List<String>) = Invalid(
-    listOf("Unknown Response TypeMember: $types")
+private fun unknownResponseOrRequestError(types: List<String>) = Invalid(
+    listOf("Unknown Response and/or Request Type: $types")
 )
 
 /**
@@ -130,7 +127,7 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
 
     val distinctTypes = metadata.distinctSource()
 
-    val unknownTypes = distinctTypes.unknown(metadata.map { it.type }.filterIsInstance<CustomType>())
+    val unknownTypes = distinctTypes.unknownSource(metadata.map { it.type }.filterIsInstance<CustomType>())
 
     val emptyTypes = distinctTypes
         .filter { it.members.isEmpty() }
@@ -156,45 +153,36 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
 
 /**
  * Find all valid Controller classes.
- * - List of Response [AbstractType] if all are valid
+ * - List of [Controller] if all are valid.
  * - List of [String] errors if not.
  */
-internal fun List<Either<String,Controller>>.validateControllers(): ValidationResult {
+internal fun List<Either<String,Controller>>.validateControllers(
+    responses: List<AbstractType>
+): ValidationResult {
 
     val errors = this
-        .filterIsInstance<InvalidControllerType>()
+        .filterIsInstance<InvalidController>()
 
     if(errors.isNotEmpty())
         return Invalid(errors.map { it.data }.toList())
 
     val types = this
-        .filterIsInstance<ValidControllerType>()
+        .filterIsInstance<ValidController>()
         .map { it.data }
-
-    val duplicateTypes = types.duplicates()
 
     val distinctTypes = types.distinct()
 
-    val unknownTypes = distinctTypes.unknown(types)
+    val unknownTypes = distinctTypes.unknownControllerRequestOrResponseType(responses)
 
     return when {
         unknownTypes.isNotEmpty() ->
-            unknownResponseError(unknownTypes)
-
-        duplicateTypes.isNotEmpty() ->
-            duplicateResponseError(duplicateTypes)
-
+            unknownResponseOrRequestError(unknownTypes)
         else -> Valid(distinctTypes.toList())
     }
 }
 
 private fun List<SquintMessageSource>.duplicateSource() = this
     .groupBy { it.type.className }
-    .filter { it.value.size > 1 }
-    .map { it.key }
-
-private fun List<CustomType>.duplicates() = this
-    .groupBy { it.className }
     .filter { it.value.size > 1 }
     .map { it.key }
 
@@ -212,7 +200,13 @@ private fun List<SquintMessageSource>.distinctSource() =
         }
     }.filterDuplicates(this.map { it.type }.filterIsInstance<CustomType>())
 
-private fun Set<CustomType>.unknown(types: List<CustomType>) = this
+private fun Set<CustomType>.unknownSource(types: List<AbstractType>) = this
+    .map { it.className }
+    .filter { types.none { type -> type.className == it } }
+
+private fun Set<Controller>.unknownControllerRequestOrResponseType(types: List<AbstractType>) = this
+    .flatMap { it.functions }
+    .flatMap { listOfNotNull(it.requestDataType, it.responseDataType) }
     .map { it.className }
     .filter { types.none { type -> type.className == it } }
 

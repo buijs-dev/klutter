@@ -52,8 +52,9 @@ fun File.maybeCreate() = this.also {
  * @throws [KlutterException] if folder does not exist after creating it.
  * @returns [File] with path of this String.
  */
-fun File.maybeCreateFolder() = this.also {
+fun File.maybeCreateFolder(clearIfExists: Boolean = false) = this.also {
     if(!it.exists()) it.mkdirs()
+    if(clearIfExists) it.delete(); it.mkdirs()
     if(!it.exists()) throw KlutterException("Failed to create folders: $this")
 }
 

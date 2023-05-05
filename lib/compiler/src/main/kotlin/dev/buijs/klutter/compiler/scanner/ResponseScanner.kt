@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.compiler.processor
+package dev.buijs.klutter.compiler.scanner
 
 import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.processing.Resolver
@@ -31,8 +31,6 @@ import dev.buijs.klutter.kore.ast.toAbstractType
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
@@ -40,50 +38,6 @@ import java.io.File
  */
 private const val RESPONSE_ANNOTATION =
     "dev.buijs.klutter.annotations.Response"
-
-/**
- * Alias for [Either] with only right value of type [SquintMessageSource].
- */
-typealias ValidSquintType =
-        EitherOk<String, SquintMessageSource>
-
-/**
- * Alias for [Either] with only left value of type [String] (error).
- */
-typealias InvalidSquintType =
-        EitherNok<String, SquintMessageSource>
-
-/**
- * Error indicating a class is missing the @Response annotation.
- */
-private fun Any.missingSerializableAnnotation() =
-    InvalidSquintType("Class is missing @Serializable annotation: $this")
-
-/**
- * Error indicating a class does not extend KlutterJSON.
- */
-private fun Any.doesNotExtendKlutterJSON() =
-    InvalidSquintType("Class does not extend KlutterJSON: $this")
-
-/**
- * A Response is invalid because it has multiple constructors.
- */
-private fun Any.tooManyConstructors() = Either.nok<String, List<TypeMember>>(
-    "Response $this has multiple constructors but only 1 is allowed."
-)
-
-/**
- * A Response is invalid because it has no constructor fields.
- */
-private fun Any.emptyConstructor() = Either.nok<String, List<TypeMember>>(
-    "Response $this constructor has no fields but atleast 1 is expected."
-)
-
-/**
- * Error indicating a field member is not immutable.
- */
-private fun String.mutabilityError() =
-    InvalidTypeMember("TypeMember is mutable: '$this'")
 
 /**
  * Process all class annotated with @Response.
@@ -94,69 +48,7 @@ internal fun Resolver.annotatedWithResponse(
     .filterIsInstance<KSClassDeclaration>()
     .toList()
     .map { it.toAbstractTypeOrFail() }
-    .mapIndexed { index, either -> either.writeDebugOutput(outputFolder, index) }
-
-/**
- * Write all AbstractTypes or error message to [outputFolder].
- */
-private fun Either<String,SquintMessageSource>.writeDebugOutput(
-    outputFolder: File,
-    count: Int,
-    ): Either<String,SquintMessageSource> {
-
-    val folder = outputFolder
-        .resolve("response")
-        .also { it.mkdir() }
-
-    if(this is EitherNok) {
-        toDebugOutput(count) writeErrorIn folder
-        return this
-    }
-
-    val type = this as EitherOk
-    val source = type.toDebugOutput() writeContentIn folder
-    return ValidSquintType(data = data.copy(source = source))
-
-}
-
-/**
- * Return Pair:
- * - left: filename consisting className
- * - right: file content consisting of class data
- */
-private fun EitherOk<String,SquintMessageSource>.toDebugOutput() =
-    Pair(data.type.className.lowercase(), data)
-
-/**
- * Return Pair:
- * - left: filename consisting of count + '_invalid'
- * - right: file content consisting of error message
- */
-private fun EitherNok<String,SquintMessageSource>.toDebugOutput(count: Int) =
-    Pair("${count}_invalid", data)
-
-/**
- * Create a new file in [folder] and write debug content.
- */
-private infix fun Pair<String, String>.writeErrorIn(folder: File) =
-    folder.resolve("sqdb_$first.json").also {
-        it.createNewFile()
-        it.writeText(second)
-    }
-
-/**
- * Create a new file in [folder] and write debug content.
- */
-private infix fun Pair<String, SquintMessageSource>.writeContentIn(folder: File) =
-    folder.resolve("sqdb_$first.json").also {
-        it.createNewFile()
-        when (second.squintType) {
-            is SquintCustomType ->
-                it.writeText(Json.encodeToString(second.squintType as SquintCustomType))
-            is SquintEnumType ->
-                it.writeText(Json.encodeToString(second.squintType as SquintEnumType))
-        }
-    }
+    .mapIndexed { index, either -> either.writeOutput(outputFolder, index) }
 
 private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, SquintMessageSource> {
 
@@ -183,8 +75,7 @@ private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, SquintMess
         val type = CustomType(
             className = className,
             packageName = this.packageName.asString(),
-            members = (fields as EitherOk).data,
-        )
+            members = (fields as EitherOk).data)
 
         val squintType = SquintCustomType(
             className = className,
@@ -192,17 +83,9 @@ private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, SquintMess
                 SquintCustomTypeMember(
                     name = it.name,
                     type = it.type.let { t -> t.typeSimplename(asKotlinType = false) },
-                    nullable = it.type is Nullable
-                )
-            },
-        )
+                    nullable = it.type is Nullable) })
 
-        ValidSquintType(
-            data = SquintMessageSource(
-                type = type,
-                squintType = squintType,
-            )
-        )
+        ValidSquintType(SquintMessageSource(type = type, squintType = squintType))
     }
 
 }
@@ -229,7 +112,7 @@ private fun KSClassDeclaration.getConstructorFields(): Either<String, List<TypeM
                 Either.nok(invalid.joinToString { it })
             }
         }
-        else -> tooManyConstructors()
+        else -> responseHasTooManyConstructors()
     }
 }
 

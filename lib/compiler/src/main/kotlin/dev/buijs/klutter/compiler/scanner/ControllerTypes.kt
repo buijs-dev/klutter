@@ -19,25 +19,33 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand
+package dev.buijs.klutter.compiler.scanner
 
-import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.tasks.project.toGroupName
-import dev.buijs.klutter.tasks.project.toPluginName
-import dev.buijs.klutter.tasks.project.toRootFolder
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.required
+import dev.buijs.klutter.kore.ast.*
+import dev.buijs.klutter.kore.common.Either
+import dev.buijs.klutter.kore.common.EitherNok
+import dev.buijs.klutter.kore.common.EitherOk
 
-internal fun Array<String>.determineProjectBuilderOptionsByCommand(): ProjectBuilderOptions {
-    val parser = ArgParser("klutter")
-    val root by parser.option(ArgType.String, shortName = "root", description = "Path to root folder").required()
-    val group by parser.option(ArgType.String, shortName = "org", description = "Organization").required()
-    val name by parser.option(ArgType.String, shortName = "name", description = "Plugin name").required()
-    parser.parse(this)
-    return ProjectBuilderOptions(
-        rootFolder = toRootFolder(root),
-        groupName = toGroupName(group),
-        pluginName = toPluginName(name)
-    )
-}
+/**
+ * Alias for [Either] with only right value of type [Controller].
+ */
+internal typealias ValidController = EitherOk<String, Controller>
+
+/**
+ * Alias for [Either] with only left value of type [String] (error).
+ */
+internal typealias InvalidController = EitherNok<String, Controller>
+/**
+ * Alias for [Either] with only right value of type [Method].
+ */
+internal typealias ValidEvent = EitherOk<String, Method>
+
+/**
+ * Alias for [Either] with only left value of type [String] (error).
+ */
+internal typealias InvalidEvent = EitherNok<String, Method>
+
+/**
+ * Alias for [Either] containing a valid [Controller] or a [String] error message.
+ */
+internal typealias ValidControllerOrError = Either<String,Controller>

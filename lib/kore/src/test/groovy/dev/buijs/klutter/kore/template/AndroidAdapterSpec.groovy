@@ -30,9 +30,9 @@ import dev.buijs.klutter.kore.ast.IntType
 import dev.buijs.klutter.kore.ast.NullableCustomType
 import dev.buijs.klutter.kore.ast.NullableStringType
 import dev.buijs.klutter.kore.ast.RequestScopedBroadcastController
-import dev.buijs.klutter.kore.ast.RequestScopedController
+import dev.buijs.klutter.kore.ast.RequestScopedSimpleController
 import dev.buijs.klutter.kore.ast.SingletonBroadcastController
-import dev.buijs.klutter.kore.ast.SingletonController
+import dev.buijs.klutter.kore.ast.SingletonSimpleController
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.ast.TypeMember
 import dev.buijs.klutter.kore.ast.UnitType
@@ -47,7 +47,7 @@ class AndroidAdapterSpec extends Specification {
         given:
         def packageName = "dev.buijs.platform.controller"
         def sut = createSut([
-                new RequestScopedController(packageName, "MySimpleContollerImpl", [
+                new RequestScopedSimpleController(packageName, "MySimpleContollerImpl", [
                         new Method(
                                 "sayHi",
                                 "dev.buijs.platform.contoller.MySimpleControllerImpl",
@@ -314,7 +314,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     def "Verify request data is returned when invoked method has void return type"() {
         given:
         def methodReturningVoid = createMethod(new StringType(), new UnitType())
-        def controllerWithMethod = new SingletonController("foo.bar", "MySingleton", [methodReturningVoid])
+        def controllerWithMethod = new SingletonSimpleController("foo.bar", "MySingleton", [methodReturningVoid])
         def adapter = new AndroidAdapter("", "", Set.of("foo/bar"), Set.of(), Set.of(controllerWithMethod))
 
         expect:
@@ -359,7 +359,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     }
 
     def static createRequestScopedController(List<Method> methods) {
-        new RequestScopedController(
+        new RequestScopedSimpleController(
                 "dev.buijs.platform.controller",
                 "MyRequestScopedController",
                 methods
@@ -376,7 +376,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     }
 
     def static createSingletonController(List<Method> methods) {
-        new SingletonController(
+        new SingletonSimpleController(
                 "dev.buijs.platform.controller",
                 "MySingletonController",
                 methods

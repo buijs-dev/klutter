@@ -25,9 +25,9 @@ import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.CustomType
 import dev.buijs.klutter.kore.ast.Method
 import dev.buijs.klutter.kore.ast.RequestScopedBroadcastController
-import dev.buijs.klutter.kore.ast.RequestScopedController
+import dev.buijs.klutter.kore.ast.RequestScopedSimpleController
 import dev.buijs.klutter.kore.ast.SingletonBroadcastController
-import dev.buijs.klutter.kore.ast.SingletonController
+import dev.buijs.klutter.kore.ast.SingletonSimpleController
 import dev.buijs.klutter.kore.ast.SquintCustomType
 import dev.buijs.klutter.kore.ast.SquintCustomTypeMember
 import dev.buijs.klutter.kore.ast.SquintMessageSource
@@ -135,8 +135,8 @@ class GenerateCodeTaskSpec extends Specification {
     @Shared
     List<Controller> controllers = [
             new RequestScopedBroadcastController(packageName, "MyRequestScopedBroadcaster", [], new StringType()),
-            new RequestScopedController(packageName, "MyRequestScoped", [methodReturningMyCustomType]),
-            new SingletonController(packageName, "MySingleton", [methodWithStringRequest]),
+            new RequestScopedSimpleController(packageName, "MyRequestScoped", [methodReturningMyCustomType]),
+            new SingletonSimpleController(packageName, "MySingleton", [methodWithStringRequest]),
             new SingletonBroadcastController(packageName, "MySingletonBroadcaster", [], myCustomType)
     ]
 

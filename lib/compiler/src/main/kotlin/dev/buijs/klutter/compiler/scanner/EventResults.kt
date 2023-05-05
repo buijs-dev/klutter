@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,25 +19,16 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand
+package dev.buijs.klutter.compiler.scanner
 
-import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.tasks.project.toGroupName
-import dev.buijs.klutter.tasks.project.toPluginName
-import dev.buijs.klutter.tasks.project.toRootFolder
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.required
+internal val eventIsMissingReturnValue =
+    InvalidEvent("Event is missing a return value.")
 
-internal fun Array<String>.determineProjectBuilderOptionsByCommand(): ProjectBuilderOptions {
-    val parser = ArgParser("klutter")
-    val root by parser.option(ArgType.String, shortName = "root", description = "Path to root folder").required()
-    val group by parser.option(ArgType.String, shortName = "org", description = "Organization").required()
-    val name by parser.option(ArgType.String, shortName = "name", description = "Plugin name").required()
-    parser.parse(this)
-    return ProjectBuilderOptions(
-        rootFolder = toRootFolder(root),
-        groupName = toGroupName(group),
-        pluginName = toPluginName(name)
-    )
-}
+internal val eventIsMissingParameter =
+    InvalidEvent("Event is missing value parameter 'name'.")
+
+internal val eventHasUndeterminedMethodSignature =
+    InvalidEvent("Unable to determine method signature of Event.")
+
+internal val eventHasTooManyParameters =
+    InvalidEvent("Method has more than 1 parameter but only 0 or 1 is allowed.")

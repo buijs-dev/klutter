@@ -25,6 +25,15 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
+import dev.buijs.klutter.compiler.scanner.annotatedWithController
+import dev.buijs.klutter.compiler.scanner.annotatedWithResponse
+import dev.buijs.klutter.compiler.validator.*
+import dev.buijs.klutter.compiler.validator.Invalid
+import dev.buijs.klutter.compiler.validator.InvalidSquintMessages
+import dev.buijs.klutter.compiler.validator.Valid
+import dev.buijs.klutter.compiler.validator.ValidSquintMessages
+import dev.buijs.klutter.compiler.validator.ValidationResult
+import dev.buijs.klutter.compiler.validator.ValidationResultSquintMessages
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.project.plugin
@@ -57,7 +66,7 @@ class Processor(
 
         val controllers = resolver
             .annotatedWithController(input)
-            .validateControllers()
+            .validateControllers(responses?.map { it.type } ?: emptyList())
             .validControllersOrNull("@Controller")
 
         // If null then there are validation errors and code generation should be skipped

@@ -25,13 +25,13 @@ sealed class Controller(
  * A Simple Controller which is a class with a no-arg constructor
  * and contains one or more @Event annotated functions.
  */
-class RequestScopedController(
+class RequestScopedSimpleController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,
 ): SimpleController(packageName, className), RequestScoped
 
-class SingletonController(
+class SingletonSimpleController(
     override val packageName: String,
     override val className: String,
     override val functions: List<Method>,

@@ -1,4 +1,4 @@
-package dev.buijs.klutter.kommand.input
+package dev.buijs.klutter.kommand
 
 import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
 import dev.buijs.klutter.tasks.project.toGroupName

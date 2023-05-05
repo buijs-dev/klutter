@@ -1,4 +1,4 @@
-package dev.buijs.klutter.kommand.input
+package dev.buijs.klutter.kommand
 
 import com.github.kinquirer.KInquirer
 import com.github.kinquirer.components.*

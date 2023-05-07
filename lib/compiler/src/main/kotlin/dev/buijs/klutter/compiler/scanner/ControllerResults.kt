@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
-import com.google.devtools.ksp.symbol.KSClassDeclaration
+import dev.buijs.klutter.compiler.wrapper.KCWrapper
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
 
@@ -30,66 +30,64 @@ import dev.buijs.klutter.kore.common.Either
  * </br>
  * A Controller should only have a no-args constructor.
  */
-internal fun Any.controllerIsMissingNoArgsConstructor() = Either.nok<String, Controller>(
-    "Controller $this is only allowed to have a no-arg constructor")
+internal fun KCWrapper.controllerIsMissingNoArgsConstructor() = Either.nok<String, Controller>(
+    "Controller $packageName.$className is only allowed to have a no-arg constructor")
 
 /**
  * A Controller is invalid because it has multiple constructors.
  *
  * A Controller should only have a no-args constructor.
  */
-internal fun Any.controllerHasTooManyConstructors() = Either.nok<String, Controller>(
-    "Controller $this has multiple constructors but only 1 is allowed.")
+internal fun KCWrapper.controllerHasTooManyConstructors() = Either.nok<String, Controller>(
+    "Controller $packageName.$className has multiple constructors but only 1 is allowed.")
 
-internal fun List<InvalidEvent>.controllerHasInvalidEvents() =
-    InvalidController(joinToString { it.data })
+internal fun KCWrapper.controllerHasInvalidEvents(events: List<String>) =
+    InvalidController("Controller $packageName.$className has invalid events: ${events.joinToString { it }}")
 
 /**
- * A Publisher Controller is invalid because it's TypeParameter is not a Response class.
- * </br>
- * A Response class should extend KlutterJSON and be annotated with "@Response".
+ * A Publisher Controller is invalid because it's TypeParameter has an invalid name.
  */
-internal fun String.publisherControllerHasInvalidTypeParameter() =
-    InvalidController("Publisher has invalid TypeParameter: $this (not a Response class)")
+internal fun String.broadcastControllerHasInvalidTypeParameterName() =
+   InvalidController("BroadcastController has invalid TypeParameter: $this (invalid class name)")
 
 /**
  * Return a [ValidController] containing a [RequestScopedBroadcastController].
  */
-internal fun KSClassDeclaration.validRequestScopedBroadcastController(functions: List<Method>, response: AbstractType) =
+internal fun KCWrapper.validRequestScopedBroadcastController(functions: List<Method>, response: AbstractType) =
     ValidController(
         RequestScopedBroadcastController(
-            packageName = packageName.asString(),
-            className = "$this",
+            packageName = packageName,
+            className = className,
             functions = functions,
             response = response))
 
 /**
  * Return a [ValidController] containing a [SingletonBroadcastController].
  */
-internal fun KSClassDeclaration.validSingletonBroadcastController(functions: List<Method>, response: AbstractType) =
+internal fun KCWrapper.validSingletonBroadcastController(functions: List<Method>, response: AbstractType) =
     ValidController(
         SingletonBroadcastController(
-            packageName = packageName.asString(),
-            className = "$this",
+            packageName = packageName,
+            className = className,
             functions = functions,
             response = response))
 
 /**
  * Return a [ValidController] containing a [RequestScopedSimpleController].
  */
-internal fun KSClassDeclaration.validRequestScopedSimpleController(functions: List<Method>) =
+internal fun KCWrapper.validRequestScopedSimpleController(functions: List<Method>) =
     ValidController(
         RequestScopedSimpleController(
-            packageName = packageName.asString(),
-            className = "$this",
+            packageName = packageName,
+            className = className,
             functions = functions))
 
 /**
  * Return a [ValidController] containing a [SingletonSimpleController].
  */
-internal fun KSClassDeclaration.validSingletonSimpleController(functions: List<Method>) =
+internal fun KCWrapper.validSingletonSimpleController(functions: List<Method>) =
     ValidController(
         SingletonSimpleController(
-            packageName = packageName.asString(),
-            className = "$this",
+            packageName = packageName,
+            className = className,
             functions = functions))

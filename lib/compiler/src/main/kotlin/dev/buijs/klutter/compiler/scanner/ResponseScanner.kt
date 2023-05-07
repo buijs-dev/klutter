@@ -85,7 +85,9 @@ private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, SquintMess
                     type = it.type.let { t -> t.typeSimplename(asKotlinType = false) },
                     nullable = it.type is Nullable) })
 
-        ValidSquintType(SquintMessageSource(type = type, squintType = squintType))
+        ValidSquintType(SquintMessageSource(
+            type = type,
+            squintType = squintType))
     }
 
 }
@@ -136,19 +138,11 @@ private fun KSFunctionDeclaration.getTypeMembers() = parameters.map { param ->
             ).toAbstractType()
 
             if(maybeType is EitherOk) {
-                ValidTypeMember(
-                    data = TypeMember(
-                        name = name,
-                        type = maybeType.data,
-                    )
-                )
-            } else {
-                InvalidTypeMember(
-                    data = (maybeType as EitherNok).data
-                )
-            }
+                ValidTypeMember(TypeMember(
+                    name = name,
+                    type = maybeType.data))
+            } else InvalidTypeMember(data = (maybeType as EitherNok).data)
         }
-
     }
 
 }
@@ -176,19 +170,14 @@ private fun KSClassDeclaration.enumeration(): Either<String, SquintMessageSource
         className = className,
         packageName = packageName.asString(),
         values = values,
-        valuesJSON = valuesJSON
-    )
+        valuesJSON = valuesJSON)
 
     val squintType = SquintEnumType(
         className = className,
         values = values,
-        valuesJSON = valuesJSON
-    )
+        valuesJSON = valuesJSON)
 
-    return Either.ok(
-        data = SquintMessageSource(
-            type = enumType,
-            squintType = squintType,
-        )
-    )
+    return Either.ok(SquintMessageSource(
+        type = enumType,
+        squintType = squintType,))
 }

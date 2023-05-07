@@ -31,6 +31,15 @@ import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
+ * Prefix for any File that is processed by the (dart) squint_json library.
+ * </br>
+ * If a File has this prefix then squint_json will analyse its content as Metadata and not as JSON.
+ * </br>
+ * For more information see: [squint_json](https://pub.dev/packages/squint_json).
+ */
+private const val squintJsonMetadataPrefix = "sqdb_"
+
+/**
  * Write all AbstractTypes or error message to [outputFolder].
  */
 internal fun Either<String,SquintMessageSource>.writeOutput(
@@ -43,14 +52,14 @@ internal fun Either<String,SquintMessageSource>.writeOutput(
 
     when (this) {
         is EitherNok -> {
-            val file = folder.resolve("sqdb_${count}_invalid.json")
+            val file = folder.resolve("$squintJsonMetadataPrefix${count}_invalid.json")
             file.createNewFile()
             file.writeText(data)
             return this
         }
 
         is EitherOk -> {
-            val file = folder.resolve("sqdb_${data.type.className.lowercase()}.json")
+            val file = folder.resolve("$squintJsonMetadataPrefix${data.type.className.lowercase()}.json")
             file.createNewFile()
             when (data.squintType) {
                 is SquintCustomType ->

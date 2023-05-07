@@ -21,9 +21,10 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
-import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
+import dev.buijs.klutter.compiler.wrapper.KCWrapper
+import dev.buijs.klutter.compiler.wrapper.toKotlinClassWrapper
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.common.Either
@@ -36,6 +37,15 @@ import java.io.File
 private const val CONTROLLER_ANNOTATION = "dev.buijs.klutter.annotations.Controller"
 
 /**
+ * Get all classes with Controller annotation and convert them to [KCWrapper].
+ */
+private fun getSymbolsWithControllerAnnotation(resolver: Resolver): List<KCWrapper> =
+    resolver.getSymbolsWithAnnotation(CONTROLLER_ANNOTATION)
+        .filterIsInstance<KSClassDeclaration>()
+        .map { clazz -> clazz.toKotlinClassWrapper() }
+        .toList()
+
+/**
  * Find all class annotated with @Controller.
  * </br>
  * Preliminary checks are done which result in either a [Controller] instance
@@ -44,60 +54,42 @@ private const val CONTROLLER_ANNOTATION = "dev.buijs.klutter.annotations.Control
  * Full validation is done by [validateResponses()] which takes the
  * full context (other Responses and/or Controllers) into consideration.
  */
-internal fun Resolver.annotatedWithController(outputFolder: File): List<ValidControllerOrError> =
-    getSymbolsWithAnnotation(CONTROLLER_ANNOTATION)
-        .filterIsInstance<KSClassDeclaration>()
+@JvmOverloads
+internal fun scanForControllers(
+    outputFolder: File,
+    resolver: Resolver,
+    scanner: (resolver: Resolver) -> List<KCWrapper> = { getSymbolsWithControllerAnnotation(it) },
+): List<ValidControllerOrError> =
+    scanner.invoke(resolver)
         .map { it.toAbstractTypeOrFail() }
         .toList()
         .also { it.writeOutput(outputFolder) }
 
-private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, Controller> {
+private fun KCWrapper.toAbstractTypeOrFail(): Either<String, Controller> {
 
-    if(getConstructors().toList().size != 1)
+    if(!hasOneConstructor)
         return controllerHasTooManyConstructors()
 
-    if(getConstructors().first().parameters.isNotEmpty())
+    if(!firstConstructorHasNoParameters)
         return controllerIsMissingNoArgsConstructor()
 
-    val functions = getAllFunctions().getEvents()
+    if(eventErrors.isNotEmpty())
+        return controllerHasInvalidEvents(eventErrors)
 
-    if(functions.any { it is InvalidEvent })
-        return functions.filterIsInstance<InvalidEvent>().controllerHasInvalidEvents()
-
-    val type = determineControllerType()
-
-    val validFunctions =
-        functions.filterIsInstance<ValidEvent>().map { it.data }
-
-    return toController(functions = validFunctions, type = type)
+    return toController()
 }
 
-private fun KSClassDeclaration.determineControllerType() = this
-    .annotations
-    .filter { it.shortName.asString() == "Controller" }
-    .filter { it.arguments.isNotEmpty() }
-    .map { it.arguments.firstOrNull { arg -> arg.name?.getShortName() == "type" } }
-    .filterNotNull()
-    .map { it.value.toString() }
-    .firstOrNull { it.startsWith("dev.buijs.klutter.annotations.ControllerType.") }
-    ?.substringAfterLast("dev.buijs.klutter.annotations.ControllerType.")
-    ?: "Default"
-
-private fun KSClassDeclaration.toController(functions: List<Method>, type: String): ValidControllerOrError {
-    val publisher = superTypes.firstOrNull { it.toString() == "Publisher" }
-        ?: return toSimpleController(functions, type)
-    return toBroadcastController(publisher.resolve(), functions, type)
+private fun KCWrapper.toController(): ValidControllerOrError = if(isBroadcastController) {
+    toBroadcastController(broadcastTypeParameterOrBlank, methods, controllerType)
+} else {
+    toSimpleController(methods, controllerType)
 }
 
-private fun KSClassDeclaration.toBroadcastController(
-    publisher: KSType, functions: List<Method>, type: String
-): ValidControllerOrError {
+private fun KCWrapper.toBroadcastController(
+    typeParameter: String, functions: List<Method>, type: String)
+: ValidControllerOrError {
 
-    val typeParameter =
-        publisher.arguments.first().type?.toString() ?: ""
-
-    val responseType =
-        TypeData(typeParameter).toAbstractType()
+    val responseType = TypeData(typeParameter).toAbstractType()
 
     if(responseType is ValidAbstractType) {
         return when(type) {
@@ -107,10 +99,11 @@ private fun KSClassDeclaration.toBroadcastController(
                 validSingletonBroadcastController(functions,responseType.data)
         }
     }
-    return typeParameter.publisherControllerHasInvalidTypeParameter()
+
+    return typeParameter.broadcastControllerHasInvalidTypeParameterName()
 }
 
-private fun KSClassDeclaration.toSimpleController(
+private fun KCWrapper.toSimpleController(
     functions: List<Method>, type: String
 ): ValidControllerOrError {
     return when(type) {

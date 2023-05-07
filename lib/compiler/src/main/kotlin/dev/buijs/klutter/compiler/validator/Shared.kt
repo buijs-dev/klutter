@@ -19,19 +19,22 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.compiler.scanner
+package dev.buijs.klutter.compiler.validator
 
-internal const val eventIsMissingReturnValue =
-    "Event is missing a return value."
+import dev.buijs.klutter.kore.ast.CustomType
 
-internal const val eventIsMissingParameter =
-    "Event is missing value parameter 'name'."
+internal fun MutableSet<CustomType>.addOrReplaceIfApplicable(type: CustomType): MutableSet<CustomType> {
+    // CustomType with fields is present so break.
+    if(this.contains(type)) return this
 
-internal const val eventHasUndeterminedMethodSignature =
-    "Unable to determine method signature of Event."
+    // CustomType without fields is empty so replace with current.
+    removeIf { it.className == type.className && it.members.isEmpty()}
+    add(type)
 
-internal const val eventHasTooManyParameters =
-    "Method has more than 1 parameter but only 0 or 1 is allowed."
+    // Add all fields of type CustomType.
+    for(field in type.members.map { it.type }.filterIsInstance<CustomType>()) {
+        addOrReplaceIfApplicable(field)
+    }
 
-internal val eventMethodConversionFailure =
-    InvalidEvent("Failed to convert Event to Method AST.")
+    return this
+}

@@ -80,6 +80,22 @@ open class CustomType(
 
     override fun toString() = print()
 
+    override fun equals(other: Any?): Boolean = when {
+        other !is CustomType -> false
+        other.className != className -> false
+        other.packageName != packageName -> false
+        other.members.size != members.size -> false
+        !other.members.containsAll(members) -> false
+        else -> true
+    }
+
+    override fun hashCode(): Int {
+        var result = className.hashCode()
+        result = 31 * result + (packageName?.hashCode() ?: 0)
+        result = 31 * result + members.hashCode()
+        return result
+    }
+
 }
 
 /**

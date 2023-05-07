@@ -25,8 +25,8 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
-import dev.buijs.klutter.compiler.scanner.annotatedWithController
 import dev.buijs.klutter.compiler.scanner.annotatedWithResponse
+import dev.buijs.klutter.compiler.scanner.scanForControllers
 import dev.buijs.klutter.compiler.validator.*
 import dev.buijs.klutter.compiler.validator.Invalid
 import dev.buijs.klutter.compiler.validator.InvalidSquintMessages
@@ -64,8 +64,7 @@ class Processor(
             .validateResponses()
             .validMessagesOrNull("@Response")
 
-        val controllers = resolver
-            .annotatedWithController(input)
+        val controllers = scanForControllers(resolver = resolver, outputFolder = input)
             .validateControllers(responses?.map { it.type } ?: emptyList())
             .validControllersOrNull("@Controller")
 

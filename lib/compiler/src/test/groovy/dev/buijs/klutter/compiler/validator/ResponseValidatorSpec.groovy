@@ -1,10 +1,28 @@
-package dev.buijs.klutter.compiler.processor
+/* Copyright (c) 2021 - 2023 Buijs Software
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+package dev.buijs.klutter.compiler.validator
 
-import dev.buijs.klutter.compiler.validator.ValidatorKt
 import dev.buijs.klutter.kore.ast.CustomType
 import dev.buijs.klutter.kore.ast.Method
-import dev.buijs.klutter.kore.ast.RequestScopedSimpleController
-import dev.buijs.klutter.kore.ast.SingletonBroadcastController
 import dev.buijs.klutter.kore.ast.SquintCustomType
 import dev.buijs.klutter.kore.ast.SquintCustomTypeMember
 import dev.buijs.klutter.kore.ast.SquintMessageSource
@@ -16,7 +34,7 @@ import dev.buijs.klutter.kore.common.*
 
 import java.nio.file.Files
 
-class ValidatorSpec extends Specification {
+class ResponseValidatorSpec extends Specification {
 
     @Shared
     File rootFolder
@@ -57,6 +75,12 @@ class ValidatorSpec extends Specification {
     @Shared
     Method methodReturningMyCustomType
 
+    @Shared
+    CustomType fooCustomTypeWithUnknownTypeMember
+
+    @Shared
+    CustomType dunnoCustomType
+
     def setupSpec() {
         rootFolder = Files.createTempDirectory("").toFile()
         squintCustomType =  new SquintCustomType("MyCustomType", [squintTypeMember])
@@ -75,34 +99,21 @@ class ValidatorSpec extends Specification {
                 new CustomType("FooType", "", [customTypeMember]),
                 new SquintCustomType("FooType", [squintTypeMember]),
                 squintMessageSource)
+        fooCustomTypeWithUnknownTypeMember = new CustomType("FooType", "",
+                [new TypeMember("dunno", new CustomType("DunnoType", "foo.com.ex", []))])
+        dunnoCustomType = new CustomType("DunnoType", "foo.com.ex", [new TypeMember("doKnow", new StringType())])
         squintMessageWithoutTypeMember = new SquintMessageSource(
                 new CustomType("FooType", "", []),
                 new SquintCustomType("FooType", []),
                 squintMessageSource)
     }
 
-    def "When all Controllers are valid then they are returned as a Set"() {
-        given:
-        def broadcastController =
-                Either.ok(new SingletonBroadcastController("foo.bar", "MyController", [], new StringType()))
-
-        when:
-        def result =
-                ValidatorKt.validateControllers([broadcastController], [customType])
-
-        then:
-        result instanceof EitherOk
-    }
-
-    ///                                 Validate Response TestCases                                 \\\
-    /// =========================================================================================== \\\
-
     def "A list of errors is returned if there are 1 or more errors"() {
         given:
         def invalidResponse = Either.nok("This Response is NOT Ok.")
 
         when:
-        def result = ValidatorKt.validateResponses([invalidResponse])
+        def result = ResponseValidatorKt.validateResponses([invalidResponse])
 
         then:
         result instanceof EitherNok
@@ -120,7 +131,7 @@ class ValidatorSpec extends Specification {
         def eitherOk = Either.ok(squintMessageWithoutSourceFile)
 
         when:
-        def result = ValidatorKt.validateResponses([eitherOk])
+        def result = ResponseValidatorKt.validateResponses([eitherOk])
 
         then:
         result instanceof EitherNok
@@ -138,7 +149,7 @@ class ValidatorSpec extends Specification {
         def eitherOk = Either.ok(squintMessageWithUnknownTypeMember)
 
         when:
-        def result = ValidatorKt.validateResponses([eitherOk])
+        def result = ResponseValidatorKt.validateResponses([eitherOk])
 
         then:
         result instanceof EitherNok
@@ -156,7 +167,7 @@ class ValidatorSpec extends Specification {
         def eitherOk = Either.ok(squintMessageWithoutTypeMember)
 
         when:
-        def result = ValidatorKt.validateResponses([eitherOk])
+        def result = ResponseValidatorKt.validateResponses([eitherOk])
 
         then:
         result instanceof EitherNok
@@ -172,7 +183,7 @@ class ValidatorSpec extends Specification {
     def "An error is returned if there are 2 or more Response classes with the same name"() {
 
         when:
-        def result = ValidatorKt.validateResponses([
+        def result = ResponseValidatorKt.validateResponses([
                 Either.ok(squintMessage),
                 Either.ok(squintMessage)
         ])
@@ -192,7 +203,7 @@ class ValidatorSpec extends Specification {
 
         when:
         def result =
-                ValidatorKt.validateResponses([Either.ok(squintMessage)])
+                ResponseValidatorKt.validateResponses([Either.ok(squintMessage)])
 
         then:
         result instanceof EitherOk
@@ -205,42 +216,15 @@ class ValidatorSpec extends Specification {
 
     }
 
-    ///                                 Validate Controller TestCases                                 \\\
-    /// =========================================================================================== \\\
-
-    def "An error is returned if 1 or more Controllers have a return Type that is not present in the Response list"() {
-        given:
-        def controller = new RequestScopedSimpleController("", "", [methodReturningMyCustomType])
-        def eitherOk = Either.ok(controller)
-
-        when:
-        def result = ValidatorKt.validateControllers([eitherOk], [])
-
-        then:
-        result instanceof EitherNok
-
-        and:
-        def errors = result.data as List<String>
-
-        and:
-        errors[0] == "Unknown Response and/or Request Type: [MyCustomType]"
+    def "When a TypeMember's CustomType has no fields but no match is found for replacement, then nothing is replaced."() {
+        expect:
+        ResponseValidatorKt.copyOrReplace(fooCustomTypeWithUnknownTypeMember, []) == fooCustomTypeWithUnknownTypeMember
     }
 
-    def "A list of errors is returned if there are 1 or more errors"() {
-        given:
-        def invalidController = Either.nok("This Controller is out of control! :-) bruh...")
-
-        when:
-        def result = ValidatorKt.validateControllers([invalidController], [])
-
-        then:
-        result instanceof EitherNok
-
-        and:
-        def errors = result.data as List<String>
-
-        and:
-        errors[0] == "This Controller is out of control! :-) bruh..."
+    def "When a TypeMember's CustomType has no fields but a match is found for replacement, then the CustomType is replaced."() {
+        expect:
+        def replaced = ResponseValidatorKt.copyOrReplace(fooCustomTypeWithUnknownTypeMember, [dunnoCustomType])
+        replaced != fooCustomTypeWithUnknownTypeMember
+        replaced.members[0].type == dunnoCustomType
     }
-
 }

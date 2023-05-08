@@ -62,7 +62,7 @@ private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
             method = methodName,
             async = modifiers.map { "$it" }.any { it == "SUSPEND" },
             responseDataType = (responseType as ValidAbstractType).data,
-            requestDataType = requestTypeOrErrorOrNull?.let { (it as ValidAbstractType).data },
+            requestDataType = requestTypeOrErrorOrNull.let { (it as ValidAbstractType).data },
             requestParameterName = requestParameterOrNull?.name?.getShortName()))
 }
 

@@ -21,6 +21,8 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
+import dev.buijs.klutter.compiler.wrapper.KCMessage
+import dev.buijs.klutter.compiler.wrapper.KCResponse
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.common.EitherNok
@@ -41,29 +43,32 @@ typealias InvalidSquintType =
 /**
  * Error indicating a class is missing the @Response annotation.
  */
-internal fun Any.missingSerializableAnnotation() =
-    InvalidSquintType("Class is missing @Serializable annotation: $this")
+internal fun KCResponse.missingSerializableAnnotation() =
+    InvalidSquintType("Class is missing @Serializable annotation: $packageName.$className")
 
 /**
  * Error indicating a class does not extend KlutterJSON.
  */
-internal fun Any.doesNotExtendKlutterJSON() =
-    InvalidSquintType("Class does not extend KlutterJSON: $this")
+internal fun KCMessage.doesNotExtendKlutterJSON() =
+    InvalidSquintType("Class does not extend KlutterJSON: $packageName.$className")
 
 /**
  * A Response is invalid because it has multiple constructors.
  */
-internal fun Any.responseHasTooManyConstructors() = Either.nok<String, List<TypeMember>>(
-    "Response $this has multiple constructors but only 1 is allowed.")
+internal fun KCResponse.responseHasTooManyConstructors() =
+    InvalidSquintType("Response $packageName.$className has multiple constructors but only 1 is allowed.")
 
 /**
  * A Response is invalid because it has no constructor fields.
  */
-internal fun Any.emptyConstructor() = Either.nok<String, List<TypeMember>>(
-    "Response $this constructor has no fields but atleast 1 is expected.")
+internal fun KCResponse.emptyConstructor() =
+    InvalidSquintType("Response $packageName.$className constructor has no fields but at least 1 is expected.")
 
 /**
  * Error indicating a field member is not immutable.
  */
 internal fun String.mutabilityError() =
     InvalidTypeMember("TypeMember is mutable: '$this'")
+
+internal fun KCMessage.invalidTypeMembers(invalidTypeMembers: List<String>) =
+    InvalidSquintType("Response $packageName.$className is invalid: ${invalidTypeMembers.joinToString { it }}")

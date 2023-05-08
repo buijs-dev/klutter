@@ -24,7 +24,7 @@ package dev.buijs.klutter.compiler.scanner
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import dev.buijs.klutter.compiler.wrapper.KCWrapper
+import dev.buijs.klutter.compiler.wrapper.KCController
 import dev.buijs.klutter.kore.ast.Method
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.common.EitherNok
@@ -216,7 +216,7 @@ class ControllerScannerSpec extends Specification {
     }
 
     def buildKotlinClassWrapper(Map<String, Object> config) {
-        return new KCWrapper(
+        return new KCController(
                 config.getOrDefault(hasOneConstructor, true) as boolean,
                 config.getOrDefault(firstConstructorHasNoParameters, true) as boolean,
                 config.getOrDefault(methods, []) as List<Method>,

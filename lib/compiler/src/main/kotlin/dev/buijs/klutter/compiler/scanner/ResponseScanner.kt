@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,16 +21,13 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
-import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import dev.buijs.klutter.compiler.wrapper.*
+import dev.buijs.klutter.compiler.wrapper.KCResponse
+import dev.buijs.klutter.compiler.wrapper.toKCResponse
 import dev.buijs.klutter.kore.ast.*
-import dev.buijs.klutter.kore.ast.TypeData
-import dev.buijs.klutter.kore.ast.toAbstractType
 import dev.buijs.klutter.kore.common.Either
-import dev.buijs.klutter.kore.common.EitherNok
-import dev.buijs.klutter.kore.common.EitherOk
 import java.io.File
 
 /**
@@ -40,135 +37,86 @@ private const val RESPONSE_ANNOTATION =
     "dev.buijs.klutter.annotations.Response"
 
 /**
- * Process all class annotated with @Response.
+ * Get all classes with @Response annotation and convert them to [KCController].
  */
-internal fun Resolver.annotatedWithResponse(
-    outputFolder: File
-): List<Either<String, SquintMessageSource>> = getSymbolsWithAnnotation(RESPONSE_ANNOTATION)
-    .filterIsInstance<KSClassDeclaration>()
-    .toList()
-    .map { it.toAbstractTypeOrFail() }
-    .mapIndexed { index, either -> either.writeOutput(outputFolder, index) }
-
-private fun KSClassDeclaration.toAbstractTypeOrFail(): Either<String, SquintMessageSource> {
-
-    val annotations = annotations
-        .map{ it.shortName.getShortName() }
+private fun getSymbolsWithResponseAnnotation(resolver: Resolver): List<KCResponse> =
+    resolver.getSymbolsWithAnnotation(RESPONSE_ANNOTATION)
+        .filterIsInstance<KSClassDeclaration>()
+        .map { clazz -> clazz.toKCResponse() }
         .toList()
 
-    if(!annotations.contains("Serializable"))
+/**
+ * Find all class annotated with @Response.
+ * </br>
+ * Preliminary checks are done which result in either a [SquintMessageSource] instance
+ * or an error message describing the issue.
+ * </br>
+ * Full validation is done by [validateResponses()] which takes the
+ * full context (other Responses and/or Controllers) into consideration.
+ */
+@JvmOverloads
+internal fun scanForResponses(
+    outputFolder: File,
+    resolver: Resolver,
+    scanner: (resolver: Resolver) -> List<KCResponse> = { getSymbolsWithResponseAnnotation(it) },
+): List<Either<String, SquintMessageSource>> =
+    scanner.invoke(resolver)
+        .map { it.toAbstractTypeOrFail() }
+        .toList()
+        .also { it.forEachIndexed { index, data -> data.writeOutput(outputFolder, index) } }
+
+private fun KCResponse.toAbstractTypeOrFail()
+: Either<String, SquintMessageSource> = when(this) {
+    is KCEnumeration -> enumeration()
+    is KCMessage -> message()
+}
+
+private fun KCMessage.message(): Either<String, SquintMessageSource> {
+    if(!isSerializableAnnotated)
         return missingSerializableAnnotation()
 
-    if(classKind.type.trim().lowercase() == "enum_class")
-        return enumeration()
-
-    if(!superTypes.map { it.toString() }.toList().contains("KlutterJSON"))
+    if(!extendsKlutterJSON)
         return doesNotExtendKlutterJSON()
 
-    val fields = getConstructorFields()
+    val validTypeMembers = typeMembers
+        .filterIsInstance<ValidTypeMember>()
 
-    return if(fields is EitherNok) {
-        InvalidSquintType("$this is invalid: ${fields.data}")
-    } else {
-        val className = "$this"
+    val invalidTypeMembers = typeMembers
+        .filterIsInstance<InvalidTypeMember>()
+        .map { it.data }
 
-        val type = CustomType(
-            className = className,
-            packageName = this.packageName.asString(),
-            members = (fields as EitherOk).data)
+    if(invalidTypeMembers.isNotEmpty())
+        return invalidTypeMembers(invalidTypeMembers)
 
-        val squintType = SquintCustomType(
-            className = className,
-            members = fields.data.map {
-                SquintCustomTypeMember(
-                    name = it.name,
-                    type = it.type.let { t -> t.typeSimplename(asKotlinType = false) },
-                    nullable = it.type is Nullable) })
+    if(!hasOneConstructor)
+        return responseHasTooManyConstructors()
 
-        ValidSquintType(SquintMessageSource(
-            type = type,
-            squintType = squintType))
-    }
+    if(validTypeMembers.isEmpty())
+        return emptyConstructor()
 
+    val type = CustomType(
+        className = className,
+        packageName = packageName,
+        members = validTypeMembers.map { it.data })
+
+    val squintType = SquintCustomType(
+        className = className,
+        members = validTypeMembers.map {
+            SquintCustomTypeMember(
+                name = it.data.name,
+                type = it.data.type.let { t -> t.typeSimplename(asKotlinType = false) },
+                nullable = it.data.type is Nullable) })
+
+    return ValidSquintType(SquintMessageSource(type = type, squintType = squintType))
 }
 
-private fun KSClassDeclaration.getConstructorFields(): Either<String, List<TypeMember>> {
-    val constructors = getConstructors().toList()
-    return when(constructors.size) {
-        0 -> emptyConstructor()
-        1 -> {
-            val members = constructors
-                .first()
-                .getTypeMembers()
-
-            val valid = members
-                .filterIsInstance<ValidTypeMember>()
-
-            val invalid = members
-                .filterIsInstance<InvalidTypeMember>()
-                .map { it.data }
-
-            if(invalid.isEmpty()) {
-                Either.ok(valid.map { it.data })
-            } else {
-                Either.nok(invalid.joinToString { it })
-            }
-        }
-        else -> responseHasTooManyConstructors()
-    }
-}
-
-private fun KSFunctionDeclaration.getTypeMembers() = parameters.map { param ->
-    val name = param.name?.getShortName()
-
-    val resolved = param.type.resolve()
-
-    when {
-        name == null ->
-            InvalidTypeMember("Unable to determine $this field name.")
-
-        !param.isVal ->
-            name.mutabilityError()
-
-        else -> {
-            val maybeType = TypeData(
-                type = param.type.toString().trim(),
-                arguments = resolved.arguments.map { it.type.toString() },
-                nullable = resolved.isMarkedNullable,
-            ).toAbstractType()
-
-            if(maybeType is EitherOk) {
-                ValidTypeMember(TypeMember(
-                    name = name,
-                    type = maybeType.data))
-            } else InvalidTypeMember(data = (maybeType as EitherNok).data)
-        }
-    }
-
-}
-
-private fun KSClassDeclaration.enumeration(): Either<String, SquintMessageSource> {
-
-    val className = "$this"
-
-    val members = declarations
-        .filter { (it.qualifiedName?.getShortName() ?: "") != "<init>" }
-        .filterIsInstance<KSClassDeclaration>()
-
-    val values = members
-        .map { it.qualifiedName?.getShortName() ?: ""}
-        .toList()
-
-    val valuesJSON = members
-        .map { it.annotations }
-        .map { it.firstOrNull { annotation -> annotation.shortName.getShortName() == "SerialName" } }
-        .map { it?.arguments?.firstOrNull() }
-        .map { it?.value.toString() }
-        .toList()
+private fun KCEnumeration.enumeration(): Either<String, SquintMessageSource> {
+    if(!isSerializableAnnotated)
+        return missingSerializableAnnotation()
 
     val enumType = EnumType(
         className = className,
-        packageName = packageName.asString(),
+        packageName = packageName,
         values = values,
         valuesJSON = valuesJSON)
 
@@ -177,7 +125,5 @@ private fun KSClassDeclaration.enumeration(): Either<String, SquintMessageSource
         values = values,
         valuesJSON = valuesJSON)
 
-    return Either.ok(SquintMessageSource(
-        type = enumType,
-        squintType = squintType,))
+    return Either.ok(SquintMessageSource(type = enumType, squintType = squintType))
 }

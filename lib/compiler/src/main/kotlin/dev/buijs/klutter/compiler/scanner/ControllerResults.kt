@@ -21,7 +21,7 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
-import dev.buijs.klutter.compiler.wrapper.KCWrapper
+import dev.buijs.klutter.compiler.wrapper.KCController
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
 
@@ -30,7 +30,7 @@ import dev.buijs.klutter.kore.common.Either
  * </br>
  * A Controller should only have a no-args constructor.
  */
-internal fun KCWrapper.controllerIsMissingNoArgsConstructor() = Either.nok<String, Controller>(
+internal fun KCController.controllerIsMissingNoArgsConstructor() = Either.nok<String, Controller>(
     "Controller $packageName.$className is only allowed to have a no-arg constructor")
 
 /**
@@ -38,10 +38,10 @@ internal fun KCWrapper.controllerIsMissingNoArgsConstructor() = Either.nok<Strin
  *
  * A Controller should only have a no-args constructor.
  */
-internal fun KCWrapper.controllerHasTooManyConstructors() = Either.nok<String, Controller>(
+internal fun KCController.controllerHasTooManyConstructors() = Either.nok<String, Controller>(
     "Controller $packageName.$className has multiple constructors but only 1 is allowed.")
 
-internal fun KCWrapper.controllerHasInvalidEvents(events: List<String>) =
+internal fun KCController.controllerHasInvalidEvents(events: List<String>) =
     InvalidController("Controller $packageName.$className has invalid events: ${events.joinToString { it }}")
 
 /**
@@ -53,7 +53,7 @@ internal fun String.broadcastControllerHasInvalidTypeParameterName() =
 /**
  * Return a [ValidController] containing a [RequestScopedBroadcastController].
  */
-internal fun KCWrapper.validRequestScopedBroadcastController(functions: List<Method>, response: AbstractType) =
+internal fun KCController.validRequestScopedBroadcastController(functions: List<Method>, response: AbstractType) =
     ValidController(
         RequestScopedBroadcastController(
             packageName = packageName,
@@ -64,7 +64,7 @@ internal fun KCWrapper.validRequestScopedBroadcastController(functions: List<Met
 /**
  * Return a [ValidController] containing a [SingletonBroadcastController].
  */
-internal fun KCWrapper.validSingletonBroadcastController(functions: List<Method>, response: AbstractType) =
+internal fun KCController.validSingletonBroadcastController(functions: List<Method>, response: AbstractType) =
     ValidController(
         SingletonBroadcastController(
             packageName = packageName,
@@ -75,7 +75,7 @@ internal fun KCWrapper.validSingletonBroadcastController(functions: List<Method>
 /**
  * Return a [ValidController] containing a [RequestScopedSimpleController].
  */
-internal fun KCWrapper.validRequestScopedSimpleController(functions: List<Method>) =
+internal fun KCController.validRequestScopedSimpleController(functions: List<Method>) =
     ValidController(
         RequestScopedSimpleController(
             packageName = packageName,
@@ -85,7 +85,7 @@ internal fun KCWrapper.validRequestScopedSimpleController(functions: List<Method
 /**
  * Return a [ValidController] containing a [SingletonSimpleController].
  */
-internal fun KCWrapper.validSingletonSimpleController(functions: List<Method>) =
+internal fun KCController.validSingletonSimpleController(functions: List<Method>) =
     ValidController(
         SingletonSimpleController(
             packageName = packageName,

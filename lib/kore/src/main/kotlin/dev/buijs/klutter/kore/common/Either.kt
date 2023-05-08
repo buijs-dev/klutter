@@ -31,6 +31,6 @@ sealed class Either<T,R> {
     }
 }
 
-class EitherOk<T, R>(val data: R): Either<T,R>()
+data class EitherOk<T, R>(val data: R): Either<T,R>()
 
-class EitherNok<T, R>(val data: T): Either<T,R>()
+data class EitherNok<T, R>(val data: T): Either<T,R>()

@@ -23,7 +23,7 @@ package dev.buijs.klutter.compiler.scanner
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
-import dev.buijs.klutter.compiler.wrapper.KCWrapper
+import dev.buijs.klutter.compiler.wrapper.KCController
 import dev.buijs.klutter.compiler.wrapper.toKotlinClassWrapper
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.ast.Controller
@@ -37,9 +37,9 @@ import java.io.File
 private const val CONTROLLER_ANNOTATION = "dev.buijs.klutter.annotations.Controller"
 
 /**
- * Get all classes with Controller annotation and convert them to [KCWrapper].
+ * Get all classes with Controller annotation and convert them to [KCController].
  */
-private fun getSymbolsWithControllerAnnotation(resolver: Resolver): List<KCWrapper> =
+private fun getSymbolsWithResponseAnnotation(resolver: Resolver): List<KCController> =
     resolver.getSymbolsWithAnnotation(CONTROLLER_ANNOTATION)
         .filterIsInstance<KSClassDeclaration>()
         .map { clazz -> clazz.toKotlinClassWrapper() }
@@ -51,21 +51,21 @@ private fun getSymbolsWithControllerAnnotation(resolver: Resolver): List<KCWrapp
  * Preliminary checks are done which result in either a [Controller] instance
  * or an error message describing the issue.
  * </br>
- * Full validation is done by [validateResponses()] which takes the
+ * Full validation is done by [validateResponses()] and [validateControllers()]which takes the
  * full context (other Responses and/or Controllers) into consideration.
  */
 @JvmOverloads
 internal fun scanForControllers(
     outputFolder: File,
     resolver: Resolver,
-    scanner: (resolver: Resolver) -> List<KCWrapper> = { getSymbolsWithControllerAnnotation(it) },
+    scanner: (resolver: Resolver) -> List<KCController> = { getSymbolsWithResponseAnnotation(it) },
 ): List<ValidControllerOrError> =
     scanner.invoke(resolver)
         .map { it.toAbstractTypeOrFail() }
         .toList()
         .also { it.writeOutput(outputFolder) }
 
-private fun KCWrapper.toAbstractTypeOrFail(): Either<String, Controller> {
+private fun KCController.toAbstractTypeOrFail(): Either<String, Controller> {
 
     if(!hasOneConstructor)
         return controllerHasTooManyConstructors()
@@ -79,13 +79,13 @@ private fun KCWrapper.toAbstractTypeOrFail(): Either<String, Controller> {
     return toController()
 }
 
-private fun KCWrapper.toController(): ValidControllerOrError = if(isBroadcastController) {
+private fun KCController.toController(): ValidControllerOrError = if(isBroadcastController) {
     toBroadcastController(broadcastTypeParameterOrBlank, methods, controllerType)
 } else {
     toSimpleController(methods, controllerType)
 }
 
-private fun KCWrapper.toBroadcastController(
+private fun KCController.toBroadcastController(
     typeParameter: String, functions: List<Method>, type: String)
 : ValidControllerOrError {
 
@@ -103,7 +103,7 @@ private fun KCWrapper.toBroadcastController(
     return typeParameter.broadcastControllerHasInvalidTypeParameterName()
 }
 
-private fun KCWrapper.toSimpleController(
+private fun KCController.toSimpleController(
     functions: List<Method>, type: String
 ): ValidControllerOrError {
     return when(type) {

@@ -11,7 +11,7 @@ import dev.buijs.klutter.kore.ast.Method
 /**
  * Wrapper for KSP KSClassDeclaration to encapsulate KSP specific classes.
  */
-internal data class KCWrapper(
+internal data class KCController(
     val hasOneConstructor: Boolean,
     val firstConstructorHasNoParameters: Boolean,
     val methods: List<Method>,
@@ -22,7 +22,7 @@ internal data class KCWrapper(
     val className: String,
     val packageName: String)
 
-internal fun KSClassDeclaration.toKotlinClassWrapper(): KCWrapper {
+internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
 
     val constructors: List<KSFunctionDeclaration> = getConstructors().toList()
 
@@ -41,7 +41,7 @@ internal fun KSClassDeclaration.toKotlinClassWrapper(): KCWrapper {
 
     val events = getAllFunctions().map { it.toKAWrapper() }.getEvents()
 
-    return KCWrapper(
+    return KCController(
         hasOneConstructor = constructors.size == 1,
         firstConstructorHasNoParameters = constructors.firstOrNull()?.parameters?.isEmpty() ?: false,
         methods = events.filterIsInstance<ValidEvent>().map { it.data },

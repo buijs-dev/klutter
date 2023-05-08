@@ -27,6 +27,7 @@ import java.io.File
 /**
  * Parent for all types that are serializable to a format that dart squint can process.
  */
+@Serializable
 sealed interface SquintType {
     val className: String
 }

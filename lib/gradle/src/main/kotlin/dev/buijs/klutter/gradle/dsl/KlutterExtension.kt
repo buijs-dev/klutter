@@ -22,6 +22,7 @@
 @file:Suppress("unused")
 package dev.buijs.klutter.gradle.dsl
 
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import java.io.File
@@ -53,11 +54,8 @@ open class KlutterExtension(project: Project) {
      * Add klutter implementation dependency to this project.
      */
     @JvmOverloads
-    fun include(
-        simpleModuleName: String,
-        version: String? = null,
-        test: Boolean = false
-    ) {
+    @ExcludeFromJacocoGeneratedReport
+    fun include(simpleModuleName: String, version: String? = null, test: Boolean = false) {
         when {
             simpleModuleName == "bill-of-materials" || simpleModuleName == "bom"-> {
                 handler.addKlutterImplementation("annotations", version)
@@ -85,6 +83,7 @@ open class KlutterExtension(project: Project) {
      * Add klutter testImplementation dependency to this project.
      */
     @JvmOverloads
+    @ExcludeFromJacocoGeneratedReport
     fun includeTest(simpleModuleName: String, version: String? = null) {
         handler.addKlutterTestImplementation(simpleModuleName, version)
     }
@@ -105,6 +104,7 @@ open class KlutterExtension(project: Project) {
  */
 class KlutterDependencyHandler(private val project: Project) {
 
+    @ExcludeFromJacocoGeneratedReport
     fun includeCompilerPlugin(version: String? = null) {
         project.dependencies.add(
             "kspCommonMainMetadata",
@@ -117,12 +117,14 @@ class KlutterDependencyHandler(private val project: Project) {
             "dev.buijs.klutter:tasks:${version?:KlutterVersion.byName("tasks")}")
     }
 
+    @ExcludeFromJacocoGeneratedReport
     fun addImplementation(dependencyNotation: String) {
         project.dependencies.add(
             "implementation",
             project.createDependency(dependencyNotation))
     }
 
+    @ExcludeFromJacocoGeneratedReport
     fun addKlutterImplementation(simpleModuleName: String, version: String? = null) {
         val multiplatform =
             project.findKotlinMultiplatformExtension()
@@ -143,6 +145,7 @@ class KlutterDependencyHandler(private val project: Project) {
         }
     }
 
+    @ExcludeFromJacocoGeneratedReport
     fun addKlutterTestImplementation(simpleModuleName: String, version: String? = null) {
         val multiplatform =
             project.findKotlinMultiplatformExtension()

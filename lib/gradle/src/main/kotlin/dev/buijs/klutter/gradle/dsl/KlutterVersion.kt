@@ -29,35 +29,40 @@ internal object KlutterVersion {
         it.load(KlutterDependencyHandler::class.java.classLoader.getResourceAsStream("publish.properties"))
     }
 
-    val annotations: String = properties.getProperty("annotations.version")
-        ?: throw KlutterException("Missing 'annotations.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val annotations: String = getOrThrow("annotations.version")
 
-    val compiler: String = properties.getProperty("compiler.version")
-        ?: throw KlutterException("Missing 'compiler.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val compiler: String = getOrThrow("compiler.version")
 
-    val kore: String = properties.getProperty("kore.version")
-        ?: throw KlutterException("Missing 'kore.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val kore: String = getOrThrow("kore.version")
 
-    val gradle: String = properties.getProperty("plugin.gradle.version")
-        ?: throw KlutterException("Missing 'plugin.gradle.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val gradle: String = getOrThrow("plugin.gradle.version")
 
-    val tasks: String = properties.getProperty("tasks.version")
-        ?: throw KlutterException("Missing 'tasks.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val tasks: String = getOrThrow("tasks.version")
 
-    val kompose: String = properties.getProperty("kompose.version")
-        ?: throw KlutterException("Missing 'kompose.version' in Klutter Gradle Jar.")
+    @JvmStatic
+    val kompose: String = getOrThrow("kompose.version")
 
-    val flutterEngine: String = properties.getProperty("flutter.engine.version")
-        ?: throw KlutterException("Missing 'flutter.engine.version' in Klutter Gradle Jar.")
-}
+    @JvmStatic
+    val flutterEngine: String = getOrThrow("flutter.engine.version")
 
-internal fun KlutterVersion.byName(simpleModuleName: String): String = when(simpleModuleName) {
-    "annotations" -> annotations
-    "kompose" -> kompose
-    "kore" -> kore
-    "gradle" -> gradle
-    "tasks" -> tasks
-    "compiler" -> compiler
-    "flutter-engine-android" -> flutterEngine
-    else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
+    @JvmStatic
+    internal fun byName(simpleModuleName: String): String = when(simpleModuleName) {
+        "annotations" -> annotations
+        "kompose" -> kompose
+        "kore" -> kore
+        "gradle" -> gradle
+        "tasks" -> tasks
+        "compiler" -> compiler
+        "flutter-engine-android" -> flutterEngine
+        else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
+    }
+
+    @JvmStatic
+    internal fun getOrThrow(property: String): String = properties.getProperty(property)
+        ?: throw KlutterException("Missing '$property' in Klutter Gradle Jar.")
 }

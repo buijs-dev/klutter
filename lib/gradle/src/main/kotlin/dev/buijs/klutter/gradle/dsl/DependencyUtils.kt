@@ -22,6 +22,7 @@
 @file:Suppress("unused")
 package dev.buijs.klutter.gradle.dsl
 
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import dev.buijs.klutter.kore.project.mapper
 import dev.buijs.klutter.kore.project.toConfigOrNull
 import dev.buijs.klutter.kore.common.maybeCreate
@@ -33,6 +34,8 @@ import java.io.File
 
 private val log = KotlinLogging.logger { }
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Should be test with System Test (see test-ksp)")
 fun KotlinDependencyHandler.embedded(dependencyNotation: String) {
     this.implementation(dependencyNotation)
 
@@ -42,15 +45,9 @@ fun KotlinDependencyHandler.embedded(dependencyNotation: String) {
     if(extension == null)
         log.info { "KlutterExtension Not Found." }
 
-    val configFile = extension
-        ?.root
-        ?.resolve("klutter.yaml")
-        ?: return
+    val configFile = extension?.root?.resolve("klutter.yaml") ?: return
 
-    val config = configFile
-        .maybeCreate()
-        .toConfigOrNull()
-        ?: return
+    val config = configFile.maybeCreate().toConfigOrNull() ?: return
 
     val embedded = config.dependencies.embedded.toMutableSet()
     embedded.add(dependencyNotation)
@@ -60,15 +57,16 @@ fun KotlinDependencyHandler.embedded(dependencyNotation: String) {
                 embedded = embedded))))
 }
 
+@ExcludeFromJacocoGeneratedReport
 internal fun Project.createKlutterDependency(
-    simpleModuleName: String,
-    version: String? = null
+    simpleModuleName: String, version: String? = null
 ): ExternalModuleDependency {
     val versionNotNull = version ?: KlutterVersion.byName(simpleModuleName)
     val dependency = project.dependencies.create("dev.buijs.klutter:$simpleModuleName:$versionNotNull")
     return dependency as ExternalModuleDependency
 }
 
+@ExcludeFromJacocoGeneratedReport
 internal fun Project.createDependency(
     dependencyNotation: String,
 ): ExternalModuleDependency {

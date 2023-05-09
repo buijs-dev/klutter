@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,33 +21,37 @@
  */
 package dev.buijs.klutter.gradle.dsl
 
-import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import dev.buijs.klutter.gradle.dsl.DependencyUtilsKt
+import spock.lang.Specification
 
-@ExcludeFromJacocoGeneratedReport
-internal fun Project.findKotlinMultiplatformExtension(): KotlinMultiplatformExtension? =
-    extensions.findByType(KotlinMultiplatformExtension::class.java)
+import java.nio.file.Files
 
-@ExcludeFromJacocoGeneratedReport
-internal fun Project.addKotlinMultiplatformDependency(
-    sourceset: KotlinSourceSet,
-    simpleModuleName: String,
-    version: String,
-) {
-    sourceset.dependencies {
-        implementation(createKlutterDependency(simpleModuleName, version))
+class DependencyUtilsSpec extends Specification {
+
+    def "Verify embedded dependencies are retrieved successfully"() {
+
+        given:
+        def configFile = Files.createTempFile("", "").toFile()
+
+        and:
+        configFile.write(content)
+
+        when:
+        def embedded = DependencyUtilsKt.embeddedDependenciesFromConfigFile(configFile)
+
+        then:
+        embedded.size() == 1
+        embedded[0] == "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+
+        where:
+        content = '''bom-version: "2023.1.2-SNAPSHOT"
+                     dependencies:
+                       klutter: "0.3.0"
+                       klutter_ui: "0.0.1"
+                       squint_json: "0.0.6"
+                       embedded:
+                         - "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"'''
+
     }
-}
 
-@ExcludeFromJacocoGeneratedReport
-internal fun Project.addKotlinMultiplatformTestDependency(
-    sourceset: KotlinSourceSet,
-    simpleModuleName: String,
-    version: String,
-) {
-    sourceset.dependencies {
-        implementation(createKlutterDependency(simpleModuleName, version))
-    }
 }

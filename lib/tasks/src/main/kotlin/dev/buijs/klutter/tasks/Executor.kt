@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.tasks
 
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -32,7 +33,6 @@ infix fun String.execute(file: File) =
 
 /**
  * Execute a CLI command.
- *
  */
 open class Executor {
 
@@ -40,6 +40,7 @@ open class Executor {
      * Execute a CLI command.
      */
     @JvmOverloads
+    @ExcludeFromJacocoGeneratedReport
     open fun execute(
         /**
          * Folder from where to execute this command.
@@ -68,6 +69,7 @@ open class Executor {
         .finish(timeout)
 }
 
+@ExcludeFromJacocoGeneratedReport
 fun Process.finish(timeout: Long?): String {
     if(timeout == null) waitFor() else waitFor(timeout, TimeUnit.SECONDS)
     if(exitValue() != 0)

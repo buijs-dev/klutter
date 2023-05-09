@@ -106,7 +106,7 @@ class ActionInitKlutterSpec extends Specification {
             klutterYaml.delete()
 
         and:
-        def sut = new InitKlutter(validRootFolder, validPluginName, null)
+        def sut = new InitKlutter(validRootFolder, validPluginName)
 
         when: "task will fail because of invalid pubspec.yamls but does not matter"
         try {

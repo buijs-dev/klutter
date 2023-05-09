@@ -21,24 +21,18 @@
  */
 package dev.buijs.klutter.tasks.codegen
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.common.*
-import dev.buijs.klutter.tasks.execute
-import java.io.File
+import spock.lang.Specification
 
-fun GenerateCodeOptions.toDartFormatTask() =
-    DartFormatTask(folder = flutterLibFolder, log = log)
+import java.nio.file.Files
 
-/**
- * Run command 'dart format .'  in a folder.
- */
-class DartFormatTask @JvmOverloads constructor(
-    private val folder: File,
-    private val log: (String) -> Unit = {  },
-) : KlutterTask, GenerateCodeAction {
+class DartFormatTaskSpec extends Specification {
 
-    override fun run() {
-        "dart format .".execute(folder.verifyExists()).also { log(it) }
+    def "Verify constructor"(){
+        given:
+        def file = Files.createTempDirectory("").toFile()
+
+        expect:
+        new DartFormatTask(file).run()
     }
 
 }

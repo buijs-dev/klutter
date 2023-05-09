@@ -22,7 +22,14 @@
 package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = """
+        Most is actually covered 
+        but can NOT test with Spock directly 
+        due to it being a reified function.
+    """)
 inline fun <reified T: GenerateCodeAction> findGenerateCodeAction(
     options: GenerateCodeOptions
 ): GenerateCodeAction = when(T::class.java) {
@@ -47,20 +54,10 @@ inline fun <reified T: GenerateCodeAction> findGenerateCodeAction(
     else -> throw KlutterException("Unknown GenerateCodeAction: ${T::class.java}")
 }
 
-fun runGenerateCodeActions(
-    vararg action: GenerateCodeAction
-) {
+fun runGenerateCodeActions(vararg action: GenerateCodeAction) {
     action.toList().forEach { it.run() }
 }
 
 sealed interface GenerateCodeAction {
     fun run()
-}
-
-// Use for UT only!
-@Suppress("unused")
-private object GroovyHelper {
-    @JvmStatic
-    fun findGenerateCodeAction(options: GenerateCodeAction): GenerateCodeAction =
-        findGenerateCodeAction(options)
 }

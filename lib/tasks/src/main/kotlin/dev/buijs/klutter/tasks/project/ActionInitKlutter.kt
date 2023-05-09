@@ -28,7 +28,8 @@ import java.io.File
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
     InitKlutter(rootFolder, pluginName, config)
 
-internal class InitKlutter(
+internal class InitKlutter
+@JvmOverloads constructor(
     rootFolder: RootFolder,
     pluginName: PluginName,
     configOrNull: Config? = null

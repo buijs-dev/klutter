@@ -8,6 +8,7 @@ import dev.buijs.klutter.compiler.scanner.eventHasUndeterminedMethodSignature
 import dev.buijs.klutter.compiler.scanner.eventIsMissingParameter
 import dev.buijs.klutter.compiler.scanner.eventIsMissingReturnValue
 import dev.buijs.klutter.kore.ast.*
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
 /**
  * Wrapper for KSP KSAnnotated to encapsulate KSP specific classes.
@@ -17,6 +18,8 @@ internal data class KAWrapper(
     val errorMessageOrNull: String? = null,
     val method: Method? = null)
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
 internal fun KSAnnotated.toKAWrapper(): KAWrapper {
     if(!hasEventAnnotation())
         return KAWrapper(hasEventAnnotation = false)
@@ -27,6 +30,8 @@ internal fun KSAnnotated.toKAWrapper(): KAWrapper {
     return KAWrapper(hasEventAnnotation = true)
 }
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
 private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
 
     val ksType = returnType?.resolve()
@@ -66,28 +71,35 @@ private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
             requestParameterName = requestParameterOrNull?.name?.getShortName()))
 }
 
+@ExcludeFromJacocoGeneratedReport
 private fun String.responseTypeError() =
     KAWrapper(hasEventAnnotation = true, errorMessageOrNull = this)
 
+@ExcludeFromJacocoGeneratedReport
 private fun String.requestTypeError() =
     KAWrapper(hasEventAnnotation = true, errorMessageOrNull = this)
 
+@ExcludeFromJacocoGeneratedReport
 private fun commandNameError() =
     KAWrapper(hasEventAnnotation = true, errorMessageOrNull = eventIsMissingParameter)
 
+@ExcludeFromJacocoGeneratedReport
 private fun methodSignatureError() =
     KAWrapper(hasEventAnnotation = true, errorMessageOrNull = eventHasUndeterminedMethodSignature)
 
+@ExcludeFromJacocoGeneratedReport
 private fun KSType.toTypeData(function: KSFunctionDeclaration) = TypeData(
     type = function.returnType?.toString() ?: "",
     arguments = arguments.map { it.type.toString() },
     nullable = isMarkedNullable)
 
+@ExcludeFromJacocoGeneratedReport
 private fun KSFunctionDeclaration.getCommand() = annotations
     .firstOrNull { it.shortName.getShortName() == "Event"}
     ?.arguments?.firstOrNull { it.name?.getShortName() == "name" }
     ?.value?.toString()
 
+@ExcludeFromJacocoGeneratedReport
 private fun KSAnnotated.hasEventAnnotation(): Boolean = annotations
     .map{ it.shortName.getShortName() }
     .toList()

@@ -7,6 +7,7 @@ import dev.buijs.klutter.compiler.scanner.InvalidEvent
 import dev.buijs.klutter.compiler.scanner.ValidEvent
 import dev.buijs.klutter.compiler.scanner.getEvents
 import dev.buijs.klutter.kore.ast.Method
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
 /**
  * Wrapper for KSP KSClassDeclaration to encapsulate KSP specific classes.
@@ -22,6 +23,8 @@ internal data class KCController(
     val className: String,
     val packageName: String)
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
 internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
 
     val constructors: List<KSFunctionDeclaration> = getConstructors().toList()

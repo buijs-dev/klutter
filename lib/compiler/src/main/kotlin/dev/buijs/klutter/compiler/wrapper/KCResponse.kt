@@ -8,6 +8,7 @@ import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
 /**
  * Wrapper for KSP KSClassDeclaration to encapsulate KSP specific classes.
@@ -37,6 +38,8 @@ internal data class KCMessage(
     val typeMembers: List<Either<String, TypeMember>>
 ): KCResponse
 
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
 internal fun KSClassDeclaration.toKCResponse(): KCResponse {
 
     val annotationNames = annotations
@@ -80,7 +83,8 @@ internal fun KSClassDeclaration.toKCResponse(): KCResponse {
         typeMembers =  constructors.firstOrNull()?.getTypeMembers() ?: emptyList())
 }
 
-
+@ExcludeFromJacocoGeneratedReport(
+    reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
 private fun KSFunctionDeclaration.getTypeMembers() = parameters.map { param ->
     val name = param.name?.getShortName()
 

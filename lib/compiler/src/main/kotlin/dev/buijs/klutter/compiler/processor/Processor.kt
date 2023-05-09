@@ -34,6 +34,7 @@ import dev.buijs.klutter.compiler.validator.Valid
 import dev.buijs.klutter.compiler.validator.ValidSquintMessages
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import dev.buijs.klutter.kore.project.Project
 import dev.buijs.klutter.kore.project.Pubspec
 import dev.buijs.klutter.kore.project.plugin
@@ -47,6 +48,16 @@ import java.io.File
  * The actual symbol processor which will scan all classes with Klutter annotations
  * and run code generation tasks as configured.
  */
+@ExcludeFromJacocoGeneratedReport(reason = """
+    The Processor requires an actual Resolver implementation to work properly.
+    Stubbing and/or mocking is possible to some extent but is very maintenance intensive 
+    without providing actual insight to the code quality. 
+    
+    It's better to NOT unit test the Processor but to run a System and/or Integration Test
+    which uses a real Kotlin Multiplatform Project.
+    
+    See module test-ksp for this test.
+""")
 class Processor(
     private val options: ProcessorOptions,
     private val logger: KSPLogger,
@@ -59,6 +70,7 @@ class Processor(
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
 
+    @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         output = options.outputFolder
         project = output.plugin()
@@ -69,6 +81,7 @@ class Processor(
         return emptyList()
     }
 
+    @ExcludeFromJacocoGeneratedReport
     private fun Resolver.findAndValidateMessages() {
         messages = scanForResponses(resolver = this, outputFolder = options.metadataFolder)
             .validateResponses().let {
@@ -82,6 +95,7 @@ class Processor(
             }
     }
 
+    @ExcludeFromJacocoGeneratedReport
     private fun Resolver.findAndValidateControllers() {
         controllers = scanForControllers(resolver = this, outputFolder = options.metadataFolder)
             .validateControllers(messages?.map { it.type } ?: emptyList()).let {
@@ -95,6 +109,7 @@ class Processor(
             }
     }
 
+    @ExcludeFromJacocoGeneratedReport
     private fun generateCodeAndInstall() {
         // If null then there are validation errors and code generation should be skipped
         if (messages == null || controllers == null) return
@@ -113,6 +128,7 @@ class Processor(
     }
 }
 
+@ExcludeFromJacocoGeneratedReport
 private fun KSPLogger.logAnnotationScanningWarnings(warnings: List<String>, annotation: String) {
     warn("Fatal error occured while processing $annotation classes")
     warn("=============================================================")
@@ -120,6 +136,7 @@ private fun KSPLogger.logAnnotationScanningWarnings(warnings: List<String>, anno
     warn("=============================================================")
 }
 
+@ExcludeFromJacocoGeneratedReport
 private fun KSPLogger.logSquintInfo(project: Project, messageCount: Int, controllerCount: Int) {
     info("=============================================================")
     info("Generating dart code")

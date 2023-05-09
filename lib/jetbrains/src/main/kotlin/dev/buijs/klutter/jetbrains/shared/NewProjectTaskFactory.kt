@@ -43,8 +43,7 @@ object NewProjectTaskFactory {
         options = ProjectBuilderOptions(
             rootFolder = toRootFolder(pathToRoot),
             pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
-            groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup)
-        ))
+            groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup)))
 }
 
 /**
@@ -63,9 +62,7 @@ private fun createKlutterPluginTask(
         task = {
             executor = JetbrainsExecutor()
             task.run()
-            rootFolder.moveUpFolder(options.pluginName.validPluginNameOrThrow()) }
-
-    )
+            rootFolder.moveUpFolder(options.pluginName.validPluginNameOrThrow()) })
 }
 
 /**

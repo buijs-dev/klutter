@@ -96,8 +96,6 @@ fun NewProjectConfig.validate(): ValidationResult {
 /**
  * Result returned after validating user input.
  */
-data class ValidationResult(
-    val messages: List<String>,
-) {
+data class ValidationResult(val messages: List<String>) {
     val isValid: Boolean = messages.isEmpty()
 }

@@ -1,5 +1,8 @@
+import org.jetbrains.changelog.date
+
 plugins {
     id("org.jetbrains.intellij") version "1.13.3"
+    id("org.jetbrains.changelog") version "2.0.0"
     id("java")
     id("maven-publish")
     id("klutter")
@@ -20,20 +23,41 @@ group = "dev.buijs.klutter"
 version = dev.buijs.klutter.ProjectVersions.jetbrains
 
 intellij {
-    version.set("2022.2.1")
+    version.set("2022.3.2")
     type.set("IC") // Intellij Community Edition
     plugins.set(listOf("java", "com.intellij.gradle","android"))
+}
+
+changelog {
+    version.set(dev.buijs.klutter.ProjectVersions.jetbrains)
+    path.set(file("CHANGELOG.md").canonicalPath)
+    header.set(provider { "[${version.get()}] - ${date()}" })
+    headerParserRegex.set("""(\d+\.\d+)""".toRegex())
+    introduction.set(
+        """
+        |The Klutter plugin provides support for the Klutter Framework in IntelliJ IDEA and Android Studio.
+        |
+        |Klutter is a framework which interconnects Flutter and Kotlin Multiplatform. 
+        |It can be used to create Flutter plugins or standalone apps.
+        |""".trimMargin()
+    )
+    itemPrefix.set("-")
+    keepUnreleasedSection.set(true)
+    unreleasedTerm.set("[Unreleased]")
+    groups.set(listOf("Added", "Changed", "Deprecated", "Removed", "Fixed", "Security"))
+    lineSeparator.set("\n")
+    combinePreReleases.set(true)
 }
 
 tasks {
 
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 
     withType<Test> {
@@ -41,7 +65,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("213.*")
+        sinceBuild.set("223.*")
     }
 
     signPlugin {
@@ -86,8 +110,8 @@ repositories {
 
 dependencies {
     // Logging
-    implementation("org.slf4j:slf4j-api:2.0.1")
-    implementation("io.github.microutils:kotlin-logging:3.0.0")
+    implementation("org.slf4j:slf4j-api:2.0.7")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // Project
     implementation(project(":lib:tasks"))
@@ -97,8 +121,8 @@ dependencies {
     @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 
     // Plugin UI Test
     testImplementation("com.intellij.remoterobot:remote-robot:$robotVersion")

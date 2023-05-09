@@ -53,9 +53,7 @@ class NewProjectAction : AnAction("New Klutter Project"), DumbAware {
      * When the button is clicked then open a new project wizard.
      */
     override fun actionPerformed(e: AnActionEvent) {
-        NewProjectUtil.createNewProject(
-            NewProjectWizard(null, EMPTY_MODULES_PROVIDER, null)
-        )
+        NewProjectUtil.createNewProject(NewProjectWizard(null, EMPTY_MODULES_PROVIDER, null))
     }
 
 }

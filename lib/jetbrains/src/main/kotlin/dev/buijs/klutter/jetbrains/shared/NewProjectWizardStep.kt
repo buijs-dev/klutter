@@ -128,8 +128,7 @@ private val projectTypeValues: List<String>
 private val NewProjectConfig.projectTypeObservable
     get() = observable(
         get = { this.projectType.displayName },
-        set = { this.projectType = KlutterProjectType.from(it) }
-    )
+        set = { this.projectType = KlutterProjectType.from(it) })
 
 /**
  * Getter/Setter for the AppName.
@@ -137,8 +136,7 @@ private val NewProjectConfig.projectTypeObservable
 private val NewProjectConfig.appNameObservable
     get() = observable(
         get = { this.appName ?: "" },
-        set = { this.appName = it  }
-    )
+        set = { this.appName = it  })
 
 /**
  * Getter/Setter for the GroupName (package name).
@@ -146,8 +144,7 @@ private val NewProjectConfig.appNameObservable
 private val NewProjectConfig.groupNameObservable
     get() = observable(
         get = { this.groupName ?: "" },
-        set = { this.groupName = it  }
-    )
+        set = { this.groupName = it  })
 
 private fun <T> observable(
     get: () -> T,

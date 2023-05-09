@@ -85,6 +85,7 @@ fun File.toPubspec(): Pubspec {
     }
 }
 
+@JvmOverloads
 fun rootPubspecInit(
     pubspecFile: File,
     pubspec: Pubspec,
@@ -94,6 +95,7 @@ fun rootPubspecInit(
     return pubspecFile
 }
 
+@JvmOverloads
 fun examplePubspecInit(
     examplePubspecFile: File,
     rootPubspec: Pubspec,

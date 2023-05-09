@@ -91,9 +91,7 @@ class NewProjectBuilder(
                 NewProjectTaskFactory.build(
                     project = module.project,
                     pathToRoot = pathToRoot,
-                    config = config,
-                )
-            )
+                    config = config))
         }
 
     }

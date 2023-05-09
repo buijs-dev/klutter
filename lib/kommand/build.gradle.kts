@@ -1,12 +1,19 @@
+@file:Suppress("VulnerableLibrariesLocal")
+
 plugins {
     kotlin("jvm")
     id("klutter")
     id("groovy")
     application
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.8.21"
 }
 
 application {
     mainClass.set("dev.buijs.klutter.kommand.MainKt")
+}
+
+allOpen {
+    annotation("dev.buijs.klutter.kommand.Open4Test")
 }
 
 sourceSets {

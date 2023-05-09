@@ -21,23 +21,64 @@
  */
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.tasks.project.toGroupName
-import dev.buijs.klutter.tasks.project.toPluginName
-import dev.buijs.klutter.tasks.project.toRootFolder
+import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.toConfigOrNull
+import dev.buijs.klutter.tasks.project.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.required
+import java.io.File
 
-internal fun Array<String>.determineProjectBuilderOptionsByCommand(): ProjectBuilderOptions {
-    val parser = ArgParser("klutter")
-    val root by parser.option(ArgType.String, shortName = "root", description = "Path to root folder").required()
-    val group by parser.option(ArgType.String, shortName = "org", description = "Organization").required()
-    val name by parser.option(ArgType.String, shortName = "name", description = "Plugin name").required()
-    parser.parse(this)
-    return ProjectBuilderOptions(
-        rootFolder = toRootFolder(root),
-        groupName = toGroupName(group),
-        pluginName = toPluginName(name)
-    )
+private const val rootDescription = "Path to root folder"
+
+private const val groupDescription = "Groupname (organisation)"
+
+private const val nameDescription = "Name of app (plugin)"
+
+private const val configDescription = "Path to klutter.yaml"
+
+internal fun List<String>.projectBuilderOptionsByCommand(): ProjectBuilderOptions =
+    toTypedArray().projectBuilderOptionsByCommand()
+
+internal fun Array<String>.projectBuilderOptionsByCommand(): ProjectBuilderOptions =
+    ByCommand(parser = ArgParser("klutter"), args = this).toProjectBuilderOptions()
+
+private fun ByCommand.toProjectBuilderOptions(): ProjectBuilderOptions =
+    ProjectBuilderOptions(
+        rootFolder = rootFolder,
+        groupName = groupName,
+        pluginName = pluginName,
+        config = configOrNull)
+
+private class ByCommand(parser: ArgParser, args: Array<String>): Input {
+
+    private val root by parser required rootDescription
+
+    private val name by parser required nameDescription
+
+    private val group by parser required groupDescription
+
+    private val config by parser optional configDescription
+
+    init {
+        parser.parse(args)
+    }
+
+    override val rootFolder: RootFolder
+        get() = toRootFolder(root)
+
+    override val groupName: GroupName
+        get() = toGroupName(group)
+
+    override val pluginName: PluginName
+        get() = toPluginName(name)
+
+    override val configOrNull: Config?
+        get() = config?.let { File(it).toConfigOrNull() }
 }
+
+private infix fun ArgParser.required(description: String) =
+    option(ArgType.String, description = description).required()
+
+private infix fun ArgParser.optional(description: String) =
+    option(ArgType.String, description = description)

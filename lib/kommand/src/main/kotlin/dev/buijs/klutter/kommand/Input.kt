@@ -21,21 +21,15 @@
  */
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kore.project.klutterKommanderVersion
-import dev.buijs.klutter.tasks.project.ProjectBuilderTask
+import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.tasks.project.*
 
-fun main(args: Array<String>) {
-    println("""
-  ════════════════════════════════════════════
-     KLUTTER (v$klutterKommanderVersion)
-  ════════════════════════════════════════════
-  """)
+internal sealed interface Input {
+    val rootFolder: RootFolder
 
-    val options = if(args.isEmpty()) {
-        getOptionsByUserInput()
-    } else {
-        args.projectBuilderOptionsByCommand()
-    }
+    val groupName: GroupName
 
-    ProjectBuilderTask(options).run()
+    val pluginName: PluginName
+
+    val configOrNull: Config?
 }

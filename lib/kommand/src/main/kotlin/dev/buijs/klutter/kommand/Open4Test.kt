@@ -21,21 +21,4 @@
  */
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kore.project.klutterKommanderVersion
-import dev.buijs.klutter.tasks.project.ProjectBuilderTask
-
-fun main(args: Array<String>) {
-    println("""
-  ════════════════════════════════════════════
-     KLUTTER (v$klutterKommanderVersion)
-  ════════════════════════════════════════════
-  """)
-
-    val options = if(args.isEmpty()) {
-        getOptionsByUserInput()
-    } else {
-        args.projectBuilderOptionsByCommand()
-    }
-
-    ProjectBuilderTask(options).run()
-}
+internal annotation class Open4Test

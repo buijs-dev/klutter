@@ -61,11 +61,11 @@ internal fun scanForControllers(
     scanner: (resolver: Resolver) -> List<KCController> = { getSymbolsWithResponseAnnotation(it) },
 ): List<ValidControllerOrError> =
     scanner.invoke(resolver)
-        .map { it.toAbstractTypeOrFail() }
+        .map { it.toSquintMessageSourceOrFail() }
         .toList()
         .also { it.writeOutput(outputFolder) }
 
-private fun KCController.toAbstractTypeOrFail(): Either<String, Controller> {
+private fun KCController.toSquintMessageSourceOrFail(): Either<String, Controller> {
 
     if(!hasOneConstructor)
         return controllerHasTooManyConstructors()

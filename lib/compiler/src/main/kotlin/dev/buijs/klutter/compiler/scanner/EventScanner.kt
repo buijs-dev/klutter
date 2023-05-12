@@ -37,6 +37,7 @@ private fun KAWrapper.toMethodOrError(): Either<String, Method>  = when {
     errorMessageOrNull != null ->
         InvalidEvent(errorMessageOrNull)
     method == null ->
-        eventMethodConversionFailure
-    else -> ValidEvent(method)
+        InvalidEvent(eventMethodConversionFailure)
+    else ->
+        ValidEvent(method)
 }

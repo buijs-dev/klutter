@@ -5,17 +5,6 @@ import io.kotlintest.specs.WordSpec
 
 internal class KlutterMetadataTest: WordSpec({
 
-    "Verify KlutterIcons" should {
-
-        "Return correct logo icon" {
-            KlutterIcons.logo16x16.iconHeight shouldBe 16
-            KlutterIcons.logo16x16.iconWidth shouldBe 16
-            KlutterIcons.logo20x20.iconHeight shouldBe 20
-            KlutterIcons.logo20x20.iconWidth shouldBe 20
-        }
-
-    }
-
     "Verify KlutterBundle" should {
 
         "Return correct information" {

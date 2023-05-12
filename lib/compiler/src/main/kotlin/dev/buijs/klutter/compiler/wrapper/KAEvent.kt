@@ -48,7 +48,7 @@ private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
     val requestParameterOrNull = parameters.firstOrNull()
 
     val requestTypeOrErrorOrNull = requestParameterOrNull
-        ?.type.toString().let { TypeData(it).toAbstractType() }
+        ?.type?.toString()?.let { TypeData(it).toAbstractType() }
 
     if (requestTypeOrErrorOrNull is InvalidAbstractType)
         return requestTypeOrErrorOrNull.data.requestTypeError()
@@ -67,7 +67,7 @@ private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
             method = methodName,
             async = modifiers.map { "$it" }.any { it == "SUSPEND" },
             responseDataType = (responseType as ValidAbstractType).data,
-            requestDataType = requestTypeOrErrorOrNull.let { (it as ValidAbstractType).data },
+            requestDataType = requestTypeOrErrorOrNull?.let { (it as ValidAbstractType).data },
             requestParameterName = requestParameterOrNull?.name?.getShortName()))
 }
 

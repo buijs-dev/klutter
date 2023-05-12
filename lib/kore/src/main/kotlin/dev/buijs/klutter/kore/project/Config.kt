@@ -37,7 +37,7 @@ data class Config(
     val dependencies: Dependencies = Dependencies(),
 
     @JsonProperty("bom-version")
-    val bomVersion: String = klutterKommanderVersion,
+    val bomVersion: String = klutterBomVersion,
 )
 
 @JsonPropertyOrder(
@@ -58,6 +58,15 @@ data class Dependencies(
     @JsonProperty("embedded")
     val embedded: Set<String> = emptySet()
 )
+
+/**
+ * [Dependencies] instance which uses GIT for all dependencies.
+ */
+val gitDependencies = Dependencies(
+    klutter = "https://github.com/buijs-dev/klutter-dart.git@develop",
+    klutterUI = "https://github.com/buijs-dev/klutter-dart-ui.git@develop",
+    squint = "https://github.com/buijs-dev/squint.git@develop",
+    embedded = emptySet())
 
 fun File.toConfigOrNull(): Config? = try {
     mapper.readValue(verifyExists().readText(), Config::class.java)

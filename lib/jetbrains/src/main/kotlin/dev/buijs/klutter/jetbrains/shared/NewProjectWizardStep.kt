@@ -5,11 +5,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.observable.properties.ObservableMutableProperty
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.util.IconLoader
-import com.intellij.ui.dsl.builder.bindItem
+import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
+import dev.buijs.klutter.kore.project.klutterBomVersion
 import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JPanel
@@ -92,43 +93,35 @@ private fun newProjectPanel(data: NewProjectConfig) = panel {
             cell(KlutterBanner).verticalAlign(VerticalAlign.CENTER)
         }
 
-        // Name: [ my_plugin ]
-        row("Name: ") { textField()
-            .bindText(data.appNameObservable)
-            .horizontalAlign(HorizontalAlign.LEFT)
+        group("Project") {
+            // Name: [ my_plugin ]
+            row("Name: ") { textField()
+                .bindText(data.appNameObservable)
+                .horizontalAlign(HorizontalAlign.LEFT)
+            }
+
+            // Group: [ com.example ]
+            row("Group: ") { textField()
+                .bindText(data.groupNameObservable)
+                .horizontalAlign(HorizontalAlign.LEFT)
+            }
         }
 
-        // Group: [ com.example ]
-        row("Group: ") { textField()
-            .bindText(data.groupNameObservable)
-            .horizontalAlign(HorizontalAlign.LEFT)
-        }
+        group("Dependencies") {
+            // Version: [ 2023.1.1.beta ]
+            row("BOM Version: ") { textField()
+                .bindText(data.gradleVersionObservable)
+                .horizontalAlign(HorizontalAlign.LEFT)
+            }
+            row { checkBox("Get flutter dependencies from git.")
+                .bindSelected(data.useGitForPubDependenciesObservable)
+                .horizontalAlign(HorizontalAlign.LEFT)
+            }
 
-        // Project: [ Plugin ]
-        row { comboBox(projectTypeValues)
-            .label("Project:")
-            .bindItem(data.projectTypeObservable)
-            .horizontalAlign(HorizontalAlign.LEFT)
+            row {}.comment("If enabled then all flutter dependencies are pulled from git and not pub.")
         }
-        row {}.comment("Generate a plugin project. Application project support is coming soon...")
     }
 }
-
-/**
- * List of supported KlutterProjectType values as String values.
- */
-private val projectTypeValues: List<String>
-    get() = KlutterProjectType.values()
-        .filter { it == KlutterProjectType.PLUGIN }
-        .map { it.displayName }.toList()
-
-/**
- * Getter/Setter for the ProjectType.
- */
-private val NewProjectConfig.projectTypeObservable
-    get() = observable(
-        get = { this.projectType.displayName },
-        set = { this.projectType = KlutterProjectType.from(it) })
 
 /**
  * Getter/Setter for the AppName.
@@ -145,6 +138,16 @@ private val NewProjectConfig.groupNameObservable
     get() = observable(
         get = { this.groupName ?: "" },
         set = { this.groupName = it  })
+
+private val NewProjectConfig.gradleVersionObservable
+    get() = observable(
+        get = { this.bomVersion ?: klutterBomVersion },
+        set = { this.bomVersion = it  })
+
+private val NewProjectConfig.useGitForPubDependenciesObservable
+    get() = observable(
+        get = { this.useGitForPubDependencies ?: false },
+        set = { this.useGitForPubDependencies = it  })
 
 private fun <T> observable(
     get: () -> T,

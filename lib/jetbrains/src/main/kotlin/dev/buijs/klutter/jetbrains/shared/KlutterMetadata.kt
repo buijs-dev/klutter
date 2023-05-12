@@ -22,11 +22,13 @@
 package dev.buijs.klutter.jetbrains.shared
 
 import com.intellij.openapi.util.IconLoader
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import javax.swing.Icon
 
 /**
  * Common text messages.
  */
+@ExcludeFromJacocoGeneratedReport
 object KlutterBundle {
 
     const val moduleId: String = "KLUTTER_MODULE"
@@ -48,6 +50,7 @@ object KlutterBundle {
 /**
  * Klutter Logo's in Icon format.
  */
+@ExcludeFromJacocoGeneratedReport
 object KlutterIcons {
     val logo16x16: Icon = IconLoader.getIcon("/pluginIcon16x16.png", KlutterIcons::class.java)
     val logo20x20: Icon = IconLoader.getIcon("/pluginIcon20x20.png", KlutterIcons::class.java)

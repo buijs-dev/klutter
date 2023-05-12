@@ -24,11 +24,13 @@ package dev.buijs.klutter.jetbrains.shared
 import com.intellij.icons.AllIcons
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.projectWizard.NewProjectWizard
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider.EMPTY_MODULES_PROVIDER
 import com.intellij.openapi.wm.impl.welcomeScreen.NewWelcomeScreen
+import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
 /**
  * Action to start the new project wizard.
@@ -42,6 +44,7 @@ class NewProjectAction : AnAction("New Klutter Project"), DumbAware {
     /**
      * Adds a button named 'New Klutter Project' to the Welcome Screen.
      */
+    @ExcludeFromJacocoGeneratedReport
     override fun update(e: AnActionEvent) {
         if (NewWelcomeScreen.isNewWelcomeScreen(e)) {
             e.presentation.icon = AllIcons.Welcome.CreateNewProjectTab
@@ -52,8 +55,11 @@ class NewProjectAction : AnAction("New Klutter Project"), DumbAware {
     /**
      * When the button is clicked then open a new project wizard.
      */
+    @ExcludeFromJacocoGeneratedReport
     override fun actionPerformed(e: AnActionEvent) {
         NewProjectUtil.createNewProject(NewProjectWizard(null, EMPTY_MODULES_PROVIDER, null))
     }
 
+    @ExcludeFromJacocoGeneratedReport
+    override fun getActionUpdateThread() = ActionUpdateThread.EDT
 }

@@ -47,8 +47,8 @@ internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
     return KCController(
         hasOneConstructor = constructors.size == 1,
         firstConstructorHasNoParameters = constructors.firstOrNull()?.parameters?.isEmpty() ?: false,
-        methods = events.filterIsInstance<ValidEvent>().map { it.data },
-        eventErrors = events.filterIsInstance<InvalidEvent>().map { it.data },
+        methods = events.filterIsInstance<ValidEvent>().map { it.data }.toList(),
+        eventErrors = events.filterIsInstance<InvalidEvent>().map { it.data }.toList(),
         controllerType = controllerType,
         isBroadcastController = publisherOrNull != null,
         broadcastTypeParameterOrBlank = publisherOrNull?.resolve()?.arguments?.first()?.type?.toString() ?: "",

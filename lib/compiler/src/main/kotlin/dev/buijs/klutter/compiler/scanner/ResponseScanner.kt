@@ -61,11 +61,11 @@ internal fun scanForResponses(
     scanner: (resolver: Resolver) -> List<KCResponse> = { getSymbolsWithResponseAnnotation(it) },
 ): List<Either<String, SquintMessageSource>> =
     scanner.invoke(resolver)
-        .map { it.toAbstractTypeOrFail() }
+        .map { it.toSquintMessageSourceOrFail() }
         .toList()
         .also { it.forEachIndexed { index, data -> data.writeOutput(outputFolder, index) } }
 
-private fun KCResponse.toAbstractTypeOrFail()
+private fun KCResponse.toSquintMessageSourceOrFail()
 : Either<String, SquintMessageSource> = when(this) {
     is KCEnumeration -> enumeration()
     is KCMessage -> message()

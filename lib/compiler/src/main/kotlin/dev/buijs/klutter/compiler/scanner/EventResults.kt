@@ -33,5 +33,5 @@ internal const val eventHasUndeterminedMethodSignature =
 internal const val eventHasTooManyParameters =
     "Method has more than 1 parameter but only 0 or 1 is allowed."
 
-internal val eventMethodConversionFailure =
-    InvalidEvent("Failed to convert Event to Method AST.")
+internal const val eventMethodConversionFailure =
+    "Failed to convert Event to Method AST."

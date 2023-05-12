@@ -25,14 +25,18 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.Dependencies
+import dev.buijs.klutter.kore.project.gitDependencies
+import dev.buijs.klutter.kore.project.klutterBomVersion
 import dev.buijs.klutter.tasks.executor
 import dev.buijs.klutter.tasks.project.*
+import mu.KotlinLogging
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
 
-/**
- * Factory which returns the correct task to be executed based on the [KlutterProjectType].
- */
+private val log = KotlinLogging.logger { }
+
 object NewProjectTaskFactory {
     fun build(
         pathToRoot: String,
@@ -43,7 +47,10 @@ object NewProjectTaskFactory {
         options = ProjectBuilderOptions(
             rootFolder = toRootFolder(pathToRoot),
             pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
-            groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup)))
+            groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup),
+            config = Config(
+                bomVersion = config.bomVersion ?: klutterBomVersion,
+                dependencies = if(config.useGitForPubDependencies == true) gitDependencies else Dependencies())))
 }
 
 /**
@@ -53,7 +60,6 @@ private fun createKlutterPluginTask(
     options: ProjectBuilderOptions,
     project: Project? = null,
 ): Task.Modal {
-
     val task = ProjectBuilderTask(options = options)
     val rootFolder = options.rootFolder.validRootFolderOrThrow()
     return createKlutterTask(
@@ -69,11 +75,15 @@ private fun createKlutterPluginTask(
  * Copies the generated project to the root folder.
  */
 private fun File.moveUpFolder(pluginName: String) {
-    this.resolve(pluginName).let { subRoot ->
+    resolve(pluginName).let { subRoot ->
         // Change subRoot name just in case root and subRoot name are identicial.
         File("${subRoot.parent}/klutterTempFolderName").let { temp ->
             subRoot.renameTo(temp)
-            temp.copyRecursively(this, overwrite = true)
+            temp.copyRecursively(this,
+                overwrite = true,
+                onError = { file, error ->
+                    log.error { "Error while copying File ${file.path}: $error" }
+                    OnErrorAction.SKIP } )
             temp.deleteRecursively()
         }
 

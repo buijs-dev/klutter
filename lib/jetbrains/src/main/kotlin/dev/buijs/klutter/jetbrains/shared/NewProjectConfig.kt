@@ -21,7 +21,6 @@
  */
 package dev.buijs.klutter.jetbrains.shared
 
-import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.tasks.project.toGroupName
 import dev.buijs.klutter.tasks.project.toPluginName
@@ -48,24 +47,15 @@ class NewProjectConfig(
     var groupName: String? = null,
 
     /**
-     * Type of project to be created, one of [KlutterProjectType].
+     * Get pub dependencies from Git or Pub.
      */
-    var projectType: KlutterProjectType = KlutterProjectType.PLUGIN,
+    var useGitForPubDependencies: Boolean? = false,
+
+    /**
+     * Klutter Gradle version to use.
+     */
+    var bomVersion: String? = null,
 )
-
-/**
- * Type of Klutter project to be created.
- */
-enum class KlutterProjectType(val displayName: String) {
-    PLUGIN("Plugin");
-
-    companion object {
-        fun from(value: String) = KlutterProjectType.values()
-            .firstOrNull { it.displayName == value }
-            ?: throw KlutterException("Invalid KlutterProjectType: '$value'")
-    }
-
-}
 
 internal const val INVALID_APP_NAME = "Invalid app name"
 internal const val MISSING_APP_NAME = "Missing app name"

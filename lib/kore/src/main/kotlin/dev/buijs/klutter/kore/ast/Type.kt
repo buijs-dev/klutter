@@ -128,8 +128,7 @@ open class EnumType(
         EnumType(
             className = className,
             packageName = packageName,
-            values = values
-        )
+            values = values)
 
     override fun toString() = print()
 

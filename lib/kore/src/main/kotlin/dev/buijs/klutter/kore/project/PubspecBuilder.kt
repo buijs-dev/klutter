@@ -36,9 +36,9 @@ import dev.buijs.klutter.kore.templates.flutter.createRootPubspecYamlWriter
 import java.io.File
 
 /**
- * The version of the Kommander Executable Tool.
+ * The version of Klutter Gradle Executable Tool.
  */
-const val klutterKommanderVersion = "2023.1.1"
+const val klutterBomVersion = "2023.1.1.beta"
 
 /**
  * The version of the klutter Pub Plugin.

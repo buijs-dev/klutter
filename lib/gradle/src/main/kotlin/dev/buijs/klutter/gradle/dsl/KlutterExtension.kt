@@ -79,6 +79,19 @@ open class KlutterExtension(project: Project) {
         }
     }
 
+    @JvmOverloads
+    @ExcludeFromJacocoGeneratedReport
+    fun compiler(
+        version: String? = null,
+        dependsOnTasks: String? = null,
+        dependsOnKore: String? = null
+    ) {
+        handler.includeCompilerPlugin(
+            version = version,
+            versionTasks = dependsOnTasks,
+            versionKore = dependsOnKore)
+    }
+
     /**
      * Add klutter testImplementation dependency to this project.
      */
@@ -105,16 +118,20 @@ open class KlutterExtension(project: Project) {
 class KlutterDependencyHandler(private val project: Project) {
 
     @ExcludeFromJacocoGeneratedReport
-    fun includeCompilerPlugin(version: String? = null) {
+    fun includeCompilerPlugin(
+        version: String? = null,
+        versionTasks: String? = null,
+        versionKore: String? = null
+    ) {
         project.dependencies.add(
             "kspCommonMainMetadata",
             "dev.buijs.klutter:compiler:${version?:KlutterVersion.byName("compiler")}")
         project.dependencies.add(
             "kspCommonMainMetadata",
-            "dev.buijs.klutter:kore:${version?:KlutterVersion.byName("kore")}")
+            "dev.buijs.klutter:kore:${versionKore ?: KlutterVersion.byName("kore")}")
         project.dependencies.add(
             "kspCommonMainMetadata",
-            "dev.buijs.klutter:tasks:${version?:KlutterVersion.byName("tasks")}")
+            "dev.buijs.klutter:tasks:${versionTasks ?: KlutterVersion.byName("tasks")}")
     }
 
     @ExcludeFromJacocoGeneratedReport

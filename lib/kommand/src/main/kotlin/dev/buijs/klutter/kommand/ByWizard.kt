@@ -174,4 +174,4 @@ private fun askForPathToLocal(name: String): String = mrWizard.promptInput(
 
 private fun askForKlutterGradleBomVersion(): String = mrWizard.promptInput(
     message = "Enter bill-of-materials version:",
-    default = klutterKommanderVersion)
+    default = klutterBomVersion)

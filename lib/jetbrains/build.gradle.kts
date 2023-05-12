@@ -52,12 +52,12 @@ changelog {
 tasks {
 
     withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
     }
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = "11"
     }
 
     withType<Test> {
@@ -65,7 +65,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("223.*")
+        sinceBuild.set("213.*")
     }
 
     signPlugin {

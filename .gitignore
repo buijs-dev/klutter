@@ -89,3 +89,4 @@ hs_err_pid*
 /lib-test/rune2e.txt
 /lib-test/rune2e.properties
 /lib/gradle/src/main/resources/publish.properties
+/test-ksp/local.properties

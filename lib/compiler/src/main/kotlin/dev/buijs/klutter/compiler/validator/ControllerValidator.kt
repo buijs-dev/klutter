@@ -68,7 +68,9 @@ private fun List<Controller>.distinctControllers(): Set<Controller> {
 private fun Set<Controller>.unknownControllerRequestOrResponseType(types: List<AbstractType>) = this
     .flatMap { it.functions }
     .flatMap { listOfNotNull(it.requestDataType, it.responseDataType) }
+    .filter { it !is StandardType }
     .map { it.className }
     .filter { types.none { type -> type.className == it } }
+
 
 

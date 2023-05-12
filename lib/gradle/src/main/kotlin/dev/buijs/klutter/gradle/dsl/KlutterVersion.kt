@@ -59,6 +59,7 @@ internal object KlutterVersion {
         "tasks" -> tasks
         "compiler" -> compiler
         "flutter-engine-android" -> flutterEngine
+        "flutter-engine-kmp-android" -> flutterEngine
         else -> throw KlutterException("Unknown module name '$simpleModuleName'.")
     }
 

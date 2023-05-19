@@ -23,6 +23,7 @@ package dev.buijs.klutter.kore.templates.flutter
 
 import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.ast.AbstractType
+import dev.buijs.klutter.kore.ast.FlutterSyncChannel
 import dev.buijs.klutter.kore.ast.StandardType
 import dev.buijs.klutter.kore.common.toSnakeCase
 import dev.buijs.klutter.kore.templates.dartType
@@ -138,24 +139,26 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         )
 
         if(requiresMessage) {
-            append("    required String message,")
+            append("    required ${requestType?.dartType} message,")
         }
 
-        append(
-            """               
+        append("""
             |    void Function(${responseType.dartType})? onSuccess,
             |    void Function(Exception)? onFailure,
             |    void Function()? onNullValue,
             |    void Function(AdapterResponse<${responseType.dartType}>)? onComplete,
-            |  }) => doEvent<${responseType.dartType}>(
+            |}) => doEvent<${responseType.dartType}>(
             |    state: this,
             |    event: "${event.name}",
             |    channel: _channel,
-            """
-        )
+            |    onSuccess: onSuccess,
+            |    onFailure: onFailure,
+            |    onNullValue: onNullValue,
+            |    onComplete: onComplete,
+            """)
 
         if(requiresRequestEncoder) {
-            append("encode: (${responseType.dataType.className} data) => data.toJson,")
+            append("encode: (dynamic data) => (data as ${requestType?.dataType?.className}).toJson,")
         }
 
         if(requiresResponseDecoder) {
@@ -170,7 +173,7 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         """)
 
         if(requiresMessage) {
-            append("|    required String message,")
+            append("|    required ${requestType?.dartType} message,")
         }
 
         append("""
@@ -194,7 +197,7 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         }
 
         if(requiresRequestEncoder) {
-            append("encode: (${responseType.dataType.className} data) => data.toJson,")
+            append("encode: (dynamic data) => (data as ${requestType?.dataType?.className}).toJson,")
         }
 
         if(requiresResponseDecoder) {
@@ -221,7 +224,7 @@ data class PublisherWidget(
     /**
      * The MethodChannel value used to communicate.
      */
-    val channel: FlutterChannel,
+    val channel: FlutterSyncChannel,
 
     /**
      * Name of the event to execute.
@@ -269,13 +272,6 @@ data class PublisherWidget(
      * ```
      */
     val method: FlutterMethod,
-)
-
-/**
- * The MethodChannel value used to communicate.
- */
-data class FlutterChannel(
-    val name: String
 )
 
 /**

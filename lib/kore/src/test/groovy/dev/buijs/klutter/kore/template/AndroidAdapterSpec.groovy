@@ -74,7 +74,6 @@ class AndroidAdapterSpec extends Specification {
         )].toSet())
 
         expect:
-        println sut.print()
         TestUtil.verify(sut.print(), classBody)
 
         where:
@@ -98,6 +97,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import dev.buijs.klutter.deserialize
 import dev.buijs.platform.controller.*
 
 private val methodChannelNames = setOf(
@@ -118,9 +118,9 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     private lateinit var ecFacade: EventChannelFacade
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-       this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, methodChannelNames)
-       this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, eventChannelNames)
-    }    
+        this.mcFacade = MethodChannelFacade(this, binding.binaryMessenger, methodChannelNames)
+        this.ecFacade = EventChannelFacade(this, binding.binaryMessenger, eventChannelNames)
+    }        
 
     override fun onMethodCall(call: MethodCall, result: Result) {
         mainScope.launch {
@@ -136,7 +136,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
     override fun onListen(arguments: Any?, eventSink: EventChannel.EventSink) {
         when (arguments) {
             "my_emitting_controller" ->
-                registerEventSink(myEmittingController, eventSink)
+                 registerEventSink(myEmittingController, eventSink)
             else -> {
                 eventSink.error("Unknown topic", "\$arguments", null)
             }
@@ -145,13 +145,11 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
 
     override fun onCancel(arguments: Any?) {
         myEmittingController.cancel()
-        ecFacade.cancel()
     }
 
     override fun onDetachedFromEngine(
         binding: FlutterPlugin.FlutterPluginBinding
     ) {
-        mcFacade.cancel()
     }
 
     override fun onAttachedToActivity(
@@ -174,19 +172,19 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         // nothing
     }
 
-    suspend fun <T> onEvent(event: String, data: T?, result: Result) {
-            try {
-                when(event) {
-                    "sayHi" ->
-                        result.success(MySimpleContollerImpl().sayHiPlease(data as String))
-                    "start" ->
-                        result.success(myEmittingController.startBroadcast())
-                    else -> result.notImplemented()
-                }
-            } catch(e: Exception) {
-                result.error("10101", e.message, e.stackTrace)
-            }
-    }
+    suspend fun <T> onEvent(event: String, data: T?, result: Result) { 
+           try {
+               when(event) {
+                "sayHi" ->
+                    result.success(MySimpleContollerImpl().sayHiPlease(data as String))
+                "start" ->
+                    result.success(myEmittingController.startBroadcast())
+                   else -> result.notImplemented()
+               }
+           } catch(e: Exception) {
+               result.error("10101", e.message, e.stackTrace)
+           }
+       }
 }
 """
     }
@@ -275,7 +273,9 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(myCustomType, myCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(data.toKJson()).toKJson())")
+                content.contains("val kJson: MyCustomType? = data.deserialize<MyCustomType>()")
+                content.contains("if(kJson != null) {")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).toKJson())")
             }
         }
     }
@@ -285,7 +285,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(nullableMyCustomType, myCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(data?.toKJson()).toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).toKJson())")
             }
         }
     }
@@ -295,7 +295,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(nullableMyCustomType, nullableMyCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(data?.toKJson())?.toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson)?.toKJson())")
             }
         }
     }

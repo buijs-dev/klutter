@@ -35,54 +35,76 @@ fun GenerateCodeOptions.toGenerateControllersTask() =
  */
 class GenerateFlutterControllersTask(
     private val srcFolder: File,
-    private val bindings: Map<String, Controller>,
+    private val bindings: Map<Controller, List<FlutterChannel>>,
 ) : KlutterTask, GenerateCodeAction {
 
     override fun run() {
-        bindings.forEach { (channel, controller) ->
+        bindings.forEach { (controller, channels) ->
             when (controller) {
-                is BroadcastController ->
-                    srcFolder.writeBroadcastController(controller, channel)
                 is SimpleController ->
-                    srcFolder.writeSimpleController(controller, channel)
+                    srcFolder.writeSimpleController(
+                        controller = controller,
+                        channel = channels.firstSyncChannelOrNull()!!)
+                is BroadcastController ->
+                    srcFolder.writeBroadcastController(
+                        controller = controller,
+                        asyncChannel = channels.firstAsyncChannelOrNull()!!,
+                        syncChannel = channels.firstSyncChannelOrNull())
             }
         }
     }
 
 }
 
+private fun List<FlutterChannel>.firstSyncChannelOrNull() =
+    filterIsInstance<FlutterSyncChannel>().firstOrNull()
+
+private fun List<FlutterChannel>.firstAsyncChannelOrNull() =
+    filterIsInstance<FlutterAsyncChannel>().firstOrNull()
+
 private fun File.writeBroadcastController(
     controller: BroadcastController,
-    channel: String
+    asyncChannel: FlutterAsyncChannel,
+    syncChannel: FlutterSyncChannel?
 ) {
-    this.resolve(controller.className.toSnakeCase())
+
+    val parentFolder = this
+        .resolve(controller.className.toSnakeCase())
         .maybeCreateFolder()
-        .resolve("controller.dart")
+
+    parentFolder.resolve("controller.dart")
         .maybeCreate()
         .write(SubscriberWidget(
             topic = controller.className.toSnakeCase(),
-            channel = channel,
+            channel = asyncChannel,
             controllerName = controller.className,
             dataType = controller.response))
+
+    controller.functions
+        .forEach { it.writePublisherWidget(parentFolder, syncChannel!!) }
 }
 
 private fun File.writeSimpleController(
     controller: SimpleController,
-    channel: String
+    channel: FlutterSyncChannel
 ) {
     val parentFolder =
         resolve(controller.className.toSnakeCase())
             .maybeCreateFolder()
 
-    controller.functions.forEach { function ->
-        parentFolder.resolve("${function.method.toSnakeCase()}.dart")
-            .also { it.createNewFile() }
-            .write(PublisherWidget(
-                channel = FlutterChannel(channel),
-                event = FlutterEvent(function.command),
-                extension = FlutterExtension("${function.command.replaceFirstChar { it.uppercase() }}Event"),
-                requestType = function.requestDataType?.let { FlutterMessageType(it) },
-                responseType = FlutterMessageType(function.responseDataType),
-                method = FlutterMethod(function.method)).createPrinter())
-    }
+    controller.functions
+        .forEach { it.writePublisherWidget(parentFolder, channel) }
 }
+
+private fun Method.writePublisherWidget(
+    parentFolder: File,
+    channel: FlutterSyncChannel
+) =  parentFolder.resolve("${method.toSnakeCase()}.dart")
+    .also { it.createNewFile() }
+    .write(PublisherWidget(
+        channel = channel,
+        event = FlutterEvent(command),
+        extension = FlutterExtension("${command.replaceFirstChar { it.uppercase() }}Event"),
+        requestType = requestDataType?.let { FlutterMessageType(it) },
+        responseType = FlutterMessageType(responseDataType),
+        method = FlutterMethod(method)).createPrinter())

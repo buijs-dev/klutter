@@ -21,7 +21,7 @@ class ConfigSpec extends Specification {
         config.bomVersion == "2023.1.2-SNAPSHOT"
         config.dependencies.klutter == "0.3.0"
         config.dependencies.klutterUI == "0.0.1"
-        config.dependencies.squint == "0.0.6"
+        config.dependencies.squint == "0.1.0"
         config.dependencies.embedded.size() == 1
         config.dependencies.embedded[0] == "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 
@@ -30,7 +30,7 @@ class ConfigSpec extends Specification {
 dependencies:
   klutter: "0.3.0"
   klutter_ui: "0.0.1"
-  squint_json: "0.0.6"
+  squint_json: "0.1.0"
   embedded:
     - "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"'''
     }

@@ -1,4 +1,3 @@
-@file:Suppress("unused")
 /* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,28 +19,10 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.annotations
+package dev.buijs.klutter.kore.common
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FUNCTION)
-actual annotation class Event(
-    actual val name: String,
-)
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class Response()
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.FUNCTION)
-actual annotation class AndroidContext()
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class Controller(
-    actual val type: ControllerType
-)
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class Request()
+@OptIn(ExperimentalSerializationApi::class)
+val JSON = Json { explicitNulls = false }

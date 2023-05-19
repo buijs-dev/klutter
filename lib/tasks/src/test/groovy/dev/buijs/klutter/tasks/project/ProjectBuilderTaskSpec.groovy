@@ -88,6 +88,9 @@ class ProjectBuilderTaskSpec extends Specification {
     @Shared
     def iosPodUpdate = "pod update"
 
+    @Shared
+    def iosPodInstall = "pod install"
+
     def setupSpec() {
         plugin.mkdirs()
         example.mkdirs()
@@ -117,6 +120,7 @@ class ProjectBuilderTaskSpec extends Specification {
         executor.putExpectation(pathToExample, klutterConsumerInit)
         executor.putExpectation(pathToExample, klutterConsumerAdd)
         executor.putExpectation(pathToExampleIos, iosPodUpdate)
+        executor.putExpectation(pathToExampleIos, iosPodInstall)
 
         when:
         sut.run()
@@ -193,8 +197,8 @@ class ProjectBuilderTaskSpec extends Specification {
                     flutter:
                         sdk: flutter
                 
-                    squint_json: ^0.0.6
-                    klutter_ui: ^0.0.2
+                    squint_json: ^0.1.1
+                    klutter_ui: ^0.0.3
                 dev_dependencies:
                     klutter: ^0.3.0
                 flutter:
@@ -223,8 +227,8 @@ class ProjectBuilderTaskSpec extends Specification {
           my_awesome_plugin:
             path: ../
         
-          klutter_ui: ^0.0.2
-          squint_json: ^0.0.6     
+          klutter_ui: ^0.0.3
+          squint_json: ^0.1.1
         dev_dependencies:
           flutter_test:
             sdk: flutter
@@ -250,8 +254,8 @@ class ProjectBuilderTaskSpec extends Specification {
                     my_awesome_plugin:
                         path: ../
                 
-                    klutter_ui: ^0.0.2
-                    squint_json: ^0.0.6
+                    klutter_ui: ^0.0.3
+                    squint_json: ^0.1.1
                 dev_dependencies:
                     flutter_test:
                         sdk: flutter

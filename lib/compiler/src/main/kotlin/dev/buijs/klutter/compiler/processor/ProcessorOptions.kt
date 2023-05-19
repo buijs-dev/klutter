@@ -63,7 +63,7 @@ internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
     outputFolder = options.outputFolder(),
     generateAdapters = options.boolean(GENERATE_ADAPTERS),
     isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
-)
+).also { kcLogger?.info("Determined Processor Options: $it") }
 
 /**
  * Parse required ksp option which contains path to the build directory.

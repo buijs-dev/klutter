@@ -23,12 +23,14 @@ package dev.buijs.klutter.compiler.scanner
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
+import dev.buijs.klutter.compiler.processor.kcLogger
 import dev.buijs.klutter.compiler.wrapper.KCController
 import dev.buijs.klutter.compiler.wrapper.toKotlinClassWrapper
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.ast.Method
+import dev.buijs.klutter.kore.common.EitherOk
 import java.io.File
 
 /**
@@ -58,14 +60,17 @@ private fun getSymbolsWithResponseAnnotation(resolver: Resolver): List<KCControl
 internal fun scanForControllers(
     outputFolder: File,
     resolver: Resolver,
+    responses: Set<AbstractType>,
     scanner: (resolver: Resolver) -> List<KCController> = { getSymbolsWithResponseAnnotation(it) },
 ): List<ValidControllerOrError> =
     scanner.invoke(resolver)
-        .map { it.toSquintMessageSourceOrFail() }
+        .map { it.toSquintMessageSourceOrFail(responses) }
         .toList()
         .also { it.writeOutput(outputFolder) }
 
-private fun KCController.toSquintMessageSourceOrFail(): Either<String, Controller> {
+private fun KCController.toSquintMessageSourceOrFail(
+    responses: Set<AbstractType>
+): Either<String, Controller> {
 
     if(!hasOneConstructor)
         return controllerHasTooManyConstructors()
@@ -76,31 +81,86 @@ private fun KCController.toSquintMessageSourceOrFail(): Either<String, Controlle
     if(eventErrors.isNotEmpty())
         return controllerHasInvalidEvents(eventErrors)
 
-    return toController()
+    val controller = copy(
+        events = events.map { event ->
+            val requestDataTypeOrNull = event.requestDataType
+            if(requestDataTypeOrNull == null) {
+                kcLogger?.info("Controller (${this.className}) Event (${event.method}) has no request parameter.")
+                event
+            } else if(requestDataTypeOrNull !is UndeterminedType) {
+                kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of Type $requestDataTypeOrNull.")
+                event
+            } else {
+                val normalizedDataTypeOrError = requestDataTypeOrNull.className.determineAbstractTypeOrFail(responses)
+                if(normalizedDataTypeOrError is EitherOk) {
+                    kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of Type ${normalizedDataTypeOrError.data}.")
+                    event.copy(requestDataType = normalizedDataTypeOrError.data)
+                } else {
+                    kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of undetermined Type!")
+                    event
+                }
+            }
+        })
+
+    return controller.toValidatedController(responses)
 }
 
-private fun KCController.toController(): ValidControllerOrError = if(isBroadcastController) {
-    toBroadcastController(broadcastTypeParameterOrBlank, methods, controllerType)
+private fun KCController.toValidatedController(
+    responses: Set<AbstractType>
+): ValidControllerOrError = if(isBroadcastController) {
+    toBroadcastController(
+        typeParameter = broadcastTypeParameterOrBlank.determineAbstractTypeOrFail(responses),
+        functions = events,
+        type = controllerType)
 } else {
-    toSimpleController(methods, controllerType)
+    toSimpleController(functions = events, type = controllerType)
+}
+
+private fun String.determineAbstractTypeOrFail(
+    responses: Set<AbstractType>
+): Either<String,AbstractType> {
+
+    kcLogger?.info("Execute [determineAbstractTypeOrFail] for value '$this' with known responses: $responses")
+
+    val typeOrError = TypeData(this).toStandardTypeOrUndetermined()
+
+    if(typeOrError !is ValidAbstractType)
+        return typeOrError.also { kcLogger?.info("Encountered invalid Type during [determineAbstractTypeOrFail]: $it") }
+
+    val data = typeOrError.data
+
+    if (data is StandardType)
+       return Either.ok(data.also { kcLogger?.info("Encountered StandardType during [determineAbstractTypeOrFail]: $it") })
+
+    val response = responses
+        .firstOrNull { it.className == data.className }
+
+    if(response != null)
+        return Either.ok(response.also { kcLogger?.info("Encountered CustomType during [determineAbstractTypeOrFail]: $it") })
+
+    return typeOrError.also { kcLogger?.warn("Encountered unknown Type during [determineAbstractTypeOrFail]: $it") }
 }
 
 private fun KCController.toBroadcastController(
-    typeParameter: String, functions: List<Method>, type: String)
+    typeParameter: Either<String,AbstractType>,
+    functions: List<Method>,
+    type: String)
 : ValidControllerOrError {
 
-    val responseType = TypeData(typeParameter).toAbstractType()
-
-    if(responseType is ValidAbstractType) {
+    if(typeParameter is ValidAbstractType) {
         return when(type) {
             "RequestScoped" ->
-                validRequestScopedBroadcastController(functions, responseType.data)
+                validRequestScopedBroadcastController(functions, typeParameter.data)
+                    .also { kcLogger?.info("Executing [toBroadcastController]: $it") }
             else ->
-                validSingletonBroadcastController(functions,responseType.data)
+                validSingletonBroadcastController(functions, typeParameter.data)
+                    .also { kcLogger?.info("Executing [toBroadcastController]: $it") }
         }
     }
 
-    return typeParameter.broadcastControllerHasInvalidTypeParameterName()
+    return (typeParameter as InvalidAbstractType).data
+        .broadcastControllerHasInvalidTypeParameterName()
+        .also { kcLogger?.info("Encountered invalid TypeParameter during [toBroadcastController]: $it") }
 }
 
 private fun KCController.toSimpleController(
@@ -109,7 +169,9 @@ private fun KCController.toSimpleController(
     return when(type) {
         "Singleton" ->
             validSingletonSimpleController(functions)
+                .also { kcLogger?.info("Executing [toSimpleController]: $it") }
         else ->
             validRequestScopedSimpleController(functions)
+                .also { kcLogger?.info("Executing [toSimpleController]: $it") }
     }
 }

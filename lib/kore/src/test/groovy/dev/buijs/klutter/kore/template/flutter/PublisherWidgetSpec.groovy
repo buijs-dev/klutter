@@ -22,6 +22,7 @@
 package dev.buijs.klutter.kore.template.flutter
 
 import dev.buijs.klutter.kore.ast.CustomType
+import dev.buijs.klutter.kore.ast.FlutterSyncChannel
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.templates.flutter.*
 import dev.buijs.klutter.kore.test.TestUtil
@@ -32,7 +33,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget without message and standard response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 null,
@@ -47,7 +48,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget without message and custom response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 null,
@@ -62,7 +63,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget with standard message and standard response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 new FlutterMessageType(new StringType()),
@@ -77,7 +78,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget with custom message and custom response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 new FlutterMessageType(new CustomType("MyType", "foo.example", [])),
@@ -92,7 +93,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget with custom message and standard response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 new FlutterMessageType(new StringType()),
@@ -107,7 +108,7 @@ class PublisherWidgetSpec extends Specification {
     def "Verify a PublisherWidget with standard message and custom response type"() {
         given:
         def widget = new PublisherWidget(
-                new FlutterChannel("klutter.test/publisher"),
+                new FlutterSyncChannel("klutter.test/publisher"),
                 new FlutterEvent("sayWhat"),
                 new FlutterExtension("SayWhatNow"),
                 new FlutterMessageType(new CustomType("MyType", "foo.example", [])),
@@ -121,135 +122,146 @@ class PublisherWidgetSpec extends Specification {
 
     def noRequestStringResponseWidget =
               '''import 'package:flutter/services.dart';
-                import 'package:flutter/widgets.dart';
-                import 'package:klutter_ui/klutter_ui.dart';
-                            
-                
-                const MethodChannel _channel =
-                  MethodChannel('klutter.test/publisher');
-                
-                extension SayWhatNow on State {
-                  void getSayWhat({               
-                    void Function(String)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<String>)? onComplete,
-                  }) => doEvent<String>(
-                    state: this,
-                    event: "sayWhat",
-                    channel: _channel,
-                            
-                  );
-                }
-                
-                void getSayWhat({
-                        
-                    State? state, 
-                    void Function(String)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<String>)? onComplete,
-                }) => doEvent<String>(
-                    state: state,
-                    event: "sayWhat",
-                    channel: _channel,
-                    onSuccess: onSuccess,
-                    onFailure: onFailure,
-                    onNullValue: onNullValue,
-                    onComplete: onComplete,
-                            
-                );
+import 'package:flutter/widgets.dart';
+import 'package:klutter_ui/klutter_ui.dart';
+            
+
+const MethodChannel _channel =
+  MethodChannel('klutter.test/publisher');
+
+extension SayWhatNow on State {
+  void getSayWhat({
+    void Function(String)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<String>)? onComplete,
+}) => doEvent<String>(
+    state: this,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+            
+  );
+}
+
+void getSayWhat({
+        
+    State? state, 
+    void Function(String)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<String>)? onComplete,
+}) => doEvent<String>(
+    state: state,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+            
+);
                 '''
 
     def noRequestCustomTypeResponseWidget =
             '''import 'package:flutter/services.dart';
-                import 'package:flutter/widgets.dart';
-                import 'package:klutter_ui/klutter_ui.dart';
-                            
-                import '../my_type_dataclass.dart';
-                import '../my_type_extensions.dart';
-                                
+import 'package:flutter/widgets.dart';
+import 'package:klutter_ui/klutter_ui.dart';
+            
+import '../my_type_dataclass.dart';
+import '../my_type_extensions.dart';
                 
-                const MethodChannel _channel =
-                  MethodChannel('klutter.test/publisher');
-                
-                extension SayWhatNow on State {
-                  void getSayWhat({               
-                    void Function(MyType)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<MyType>)? onComplete,
-                  }) => doEvent<MyType>(
-                    state: this,
-                    event: "sayWhat",
-                    channel: _channel,
-                    decode: (String json) => json.toMyType,
-                  );
-                }
-                
-                void getSayWhat({
-                        
-                    State? state, 
-                    void Function(MyType)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<MyType>)? onComplete,
-                }) => doEvent<MyType>(
-                    state: state,
-                    event: "sayWhat",
-                    channel: _channel,
-                    onSuccess: onSuccess,
-                    onFailure: onFailure,
-                    onNullValue: onNullValue,
-                    onComplete: onComplete,
-                    decode: (String json) => json.toMyType,
-                );
+
+const MethodChannel _channel =
+  MethodChannel('klutter.test/publisher');
+
+extension SayWhatNow on State {
+  void getSayWhat({
+    void Function(MyType)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<MyType>)? onComplete,
+}) => doEvent<MyType>(
+    state: this,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+            decode: (String json) => json.toMyType,
+  );
+}
+
+void getSayWhat({
+        
+    State? state, 
+    void Function(MyType)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<MyType>)? onComplete,
+}) => doEvent<MyType>(
+    state: state,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+            decode: (String json) => json.toMyType,
+);
                 '''
 
     def stringRequestStringResponseWidget =
             '''import 'package:flutter/services.dart';
-                import 'package:flutter/widgets.dart';
-                import 'package:klutter_ui/klutter_ui.dart';
-                            
-                
-                const MethodChannel _channel =
-                  MethodChannel('klutter.test/publisher');
-                
-                extension SayWhatNow on State {
-                  void getSayWhat({    required String message,               
-                    void Function(String)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<String>)? onComplete,
-                  }) => doEvent<String>(
-                    state: this,
-                    event: "sayWhat",
-                    channel: _channel,
-                            
-                  );
-                }
-                
-                void getSayWhat({
-                    required String message,
-                    State? state, 
-                    void Function(String)? onSuccess,
-                    void Function(Exception)? onFailure,
-                    void Function()? onNullValue,
-                    void Function(AdapterResponse<String>)? onComplete,
-                }) => doEvent<String>(
-                    state: state,
-                    event: "sayWhat",
-                    channel: _channel,
-                    onSuccess: onSuccess,
-                    onFailure: onFailure,
-                    onNullValue: onNullValue,
-                    onComplete: onComplete,
-                    message: message,
-                );
+import 'package:flutter/widgets.dart';
+import 'package:klutter_ui/klutter_ui.dart';
+            
+
+const MethodChannel _channel =
+  MethodChannel('klutter.test/publisher');
+
+extension SayWhatNow on State {
+  void getSayWhat({    required String message,
+    void Function(String)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<String>)? onComplete,
+}) => doEvent<String>(
+    state: this,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+            
+  );
+}
+
+void getSayWhat({
+    required String message,
+    State? state, 
+    void Function(String)? onSuccess,
+    void Function(Exception)? onFailure,
+    void Function()? onNullValue,
+    void Function(AdapterResponse<String>)? onComplete,
+}) => doEvent<String>(
+    state: state,
+    event: "sayWhat",
+    channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+    message: message,
+);
                 '''
 
-    def customTypeRequestCustomTypeResponseWidget = '''
-import 'package:flutter/services.dart';
+    def customTypeRequestCustomTypeResponseWidget = '''import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:klutter_ui/klutter_ui.dart';
             
@@ -264,21 +276,26 @@ const MethodChannel _channel =
   MethodChannel('klutter.test/publisher');
 
 extension SayWhatNow on State {
-  void getSayWhat({    required String message,               
+  void getSayWhat({    required MyType message,
     void Function(MyOtherType)? onSuccess,
     void Function(Exception)? onFailure,
     void Function()? onNullValue,
     void Function(AdapterResponse<MyOtherType>)? onComplete,
-  }) => doEvent<MyOtherType>(
+}) => doEvent<MyOtherType>(
     state: this,
     event: "sayWhat",
     channel: _channel,
-            encode: (MyOtherType data) => data.toJson,decode: (String json) => json.toMyOtherType,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+    encode: (dynamic data) => (data as MyType).toJson,
+    decode: (String json) => json.toMyOtherType,
   );
 }
 
 void getSayWhat({
-    required String message,
+    required MyType message,
     State? state, 
     void Function(MyOtherType)? onSuccess,
     void Function(Exception)? onFailure,
@@ -292,7 +309,9 @@ void getSayWhat({
     onFailure: onFailure,
     onNullValue: onNullValue,
     onComplete: onComplete,
-    message: message,encode: (MyOtherType data) => data.toJson,decode: (String json) => json.toMyOtherType,
+    message: message,
+    encode: (dynamic data) => (data as MyType).toJson,
+    decode: (String json) => json.toMyOtherType,
 );
     '''
 
@@ -309,15 +328,19 @@ const MethodChannel _channel =
   MethodChannel('klutter.test/publisher');
 
 extension SayWhatNow on State {
-  void getSayWhat({    required String message,               
+  void getSayWhat({    required String message,
     void Function(MyType)? onSuccess,
     void Function(Exception)? onFailure,
     void Function()? onNullValue,
     void Function(AdapterResponse<MyType>)? onComplete,
-  }) => doEvent<MyType>(
+}) => doEvent<MyType>(
     state: this,
     event: "sayWhat",
     channel: _channel,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
             decode: (String json) => json.toMyType,
   );
 }
@@ -341,8 +364,7 @@ void getSayWhat({
 );
     '''
 
-    def stringRequestCustomTypeResponseWidget = '''
-import 'package:flutter/services.dart';
+    def stringRequestCustomTypeResponseWidget = '''import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:klutter_ui/klutter_ui.dart';
             
@@ -354,21 +376,25 @@ const MethodChannel _channel =
   MethodChannel('klutter.test/publisher');
 
 extension SayWhatNow on State {
-  void getSayWhat({    required String message,               
+  void getSayWhat({    required MyType message,
     void Function(String)? onSuccess,
     void Function(Exception)? onFailure,
     void Function()? onNullValue,
     void Function(AdapterResponse<String>)? onComplete,
-  }) => doEvent<String>(
+}) => doEvent<String>(
     state: this,
     event: "sayWhat",
     channel: _channel,
-            encode: (String data) => data.toJson,
+    onSuccess: onSuccess,
+    onFailure: onFailure,
+    onNullValue: onNullValue,
+    onComplete: onComplete,
+    encode: (dynamic data) => (data as MyType).toJson,
   );
 }
 
 void getSayWhat({
-    required String message,
+    required MyType message,
     State? state, 
     void Function(String)? onSuccess,
     void Function(Exception)? onFailure,
@@ -382,7 +408,8 @@ void getSayWhat({
     onFailure: onFailure,
     onNullValue: onNullValue,
     onComplete: onComplete,
-    message: message,encode: (String data) => data.toJson,
+    message: message,
+    encode: (dynamic data) => (data as MyType).toJson,
 );
     '''
 }

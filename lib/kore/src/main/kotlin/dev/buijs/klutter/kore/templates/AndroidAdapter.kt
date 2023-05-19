@@ -53,6 +53,7 @@ class AndroidAdapter(
         "import kotlinx.coroutines.CoroutineScope",
         "import kotlinx.coroutines.Dispatchers",
         "import kotlinx.coroutines.launch",
+        "import dev.buijs.klutter.deserialize"
     )
 
     private val importsControllers = controllers
@@ -166,14 +167,12 @@ class AndroidAdapter(
         appendLine()
         appendLine("    override fun onCancel(arguments: Any?) {")
         appendLines(broadcastCancellations)
-        appendLine("        ecFacade.cancel()")
         appendTemplate("""
             |    }
             |
             |    override fun onDetachedFromEngine(
             |        binding: FlutterPlugin.FlutterPluginBinding
             |    ) {
-            |        mcFacade.cancel()
             |    }
             |
             |    override fun onAttachedToActivity(
@@ -217,14 +216,15 @@ class AndroidAdapter(
 
 private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
 
-    val requestArgumentOrEmpty = when(this.requestDataType) {
-        null -> ""
-        is StandardType -> "data as ${this.requestDataType.kotlinType}${if(this.requestDataType is Nullable) "?" else ""}"
-        is Nullable -> "data?.toKJson()"
-        else -> "data.toKJson()"
+    if(requestDataType is CustomType || requestDataType is EnumType) {
+        return methodHandlerStringWithCustomTypeRequestParameter(instanceOrConstuctor)
     }
 
-    val responseDecoderOrEmpty = when(this.responseDataType) {
+    val requestArgumentOrEmpty =
+        if(requestDataType == null) ""
+        else "data as ${this.requestDataType.typeSimplename(asKotlinType = true)}"
+
+    val responseDecoderOrEmpty = when(responseDataType) {
         is StandardType -> ""
         is Nullable -> "?.toKJson()"
         else -> ".toKJson()"
@@ -243,6 +243,42 @@ private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
         """
         |                "$command" ->
         |                    result.success($methodInvocation)
+    """.trimMargin()
+
+}
+
+private fun Method.methodHandlerStringWithCustomTypeRequestParameter(instanceOrConstuctor: String): String {
+    val nullable = requestDataType is Nullable
+    val q = if(nullable) "?" else ""
+    val requestType = requestDataType.typeSimplename(asKotlinType = true)
+
+    val responseDecoderOrEmpty = when(this.responseDataType) {
+        is StandardType -> ""
+        is Nullable -> "?.toKJson()"
+        else -> ".toKJson()"
+    }
+
+    val methodInvocation = "$instanceOrConstuctor.$method(kJson)$responseDecoderOrEmpty"
+    return if(responseDataType is UnitType) {
+        """
+        |                "$command" -> {
+        |                    val kJson: $requestType? = data$q.deserialize<$requestType>()
+        |                    if(kJson != null) {
+        |                           $methodInvocation
+        |                    }
+        |                    result.success(data)
+        |                }
+    """.trimMargin()
+    } else
+        """
+        |                "$command" -> {
+        |                    val kJson: $requestType? = data$q.deserialize<$requestType>()
+        |                    if(kJson != null) {
+        |                         result.success($methodInvocation)
+        |                    } else {
+        |                        result.success(data)
+        |                    }
+        |                }
     """.trimMargin()
 
 }

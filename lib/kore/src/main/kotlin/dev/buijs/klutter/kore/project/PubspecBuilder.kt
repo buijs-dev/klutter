@@ -48,12 +48,12 @@ const val klutterPubVersion = "0.3.0"
 /**
  * The version of the klutter-ui Pub Plugin.
  */
-const val klutterUIPubVersion = "0.0.2"
+const val klutterUIPubVersion = "0.0.3"
 
 /**
  * The version of the squint_json Pub Plugin.
  */
-const val squintPubVersion = "0.0.6"
+const val squintPubVersion = "0.1.1"
 
 /**
  * Mapper to read/write YAML.

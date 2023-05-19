@@ -75,6 +75,10 @@ internal class InitKlutter
         "flutter pub run klutter:producer init" execute root
         "flutter pub run klutter:consumer init" execute exampleFolder
         "flutter pub run klutter:consumer add=$name" execute exampleFolder
+        exampleFolder.deleteIosPodfileLock()
+        exampleFolder.deleteIosPods()
+        exampleFolder.deleteRunnerXCWorkspace()
+        "pod install" execute exampleFolder.resolve("ios")
         "pod update" execute exampleFolder.resolve("ios")
     }
 
@@ -93,6 +97,18 @@ internal class InitKlutter
      */
     private fun File.clearLibFolder() {
         resolve("lib").listFiles()?.forEach { it.deleteRecursively() }
+    }
+
+    private fun File.deleteIosPodfileLock() {
+        resolve("ios").resolve("Podfile.lock").delete()
+    }
+
+    private fun File.deleteIosPods() {
+        resolve("ios").resolve("Pods").deleteRecursively()
+    }
+
+    private fun File.deleteRunnerXCWorkspace() {
+        resolve("ios").resolve("Runner.xcworkspace").deleteRecursively()
     }
 
     /**

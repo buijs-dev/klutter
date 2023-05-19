@@ -22,12 +22,8 @@
 package dev.buijs.klutter.compiler.scanner
 
 import dev.buijs.klutter.kore.ast.*
-import dev.buijs.klutter.kore.common.Either
-import dev.buijs.klutter.kore.common.EitherNok
-import dev.buijs.klutter.kore.common.EitherOk
-import dev.buijs.klutter.kore.common.maybeCreateFolder
+import dev.buijs.klutter.kore.common.*
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.io.File
 
 /**
@@ -63,9 +59,9 @@ internal fun Either<String,SquintMessageSource>.writeOutput(
             file.createNewFile()
             when (data.squintType) {
                 is SquintCustomType ->
-                    file.writeText(Json.encodeToString(data.squintType))
+                    file.writeText(JSON.encodeToString(data.squintType))
                 is SquintEnumType ->
-                    file.writeText(Json.encodeToString(data.squintType))
+                    file.writeText(JSON.encodeToString(data.squintType))
             }
             return ValidSquintType(data = data.copy(source = file))
         }

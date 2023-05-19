@@ -22,7 +22,8 @@
 package dev.buijs.klutter.annotations
 
 import kotlinx.serialization.Serializable
-import kotlin.test.Ignore
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -30,17 +31,23 @@ class SomeTest {
 
     @Test
     fun shouldTest() {
-        assertEquals("""{"bar":"boo"}""", Foo(bar = "boo").toKJson())
+        val json = """{"bar":"boo"}"""
+        val data = Foo(bar="boo")
+        assertEquals(json, data.toKJson())
+        assertEquals(json.deserializeFoo(), data)
     }
 
 }
 
 @Serializable
 @Suppress("Unused")
-class Foo(val bar: String): KlutterJSON<Foo>(){
+data class Foo(val bar: String, val foo: String? = null): KlutterJSON<Foo>(){
 
     override fun data() = this
 
     override fun strategy() = serializer()
 
 }
+
+fun String.deserializeFoo(): Foo =
+    Json.decodeFromString(this)

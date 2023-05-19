@@ -24,6 +24,7 @@ package dev.buijs.klutter.kore.templates.flutter
 import dev.buijs.klutter.kore.KlutterPrinter
 import dev.buijs.klutter.kore.ast.AbstractType
 import dev.buijs.klutter.kore.ast.CustomType
+import dev.buijs.klutter.kore.ast.FlutterAsyncChannel
 import dev.buijs.klutter.kore.common.toSnakeCase
 import dev.buijs.klutter.kore.templates.dartType
 
@@ -56,7 +57,7 @@ import dev.buijs.klutter.kore.templates.dartType
  */
 class SubscriberWidget(
     private val topic: String,
-    private val channel: String,
+    private val channel: FlutterAsyncChannel,
     private val controllerName: String,
     private val dataType: AbstractType,
 ): KlutterPrinter {
@@ -70,7 +71,7 @@ class SubscriberWidget(
                 "import '../${dataType.className.toSnakeCase()}_extensions.dart';\n"
             } else ""}
             |
-            |const _stream = EventChannel('$channel');
+            |const _stream = EventChannel('${channel.name}');
             |
             |class $controllerName extends Subscriber<${dataType.dartType()}> {
             |  const ${controllerName}({

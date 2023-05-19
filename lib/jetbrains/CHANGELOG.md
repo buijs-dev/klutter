@@ -5,8 +5,10 @@
 ### Changed
 - Uses klutter 2023.1.1.beta 
 - Uses klutter (dart) [0.3.0](https://pub.dev/packages/klutter)
-- Uses klutter_ui (dart) [0.0.2](https://pub.dev/packages/klutter_ui)
-- Uses squint_json (dart) [0.0.6](https://pub.dev/packages/squint_json)
+- Uses klutter_ui (dart) [0.0.3](https://pub.dev/packages/klutter_ui)
+- Uses squint_json (dart) [0.1.1](https://pub.dev/packages/squint_json)
+- Add option to get pub dependencies (see above) from git develop branches instead.
+- Add option to input klutter bom version.
 
 ## [0.2.4]
 

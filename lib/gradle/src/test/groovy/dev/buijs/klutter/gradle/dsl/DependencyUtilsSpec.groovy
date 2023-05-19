@@ -48,7 +48,7 @@ class DependencyUtilsSpec extends Specification {
                      dependencies:
                        klutter: "0.3.0"
                        klutter_ui: "0.0.1"
-                       squint_json: "0.0.6"
+                       squint_json: "0.1.1"
                        embedded:
                          - "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"'''
 

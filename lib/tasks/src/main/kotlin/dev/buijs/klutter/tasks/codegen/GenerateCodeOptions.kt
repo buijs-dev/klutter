@@ -22,8 +22,7 @@
 @file:Suppress("MemberVisibilityCanBePrivate")
 package dev.buijs.klutter.tasks.codegen
 
-import dev.buijs.klutter.kore.ast.Controller
-import dev.buijs.klutter.kore.ast.SquintMessageSource
+import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.toSnakeCase
 import dev.buijs.klutter.kore.common.verifyExists
 import dev.buijs.klutter.kore.project.*
@@ -44,8 +43,21 @@ data class GenerateCodeOptions(
     val methodChannelName: String
         get() = pubspec.android?.pluginPackage ?: "$pluginName.klutter"
 
-    val bindings: Map<String, Controller>
-        get() = controllers.associateBy { "$methodChannelName/channel/${it.className.toSnakeCase()}" }
+    val bindings: Map<Controller, List<FlutterChannel>>
+        get() = controllers.associate { controller ->
+            when {
+                controller is SimpleController ->
+                    controller to listOf(FlutterSyncChannel("$methodChannelName/channel/${controller.className.toSnakeCase()}"))
+
+                controller.functions.isEmpty() ->
+                    controller to listOf(FlutterAsyncChannel("$methodChannelName/channel/${controller.className.toSnakeCase()}"))
+
+                else ->
+                    controller to listOf(
+                        FlutterAsyncChannel("$methodChannelName/channel/async/${controller.className.toSnakeCase()}"),
+                        FlutterSyncChannel("$methodChannelName/channel/sync/${controller.className.toSnakeCase()}"))
+            }
+        }
 
     val flutterLibFolder: File
         get() = project.root.pathToLibFolder

@@ -4,8 +4,8 @@
 - Added support for request parameters.
 - Added support for streaming data from platform to ui (using EventChannel).
 - Uses [klutter-dart](https://pub.dev/packages/klutter) version 0.3.0 (only required as dev_dependency now).
-- Uses [klutter-dart-ui](https://pub.dev/packages/klutter_ui) version 0.0.2 (split from klutter to contain only Flutter code).
-- Uses [squint_json](https://pub.dev/packages/squint_json) version 0.0.6 for generating dart classes.
+- Uses [klutter-dart-ui](https://pub.dev/packages/klutter_ui) version 0.0.3 (split from klutter to contain only Flutter code).
+- Uses [squint_json](https://pub.dev/packages/squint_json) version 0.1.0 for generating dart classes.
 - Introduces bill-of-materials maven dependency for easier dependency management.
 - Introduces compiler plugin which handles build, code generation, etc.
 - Removed all Gradle tasks bar klutterCopyAarFile and klutterCopyFramework because compiler plugin handles all tasks pre-build.

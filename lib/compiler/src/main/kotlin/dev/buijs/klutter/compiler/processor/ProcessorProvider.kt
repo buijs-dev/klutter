@@ -42,6 +42,6 @@ class ProcessorProvider : SymbolProcessorProvider {
         environment: SymbolProcessorEnvironment
     ) = Processor(
         options = environment.processorOptions(),
-        logger = environment.logger,
+        log = environment.logger,
     )
 }

@@ -26,7 +26,7 @@ kotlin {
     cocoapods {
         summary = "Klutter module for annotations"
         homepage = "https://buijs.dev"
-        ios.deploymentTarget = "13"
+        ios.deploymentTarget = "9.0"
         framework {
             baseName = "Annotations"
         }

@@ -58,7 +58,7 @@ sealed interface SquintType {
  * ```
  */
 @Serializable
-class SquintCustomType(
+data class SquintCustomType(
     override val className: String,
     val members: List<SquintCustomTypeMember>,
 ): SquintType
@@ -76,17 +76,16 @@ class SquintCustomType(
  * ```
  */
 @Serializable
-class SquintCustomTypeMember(
+data class SquintCustomTypeMember(
     val name: String,
     val type: String,
-    val nullable: Boolean,
-)
+    val nullable: Boolean)
 
 @Serializable
-class SquintEnumType(
+data class SquintEnumType(
     override val className: String,
-    val values: List<String> = emptyList(),
-    val valuesJSON: List<String> = emptyList(),
+    val values: List<String>,
+    val valuesJSON: List<String>,
 ): SquintType
 
 data class SquintMessageSource(

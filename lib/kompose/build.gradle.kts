@@ -25,7 +25,7 @@ kotlin {
     cocoapods {
         summary = "Klutter Kompose module"
         homepage = "https://buijs.dev"
-        ios.deploymentTarget = "14.1"
+        ios.deploymentTarget = "9.0"
         framework {
             baseName = "Kompose"
         }

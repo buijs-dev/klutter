@@ -15,7 +15,7 @@ import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 internal data class KCController(
     val hasOneConstructor: Boolean,
     val firstConstructorHasNoParameters: Boolean,
-    val methods: List<Method>,
+    val events: List<Method>,
     val eventErrors: List<String>,
     val controllerType: String,
     val isBroadcastController: Boolean,
@@ -47,7 +47,7 @@ internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
     return KCController(
         hasOneConstructor = constructors.size == 1,
         firstConstructorHasNoParameters = constructors.firstOrNull()?.parameters?.isEmpty() ?: false,
-        methods = events.filterIsInstance<ValidEvent>().map { it.data }.toList(),
+        events = events.filterIsInstance<ValidEvent>().map { it.data }.toList(),
         eventErrors = events.filterIsInstance<InvalidEvent>().map { it.data }.toList(),
         controllerType = controllerType,
         isBroadcastController = publisherOrNull != null,

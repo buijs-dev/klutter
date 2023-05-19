@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.compiler.validator
 
+import dev.buijs.klutter.compiler.processor.kcLogger
 import dev.buijs.klutter.compiler.scanner.InvalidSquintType
 import dev.buijs.klutter.compiler.scanner.ValidSquintType
 import dev.buijs.klutter.kore.ast.*
@@ -42,32 +43,44 @@ internal fun List<Either<String,SquintMessageSource>>.validateResponses(): Valid
     if(errors.isNotEmpty())
         return InvalidSquintMessages(errors.map { it.data }.toList())
 
-    val metadata = filterIsInstance<ValidSquintType>().map { it.data }
+    val metadata = filterIsInstance<ValidSquintType>()
+        .map { it.data }
+        .also { kcLogger?.info("Executing [validateResponses] with metadata: $it") }
 
-    val allCustomTypes = metadata.map { it.type }.filterIsInstance<CustomType>()
+    val noSourceFile = metadata
+        .filter { it.source == null }
+        .map { it.squintType.className }
+        .also { kcLogger?.warn("Encountered SquintMessageSource without source files during [validateResponses]: $it") }
 
-    val noSourceFile = metadata.filter { it.source == null }.map { it.squintType.className }
+    val duplicateTypes = metadata
+        .duplicateSource()
+        .also { kcLogger?.warn("Encountered duplicate SquintMessageSource during [validateResponses]: $it") }
 
-    val duplicateCustomTypes = metadata.duplicateSource()
+    val distinctCustomTypes = metadata
+        .distinctCustomTypes()
+        .also { kcLogger?.info("All distinct CustomTypes found during [validateResponses]: $it") }
 
-    val distinctCustomTypes = metadata.distinctCustomTypes()
+    val unknownTypes = distinctCustomTypes
+        .findUnknownTypes(metadata.map { it.type })
+        .also { kcLogger?.warn("Encountered unknown Types during [validateResponses]: $it") }
 
-    val unknownCustomTypes = distinctCustomTypes.findUnknownCustomTypes(allCustomTypes)
-
-    val emptyTypes = distinctCustomTypes.filter { it.members.isEmpty() }.map { it.className }
+    val emptyTypes = distinctCustomTypes
+        .filter { it.members.isEmpty() }
+        .also { kcLogger?.warn("Encountered CustomTypes without members during [validateResponses]: $it") }
+        .map { "${it.packageName}.${it.className}" }
 
     return when {
         noSourceFile.isNotEmpty() ->
             missingSourceFileErrorSquint(noSourceFile)
 
-        unknownCustomTypes.isNotEmpty() ->
-            unknownResponseErrorSquint(unknownCustomTypes)
+        unknownTypes.isNotEmpty() ->
+            unknownResponseErrorSquint(unknownTypes)
 
         emptyTypes.isNotEmpty() ->
             emptyResponseError(emptyTypes)
 
-        duplicateCustomTypes.isNotEmpty() ->
-            duplicateResponseErrorSquint(duplicateCustomTypes)
+        duplicateTypes.isNotEmpty() ->
+            duplicateResponseErrorSquint(duplicateTypes)
 
         else -> ValidSquintMessages(metadata)
     }
@@ -80,13 +93,17 @@ private fun List<SquintMessageSource>.duplicateSource() = this
     .map { it.key }
 
 private fun List<SquintMessageSource>.distinctCustomTypes(): Set<CustomType> {
+
     val set = mutableSetOf<CustomType>()
     val customTypes = map { it.type }.filterIsInstance<CustomType>()
     customTypes.forEach { set.addOrReplaceIfApplicable(it) }
-    return set.filterDuplicates(customTypes)
+    kcLogger?.info("Executing [distinctCustomTypes] and found including possible duplicates: $set")
+    val filtered = set.filterDuplicates(customTypes)
+    kcLogger?.info("Executing [distinctCustomTypes] and removed all duplicates: $set")
+    return filtered
 }
 
-private fun Set<CustomType>.findUnknownCustomTypes(types: List<CustomType>) = this
+private fun Set<CustomType>.findUnknownTypes(types: List<AbstractType>) = this
     .map { it.className }
     .filter { types.none { type -> type.className == it } }
 

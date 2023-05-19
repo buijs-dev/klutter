@@ -1,5 +1,5 @@
 [![](https://img.shields.io/badge/Buijs-Software-blue)](https://pub.dev/publishers/buijs.dev/packages)
-[![GitHub](https://img.shields.io/github/license/buijs-dev/squint?color=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
+[![GitHub](https://img.shields.io/github/license/buijs-dev/klutter?color=black)](https://github.com/buijs-dev/klutter/blob/main/LICENSE)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter?color=darkgreen&label=Gradle%20Plugin&logo=gradle)](https://plugins.gradle.org/plugin/dev.buijs.klutter)
 [![CodeScene Code Health](https://codescene.io/projects/27235/status-badges/code-health)](https://codescene.io/projects/27235)
 [![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg)](https://codecov.io/gh/buijs-dev/klutter)

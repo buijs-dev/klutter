@@ -20,5 +20,5 @@ echo "------------------"
 
 echo "\0/ Klutter: step: publish compiler modules"
 echo "------------------"
-./gradlew publish -p "lib/compiler"
+#./gradlew publish -p "lib/compiler"
 ./gradlew publishToMavenLocal -p "lib/compiler"

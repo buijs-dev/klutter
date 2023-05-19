@@ -37,9 +37,7 @@ class IosAdapter(
     private val imports = setOf(
         "import Flutter",
         "import UIKit",
-        "import Platform",
-        "import FlutterEngine"
-    )
+        "import Platform")
 
     private val methodChannelNames =
         methodChannels.map { """      "$it", """ }
@@ -56,7 +54,6 @@ class IosAdapter(
         .flatten()
 
     private val methodChannelHandlerFunctions = controllers
-        .filter { it.functions.isNotEmpty() }
         .flatMap { it.functions.flatMap { func -> func.methodHandlerString(it.instanceOrConstructor()) } }
 
     private val singletonControllerVariables = controllers
@@ -71,7 +68,7 @@ class IosAdapter(
             """     case "${it.className.toSnakeCase()}":""",
             "           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(",
             "                  onEach: { value in",
-            "                            eventSink(value${it.response.responseDecoderOrEmpty()})",
+            "                            eventSink(value${it.response.responseDecoderOrEmpty(alwaysNullable = true)})",
             "                        },",
             "                  onCompletion: { error in",
             """                             eventSink("ERROR: \("error")")""",
@@ -94,8 +91,8 @@ class IosAdapter(
         appendLines(eventChannelNames)
         appendLine("    ]")
         appendLine()
-        appendLine("    var ecFacade: EventChannelFacade!")
         appendLine("    var methodChannels: Set<FlutterMethodChannel> = []")
+        appendLine("    var eventChannels: Set<FlutterEventChannel> = []")
         appendLine()
         appendLines(singletonControllerVariables)
         appendLine()
@@ -111,11 +108,11 @@ class IosAdapter(
                 |            registrar.addMethodCallDelegate(instance, channel: channel)
                 |        }
                 |        
-                |        instance.ecFacade = EventChannelFacade(
-                |            handler: instance,
-                |            channels: Set(ecs.map { FlutterEventChannel(name: ${'$'}0, binaryMessenger: messenger) }) )
-                |   }
-                |       
+                |        for name in ecs {
+                |            let channel = FlutterEventChannel(name: name, binaryMessenger: messenger)
+                |            channel.setStreamHandler(instance)
+                |        }
+                |    }     
                 |""")
         appendLine("    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {")
         appendLine("        let data = call.arguments")
@@ -146,8 +143,10 @@ class IosAdapter(
             |     }
             |
             |    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-            |                ecFacade.cancel()
-            |                return nil
+            |        for channel in eventChannels {
+            |            channel.setStreamHandler(nil)
+            |        }
+            |        return nil
             |    }
             |
             |}
@@ -162,6 +161,10 @@ class IosAdapter(
 
         if(this.requestDataType != null) {
             return methodHandlerWithArgument(instanceOrConstuctor, responseDecoderOrEmpty)
+        }
+
+        if(this.responseDataType is UnitType) {
+            return methodHandlerNoArgumentNoResponse(instanceOrConstuctor)
         }
 
         return if(async) {
@@ -185,46 +188,134 @@ class IosAdapter(
         }
     }
 
+    private fun Method.methodHandlerNoArgumentNoResponse(instanceOrConstuctor: String): List<String> {
+        val method = method.replace("(context)", """(context: "")""")
+
+        return if(async) {
+            listOf(
+                """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
+                   |        $instanceOrConstuctor.${method.removeSuffix("()")} { error in
+                   |            result("")
+                   |        }
+                   |    }
+                   |    
+                """.trimMargin())
+        } else {
+            listOf(
+                """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
+                   |        $instanceOrConstuctor.$method()
+                   |        result("")
+                   |    }
+                   |    
+                """.trimMargin())
+        }
+    }
+
     private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoderOrEmpty: String): List<String> {
         val requestDecoder = when(requestDataType) {
-            is StringType -> "stringOrNull"
-            is IntType -> "intOrNull"
-            is DoubleType -> "doubleOrNull"
-            is BooleanType -> "booleanOrNull"
-            is ByteArrayType -> "byteArrayOrNull"
-            is IntArrayType -> "intArrayOrNull"
-            is LongArrayType -> "longArrayOrNull"
-            is FloatArrayType -> "floatArrayOrNull"
-            is DoubleArrayType -> "doubleArrayOrNull"
-            is ListType -> "listOrNull"
-            is MapType -> "mapOrNull"
+            is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
+            is IntType -> "TypeHandlerKt.intOrNull(data: data as! Int32)"
+            is DoubleType -> "TypeHandlerKt.doubleOrNull(data: data as! Int)"
+            is BooleanType -> "TypeHandlerKt.booleanOrNull(data: data)"
+            is ByteArrayType -> "TypeHandlerKt.byteArrayOrNull(data: data)"
+            is IntArrayType -> "TypeHandlerKt.intArrayOrNull(data: data)"
+            is LongArrayType -> "TypeHandlerKt.longArrayOrNull(data: data)"
+            is FloatArrayType -> "TypeHandlerKt.floatArrayOrNull(data: data)"
+            is DoubleArrayType -> "TypeHandlerKt.doubleArrayOrNull(data: data)"
+            is ListType -> "TypeHandlerKt.listOrNull(data: data)"
+            is MapType -> "TypeHandlerKt.mapOrNull(data: data)"
+            is CustomType -> "TypeHandlerKt.deserialize(data)"
+            is EnumType -> "TypeHandlerKt.deserialize(data)"
             else -> ""
         }
 
-        val lines = mutableListOf(
-            "    func ${command}(data: Any?, result: @escaping FlutterResult) {",
-            "        let dataOrNull: String? = TypeHandlerKt.$requestDecoder(data: data)",
-            "        if(dataOrNull == nil) {",
-            "           result(FlutterError(code: \"ERROR_CODE\",",
-            "                           message: \"Expected ${requestDataType?.className} but got \\(dataOrNull)\",",
-            "                           details: nil))",
-            "        } else {")
+        val swiftRequestDataType = when(requestDataType) {
+            is StringType -> "as! String"
+            is IntType -> "as! Int32"
+            is DoubleType -> "as! Double"
+            is BooleanType -> "as! Bool"
+            is ByteArrayType -> "as! Data"
+            is IntArrayType -> "as! Data"
+            is LongArrayType -> "as! Data"
+            is FloatArrayType -> "as! Data"
+            is DoubleArrayType -> "as! Data"
+            is ListType -> {
+                when(requestDataType.child) {
+                    is BooleanType -> "as! Array<Boolean>"
 
-        if(responseDataType is UnitType) {
-            lines.add("           $instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty")
-            if(requestDataType is UnitType) {
-                lines.add("""           result("")""")
-            } else {
-                lines.add("           result(dataOrNull!)")
+                    is DoubleType -> "as! Array<KotlinDouble>"
+
+                    is IntType -> "as! Array<KotlinInt>"
+
+                    is LongType -> "as! Array<KotlinInt>"
+
+                    else -> {
+                        throw KlutterException("Found unsupported List child Type: ${requestDataType.child}")
+                    }
+                }
             }
-        } else {
-            lines.add("           result($instanceOrConstuctor.$method($requestParameterName: dataOrNull!)$responseDecoderOrEmpty)")
+            is CustomType, is EnumType -> "as! ${requestDataType.typeSimplename()}"
+            else -> throw KlutterException("Found unsupported request Type: $requestDataType")
         }
 
+        val lines = mutableListOf(
+            "    func ${command}(data: Any?, result: @escaping FlutterResult) {")
+
+        // Cast to Array (for supported types)
+        if(requestDataType is ListType) {
+            when(requestDataType.child) {
+                is BooleanType -> {
+                    lines.add("        let dataOrNull = data as? Array<Boolean>")
+                }
+                is DoubleType -> {
+                    lines.add("        let dataOrNull = data as? Array<KotlinDouble>")
+                }
+                is IntType -> {
+                    lines.add("        let dataOrNull = data as? Array<KotlinInt>")
+                }
+                is LongType -> {
+                    lines.add("        let dataOrNull = data as? Array<KotlinInt>")
+                }
+                else -> {
+                   throw KlutterException("Found unsupported List child Type: ${requestDataType.child}")
+                }
+            }
+        } else {
+            lines.add("        let dataOrNull = $requestDecoder")
+        }
+
+        lines.add("        if(dataOrNull == nil) {")
+        lines.add("           result(FlutterError(code: \"ERROR_CODE\",")
+        lines.add("                           message: \"Unexpected data type: \\(dataOrNull)\",")
+        lines.add("                           details: nil))")
+        lines.add("        } else {")
+
+
+        val dataOrNull = "(dataOrNull $swiftRequestDataType)"
+
+        if(async) {
+            if(responseDataType is UnitType) {
+                lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull) { error in")
+                lines.add("                if let failure = error { result(failure) }")
+                lines.add("                result(dataOrNull!)")
+                lines.add("            }")
+            } else {
+                lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull) { maybeData, error in")
+                lines.add("                if let response = maybeData { result(response$responseDecoderOrEmpty) }")
+                lines.add("                if let failure = error { result(failure) }")
+                lines.add("            }")
+            }
+        } else {
+            if(responseDataType is UnitType) {
+                lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull)$responseDecoderOrEmpty")
+                lines.add("           result($dataOrNull)")
+            } else {
+                lines.add("           result($instanceOrConstuctor.$method($requestParameterName: $dataOrNull)$responseDecoderOrEmpty)")
+            }
+        }
+
+        lines.add("         }")
         lines.add("     }")
-        lines.add("}")
-
-
         return lines
     }
 

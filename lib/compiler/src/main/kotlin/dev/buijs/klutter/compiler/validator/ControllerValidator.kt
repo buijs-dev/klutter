@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.compiler.validator
 
+import dev.buijs.klutter.compiler.processor.kcLogger
 import dev.buijs.klutter.compiler.scanner.InvalidController
 import dev.buijs.klutter.compiler.scanner.ValidController
 import dev.buijs.klutter.kore.ast.*
@@ -51,9 +52,15 @@ internal fun List<Either<String,Controller>>.validateControllers(responses: List
     val unknownTypes =
         distinctTypes.unknownControllerRequestOrResponseType(responses)
 
+    val unsupportedRequestParameter =
+        distinctTypes.unsupportedRequestParameter()
+
     return when {
         unknownTypes.isNotEmpty() ->
             unknownResponseOrRequestError(unknownTypes)
+
+        unsupportedRequestParameter.isNotEmpty() ->
+            unsupportedRequestParameterError(unsupportedRequestParameter)
 
         else -> Valid(distinctTypes.toList())
     }
@@ -72,5 +79,56 @@ private fun Set<Controller>.unknownControllerRequestOrResponseType(types: List<A
     .map { it.className }
     .filter { types.none { type -> type.className == it } }
 
+private fun Set<Controller>.unsupportedRequestParameter() = this
+    .flatMap { it.functions }
+    .mapNotNull { it.requestDataType }
+    .filter { !it.isValidRequestParameter() }
+    .also {
+        for (abstractType in it) {
+            kcLogger?.warn("Found unsupported request Type: $it")
+        }
+    }
+    .map { it.typeSimplename() }
 
+private fun AbstractType.isValidRequestParameter(): Boolean = when(this) {
+    is CustomType -> true
+    is EnumType -> true
+    is BooleanType -> true
+    is ByteArrayType -> true
+    is DoubleArrayType ->true
+    is DoubleType -> true
+    is FloatArrayType -> true
+    is IntArrayType ->true
+    is IntType -> true
+    is LongArrayType -> true
+    is LongType -> true
+    is StringType -> true
+    is ListType -> {
+        when(child) {
+            is BooleanType -> true
+            is DoubleType -> true
+            is IntType -> true
+            is LongType -> true
 
+            // Unsupported:
+            is CustomType -> false
+            is EnumType -> false
+            is ByteArrayType -> false
+            is DoubleArrayType -> false
+            is FloatArrayType -> false
+            is IntArrayType -> false
+            is ListType -> false
+            is LongArrayType -> false
+            is MapType -> false
+            is StringType -> true
+            is UnitType -> false
+            is UndeterminedType -> false
+            null -> false
+        }
+    }
+
+    // Unsupported:
+    is MapType -> false
+    is UnitType -> false
+    is UndeterminedType -> false
+}

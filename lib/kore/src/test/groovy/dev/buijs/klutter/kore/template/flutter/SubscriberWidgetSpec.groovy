@@ -22,6 +22,7 @@
 package dev.buijs.klutter.kore.template.flutter
 
 import dev.buijs.klutter.kore.ast.CustomType
+import dev.buijs.klutter.kore.ast.FlutterAsyncChannel
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.templates.flutter.*
 import dev.buijs.klutter.kore.test.TestUtil
@@ -33,8 +34,9 @@ class SubscriberWidgetSpec extends Specification {
         given:
         def widget = new SubscriberWidget(
                 "my-topic",
+                new FlutterAsyncChannel("klutter.test/publisher"),
                 "MyController",
-                "klutter.test/publisher",
+
                 new StringType())
 
         expect:
@@ -45,24 +47,24 @@ class SubscriberWidgetSpec extends Specification {
         given:
         def widget = new SubscriberWidget(
                 "my-topic",
+                new FlutterAsyncChannel("klutter.test/publisher"),
                 "MyController",
-                "klutter.test/publisher",
                 new CustomType("MyType", "foo.bar.examples", []))
 
         expect:
         TestUtil.verify(widget.print(), customTypeResponseWidget)
     }
 
-    def stringResponseWidget = '''
-import 'package:flutter/services.dart';
+    def stringResponseWidget =
+            '''import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:klutter_ui/klutter_ui.dart';
             
 
-const _stream = EventChannel('MyController');
+const _stream = EventChannel('klutter.test/publisher');
 
-class klutter.test/publisher extends Subscriber<String> {
-  const klutter.test/publisher({
+class MyController extends Subscriber<String> {
+  const MyController({
     required Widget Function(String?) child,
     Key? key,
   }) : super(
@@ -78,18 +80,17 @@ class klutter.test/publisher extends Subscriber<String> {
 }
     '''
 
-    def customTypeResponseWidget = '''
-import 'package:flutter/services.dart';
+    def customTypeResponseWidget = '''import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:klutter_ui/klutter_ui.dart';
 import '../my_type_dataclass.dart';
 import '../my_type_extensions.dart';
 
 
-const _stream = EventChannel('MyController');
+const _stream = EventChannel('klutter.test/publisher');
 
-class klutter.test/publisher extends Subscriber<MyType> {
-  const klutter.test/publisher({
+class MyController extends Subscriber<MyType> {
+  const MyController({
     required Widget Function(MyType?) child,
     Key? key,
   }) : super(

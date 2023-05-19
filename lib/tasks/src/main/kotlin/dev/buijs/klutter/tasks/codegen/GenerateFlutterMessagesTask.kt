@@ -46,27 +46,37 @@ class GenerateFlutterMessagesTask(
 ) : KlutterTask, GenerateCodeAction {
 
     override fun run() {
-        messages.forEach { message ->
-            var command = "flutter pub run squint_json:generate" +
-                    " --type dataclass" +
-                    " --input ${message.source}" +
-                    " --output ${srcFolder.absolutePath}" +
-                    " --overwrite true" +
-                    " --generateChildClasses false" +
-                    " --includeCustomTypeImports true"
-            command.execute(root.folder).also { log(it) }
+        val enums = messages.filter { it.type is EnumType  }
+        val clazz = messages.filter { it.type !is EnumType }
 
-            // Serializer code does not need to be generated for enumerations.
-            if(message.type is CustomType) {
-                command = "flutter pub run squint_json:generate" +
-                        " --type serializer" +
-                        " --input ${srcFolder.resolve("${message.type.className.toSnakeCase()}_dataclass.dart")}" +
-                        " --output ${srcFolder.absolutePath}" +
-                        " --overwrite true"
-                command.execute(root.folder).also { log(it) }
-            }
+        enums.forEach { message ->
+            message.source?.squintJsonGenerate()
         }
 
+        clazz.forEach { message ->
+            message.source?.squintJsonGenerate()
+            squintJsonGenerateSerializers(message.type)
+        }
+    }
+
+    private fun File.squintJsonGenerate() {
+        val command = "flutter pub run squint_json:generate" +
+                " --type dataclass" +
+                " --input $this" +
+                " --output ${srcFolder.absolutePath}" +
+                " --overwrite true" +
+                " --generateChildClasses false" +
+                " --includeCustomTypeImports true"
+        command.execute(root.folder).also { log(it) }
+    }
+
+    private fun squintJsonGenerateSerializers(type: AbstractType) {
+        val command = "flutter pub run squint_json:generate" +
+                " --type serializer" +
+                " --input ${srcFolder.resolve("${type.className.toSnakeCase()}_dataclass.dart")}" +
+                " --output ${srcFolder.absolutePath}" +
+                " --overwrite true"
+        command.execute(root.folder).also { log(it) }
     }
 
 }

@@ -22,9 +22,11 @@
 package dev.buijs.klutter.compiler.validator
 
 import dev.buijs.klutter.kore.ast.CustomType
+import dev.buijs.klutter.kore.ast.EnumType
 import dev.buijs.klutter.kore.ast.Method
 import dev.buijs.klutter.kore.ast.SquintCustomType
 import dev.buijs.klutter.kore.ast.SquintCustomTypeMember
+import dev.buijs.klutter.kore.ast.SquintEnumType
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.ast.TypeMember
@@ -81,6 +83,12 @@ class ResponseValidatorSpec extends Specification {
     @Shared
     CustomType dunnoCustomType
 
+    @Shared
+    EnumType enumType
+
+    @Shared
+    SquintMessageSource enumTypeMessage
+
     def setupSpec() {
         rootFolder = Files.createTempDirectory("").toFile()
         squintCustomType =  new SquintCustomType("MyCustomType", [squintTypeMember])
@@ -106,6 +114,9 @@ class ResponseValidatorSpec extends Specification {
                 new CustomType("FooType", "", []),
                 new SquintCustomType("FooType", []),
                 squintMessageSource)
+        enumType = new EnumType("Planet", "foo.bar.planets", ["mars", "jupiter"], [])
+        enumTypeMessage = new SquintMessageSource(
+                enumType, new SquintEnumType("Planet", ["mars", "jupiter"], []), squintMessageSource)
     }
 
     def "A list of errors is returned if there are 1 or more errors"() {
@@ -176,7 +187,7 @@ class ResponseValidatorSpec extends Specification {
         def errors = result.data as List<String>
 
         and:
-        errors[0] == "Response contract violation! Some classes have no fields: [FooType]"
+        errors[0] == "Response contract violation! Some classes have no fields: [.FooType]"
 
     }
 
@@ -201,9 +212,17 @@ class ResponseValidatorSpec extends Specification {
 
     def "A List of distict Responses is returned if everything is a-okay"() {
 
+        given:
+        def message = new SquintMessageSource(
+                new CustomType("FooType", "", [
+                        new TypeMember("planet", enumType)]),
+                new SquintCustomType("FooType", [
+                        new SquintCustomTypeMember("planet", "Planet", false)]),
+                squintMessageSource)
+
         when:
         def result =
-                ResponseValidatorKt.validateResponses([Either.ok(squintMessage)])
+                ResponseValidatorKt.validateResponses([Either.ok(message), Either.ok(enumTypeMessage)])
 
         then:
         result instanceof EitherOk
@@ -212,7 +231,7 @@ class ResponseValidatorSpec extends Specification {
         def responses = result.data as List<SquintMessageSource>
 
         and:
-        responses[0] == squintMessage
+        responses[0] == message
 
     }
 

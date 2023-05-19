@@ -105,6 +105,9 @@ class GenerateCodeTaskSpec extends Specification {
     def iosPodUpdate = "pod update"
 
     @Shared
+    def iosPodInstall = "pod install"
+
+    @Shared
     String packageName = "foo.dot.com"
 
     @Shared
@@ -166,6 +169,7 @@ class GenerateCodeTaskSpec extends Specification {
         executor.putExpectation(pathToExample, klutterConsumerInit)
         executor.putExpectation(pathToExample, klutterConsumerAdd)
         executor.putExpectation(pathToExampleIos, iosPodUpdate)
+        executor.putExpectation(pathToExampleIos, iosPodInstall)
         sut.run()
 
         def androidMain = plugin.toPath().resolve("android/src/main")
@@ -265,8 +269,8 @@ dependencies:
     flutter:
         sdk: flutter
 
-    squint_json: ^0.0.6
-    klutter_ui: ^0.0.2
+    squint_json: ^0.1.1
+    klutter_ui: ^0.0.3
 dev_dependencies:
     klutter: ^0.3.0
 flutter:
@@ -294,8 +298,8 @@ dependencies:
     my_awesome_plugin:
         path: ../
 
-    klutter_ui: ^0.0.2
-    squint_json: ^0.0.6
+    klutter_ui: ^0.0.3
+    squint_json: ^0.1.1
 dev_dependencies:
     flutter_test:
         sdk: flutter

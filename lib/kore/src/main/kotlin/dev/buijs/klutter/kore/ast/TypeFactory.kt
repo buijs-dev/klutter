@@ -79,15 +79,15 @@ data class TypeData(
 }
 
 /**
- * Return a [AbstractType] wrapped in [ValidAbstractType] or [InvalidAbstractType]:
+ * Return a [StandardType] or [CustomType] wrapped in [ValidAbstractType] or [InvalidAbstractType]:
  * - [StandardType] if member of a kotlin type [StandardTypeMap]
  * - [CustomType] if not.
  *
  * A StandardType can be valid or invalid.
  * A CustomType is always wrapped in [ValidAbstractType].
  */
-fun TypeData.toAbstractType() =
-    findStandardType() ?: toCustomType()
+fun TypeData.toStandardTypeOrUndetermined() =
+    findStandardType() ?: toUndetermined()
 
 /**
  * Regex to find a Map type, and it's key-value type.
@@ -142,15 +142,15 @@ private fun String.invalidListValue() =
  * - [NullableCustomType] if nullable
  * - [CustomType] if not.
  */
-private fun TypeData.toCustomType() = when {
+private fun TypeData.toUndetermined() = when {
     customClassNameRegex.find(type) == null ->
-        InvalidAbstractType("CustomType name is invalid (should match $customClassNameRegex): $type")
+        InvalidAbstractType("Type name is invalid (should match $customClassNameRegex): $type")
 
     nullable ->
-        ValidAbstractType(NullableCustomType(type))
+        ValidAbstractType(UndeterminedType(type))
 
     else ->
-        ValidAbstractType(CustomType(type))
+        ValidAbstractType(UndeterminedType(type))
 }
 
 /**
@@ -197,11 +197,11 @@ private fun List<String>.toMapType(
         return ValidAbstractType(if(nullable) NullableMapType() else MapType())
 
     val key = TypeData(this[3])
-        .toAbstractType()
+        .toStandardTypeOrUndetermined()
         .validAbstractTypeOrNull()
 
     val value = TypeData(this[4])
-        .toAbstractType()
+        .toStandardTypeOrUndetermined()
         .validAbstractTypeOrNull()
 
     return when {
@@ -233,7 +233,7 @@ private fun List<String>.toListType(
         return ValidAbstractType(if(nullable) NullableListType() else ListType())
 
     val childType = TypeData(this[3])
-        .toAbstractType()
+        .toStandardTypeOrUndetermined()
         .validAbstractTypeOrNull()
 
     return when {

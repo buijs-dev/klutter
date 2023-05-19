@@ -134,6 +134,10 @@ open class EnumType(
 
 }
 
+data class UndeterminedType(
+    override val className: String,
+): AbstractType()
+
 /**
  * A nullable variant of [CustomType].
  */
@@ -198,7 +202,7 @@ private fun EnumType.print() = this.javaClass.simpleName +
 
 
 fun AbstractType?.typeSimplename(asKotlinType: Boolean = true): String {
-    if(this == null) return "#undetermined#"
+    if(this == null) return "#null#"
 
     val nullable =
         if(this is Nullable) "?" else ""
@@ -209,6 +213,9 @@ fun AbstractType?.typeSimplename(asKotlinType: Boolean = true): String {
             this.className + nullable
 
         is EnumType ->
+            this.className + nullable
+
+        is UndeterminedType ->
             this.className + nullable
 
         is MapType -> {

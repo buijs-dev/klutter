@@ -16,7 +16,7 @@ class TypeFactorySpec extends Specification {
 
     def "If key is invalid then map processing returns EitherNok with error message"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("Map<!key,Boolean>"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("Map<!key,Boolean>"))) {
             it instanceof EitherNok<String, AbstractType>
             it.data == "KeyType of Map could not be processed: '!key'"
         }
@@ -24,7 +24,7 @@ class TypeFactorySpec extends Specification {
 
     def "If value is invalid then map processing returns EitherNok with error message"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("Map<String?,_!value!>"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("Map<String?,_!value!>"))) {
             it instanceof EitherNok<String, AbstractType>
             it.data == "ValueType of Map could not be processed: '_!value!'"
         }
@@ -32,7 +32,7 @@ class TypeFactorySpec extends Specification {
 
     def "If Map is valid then processing returns EitherOk with StandardType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("Map<String?, Boolean>"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("Map<String?, Boolean>"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as MapType) { map ->
                 map.key instanceof NullableStringType
@@ -43,7 +43,7 @@ class TypeFactorySpec extends Specification {
 
     def "If Nullabble Map is valid then processing returns EitherOk with StandardType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("Map<String?, Boolean>?"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("Map<String?, Boolean>?"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as NullableMapType) { map ->
                 map.key instanceof NullableStringType
@@ -54,7 +54,7 @@ class TypeFactorySpec extends Specification {
 
     def "If Nullabble String is valid then processing returns EitherOk with StandardType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("String?"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("String?"))) {
             it instanceof EitherOk<String, AbstractType>
             it.data instanceof NullableStringType
         }
@@ -70,7 +70,7 @@ class TypeFactorySpec extends Specification {
 
     def "If value is invalid then List processing returns EitherNok with error message"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("List<_!value!>"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("List<_!value!>"))) {
             it instanceof EitherNok<String, AbstractType>
             it.data == "ValueType of List could not be processed: '_!value!'"
         }
@@ -78,7 +78,7 @@ class TypeFactorySpec extends Specification {
 
     def "If List is valid then processing returns EitherOk with StandardType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("List<Boolean?>"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("List<Boolean?>"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as ListType) { list ->
                 list.child instanceof NullableBooleanType
@@ -88,7 +88,7 @@ class TypeFactorySpec extends Specification {
 
     def "If Nullabble List is valid then processing returns EitherOk with StandardType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("List<Double>?"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("List<Double>?"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as NullableListType) { list ->
                 list.child instanceof DoubleType
@@ -98,18 +98,17 @@ class TypeFactorySpec extends Specification {
 
     def "If CustomType is valid then processing returns EitherOk with CustomType"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("MyNullableType?"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("MyNullableType?"))) {
             it instanceof EitherOk<String, AbstractType>
-            with(it.data as CustomType) { type ->
+            with(it.data as UndeterminedType) { type ->
                 type.className == "MyNullableType"
-                type.members.isEmpty()
             }
         }
     }
 
     def "If List has no type parameter then processing returns EitherOk with StandardType List without parameters"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("List?"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("List?"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as ListType) { list ->
                 list.child == null
@@ -119,7 +118,7 @@ class TypeFactorySpec extends Specification {
 
     def "If Map has no type parameters then processing returns EitherOk with StandardType Map without parameters"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("Map"))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("Map"))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as MapType) { map ->
                 map.key == null
@@ -130,7 +129,7 @@ class TypeFactorySpec extends Specification {
 
     def "Verify secondary TypeData constuctor"() {
         expect:
-        with(TypeFactoryKt.toAbstractType(new TypeData("List", ["String"], true))) {
+        with(TypeFactoryKt.toStandardTypeOrUndetermined(new TypeData("List", ["String"], true))) {
             it instanceof EitherOk<String, AbstractType>
             with(it.data as NullableListType) {
                 it.child instanceof StringType

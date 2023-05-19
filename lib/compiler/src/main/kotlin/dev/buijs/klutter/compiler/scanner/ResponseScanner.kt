@@ -62,8 +62,8 @@ internal fun scanForResponses(
 ): List<Either<String, SquintMessageSource>> =
     scanner.invoke(resolver)
         .map { it.toSquintMessageSourceOrFail() }
+        .mapIndexed { index, data -> data.writeOutput(outputFolder, index) }
         .toList()
-        .also { it.forEachIndexed { index, data -> data.writeOutput(outputFolder, index) } }
 
 private fun KCResponse.toSquintMessageSourceOrFail()
 : Either<String, SquintMessageSource> = when(this) {
@@ -118,12 +118,12 @@ private fun KCEnumeration.enumeration(): Either<String, SquintMessageSource> {
         className = className,
         packageName = packageName,
         values = values,
-        valuesJSON = valuesJSON)
+        valuesJSON = valuesJSON.ifEmpty { values })
 
     val squintType = SquintEnumType(
         className = className,
         values = values,
-        valuesJSON = valuesJSON)
+        valuesJSON = valuesJSON.ifEmpty { values })
 
     return Either.ok(SquintMessageSource(type = enumType, squintType = squintType))
 }

@@ -32,6 +32,7 @@ import dev.buijs.klutter.compiler.validator.Invalid
 import dev.buijs.klutter.compiler.validator.InvalidSquintMessages
 import dev.buijs.klutter.compiler.validator.Valid
 import dev.buijs.klutter.compiler.validator.ValidSquintMessages
+import dev.buijs.klutter.compiler.wrapper.KCLogger
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
@@ -44,6 +45,8 @@ import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
 import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
 import java.io.File
 
+internal var kcLogger: KCLogger? = null
+
 /**
  * The actual symbol processor which will scan all classes with Klutter annotations
  * and run code generation tasks as configured.
@@ -55,12 +58,10 @@ import java.io.File
     
     It's better to NOT unit test the Processor but to run a System and/or Integration Test
     which uses a real Kotlin Multiplatform Project.
-    
-    See module test-ksp for this test.
 """)
 class Processor(
     private val options: ProcessorOptions,
-    private val logger: KSPLogger,
+    private val log: KSPLogger,
 ): SymbolProcessor {
 
     private lateinit var output: File
@@ -72,49 +73,51 @@ class Processor(
 
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        output = options.outputFolder
+        kcLogger = KCLogger(log, options.outputFolder)
+        output  = options.outputFolder
         project = output.plugin()
         pubspec = project.root.toPubspec()
-        resolver.findAndValidateMessages()
-        resolver.findAndValidateControllers()
+        messages = resolver.findAndValidateMessages()
+        controllers = resolver.findAndValidateControllers()
         generateCodeAndInstall()
         return emptyList()
     }
 
     @ExcludeFromJacocoGeneratedReport
-    private fun Resolver.findAndValidateMessages() {
-        messages = scanForResponses(resolver = this, outputFolder = options.metadataFolder)
+    private fun Resolver.findAndValidateMessages() =
+        scanForResponses(resolver = this, outputFolder = options.metadataFolder)
             .validateResponses().let {
                 when (it) {
                     is ValidSquintMessages -> it.data
                     is InvalidSquintMessages -> {
-                        logger.logAnnotationScanningWarnings(it.data, "@Response")
+                        kcLogger?.logAnnotationScanningWarnings(it.data, "@Response")
                         null
                     }
                 }
             }
-    }
 
     @ExcludeFromJacocoGeneratedReport
-    private fun Resolver.findAndValidateControllers() {
-        controllers = scanForControllers(resolver = this, outputFolder = options.metadataFolder)
+    private fun Resolver.findAndValidateControllers() =
+        scanForControllers(
+            resolver = this,
+            outputFolder = options.metadataFolder,
+            responses = messages?.map { it.type }?.toSet() ?: emptySet())
             .validateControllers(messages?.map { it.type } ?: emptyList()).let {
                 when (it) {
                     is Valid -> it.data
                     is Invalid -> {
-                        logger.logAnnotationScanningWarnings(it.data, "@Controller")
+                        kcLogger?.logAnnotationScanningWarnings(it.data, "@Controller")
                         null
                     }
                 }
             }
-    }
 
     @ExcludeFromJacocoGeneratedReport
     private fun generateCodeAndInstall() {
         // If null then there are validation errors and code generation should be skipped
         if (messages == null || controllers == null) return
 
-        logger.logSquintInfo(project, messages!!.size, controllers!!.size)
+        kcLogger?.logSquintInfo(project, messages!!.size, controllers!!.size)
 
         val codegenOptions = GenerateCodeOptions(
             project = project,
@@ -122,14 +125,14 @@ class Processor(
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
             controllers = controllers!!,
             messages = messages!!,
-            log = { str -> logger.info("Running dart command:\n$str") })
+            log = { str -> kcLogger?.info("Running dart command:\n$str") })
 
         findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()
     }
 }
 
 @ExcludeFromJacocoGeneratedReport
-private fun KSPLogger.logAnnotationScanningWarnings(warnings: List<String>, annotation: String) {
+private fun KCLogger.logAnnotationScanningWarnings(warnings: List<String>, annotation: String) {
     warn("Fatal error occured while processing $annotation classes")
     warn("=============================================================")
     warnings.forEach { warn(it) }
@@ -137,7 +140,7 @@ private fun KSPLogger.logAnnotationScanningWarnings(warnings: List<String>, anno
 }
 
 @ExcludeFromJacocoGeneratedReport
-private fun KSPLogger.logSquintInfo(project: Project, messageCount: Int, controllerCount: Int) {
+private fun KCLogger.logSquintInfo(project: Project, messageCount: Int, controllerCount: Int) {
     info("=============================================================")
     info("Generating dart code")
     info("Root folder: ${project.root.folder.absolutePath}")

@@ -3,6 +3,7 @@ package dev.buijs.klutter.compiler.wrapper
 import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import dev.buijs.klutter.compiler.processor.kcLogger
 import dev.buijs.klutter.compiler.scanner.*
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
@@ -59,15 +60,19 @@ internal fun KSClassDeclaration.toKCResponse(): KCResponse {
 
         return KCEnumeration(
             isSerializableAnnotated = isSerializableAnnotated,
-            className ="$this",
+            className = "$this",
             packageName = packageName.asString(),
-            values = members.map { it.qualifiedName?.getShortName() ?: ""}.toList(),
+            values = members
+                .map { it.qualifiedName?.getShortName() ?: ""}
+                .toList(),
             valuesJSON = members
                 .map { it.annotations }
-                .map { it.firstOrNull { annotation -> annotation.shortName.getShortName() == "SerialName" } }
-                .map { it?.arguments?.firstOrNull() }
-                .map { it?.value.toString() }
+                .mapNotNull { it.firstOrNull { annotation -> annotation.shortName.getShortName() == "SerialName" } }
+                .mapNotNull { it.arguments.firstOrNull() }
+                .mapNotNull { it.value?.toString() }
+                .filter { it.isNotBlank() }
                 .toList())
+            .also { kcLogger?.info("Converted KSClassDeclaration to KCEnumeration: $it") }
     }
 
     val extendsKlutterJSON = superTypes.map { it.toString() }.toList().contains("KlutterJSON")
@@ -77,10 +82,11 @@ internal fun KSClassDeclaration.toKCResponse(): KCResponse {
     return KCMessage(
         isSerializableAnnotated = isSerializableAnnotated,
         extendsKlutterJSON = extendsKlutterJSON,
-        className ="$this",
+        className = "$this",
         packageName = packageName.asString(),
         hasOneConstructor = constructors.size == 1,
         typeMembers =  constructors.firstOrNull()?.getTypeMembers() ?: emptyList())
+        .also { kcLogger?.info("Converted KSClassDeclaration to KCMessage: $it") }
 }
 
 @ExcludeFromJacocoGeneratedReport(
@@ -100,8 +106,7 @@ private fun KSFunctionDeclaration.getTypeMembers() = parameters.map { param ->
         val maybeType = TypeData(
             type = param.type.toString().trim(),
             arguments = resolved.arguments.map { it.type.toString() },
-            nullable = resolved.isMarkedNullable)
-            .toAbstractType()
+            nullable = resolved.isMarkedNullable).toStandardTypeOrUndetermined()
 
         if(maybeType is EitherOk) {
             ValidTypeMember(TypeMember(name = name, type = maybeType.data))

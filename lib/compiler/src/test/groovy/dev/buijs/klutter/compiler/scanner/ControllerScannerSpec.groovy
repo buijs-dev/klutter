@@ -81,7 +81,7 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherNok) {
@@ -95,7 +95,7 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherNok) {
@@ -110,7 +110,7 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherNok) {
@@ -126,11 +126,11 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherNok) {
-            it.data == "BroadcastController has invalid TypeParameter: !SMH (invalid class name)"
+            it.data == "BroadcastController has invalid TypeParameter: Type name is invalid (should match ^[A-Z][a-zA-Z0-9]+\$): !SMH (invalid class name)"
         }
     }
 
@@ -149,7 +149,7 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherOk) {
@@ -184,7 +184,7 @@ class ControllerScannerSpec extends Specification {
 
         when:
         def result = ControllerScannerKt
-                .scanForControllers(outputFolder, resolver, {classes })
+                .scanForControllers(outputFolder, resolver, Set.of(),{classes })
 
         then:
         with(result[0] as EitherOk) {
@@ -211,7 +211,7 @@ class ControllerScannerSpec extends Specification {
         resolver.getSymbolsWithAnnotation("dev.buijs.klutter.annotations.Controller", false) >> sequence
 
         when:
-        def result = ControllerScannerKt.scanForControllers(outputFolder, resolver)
+        def result = ControllerScannerKt.scanForControllers(outputFolder, resolver, Set.of())
 
         then:
         !result.isEmpty()

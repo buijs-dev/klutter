@@ -35,7 +35,7 @@ import kotlinx.serialization.json.Json
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
 expect annotation class Event(
-    val name: String,
+    val name: String = "",
 )
 
 /**
@@ -48,6 +48,10 @@ expect annotation class Event(
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
 expect annotation class Response()
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+expect annotation class Request()
 
 /**
  * Annotation for class which require an instance of Android Context.

@@ -367,7 +367,7 @@ class PubspecSpec extends Specification {
               flutter:
                 sdk: flutter
               klutter: ^0.2.3
-              squint_json: ^0.0.6
+              squint_json: ^0.1.0
             
             dev_dependencies:
               flutter_test:

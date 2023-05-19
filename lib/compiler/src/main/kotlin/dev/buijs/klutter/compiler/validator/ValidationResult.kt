@@ -78,6 +78,13 @@ internal fun unknownResponseOrRequestError(types: List<String>) = Invalid(
 )
 
 /**
+ * Error indicating a Controller has an unsupported request Type.
+ */
+internal fun unsupportedRequestParameterError(types: List<String>) = Invalid(
+    listOf("Unsupported Request Type: $types")
+)
+
+/**
  * Error indicating a Response class has a TypeMember of Unknown CustomType.
  */
 internal fun unknownResponseErrorSquint(types: List<String>) = InvalidSquintMessages(

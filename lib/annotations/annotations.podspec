@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'annotations'
-    spec.version                  = '2023.1.1-SNAPSHOT'
+    spec.version                  = '2023.1.68-SNAPSHOT'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
     spec.summary                  = 'Klutter module for annotations'
     spec.vendored_frameworks      = 'build/cocoapods/framework/Annotations.framework'
     spec.libraries                = 'c++'
-    spec.ios.deployment_target = '13'
+    spec.ios.deployment_target = '9.0'
                 
                 
     spec.pod_target_xcconfig = {

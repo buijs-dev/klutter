@@ -22,9 +22,7 @@
 package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.ast.BroadcastController
-import dev.buijs.klutter.kore.ast.Controller
-import dev.buijs.klutter.kore.ast.SimpleController
+import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.*
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.templates.IosAdapter
@@ -37,14 +35,14 @@ fun GenerateCodeOptions.toGenerateIosLibTask() =
  */
 class GenerateIosLibTask(
     private val ios: IOS,
-    private val bindings: Map<String, Controller>,
+    private val bindings: Map<Controller,List<FlutterChannel>>,
 ) : KlutterTask, GenerateCodeAction {
     override fun run() {
         ios.pathToPlugin.maybeCreate().write(
             IosAdapter(
                 pluginClassName = ios.pluginClassName,
-                methodChannels = bindings.filterValues { it is SimpleController }.keys,
-                eventChannels = bindings.filterValues { it is BroadcastController }.keys,
-                controllers = bindings.values.toSet()))
+                methodChannels = bindings.values.flatten().filterIsInstance<FlutterSyncChannel>().map { it.name }.toSet(),
+                eventChannels = bindings.values.flatten().filterIsInstance<FlutterAsyncChannel>().map { it.name }.toSet(),
+                controllers = bindings.keys))
     }
 }

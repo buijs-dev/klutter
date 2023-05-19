@@ -24,126 +24,126 @@ package dev.buijs.klutter.kore.ast
 /**
  * A not null Integer [StandardType].
  */
-internal open class IntType: StandardType(type = StandardTypeMap.INTEGER)
+open class IntType: StandardType(type = StandardTypeMap.INTEGER)
 
 /**
  * A nullable Integer [StandardType].
  */
-internal open class NullableIntType: IntType(), Nullable
+open class NullableIntType: IntType(), Nullable
 
 /**
  * A not null Double [StandardType].
  */
-internal open class DoubleType: StandardType(type = StandardTypeMap.DOUBLE)
+open class DoubleType: StandardType(type = StandardTypeMap.DOUBLE)
 
 /**
  * A nullable Double [StandardType].
  */
-internal open class NullableDoubleType: DoubleType(), Nullable
+open class NullableDoubleType: DoubleType(), Nullable
 
 /**
  * A not null Boolean [StandardType].
  */
-internal open class BooleanType: StandardType(type = StandardTypeMap.BOOLEAN)
+open class BooleanType: StandardType(type = StandardTypeMap.BOOLEAN)
 
 /**
  * A nullable Boolean [StandardType].
  */
-internal open class NullableBooleanType: BooleanType(), Nullable
+open class NullableBooleanType: BooleanType(), Nullable
 
 /**
  * A not null String [StandardType].
  */
-internal open class StringType: StandardType(type = StandardTypeMap.STRING)
+open class StringType: StandardType(type = StandardTypeMap.STRING)
 
 /**
  * A nullable String [StandardType].
  */
-internal open class NullableStringType: StringType(), Nullable
+open class NullableStringType: StringType(), Nullable
 
 /**
  * Unit [StandardType].
  */
-internal open class UnitType: StandardType(type = StandardTypeMap.NOTHING)
+open class UnitType: StandardType(type = StandardTypeMap.NOTHING)
 
 /**
  * A not null Long [StandardType].
  */
-internal open class LongType: StandardType(type = StandardTypeMap.LONG)
+open class LongType: StandardType(type = StandardTypeMap.LONG)
 
 /**
  * A nullable Long [StandardType].
  */
-internal open class NullableLongType: LongType(), Nullable
+open class NullableLongType: LongType(), Nullable
 
 /**
  * A not null ByteArray [StandardType].
  */
-internal open class ByteArrayType: StandardType(type = StandardTypeMap.BYTE_ARRAY)
+open class ByteArrayType: StandardType(type = StandardTypeMap.BYTE_ARRAY)
 
 /**
  * A nullable ByteArray [StandardType].
  */
-internal open class NullableByteArrayType: ByteArrayType(), Nullable
+open class NullableByteArrayType: ByteArrayType(), Nullable
 
 /**
  * A not null IntArray [StandardType].
  */
-internal open class IntArrayType: StandardType(type = StandardTypeMap.INT_ARRAY)
+open class IntArrayType: StandardType(type = StandardTypeMap.INT_ARRAY)
 
 /**
  * A nullable IntArray [StandardType].
  */
-internal open class NullableIntArrayType: IntArrayType(), Nullable
+open class NullableIntArrayType: IntArrayType(), Nullable
 
 /**
  * A not null LongArray [StandardType].
  */
-internal open class LongArrayType: StandardType(type = StandardTypeMap.LONG_ARRAY)
+open class LongArrayType: StandardType(type = StandardTypeMap.LONG_ARRAY)
 
 /**
  * A nullable LongArray [StandardType].
  */
-internal open class NullableLongArrayType: LongArrayType(), Nullable
+open class NullableLongArrayType: LongArrayType(), Nullable
 
 /**
  * A not null FloatArray [StandardType].
  */
-internal open class FloatArrayType: StandardType(type = StandardTypeMap.FLOAT_ARRAY)
+open class FloatArrayType: StandardType(type = StandardTypeMap.FLOAT_ARRAY)
 
 /**
  * A nullable FloatArray [StandardType].
  */
-internal open class NullableFloatArrayType: FloatArrayType(), Nullable
+open class NullableFloatArrayType: FloatArrayType(), Nullable
 
 /**
  * A not null DoubleArray [StandardType].
  */
-internal open class DoubleArrayType: StandardType(type = StandardTypeMap.DOUBLE_ARRAY)
+open class DoubleArrayType: StandardType(type = StandardTypeMap.DOUBLE_ARRAY)
 
 /**
  * A nullable LongArray [StandardType].
  */
-internal open class NullableDoubleArrayType: DoubleArrayType(), Nullable
+open class NullableDoubleArrayType: DoubleArrayType(), Nullable
 
 /**
  * A not null List [StandardType].
  */
-internal open class ListType(
+open class ListType(
     val child: AbstractType? = null,
 ): StandardType(type = StandardTypeMap.LIST), Nested
 
 /**
  * A nullable List [StandardType].
  */
-internal open class NullableListType(
+open class NullableListType(
     child: AbstractType? = null
 ): ListType(child), Nullable
 
 /**
  * A not null Map [StandardType].
  */
-internal open class MapType(
+open class MapType(
     val key: AbstractType? = null,
     val value: AbstractType? = null,
 ): StandardType(type = StandardTypeMap.MAP), Nested
@@ -151,7 +151,7 @@ internal open class MapType(
 /**
  * A nullable LongArray [StandardType].
  */
-internal open class NullableMapType(
+open class NullableMapType(
     key: AbstractType? = null,
     value: AbstractType? = null,
 ): MapType(key, value), Nullable

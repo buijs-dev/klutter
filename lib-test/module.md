@@ -1,3 +1,3 @@
-# Module klutter-core-test
+# Module klutter-test
 
 Testing library.

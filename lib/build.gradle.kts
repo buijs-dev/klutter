@@ -4,7 +4,6 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.dokka") version "1.6.10"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
-    id("org.sonarqube") version "3.4.0.2513"
     id("klutter")
 }
 
@@ -24,26 +23,23 @@ kover {
     disabledProjects = setOf(
         // contains only annotations
         // and breaks Jacoco due to duplicate classes
-        ":lib:klutter-annotations",
+        ":lib:annotations",
 
         // breaks Jacoco due to duplicate classes, haven't found a fix yet...
-        ":lib:klutter-kompose",
+        ":lib:kompose",
+
+        // ST can't be run remote (yet)...
+        ":lib:jetbrains",
 
         // a test-only module
         ":lib-test",
-    )
-}
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "buijs-dev_klutter")
-        property("sonar.organization", "buijs-dev")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property(
-            "sonar.coverage.jacoco.xmlReportPaths",
-            project.buildDir.resolve("koverage.xml").absolutePath
-        )
-    }
+        // a test-only module
+        ":test-integration",
+
+        // for KSP testing only
+        ":test-ksp",
+    )
 }
 
 tasks.withType<DokkaTask>().configureEach {
@@ -64,7 +60,7 @@ tasks.koverMergedXmlReport {
     excludes = listOf(
         // A test-only module
         "dev.buijs.klutter.kore.test.*",
-    )
+        "dev.buijs.klutter.kore.common.ExcludeJacoco.kt")
 
     xmlReportFile.set(layout.buildDirectory.file("koverage.xml"))
 }

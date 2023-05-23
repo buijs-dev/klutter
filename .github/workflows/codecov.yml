@@ -16,6 +16,7 @@ jobs:
       matrix:
         os: [ macos-latest ]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v2
         with:
@@ -29,14 +30,13 @@ jobs:
         with:
           flutter-version: '3.0.5'
           channel: 'stable'
-      - uses: gradle/gradle-build-action@v2
+      - uses: gradle/gradle-build-action@v2.4.2
         with:
           gradle-version: 7.4.2
-          arguments: clean build koverMergedXmlReport
+          arguments: clean build koverMergedXmlReport -p "lib"
 
       - uses: codecov/codecov-action@v2
         with:
-          file: build/koverage.xml
+          file: lib/build/koverage.xml
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

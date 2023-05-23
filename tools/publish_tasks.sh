@@ -15,9 +15,10 @@ echo " ____________
 
 echo "\0/ Klutter: step: build Tasks module"
 echo "------------------"
-./gradlew clean -p "lib/klutter-tasks"
-./gradlew build -p "lib/klutter-tasks"
+./gradlew clean -p "lib/tasks"
+./gradlew build -p "lib/tasks"
 
 echo "\0/ Klutter: step: publish tasks modules"
 echo "------------------"
-./gradlew publish -p "lib/klutter-tasks"
+#./gradlew publish -p "lib/tasks"
+./gradlew publishToMavenLocal -p "lib/tasks"

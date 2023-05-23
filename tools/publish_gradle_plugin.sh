@@ -13,13 +13,14 @@ echo " ____________
                 ||----w |
                 ||     ||"
 
-echo "\0/ Klutter: step: build klutter-gradle modules"
+echo "\0/ Klutter: step: build gradle modules"
 echo "------------------"
-./gradlew clean -p "lib/klutter-gradle"
-./gradlew build -p "lib/klutter-gradle"
+./gradlew clean -p "lib/gradle"
+./gradlew build -p "lib/gradle"
 
-./gradlew copyKlutterProperties -p "lib/klutter-gradle"
+./gradlew copyKlutterProperties -p "lib/gradle"
 
-echo "\0/ Klutter: step: publish klutter-gradle modules"
+echo "\0/ Klutter: step: publish gradle modules"
 echo "------------------"
-./gradlew publish -p "lib/klutter-gradle"
+#./gradlew publish -p "lib/gradle"
+./gradlew publishToMavenLocal -p "lib/gradle"

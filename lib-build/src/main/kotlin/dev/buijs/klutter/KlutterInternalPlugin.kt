@@ -35,14 +35,15 @@ class KlutterInternalPlugin: Plugin<Project> {
 }
 
 object ProjectVersions {
-    val core = versions("kore.version")
+    val kore = versions("kore.version")
+    val bom = versions("bom.version")
     val annotations = versions("annotations.version")
-    val kompose = versions("kompose.version")
     val gradle = versions("plugin.gradle.version")
-    val pub = versions("plugin.pub.version")
-    val kitty = versions("test.version")
     val jetbrains = versions("plugin.jetbrains.version")
     val tasks = versions("tasks.version")
+    val kompose = versions("kompose.version")
+    val compiler = versions("compiler.version")
+    val flutterEngine = versions("flutter.engine.version")
 }
 
 object Repository {

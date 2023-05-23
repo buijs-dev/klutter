@@ -46,23 +46,18 @@ class GenerateFlutterMessagesTask(
 ) : KlutterTask, GenerateCodeAction {
 
     override fun run() {
-        val enums = messages.filter { it.type is EnumType  }
-        val clazz = messages.filter { it.type !is EnumType }
-
-        enums.forEach { message ->
-            message.source?.squintJsonGenerate()
+        messages.forEach { message ->
+            squintJsonGenerate(message.source!!)
         }
-
-        clazz.forEach { message ->
-            message.source?.squintJsonGenerate()
+        messages.forEach { message ->
             squintJsonGenerateSerializers(message.type)
         }
     }
 
-    private fun File.squintJsonGenerate() {
+    private fun squintJsonGenerate(sourceFile: File) {
         val command = "flutter pub run squint_json:generate" +
                 " --type dataclass" +
-                " --input $this" +
+                " --input ${sourceFile.absolutePath}" +
                 " --output ${srcFolder.absolutePath}" +
                 " --overwrite true" +
                 " --generateChildClasses false" +

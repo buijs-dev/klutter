@@ -49,10 +49,6 @@ expect annotation class Event(
 @Target(AnnotationTarget.CLASS)
 expect annotation class Response()
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-expect annotation class Request()
-
 /**
  * Annotation for class which require an instance of Android Context.
  *
@@ -68,9 +64,9 @@ expect annotation class AndroidContext()
  * Parent Type for all custom classes which are passed between Flutter and KMP.
  */
 @Serializable
-abstract class KlutterJSON<T> {
+abstract class JSON<T> {
 
-    fun toKJson() = Json.encodeToString(strategy(), data())
+    fun encode(): String = Json.encodeToString(strategy(), data())
 
     abstract fun data(): T
 

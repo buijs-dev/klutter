@@ -34,7 +34,7 @@ internal data class KCMessage(
     override val isSerializableAnnotated: Boolean,
     override val className: String,
     override val packageName: String,
-    val extendsKlutterJSON: Boolean,
+    val extendsJSON: Boolean,
     val hasOneConstructor: Boolean,
     val typeMembers: List<Either<String, TypeMember>>
 ): KCResponse
@@ -75,13 +75,13 @@ internal fun KSClassDeclaration.toKCResponse(): KCResponse {
             .also { kcLogger?.info("Converted KSClassDeclaration to KCEnumeration: $it") }
     }
 
-    val extendsKlutterJSON = superTypes.map { it.toString() }.toList().contains("KlutterJSON")
+    val extendsKlutterJSON = superTypes.map { it.toString() }.toList().contains("JSON")
 
     val constructors: List<KSFunctionDeclaration> = getConstructors().toList()
 
     return KCMessage(
         isSerializableAnnotated = isSerializableAnnotated,
-        extendsKlutterJSON = extendsKlutterJSON,
+        extendsJSON = extendsKlutterJSON,
         className = "$this",
         packageName = packageName.asString(),
         hasOneConstructor = constructors.size == 1,

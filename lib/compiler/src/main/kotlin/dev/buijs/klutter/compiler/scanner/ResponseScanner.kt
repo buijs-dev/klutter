@@ -75,7 +75,7 @@ private fun KCMessage.message(): Either<String, SquintMessageSource> {
     if(!isSerializableAnnotated)
         return missingSerializableAnnotation()
 
-    if(!extendsKlutterJSON)
+    if(!extendsJSON)
         return doesNotExtendKlutterJSON()
 
     val validTypeMembers = typeMembers

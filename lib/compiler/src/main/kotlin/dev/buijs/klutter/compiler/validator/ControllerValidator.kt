@@ -55,12 +55,24 @@ internal fun List<Either<String,Controller>>.validateControllers(responses: List
     val unsupportedRequestParameter =
         distinctTypes.unsupportedRequestParameter()
 
+    val unsupportedResponseParameter =
+        distinctTypes.unsupportedResponseParameter()
+
+    val unsupportedEventResponseType =
+        distinctTypes.unsupportedEventResponseType()
+
     return when {
         unknownTypes.isNotEmpty() ->
             unknownResponseOrRequestError(unknownTypes)
 
         unsupportedRequestParameter.isNotEmpty() ->
             unsupportedRequestParameterError(unsupportedRequestParameter)
+
+        unsupportedResponseParameter.isNotEmpty() ->
+            unsupportedResponseParameterError(unsupportedResponseParameter)
+
+        unsupportedEventResponseType.isNotEmpty() ->
+            unsupportedResponseParameterError(unsupportedEventResponseType)
 
         else -> Valid(distinctTypes.toList())
     }
@@ -91,17 +103,12 @@ private fun Set<Controller>.unsupportedRequestParameter() = this
     .map { it.typeSimplename() }
 
 private fun AbstractType.isValidRequestParameter(): Boolean = when(this) {
-    is CustomType -> true
-    is EnumType -> true
-    is BooleanType -> true
-    is ByteArrayType -> true
-    is DoubleArrayType ->true
-    is DoubleType -> true
-    is FloatArrayType -> true
-    is IntArrayType ->true
-    is IntType -> true
-    is LongArrayType -> true
-    is LongType -> true
+    is CustomType,
+    is EnumType,
+    is BooleanType,
+    is DoubleType,
+    is IntType,
+    is LongType,
     is StringType -> true
     is ListType -> {
         when(child) {
@@ -111,24 +118,114 @@ private fun AbstractType.isValidRequestParameter(): Boolean = when(this) {
             is LongType -> true
 
             // Unsupported:
-            is CustomType -> false
-            is EnumType -> false
-            is ByteArrayType -> false
-            is DoubleArrayType -> false
-            is FloatArrayType -> false
-            is IntArrayType -> false
-            is ListType -> false
-            is LongArrayType -> false
-            is MapType -> false
-            is StringType -> true
-            is UnitType -> false
-            is UndeterminedType -> false
+            is CustomType,
+            is EnumType,
+            is ByteArrayType,
+            is DoubleArrayType,
+            is FloatArrayType,
+            is IntArrayType,
+            is ListType,
+            is LongArrayType,
+            is MapType,
+            is StringType,
+            is UnitType,
+            is UndeterminedType,
             null -> false
         }
     }
 
     // Unsupported:
-    is MapType -> false
-    is UnitType -> false
+    is MapType,
+    is UnitType,
+    is UndeterminedType,
+    is ByteArrayType,
+    is DoubleArrayType,
+    is FloatArrayType,
+    is IntArrayType,
+    is LongArrayType -> false
+}
+
+private fun Set<Controller>.unsupportedEventResponseType() = this
+    .flatMap { it.functions }
+    .map { it.responseDataType }
+    .filter { !it.isValidResponseParameter() }
+    .filter { it !is UnitType } // void is allowed for Events
+    .also {
+        for (abstractType in it) {
+            kcLogger?.warn("Found unsupported Event Response Type: $it")
+        }
+    }
+    .map { it.typeSimplename() }
+
+private fun Set<Controller>.unsupportedResponseParameter() = this
+    .filterIsInstance<BroadcastController>()
+    .filter { !it.response.isValidResponseParameter() }
+    .also {
+        for (abstractType in it) {
+            kcLogger?.warn("Found unsupported Broadcast Response Type: $it")
+        }
+    }
+    .map { it.typeSimplename() }
+
+private fun AbstractType.isValidResponseParameter(): Boolean = when(this) {
+    is CustomType,
+    is EnumType,
+    is BooleanType,
+    is DoubleType,
+    is IntType,
+    is LongType,
+    is StringType,
+    is ByteArrayType,
+    is DoubleArrayType,
+    is FloatArrayType,
+    is IntArrayType,
+    is LongArrayType -> true
+    is ListType -> {
+        when(child) {
+            is BooleanType -> true
+            is DoubleType -> true
+            is IntType -> true
+            is LongType -> true
+
+            // Unsupported:
+            is CustomType,
+            is EnumType,
+            is ByteArrayType,
+            is DoubleArrayType,
+            is FloatArrayType,
+            is IntArrayType,
+            is ListType,
+            is LongArrayType,
+            is MapType,
+            is StringType,
+            is UnitType,
+            is UndeterminedType,
+            null -> false
+        }
+    }
+
+    is MapType ->
+        when(key) {
+           is StringType,
+           is IntType,
+           is DoubleType,
+           is BooleanType,
+           is EnumType -> true
+            // Unsupported:
+            is CustomType,
+            is ByteArrayType,
+            is DoubleArrayType,
+            is FloatArrayType,
+            is IntArrayType,
+            is ListType,
+            is LongArrayType,
+            is LongType,
+            is MapType,
+            is UnitType,
+            is UndeterminedType,
+            null -> false
+        }
+        // Unsupported:
+    is UnitType,
     is UndeterminedType -> false
 }

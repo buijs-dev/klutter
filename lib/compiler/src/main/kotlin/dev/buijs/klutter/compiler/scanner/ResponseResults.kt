@@ -47,10 +47,10 @@ internal fun KCResponse.missingSerializableAnnotation() =
     InvalidSquintType("Class is missing @Serializable annotation: $packageName.$className")
 
 /**
- * Error indicating a class does not extend KlutterJSON.
+ * Error indicating a class does not extend JSON.
  */
 internal fun KCMessage.doesNotExtendKlutterJSON() =
-    InvalidSquintType("Class does not extend KlutterJSON: $packageName.$className")
+    InvalidSquintType("Class does not extend JSON: $packageName.$className")
 
 /**
  * A Response is invalid because it has multiple constructors.

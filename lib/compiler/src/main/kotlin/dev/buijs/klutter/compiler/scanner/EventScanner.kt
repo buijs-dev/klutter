@@ -21,6 +21,8 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
+import dev.buijs.klutter.compiler.processor.kcLogger
+import dev.buijs.klutter.compiler.validator.isValidRequestParameterType
 import dev.buijs.klutter.compiler.wrapper.KAWrapper
 import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
@@ -33,11 +35,39 @@ internal fun Sequence<KAWrapper>.getEvents(): List<Either<String, Method>> = thi
     .map { it.toMethodOrError() }
     .toList()
 
+internal fun String.determineAbstractTypeOrFail(
+    responses: Set<AbstractType>
+): Either<String,AbstractType> {
+
+    kcLogger?.info("Execute [determineAbstractTypeOrFail] for value '$this' with known responses: $responses")
+
+    val typeOrError = TypeData(this).toStandardTypeOrUndetermined()
+
+    if(typeOrError !is ValidAbstractType)
+        return typeOrError.also { kcLogger?.info("Encountered invalid Type during [determineAbstractTypeOrFail]: $it") }
+
+    val data = typeOrError.data
+
+    if (data is StandardType)
+        return Either.ok(data.also { kcLogger?.info("Encountered StandardType during [determineAbstractTypeOrFail]: $it") })
+
+    val response = responses
+        .firstOrNull { it.className == data.className }
+
+    if(response != null)
+        return Either.ok(response.also { kcLogger?.info("Encountered CustomType during [determineAbstractTypeOrFail]: $it") })
+
+    return typeOrError.also { kcLogger?.warn("Encountered unknown Type during [determineAbstractTypeOrFail]: $it") }
+}
+
 private fun KAWrapper.toMethodOrError(): Either<String, Method>  = when {
     errorMessageOrNull != null ->
         InvalidEvent(errorMessageOrNull)
     method == null ->
         InvalidEvent(eventMethodConversionFailure)
-    else ->
+    method.requestDataType == null ->
         ValidEvent(method)
+    !method.requestDataType!!.isValidRequestParameterType() ->
+        eventUnsupportedRequestParameterType()
+    else -> ValidEvent(method)
 }

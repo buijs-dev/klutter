@@ -21,11 +21,10 @@
  */
 package dev.buijs.klutter.compiler.scanner
 
+import dev.buijs.klutter.compiler.wrapper.KAWrapper
+
 internal const val eventIsMissingReturnValue =
     "Event is missing a return value."
-
-internal const val eventIsMissingParameter =
-    "Event is missing value parameter 'name'."
 
 internal const val eventHasUndeterminedMethodSignature =
     "Unable to determine method signature of Event."
@@ -35,3 +34,6 @@ internal const val eventHasTooManyParameters =
 
 internal const val eventMethodConversionFailure =
     "Failed to convert Event to Method AST."
+
+internal fun KAWrapper.eventUnsupportedRequestParameterType() =
+    InvalidEvent("Event ${method?.command} has a request parameter of an unsupported Type: '${method?.requestDataType}'")

@@ -41,10 +41,10 @@ private const val CONTROLLER_ANNOTATION = "dev.buijs.klutter.annotations.Control
 /**
  * Get all classes with Controller annotation and convert them to [KCController].
  */
-private fun getSymbolsWithResponseAnnotation(resolver: Resolver): List<KCController> =
+private fun getSymbolsWithResponseAnnotation(resolver: Resolver, responses: Set<AbstractType>,): List<KCController> =
     resolver.getSymbolsWithAnnotation(CONTROLLER_ANNOTATION)
         .filterIsInstance<KSClassDeclaration>()
-        .map { clazz -> clazz.toKotlinClassWrapper() }
+        .map { clazz -> clazz.toKotlinClassWrapper(responses) }
         .toList()
 
 /**
@@ -61,7 +61,7 @@ internal fun scanForControllers(
     outputFolder: File,
     resolver: Resolver,
     responses: Set<AbstractType>,
-    scanner: (resolver: Resolver) -> List<KCController> = { getSymbolsWithResponseAnnotation(it) },
+    scanner: (resolver: Resolver) -> List<KCController> = { getSymbolsWithResponseAnnotation(it, responses) },
 ): List<ValidControllerOrError> =
     scanner.invoke(resolver)
         .map { it.toSquintMessageSourceOrFail(responses) }
@@ -85,18 +85,18 @@ private fun KCController.toSquintMessageSourceOrFail(
         events = events.map { event ->
             val requestDataTypeOrNull = event.requestDataType
             if(requestDataTypeOrNull == null) {
-                kcLogger?.info("Controller (${this.className}) Event (${event.method}) has no request parameter.")
+                kcLogger?.info("Controller (${className}) Event (${event.method}) has no request parameter.")
                 event
             } else if(requestDataTypeOrNull !is UndeterminedType) {
-                kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of Type $requestDataTypeOrNull.")
+                kcLogger?.info("Controller (${className}) Event (${event.method}) has request parameter of Type $requestDataTypeOrNull.")
                 event
             } else {
                 val normalizedDataTypeOrError = requestDataTypeOrNull.className.determineAbstractTypeOrFail(responses)
                 if(normalizedDataTypeOrError is EitherOk) {
-                    kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of Type ${normalizedDataTypeOrError.data}.")
+                    kcLogger?.info("Controller (${className}) Event (${event.method}) has request parameter of Type ${normalizedDataTypeOrError.data}.")
                     event.copy(requestDataType = normalizedDataTypeOrError.data)
                 } else {
-                    kcLogger?.info("Controller (${this.className}) Event (${event.method}) has request parameter of undetermined Type!")
+                    kcLogger?.info("Controller (${className}) Event (${event.method}) has request parameter of undetermined Type!")
                     event
                 }
             }
@@ -114,31 +114,6 @@ private fun KCController.toValidatedController(
         type = controllerType)
 } else {
     toSimpleController(functions = events, type = controllerType)
-}
-
-private fun String.determineAbstractTypeOrFail(
-    responses: Set<AbstractType>
-): Either<String,AbstractType> {
-
-    kcLogger?.info("Execute [determineAbstractTypeOrFail] for value '$this' with known responses: $responses")
-
-    val typeOrError = TypeData(this).toStandardTypeOrUndetermined()
-
-    if(typeOrError !is ValidAbstractType)
-        return typeOrError.also { kcLogger?.info("Encountered invalid Type during [determineAbstractTypeOrFail]: $it") }
-
-    val data = typeOrError.data
-
-    if (data is StandardType)
-       return Either.ok(data.also { kcLogger?.info("Encountered StandardType during [determineAbstractTypeOrFail]: $it") })
-
-    val response = responses
-        .firstOrNull { it.className == data.className }
-
-    if(response != null)
-        return Either.ok(response.also { kcLogger?.info("Encountered CustomType during [determineAbstractTypeOrFail]: $it") })
-
-    return typeOrError.also { kcLogger?.warn("Encountered unknown Type during [determineAbstractTypeOrFail]: $it") }
 }
 
 private fun KCController.toBroadcastController(

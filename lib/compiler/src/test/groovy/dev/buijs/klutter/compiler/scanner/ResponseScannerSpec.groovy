@@ -88,7 +88,7 @@ class ResponseScannerSpec extends Specification {
         }
     }
 
-    def "When a response does NOT extend KlutterJSON, then scanning returns an error" () {
+    def "When a response does NOT extend JSON, then scanning returns an error" () {
         given:
         def classes = [buildKCMessage([extendsKlutterJSON: false])]
 
@@ -98,7 +98,7 @@ class ResponseScannerSpec extends Specification {
 
         then:
         with(result[0] as EitherNok) {
-            it.data == "Class does not extend KlutterJSON: com.foo.example.MyCustomClass"
+            it.data == "Class does not extend JSON: com.foo.example.MyCustomClass"
         }
     }
 

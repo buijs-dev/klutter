@@ -22,9 +22,7 @@
 package dev.buijs.klutter.kore.templates.flutter
 
 import dev.buijs.klutter.kore.KlutterPrinter
-import dev.buijs.klutter.kore.ast.AbstractType
-import dev.buijs.klutter.kore.ast.FlutterSyncChannel
-import dev.buijs.klutter.kore.ast.StandardType
+import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.toSnakeCase
 import dev.buijs.klutter.kore.templates.dartType
 
@@ -101,6 +99,18 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
     val requiresResponseDecoder =
         responseType.dataType !is StandardType
 
+    val requestEncoderOrBlank = when(requestType?.dataType) {
+        is CustomType -> {
+            "encode: (dynamic data) => (data as ${requestType.dataType.className}).toJson,"
+        }
+
+        is EnumType -> {
+            "encode: (dynamic data) => (data as ${requestType.dataType.className}).toJsonValue,"
+        }
+
+        else -> ""
+    }
+
     val template = buildString {
         append(
             """
@@ -158,7 +168,7 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
             """)
 
         if(requiresRequestEncoder) {
-            append("encode: (dynamic data) => (data as ${requestType?.dataType?.className}).toJson,")
+            append(requestEncoderOrBlank)
         }
 
         if(requiresResponseDecoder) {
@@ -197,7 +207,7 @@ fun PublisherWidget.createPrinter(): KlutterPrinter {
         }
 
         if(requiresRequestEncoder) {
-            append("encode: (dynamic data) => (data as ${requestType?.dataType?.className}).toJson,")
+            append(requestEncoderOrBlank)
         }
 
         if(requiresResponseDecoder) {

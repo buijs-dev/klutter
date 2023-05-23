@@ -5,10 +5,14 @@ import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import dev.buijs.klutter.compiler.processor.kcLogger
+import dev.buijs.klutter.compiler.scanner.determineAbstractTypeOrFail
 import dev.buijs.klutter.compiler.scanner.eventHasTooManyParameters
 import dev.buijs.klutter.compiler.scanner.eventHasUndeterminedMethodSignature
 import dev.buijs.klutter.compiler.scanner.eventIsMissingReturnValue
 import dev.buijs.klutter.kore.ast.*
+import dev.buijs.klutter.kore.common.Either
+import dev.buijs.klutter.kore.common.EitherNok
+import dev.buijs.klutter.kore.common.EitherOk
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
 /**
@@ -21,24 +25,27 @@ internal data class KAWrapper(
 
 @ExcludeFromJacocoGeneratedReport(
     reason = "Requires way too much mocking/stubbing.")
-internal fun KSAnnotated.toKAWrapper(): KAWrapper {
+internal fun KSAnnotated.toKAWrapper(knownTypes: Set<AbstractType>): KAWrapper {
     if(!hasEventAnnotation())
         return KAWrapper(hasEventAnnotation = false)
 
     if(this is KSFunctionDeclaration)
-        return this.toKAWrapper()
+        return this.toKAWrapper(knownTypes)
 
     return KAWrapper(hasEventAnnotation = true)
 }
 
 @ExcludeFromJacocoGeneratedReport(
     reason = "Requires way too much mocking/stubbing.")
-private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
+private fun KSFunctionDeclaration.toKAWrapper(knownTypes: Set<AbstractType>): KAWrapper {
 
     val ksType = returnType?.resolve()
         ?: return eventIsMissingReturnValue.responseTypeError()
 
-    val responseType = ksType.toTypeData(this).toStandardTypeOrUndetermined()
+    val responseType = ksType
+        .toTypeData(this)
+        .toStandardTypeOrUndetermined()
+        .tryToReplaceUndeterminedTypes(knownTypes)
 
     if(responseType is InvalidAbstractType)
         return responseType.data.responseTypeError()
@@ -53,9 +60,7 @@ private fun KSFunctionDeclaration.toKAWrapper(): KAWrapper {
         ?.resolve()
         ?.toString()
         ?.also { kcLogger?.info("Found request type parameter: $it") }
-        ?.let { TypeData(it) }
-        ?.also { kcLogger?.info("Mapped request type parameter to TypeData: $it") }
-        ?.toStandardTypeOrUndetermined()
+        ?.determineAbstractTypeOrFail(knownTypes)
         ?.also { kcLogger?.info("Mapped request type parameter to AbstractType: $it") }
 
     if (requestParameterTypeOrErrorOrNull is InvalidAbstractType)
@@ -128,3 +133,16 @@ private fun KSAnnotation?.getEventArgumentOrNull(): String? = this
     ?.arguments
     ?.firstNotNullOfOrNull { it.value?.toString() }
     ?.also { kcLogger?.info("Inside getEventArgumentOrNull: '$it'") }
+
+private fun Either<String, AbstractType>.tryToReplaceUndeterminedTypes(
+    knownTypes: Set<AbstractType>
+): Either<String, AbstractType> {
+
+    if(this is EitherNok) return this
+
+    val type = (this as EitherOk).data
+
+    if(type !is UndeterminedType) return this
+
+    return type.className.determineAbstractTypeOrFail(knownTypes)
+}

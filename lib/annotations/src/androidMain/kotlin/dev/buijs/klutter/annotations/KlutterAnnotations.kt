@@ -41,7 +41,3 @@ actual annotation class AndroidContext()
 actual annotation class Controller(
     actual val type: ControllerType
 )
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class Request()

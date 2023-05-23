@@ -68,7 +68,7 @@ class IosAdapter(
             """     case "${it.className.toSnakeCase()}":""",
             "           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(",
             "                  onEach: { value in",
-            "                            eventSink(value${it.response.responseDecoderOrEmpty(alwaysNullable = true)})",
+            "                            eventSink(${it.response.responseDecoder()})",
             "                        },",
             "                  onCompletion: { error in",
             """                             eventSink("ERROR: \("error")")""",
@@ -156,11 +156,11 @@ class IosAdapter(
     private fun Method.methodHandlerString(instanceOrConstuctor: String): List<String> {
         val method = method.replace("(context)", """(context: "")""")
 
-        val responseDecoderOrEmpty =
-            responseDataType.responseDecoderOrEmpty()
+        val responseDecoder =
+            responseDataType.responseDecoder()
 
         if(this.requestDataType != null) {
-            return methodHandlerWithArgument(instanceOrConstuctor, responseDecoderOrEmpty)
+            return methodHandlerWithArgument(instanceOrConstuctor, responseDecoder)
         }
 
         if(this.responseDataType is UnitType) {
@@ -171,7 +171,7 @@ class IosAdapter(
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
                    |        $instanceOrConstuctor.${method.removeSuffix("()")} { maybeData, error in
-                   |            if let response = maybeData { result(response$responseDecoderOrEmpty) }
+                   |            if let value = maybeData { result($responseDecoder) }
                    |
                    |            if let failure = error { result(failure) }
                    |        }
@@ -181,7 +181,8 @@ class IosAdapter(
         } else {
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
-                   |        result($instanceOrConstuctor.$method()$responseDecoderOrEmpty)
+                    |       let value = $instanceOrConstuctor.$method()
+                   |        result($responseDecoder)
                    |    }
                    |    
                 """.trimMargin())
@@ -211,12 +212,13 @@ class IosAdapter(
         }
     }
 
-    private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoderOrEmpty: String): List<String> {
+    private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoder: String): List<String> {
         val requestDecoder = when(requestDataType) {
             is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
-            is IntType -> "TypeHandlerKt.intOrNull(data: data as! Int32)"
-            is DoubleType -> "TypeHandlerKt.doubleOrNull(data: data as! Int)"
+            is IntType -> "TypeHandlerKt.intOrNull(data: data)"
+            is DoubleType -> "TypeHandlerKt.intOrNull(data: data)"
             is BooleanType -> "TypeHandlerKt.booleanOrNull(data: data)"
+            is LongType -> "TypeHandlerKt.intOrNull(data: data)"
             is ByteArrayType -> "TypeHandlerKt.byteArrayOrNull(data: data)"
             is IntArrayType -> "TypeHandlerKt.intArrayOrNull(data: data)"
             is LongArrayType -> "TypeHandlerKt.longArrayOrNull(data: data)"
@@ -226,13 +228,14 @@ class IosAdapter(
             is MapType -> "TypeHandlerKt.mapOrNull(data: data)"
             is CustomType -> "TypeHandlerKt.deserialize(data)"
             is EnumType -> "TypeHandlerKt.deserialize(data)"
-            else -> ""
+            else -> throw KlutterException("Found unsupported request Type: $requestDataType")
         }
 
         val swiftRequestDataType = when(requestDataType) {
             is StringType -> "as! String"
             is IntType -> "as! Int32"
             is DoubleType -> "as! Double"
+            is LongType -> "as! Int64"
             is BooleanType -> "as! Bool"
             is ByteArrayType -> "as! Data"
             is IntArrayType -> "as! Data"
@@ -241,13 +244,13 @@ class IosAdapter(
             is DoubleArrayType -> "as! Data"
             is ListType -> {
                 when(requestDataType.child) {
-                    is BooleanType -> "as! Array<Boolean>"
+                    is BooleanType -> "as! Array<KotlinBoolean>"
 
                     is DoubleType -> "as! Array<KotlinDouble>"
 
                     is IntType -> "as! Array<KotlinInt>"
 
-                    is LongType -> "as! Array<KotlinInt>"
+                    is LongType -> "as! Array<KotlinLong>"
 
                     else -> {
                         throw KlutterException("Found unsupported List child Type: ${requestDataType.child}")
@@ -265,7 +268,7 @@ class IosAdapter(
         if(requestDataType is ListType) {
             when(requestDataType.child) {
                 is BooleanType -> {
-                    lines.add("        let dataOrNull = data as? Array<Boolean>")
+                    lines.add("        let dataOrNull = data as? Array<KotlinBoolean>")
                 }
                 is DoubleType -> {
                     lines.add("        let dataOrNull = data as? Array<KotlinDouble>")
@@ -274,7 +277,7 @@ class IosAdapter(
                     lines.add("        let dataOrNull = data as? Array<KotlinInt>")
                 }
                 is LongType -> {
-                    lines.add("        let dataOrNull = data as? Array<KotlinInt>")
+                    lines.add("        let dataOrNull = data as? Array<KotlinLong>")
                 }
                 else -> {
                    throw KlutterException("Found unsupported List child Type: ${requestDataType.child}")
@@ -301,16 +304,16 @@ class IosAdapter(
                 lines.add("            }")
             } else {
                 lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull) { maybeData, error in")
-                lines.add("                if let response = maybeData { result(response$responseDecoderOrEmpty) }")
+                lines.add("                if let value = maybeData { result($responseDecoder) }")
                 lines.add("                if let failure = error { result(failure) }")
                 lines.add("            }")
             }
         } else {
             if(responseDataType is UnitType) {
-                lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull)$responseDecoderOrEmpty")
+                lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull)")
                 lines.add("           result($dataOrNull)")
             } else {
-                lines.add("           result($instanceOrConstuctor.$method($requestParameterName: $dataOrNull)$responseDecoderOrEmpty)")
+                lines.add("           result($instanceOrConstuctor.$method($requestParameterName: $dataOrNull))")
             }
         }
 
@@ -324,12 +327,10 @@ class IosAdapter(
         else -> "${className}()"
     }
 
-    private fun AbstractType.responseDecoderOrEmpty(alwaysNullable: Boolean = false): String {
-        return when {
-            this is StandardType -> ""
-            this is Nullable -> "?.toKJson()"
-            alwaysNullable -> "?.toKJson()"
-            else -> ".toKJson()"
+    private fun AbstractType.responseDecoder(): String {
+        return when (this) {
+            is StandardType -> "value"
+            else -> "TypeHandlerKt.encode(value)"
         }
     }
 

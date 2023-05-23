@@ -37,6 +37,7 @@ class AndroidAdapter(
     private val importsFramework = setOf(
         "import android.app.Activity",
         "import android.content.Context",
+        "import dev.buijs.klutter.*",
         "import dev.buijs.klutter.EventChannelFacade",
         "import dev.buijs.klutter.MethodChannelFacade",
         "import dev.buijs.klutter.registerEventSink",
@@ -52,8 +53,7 @@ class AndroidAdapter(
         "import io.flutter.plugin.common.MethodChannel.Result",
         "import kotlinx.coroutines.CoroutineScope",
         "import kotlinx.coroutines.Dispatchers",
-        "import kotlinx.coroutines.launch",
-        "import dev.buijs.klutter.deserialize"
+        "import kotlinx.coroutines.launch"
     )
 
     private val importsControllers = controllers
@@ -226,8 +226,8 @@ private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
 
     val responseDecoderOrEmpty = when(responseDataType) {
         is StandardType -> ""
-        is Nullable -> "?.toKJson()"
-        else -> ".toKJson()"
+        is Nullable -> "?.encode()"
+        else -> ".encode()"
     }
 
     val methodInvocation = "$instanceOrConstuctor.$method($requestArgumentOrEmpty)$responseDecoderOrEmpty"
@@ -248,21 +248,19 @@ private fun Method.methodHandlerString(instanceOrConstuctor: String): String {
 }
 
 private fun Method.methodHandlerStringWithCustomTypeRequestParameter(instanceOrConstuctor: String): String {
-    val nullable = requestDataType is Nullable
-    val q = if(nullable) "?" else ""
     val requestType = requestDataType.typeSimplename(asKotlinType = true)
 
     val responseDecoderOrEmpty = when(this.responseDataType) {
         is StandardType -> ""
-        is Nullable -> "?.toKJson()"
-        else -> ".toKJson()"
+        is Nullable -> "?.encode()"
+        else -> ".encode()"
     }
 
     val methodInvocation = "$instanceOrConstuctor.$method(kJson)$responseDecoderOrEmpty"
     return if(responseDataType is UnitType) {
         """
         |                "$command" -> {
-        |                    val kJson: $requestType? = data$q.deserialize<$requestType>()
+        |                    val kJson: $requestType? = data.decode() as $requestType?
         |                    if(kJson != null) {
         |                           $methodInvocation
         |                    }
@@ -272,7 +270,7 @@ private fun Method.methodHandlerStringWithCustomTypeRequestParameter(instanceOrC
     } else
         """
         |                "$command" -> {
-        |                    val kJson: $requestType? = data$q.deserialize<$requestType>()
+        |                    val kJson: $requestType? = data.decode() as $requestType?
         |                    if(kJson != null) {
         |                         result.success($methodInvocation)
         |                    } else {

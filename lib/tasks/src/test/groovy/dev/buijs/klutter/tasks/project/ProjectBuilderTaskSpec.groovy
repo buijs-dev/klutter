@@ -197,7 +197,7 @@ class ProjectBuilderTaskSpec extends Specification {
                     flutter:
                         sdk: flutter
                 
-                    squint_json: ^0.1.1
+                    squint_json: ^0.1.2
                     klutter_ui: ^0.0.3
                 dev_dependencies:
                     klutter: ^0.3.0
@@ -228,7 +228,7 @@ class ProjectBuilderTaskSpec extends Specification {
             path: ../
         
           klutter_ui: ^0.0.3
-          squint_json: ^0.1.1
+          squint_json: ^0.1.2
         dev_dependencies:
           flutter_test:
             sdk: flutter
@@ -255,7 +255,7 @@ class ProjectBuilderTaskSpec extends Specification {
                         path: ../
                 
                     klutter_ui: ^0.0.3
-                    squint_json: ^0.1.1
+                    squint_json: ^0.1.2
                 dev_dependencies:
                     flutter_test:
                         sdk: flutter

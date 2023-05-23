@@ -5,7 +5,7 @@
 - Added support for streaming data from platform to ui (using EventChannel).
 - Uses [klutter-dart](https://pub.dev/packages/klutter) version 0.3.0 (only required as dev_dependency now).
 - Uses [klutter-dart-ui](https://pub.dev/packages/klutter_ui) version 0.0.3 (split from klutter to contain only Flutter code).
-- Uses [squint_json](https://pub.dev/packages/squint_json) version 0.1.0 for generating dart classes.
+- Uses [squint_json](https://pub.dev/packages/squint_json) version 0.1.2 for generating dart classes.
 - Introduces bill-of-materials maven dependency for easier dependency management.
 - Introduces compiler plugin which handles build, code generation, etc.
 - Removed all Gradle tasks bar klutterCopyAarFile and klutterCopyFramework because compiler plugin handles all tasks pre-build.
@@ -14,6 +14,7 @@
 - Removed @KlutterAdapter annotation because it is no longer used.
 - Renamed @KlutterResponse to @Response.
 - Renamed @KlutterAdaptee to @Event.
+- Renamed KlutterJSON to JSON.
 - Code generated in example/consumer app uses flutter-engine-kmp utilities (less boilerplate code).
 
 ## v2022.r6-9.alpha

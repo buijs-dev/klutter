@@ -55,7 +55,7 @@ The annotated class should comply with the following rules:
 
 1. Must be an open class
 2. Fields must be immutable
-3. Must implement KlutterJSON class
+3. Must implement JSON class
 4. No additional functionality implemented in body
 5. Any field type should comply with the same rules
 
@@ -122,7 +122,7 @@ Example of valid declaration:
     open class Something(
         val x: String?,
         val y: SomethingElse
-    ): KlutterJSON<Something>() {
+    ): JSON<Something>() {
 
         override fun data() = this
 
@@ -135,7 +135,7 @@ Example of valid declaration:
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
-    ): KlutterJSON<SomethingElse>() {
+    ): JSON<SomethingElse>() {
 
         override fun data() = this
 
@@ -155,7 +155,7 @@ Example of invalid declaration (Mutability):
     open class Something(
         var x: String?,
         var y: Int,
-    ): KlutterJSON<SomethingElse>() {
+    ): JSON<SomethingElse>() {
 
         override fun data() = this
 
@@ -175,7 +175,7 @@ Example of invalid declaration (SomethingElse class should not have a body):
     open class Something(
         val x: String?,
         var y: SomethingElse
-    ): KlutterJSON<SomethingElse>() {
+    ): JSON<SomethingElse>() {
 
         override fun data() = this
 
@@ -188,7 +188,7 @@ Example of invalid declaration (SomethingElse class should not have a body):
     open class SomethingElse(
         val a: Int?,
         val b: List<Boolean>
-    ): KlutterJSON<SomethingElse>() {
+    ): JSON<SomethingElse>() {
 
         val bodyNotAllowed: Boolean = true
         

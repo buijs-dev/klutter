@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import dev.buijs.klutter.compiler.scanner.InvalidEvent
 import dev.buijs.klutter.compiler.scanner.ValidEvent
 import dev.buijs.klutter.compiler.scanner.getEvents
+import dev.buijs.klutter.kore.ast.AbstractType
 import dev.buijs.klutter.kore.ast.Method
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 
@@ -25,7 +26,7 @@ internal data class KCController(
 
 @ExcludeFromJacocoGeneratedReport(
     reason = "Requires way too much mocking/stubbing. Is test through module test-ksp.")
-internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
+internal fun KSClassDeclaration.toKotlinClassWrapper(responses: Set<AbstractType>): KCController {
 
     val constructors: List<KSFunctionDeclaration> = getConstructors().toList()
 
@@ -42,7 +43,7 @@ internal fun KSClassDeclaration.toKotlinClassWrapper(): KCController {
     val publisherOrNull =
         superTypes.firstOrNull { it.toString() == "Publisher" }
 
-    val events = getAllFunctions().map { it.toKAWrapper() }.getEvents()
+    val events = getAllFunctions().map { it.toKAWrapper(responses) }.getEvents()
 
     return KCController(
         hasOneConstructor = constructors.size == 1,

@@ -85,6 +85,13 @@ internal fun unsupportedRequestParameterError(types: List<String>) = Invalid(
 )
 
 /**
+ * Error indicating a Controller has an unsupported response Type.
+ */
+internal fun unsupportedResponseParameterError(types: List<String>) = Invalid(
+    listOf("Unsupported Response Type: $types")
+)
+
+/**
  * Error indicating a Response class has a TypeMember of Unknown CustomType.
  */
 internal fun unknownResponseErrorSquint(types: List<String>) = InvalidSquintMessages(

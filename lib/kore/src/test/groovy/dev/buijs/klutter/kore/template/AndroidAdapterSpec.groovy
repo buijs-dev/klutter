@@ -81,6 +81,7 @@ class AndroidAdapterSpec extends Specification {
 
 import android.app.Activity
 import android.content.Context
+import dev.buijs.klutter.*
 import dev.buijs.klutter.EventChannelFacade
 import dev.buijs.klutter.MethodChannelFacade
 import dev.buijs.klutter.registerEventSink
@@ -97,7 +98,6 @@ import io.flutter.plugin.common.MethodChannel.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import dev.buijs.klutter.deserialize
 import dev.buijs.platform.controller.*
 
 private val methodChannelNames = setOf(
@@ -263,7 +263,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(null, myCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease().toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease().encode())")
             }
         }
     }
@@ -273,9 +273,9 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(myCustomType, myCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("val kJson: MyCustomType? = data.deserialize<MyCustomType>()")
+                content.contains("val kJson: MyCustomType? = data.decode() as MyCustomType?")
                 content.contains("if(kJson != null) {")
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).encode())")
             }
         }
     }
@@ -285,7 +285,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(nullableMyCustomType, myCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson).encode())")
             }
         }
     }
@@ -295,7 +295,7 @@ class SuperPlugin: FlutterPlugin, MethodCallHandler, StreamHandler, ActivityAwar
         with(createSut(Set.of(createRequestScopedController([createMethod(nullableMyCustomType, nullableMyCustomType)])))) {
             with(it.print()) { content ->
                 content.contains('''"sayHi" ->''')
-                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson)?.toKJson())")
+                content.contains("result.success(MyRequestScopedController().sayHiPlease(kJson)?.encode())")
             }
         }
     }

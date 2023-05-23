@@ -36,10 +36,6 @@ actual annotation class Response()
 @Target(AnnotationTarget.FUNCTION)
 actual annotation class AndroidContext()
 
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.CLASS)
-actual annotation class Request()
-
 /**
  * Annotation which informs Klutter to implement multiple
  * method channel calls to pass KlutterEvents to this Controller class.

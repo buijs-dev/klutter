@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'kompose'
-    spec.version                  = '2023.1.103-SNAPSHOT'
+    spec.version                  = '2023.1.1.beta'
     spec.homepage                 = 'https://buijs.dev'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''

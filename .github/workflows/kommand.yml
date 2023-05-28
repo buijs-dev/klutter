@@ -1,7 +1,6 @@
 name: Publish kommand executable.
 on:
   push:
-    branches: [ main ]
 env:
   KLUTTER_PRIVATE_USERNAME: ${{ secrets.KLUTTER_PRIVATE_USERNAME }}
   KLUTTER_PRIVATE_PASSWORD: ${{ secrets.KLUTTER_PRIVATE_PASSWORD }}

@@ -34,7 +34,7 @@ jobs:
       - name: 'create downloads folder'
         run: mkdir kommander
       - name: 'copy zip to downloads folder'
-        run: cp ./lib/kommand/build/distributions/kommand-*.zip kommander
+        run: cp ./lib/kommand/build/distributions/kommand.zip kommander
       - name: 'upload downloads folder'
         uses: actions/upload-artifact@v2
         with:

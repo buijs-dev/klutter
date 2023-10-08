@@ -69,8 +69,6 @@ hs_err_pid*
 /packages/.gradle/
 /gradle.properties
 /local.properties
-/gradlew
-/gradlew.bat
 /packages/core-test/src/main/resources/testkit-gradle.properties
 /packages/plugin-pub/checklist.txt
 /packages/plugin-pub/dartdoc.sh

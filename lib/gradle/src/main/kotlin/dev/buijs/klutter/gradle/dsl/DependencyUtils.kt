@@ -49,8 +49,10 @@ fun KotlinDependencyHandler.embedded(dependencyNotation: String) {
 
     val config = configFile.maybeCreate().toConfigOrNull() ?: return
 
-    val embedded = config.dependencies.embedded.toMutableSet()
-    embedded.add(dependencyNotation)
+    val embedded = config.dependencies.embedded
+        .toMutableSet()
+        .bumpDependencyVersion(dependencyNotation)
+
     configFile.writeText(mapper.writeValueAsString(
         config.copy(
             dependencies = config.dependencies.copy(
@@ -93,4 +95,12 @@ internal fun File.embeddedDependenciesFromConfigFile(): Set<String> {
         }
     }
     return output.filterNotNull().toSet()
+}
+
+internal fun MutableSet<String>.bumpDependencyVersion(dependencyNotation: String): MutableSet<String> {
+    val dependencySplitted = dependencyNotation.split(":")
+    val dependencyGroupAndArtifact = "${dependencySplitted[0]}:${dependencySplitted[1]}"
+    return filter { !it.startsWith(dependencyGroupAndArtifact) }
+        .toMutableSet()
+        .also { it.add(dependencyNotation) }
 }

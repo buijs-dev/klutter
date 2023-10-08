@@ -137,7 +137,7 @@ class IosAdapter(
             |        default:
             |           eventSink(FlutterError(code: "ERROR_CODE",
             |                               message: "Unknown topic",
-            |                               details: "\(withArguments)"))
+            |                               details: "\(topic)"))
             |        }
             |        return nil
             |     }

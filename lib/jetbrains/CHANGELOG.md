@@ -1,5 +1,12 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
+## [2023.2.1]
+
+### Changed
+- Uses klutter 2023.2.1.beta
+- Uses klutter (dart) [1.0.0](https://pub.dev/packages/klutter)
+- Uses klutter_ui (dart) [1.0.0](https://pub.dev/packages/klutter_ui)
+
 ## [2023.1.1]
 
 ### Changed

@@ -38,17 +38,17 @@ import java.io.File
 /**
  * The version of Klutter Gradle Executable Tool.
  */
-const val klutterBomVersion = "2023.1.1.beta"
+const val klutterBomVersion = "2023.2.1.beta"
 
 /**
  * The version of the klutter Pub Plugin.
  */
-const val klutterPubVersion = "0.3.0"
+const val klutterPubVersion = "1.0.0"
 
 /**
  * The version of the klutter-ui Pub Plugin.
  */
-const val klutterUIPubVersion = "0.0.3"
+const val klutterUIPubVersion = "1.0.0"
 
 /**
  * The version of the squint_json Pub Plugin.

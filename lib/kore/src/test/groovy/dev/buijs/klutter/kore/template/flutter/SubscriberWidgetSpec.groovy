@@ -65,10 +65,10 @@ const _stream = EventChannel('klutter.test/publisher');
 
 class MyController extends Subscriber<String> {
   const MyController({
-    required Widget Function(String?) child,
+    required Widget Function(String?) builder,
     Key? key,
   }) : super(
-    child: child,
+    builder: builder,
     channel: _stream,
     topic: "my-topic",
     key: key,
@@ -91,10 +91,10 @@ const _stream = EventChannel('klutter.test/publisher');
 
 class MyController extends Subscriber<MyType> {
   const MyController({
-    required Widget Function(MyType?) child,
+    required Widget Function(MyType?) builder,
     Key? key,
   }) : super(
-    child: child,
+    builder: builder,
     channel: _stream,
     topic: "my-topic",
     key: key,

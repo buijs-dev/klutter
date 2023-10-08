@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v2023.2.1.beta
+- Remove example/integration_test folder on project init.
+- Bugfix: Eventsink received incorrect variable on error.
+- Uses [klutter-dart](https://pub.dev/packages/klutter) version 1.0.0.
+- Uses [klutter-dart-ui](https://pub.dev/packages/klutter_ui) version 1.0.0.
+
 ## v2023.1.1.beta
 - Added support for request parameters.
 - Added support for streaming data from platform to ui (using EventChannel).

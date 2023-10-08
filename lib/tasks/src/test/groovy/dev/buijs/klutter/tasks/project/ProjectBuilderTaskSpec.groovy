@@ -202,9 +202,9 @@ class ProjectBuilderTaskSpec extends Specification {
                         sdk: flutter
                 
                     squint_json: ^0.1.2
-                    klutter_ui: ^0.0.3
+                    klutter_ui: ^1.0.0
                 dev_dependencies:
-                    klutter: ^0.3.0
+                    klutter: ^1.0.0
                 flutter:
                   plugin:
                     platforms:
@@ -231,13 +231,13 @@ class ProjectBuilderTaskSpec extends Specification {
           my_awesome_plugin:
             path: ../
         
-          klutter_ui: ^0.0.3
+          klutter_ui: ^1.0.0
           squint_json: ^0.1.2
         dev_dependencies:
           flutter_test:
             sdk: flutter
           flutter_lints: ^2.0.0
-          klutter: ^0.3.0
+          klutter: ^1.0.0
         flutter:
           uses-material-design: true
     """
@@ -258,13 +258,13 @@ class ProjectBuilderTaskSpec extends Specification {
                     my_awesome_plugin:
                         path: ../
                 
-                    klutter_ui: ^0.0.3
+                    klutter_ui: ^1.0.0
                     squint_json: ^0.1.2
                 dev_dependencies:
                     flutter_test:
                         sdk: flutter
                 
-                    klutter: ^0.3.0
+                    klutter: ^1.0.0
                 flutter:
                     uses-material-design: true
         

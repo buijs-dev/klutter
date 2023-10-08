@@ -54,4 +54,19 @@ class DependencyUtilsSpec extends Specification {
 
     }
 
+
+    def "Verify embedded dependencyNotation is bumped and not duplicated"() {
+
+        given:
+        def embedded = Set.of("foo:bar:001")
+
+        when:
+        def bumped = DependencyUtilsKt.bumpDependencyVersion(embedded,"foo:bar:002")
+
+        then:
+        bumped.size() == 1
+        bumped[0] == "foo:bar:002"
+    }
+
+
 }

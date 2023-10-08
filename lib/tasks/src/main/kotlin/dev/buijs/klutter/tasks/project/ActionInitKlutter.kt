@@ -92,6 +92,7 @@ internal class InitKlutter
      */
     private fun File.deleteTestFolder() {
         resolve("test").deleteRecursively()
+        resolve("integration_test").deleteRecursively()
     }
 
     /**

@@ -274,9 +274,9 @@ dependencies:
         sdk: flutter
 
     squint_json: ^0.1.2
-    klutter_ui: ^0.0.3
+    klutter_ui: ^1.0.0
 dev_dependencies:
-    klutter: ^0.3.0
+    klutter: ^1.0.0
 flutter:
   plugin:
     platforms:
@@ -302,13 +302,13 @@ dependencies:
     my_awesome_plugin:
         path: ../
 
-    klutter_ui: ^0.0.3
+    klutter_ui: ^1.0.0
     squint_json: ^0.1.2
 dev_dependencies:
     flutter_test:
         sdk: flutter
 
-    klutter: ^0.3.0
+    klutter: ^1.0.0
 flutter:
     uses-material-design: true
 """

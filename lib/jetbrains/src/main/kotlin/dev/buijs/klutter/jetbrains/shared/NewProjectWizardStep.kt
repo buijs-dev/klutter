@@ -108,7 +108,7 @@ private fun newProjectPanel(data: NewProjectConfig) = panel {
         }
 
         group("Dependencies") {
-            // Version: [ 2023.1.1.beta ]
+            // Version: [ 2023.2.1.beta ]
             row("BOM Version: ") { textField()
                 .bindText(data.gradleVersionObservable)
                 .horizontalAlign(HorizontalAlign.LEFT)

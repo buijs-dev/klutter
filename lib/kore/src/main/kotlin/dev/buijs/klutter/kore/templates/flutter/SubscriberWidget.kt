@@ -41,10 +41,10 @@ import dev.buijs.klutter.kore.templates.dartType
  *
  * class MyResponseSubscriber extends Subscriber<MyResponse> {
  *   const MyResponseSubscriber({
- *     required Widget Function(MyResponse?) child,
+ *     required Widget Function(MyResponse?) builder,
  *     Key? key,
  *   }) : super(
- *     child: child,
+ *     builder: builder,
  *     channel: _stream,
  *     topic: "my_response_subscriber",
  *     key: key,
@@ -75,10 +75,10 @@ class SubscriberWidget(
             |
             |class $controllerName extends Subscriber<${dataType.dartType()}> {
             |  const ${controllerName}({
-            |    required Widget Function(${dataType.dartType()}?) child,
+            |    required Widget Function(${dataType.dartType()}?) builder,
             |    Key? key,
             |  }) : super(
-            |    child: child,
+            |    builder: builder,
             |    channel: _stream,
             |    topic: "$topic",
             |    key: key,

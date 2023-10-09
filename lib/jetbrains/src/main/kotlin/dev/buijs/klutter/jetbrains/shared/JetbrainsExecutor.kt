@@ -35,7 +35,7 @@ class JetbrainsExecutor: Executor() {
         timeout: Long?,
         command: String,
         environment: Map<String, String>,
-    ): String = GeneralCommandLine(command.split(" "))
+    ): String = GeneralCommandLine(command.platformSpecific)
         .also { it.workDirectory = runFrom }
         .also { it.environment.putAll(environment) }
         .createProcess()

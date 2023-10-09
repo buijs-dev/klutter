@@ -29,15 +29,23 @@ import java.util.concurrent.TimeUnit
 
 var executor: Executor = Executor()
 
-infix fun String.execute(file: File) =
-    executor.execute(
-        runFrom = file,
-        command = if(isWindows) "cmd.exe /c $this" else this)
+infix fun String. execute(file: File) =
+    executor.execute(runFrom = file, command = this)
 
 /**
  * Execute a CLI command.
  */
 open class Executor {
+
+    val String.platformSpecific: List<String>
+        get()= buildList {
+            if(isWindows) {
+                add("cmd.exe")
+                add("/c")
+            }
+
+            addAll(split(" "))
+        }
 
     /**
      * Execute a CLI command.
@@ -65,7 +73,7 @@ open class Executor {
          */
         environment: Map<String,String> = emptyMap(),
     ): String = ProcessBuilder()
-        .command(command.split(" "))
+        .command(command.platformSpecific)
         .directory(runFrom)
         .also { it.environment().putAll(environment)}
         .start()

@@ -21,18 +21,18 @@
  */
 package dev.buijs.klutter.tasks.project
 
+import dev.buijs.klutter.kore.common.isWindows
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
-    InitKlutter(rootFolder, pluginName, flutterPath, config)
+    InitKlutter(rootFolder, pluginName, config)
 
 internal class InitKlutter
 @JvmOverloads constructor(
     rootFolder: RootFolder,
     pluginName: PluginName,
-    flutterPath: FlutterPath,
     configOrNull: Config? = null
 ): ProjectBuilderAction {
 
@@ -40,7 +40,6 @@ internal class InitKlutter
     private val root = rootFolder.validRootFolderOrThrow().resolve(name)
     private val conf = configOrNull
     private val confContainsBom = conf?.bomVersion != null
-    private val flutter = flutterPath.validFlutterPathOrThrow()
 
     private val rootPubspecFile =
         root.resolve("pubspec.yaml")
@@ -69,14 +68,20 @@ internal class InitKlutter
             config = conf)
 
         root.deleteTestFolder()
+        root.deleteIntegrationTestFolder()
         root.clearLibFolder()
         root.overwriteReadmeFile()
         root.copyLocalProperties()
-        "$flutter pub get" execute root
-        "$flutter pub get" execute exampleFolder
-        "$flutter pub run klutter:producer init" execute root
-        "$flutter pub run klutter:consumer init" execute exampleFolder
-        "$flutter pub run klutter:consumer add=$name" execute exampleFolder
+        "flutter pub get" execute root
+        "flutter pub get" execute exampleFolder
+        "flutter pub run klutter:producer init" execute root
+        "flutter pub run klutter:consumer init" execute exampleFolder
+        "flutter pub run klutter:consumer add=$name" execute exampleFolder
+        exampleFolder.deleteIntegrationTestFolder()
+
+        // Do not bother setting up iOS on windows
+        if(isWindows) return
+
         exampleFolder.deleteIosPodfileLock()
         exampleFolder.deleteIosPods()
         exampleFolder.deleteRunnerXCWorkspace()
@@ -92,6 +97,15 @@ internal class InitKlutter
      */
     private fun File.deleteTestFolder() {
         resolve("test").deleteRecursively()
+    }
+
+    /**
+     * Delete integration_test folder and all it's content.
+     *
+     * You should test, but we're going to do that with Spock/JUnit in the platform module,
+     * not with Dart in the root/test folder.
+     */
+    private fun File.deleteIntegrationTestFolder() {
         resolve("integration_test").deleteRecursively()
     }
 

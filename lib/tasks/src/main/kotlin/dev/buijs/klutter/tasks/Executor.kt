@@ -22,6 +22,7 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
+import dev.buijs.klutter.kore.common.isWindows
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -29,7 +30,9 @@ import java.util.concurrent.TimeUnit
 var executor: Executor = Executor()
 
 infix fun String.execute(file: File) =
-    executor.execute(runFrom = file, command = this)
+    executor.execute(
+        runFrom = file,
+        command = if(isWindows) "cmd.exe /c $this" else this)
 
 /**
  * Execute a CLI command.

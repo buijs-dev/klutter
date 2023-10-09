@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v2023.2.2.beta
+- Remove example/integration_test folder on project init from example app.
+- Skip iOS setup during project init on Windows platform.
+
 ## v2023.2.1.beta
 - Remove example/integration_test folder on project init.
 - Bugfix: Eventsink received incorrect variable on error.

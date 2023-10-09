@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.tasks.project
 
+import dev.buijs.klutter.kore.common.isWindows
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.execute
 import java.io.File
@@ -67,6 +68,7 @@ internal class InitKlutter
             config = conf)
 
         root.deleteTestFolder()
+        root.deleteIntegrationTestFolder()
         root.clearLibFolder()
         root.overwriteReadmeFile()
         root.copyLocalProperties()
@@ -75,6 +77,11 @@ internal class InitKlutter
         "flutter pub run klutter:producer init" execute root
         "flutter pub run klutter:consumer init" execute exampleFolder
         "flutter pub run klutter:consumer add=$name" execute exampleFolder
+        exampleFolder.deleteIntegrationTestFolder()
+
+        // Do not bother setting up iOS on windows
+        if(isWindows) return
+
         exampleFolder.deleteIosPodfileLock()
         exampleFolder.deleteIosPods()
         exampleFolder.deleteRunnerXCWorkspace()
@@ -90,6 +97,15 @@ internal class InitKlutter
      */
     private fun File.deleteTestFolder() {
         resolve("test").deleteRecursively()
+    }
+
+    /**
+     * Delete integration_test folder and all it's content.
+     *
+     * You should test, but we're going to do that with Spock/JUnit in the platform module,
+     * not with Dart in the root/test folder.
+     */
+    private fun File.deleteIntegrationTestFolder() {
         resolve("integration_test").deleteRecursively()
     }
 

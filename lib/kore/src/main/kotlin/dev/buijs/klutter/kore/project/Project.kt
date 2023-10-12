@@ -23,6 +23,7 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.maybeCreateFolder
 import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
@@ -43,6 +44,29 @@ data class Project(
     val android: Android,
     val platform: Platform,
 )
+
+val projectsHome: File
+    get() = File(System.getProperty("user.home"))
+        .verifyExists()
+        .resolve("KlutterProjects")
+
+fun flutterExecutable(name: String): File =
+    flutterSDK(name)
+        .resolve("flutter")
+        .resolve("bin")
+        .resolve("flutter")
+
+fun flutterSDK(name: String): File =
+    projectsHome.resolve(".cache").resolve(name)
+
+fun initKlutterProjectsFolder() {
+    projectsHome
+        .maybeCreateFolder(clearIfExists = false)
+        .verifyExists()
+        .resolve(".cache")
+        .maybeCreateFolder(clearIfExists = false)
+        .verifyExists()
+}
 
 fun String.plugin(pluginName: String) =
     File(this).plugin(pluginName)

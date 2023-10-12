@@ -48,6 +48,7 @@ object NewProjectTaskFactory {
             rootFolder = toRootFolder(pathToRoot),
             pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
             groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup),
+            flutterPath = toFlutterPath(config.flutterPath ?: "flutter"),
             config = Config(
                 bomVersion = config.bomVersion ?: klutterBomVersion,
                 dependencies = if(config.useGitForPubDependencies == true) gitDependencies else Dependencies())))

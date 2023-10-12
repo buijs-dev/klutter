@@ -19,9 +19,14 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand
+package dev.buijs.klutter.kommand.project
 
+import dev.buijs.klutter.kommand.flutterw.*
+import dev.buijs.klutter.kommand.flutterw.downloadFlutter
+import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.isWindows
 import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.flutterSDK
 import dev.buijs.klutter.kore.project.toConfigOrNull
 import dev.buijs.klutter.tasks.project.*
 import kotlinx.cli.ArgParser
@@ -37,6 +42,8 @@ private const val nameDescription = "Name of app (plugin)"
 
 private const val configDescription = "Path to klutter.yaml"
 
+private const val flutterDescription = "Flutter SDK version (format: major.minor.patch and if macos then add the architecture, example: 3.0.4.ARM64)"
+
 internal fun List<String>.projectBuilderOptionsByCommand(): ProjectBuilderOptions =
     toTypedArray().projectBuilderOptionsByCommand()
 
@@ -48,6 +55,7 @@ private fun ByCommand.toProjectBuilderOptions(): ProjectBuilderOptions =
         rootFolder = rootFolder,
         groupName = groupName,
         pluginName = pluginName,
+        flutterPath = flutterPath,
         config = configOrNull)
 
 private class ByCommand(parser: ArgParser, args: Array<String>): Input {
@@ -57,6 +65,8 @@ private class ByCommand(parser: ArgParser, args: Array<String>): Input {
     private val name by parser required nameDescription
 
     private val group by parser required groupDescription
+
+    private val flutter by parser required flutterDescription
 
     private val config by parser optional configDescription
 
@@ -72,6 +82,29 @@ private class ByCommand(parser: ArgParser, args: Array<String>): Input {
 
     override val pluginName: PluginName
         get() = toPluginName(name)
+
+    override val flutterPath: FlutterPath
+        get() {
+            val splitted = flutter.trim().uppercase().split(".")
+            val major = splitted.getOrNull(0)?.toIntOrNull()
+                ?: throw KlutterException("Flutter version is invalid: $flutter")
+            val minor = splitted.getOrNull(1)?.toIntOrNull()
+                ?: throw KlutterException("Flutter version is invalid: $flutter")
+            val patch = splitted.getOrNull(2)?.toIntOrNull()
+                ?: throw KlutterException("Flutter version is invalid: $flutter")
+            val os = if(isWindows) OperatingSystem.WINDOWS else OperatingSystem.MACOS
+            val arch = splitted.getOrNull(3)?.let { Architecture.valueOf(it) }
+            if(arch == null && os == OperatingSystem.MACOS)
+                throw KlutterException("Architecture (X64 or ARM64) is missing")
+            val version = FlutterVersion(
+                id = Version(major, minor, patch),
+                os = os,
+                arch = arch ?: Architecture.X64)
+            val sdkLocation = flutterSDK(version.folderName)
+            if(!sdkLocation.exists())
+                downloadFlutter(version)
+            return toFlutterPath(sdkLocation.absolutePath)
+        }
 
     override val configOrNull: Config?
         get() = config?.let { File(it).toConfigOrNull() }

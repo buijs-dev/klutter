@@ -22,6 +22,10 @@
 //file:noinspection GroovyAssignabilityCheck
 package dev.buijs.klutter.kommand
 
+import dev.buijs.klutter.kommand.flutterw.DownloaderKt
+import dev.buijs.klutter.kommand.project.ByWizard
+import dev.buijs.klutter.kommand.project.ByWizardKt
+import dev.buijs.klutter.kommand.project.MrWizard
 import dev.buijs.klutter.kore.project.PubspecBuilder
 import spock.lang.Shared
 import spock.lang.Specification
@@ -34,6 +38,10 @@ class ByWizzardSpec extends Specification {
 
     @Shared
     File folder = Files.createTempDirectory("").toFile()
+
+    def setupSpec() {
+        DownloaderKt.dryRun = true
+    }
 
     def "Verify wizard asks for all required fields"() {
         given:
@@ -49,6 +57,13 @@ class ByWizzardSpec extends Specification {
 
         and: "ask for pluginName"
         mrWizard.promptInput("Enter Plugin name:", _) >> "dummy_plugin"
+
+        and: "ask for flutterPath"
+        mrWizard.promptList(
+                "press Enter to pick",
+                "Select Flutter SDK version:",
+                _
+        ) >> "3.0.5 (macos ARM64)"
 
         and: "ask for configOrNull"
         mrWizard.promptConfirm("Configure dependencies?", _) >> false
@@ -77,6 +92,13 @@ class ByWizzardSpec extends Specification {
 
         and: "ask for pluginName"
         mrWizard.promptInput("Enter Plugin name:", _) >> "dummy_plugin"
+
+        and: "ask for flutterPath"
+        mrWizard.promptList(
+                "press Enter to pick",
+                "Select Flutter SDK version:",
+                _
+        ) >> "3.0.5 (macos ARM64)"
 
         and: "ask for configOrNull"
         mrWizard.promptConfirm("Configure dependencies?", _) >> false
@@ -108,6 +130,13 @@ class ByWizzardSpec extends Specification {
 
         and: "ask for pluginName"
         mrWizard.promptInput("Enter Plugin name:", _) >> "dummy_plugin"
+
+        and: "ask for flutterPath"
+        mrWizard.promptList(
+                "press Enter to pick",
+                "Select Flutter SDK version:",
+                _
+        ) >> "3.0.5 (macos ARM64)"
 
         and: "ask for configOrNull"
         mrWizard.promptConfirm("Configure dependencies?", _) >> true

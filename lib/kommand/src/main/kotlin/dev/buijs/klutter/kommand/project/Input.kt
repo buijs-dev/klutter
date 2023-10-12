@@ -19,34 +19,19 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.tasks.project
+package dev.buijs.klutter.kommand.project
 
-import dev.buijs.klutter.tasks.execute
+import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.tasks.project.*
 
-internal fun ProjectBuilderOptions.toRunFlutterAction() =
-    RunFlutterCreate(pluginName, groupName, rootFolder, flutterPath)
+internal sealed interface Input {
+    val rootFolder: RootFolder
 
-internal class RunFlutterCreate(
-    private val pluginName: PluginName,
-    private val groupName: GroupName,
-    private val rootFolder: RootFolder,
-    private val flutterPath: FlutterPath,
-): ProjectBuilderAction {
+    val groupName: GroupName
 
-    override fun doAction() {
-        val flutter = flutterPath.validFlutterPathOrThrow()
+    val pluginName: PluginName
 
-        val validRootFolder = rootFolder.validRootFolderOrThrow()
+    val flutterPath: FlutterPath
 
-        val validPluginName = pluginName.validPluginNameOrThrow()
-
-        val validGroupName = groupName.validGroupNameOrThrow()
-
-        "$flutter create $validPluginName " +
-                "--org $validGroupName " +
-                "--template=plugin " +
-                "--platforms=android,ios " +
-                "-a kotlin -i swift" execute validRootFolder
-    }
-
+    val configOrNull: Config?
 }

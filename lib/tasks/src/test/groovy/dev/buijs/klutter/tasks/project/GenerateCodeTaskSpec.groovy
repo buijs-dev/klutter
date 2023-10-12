@@ -79,27 +79,31 @@ class GenerateCodeTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
+    def flutterSDKPath = root.absolutePath
+
+    @Shared
     def sut = new ProjectBuilderTask(
             new ProjectBuilderOptions(
                     Either.ok(new File(pathToRoot)),
                     Either.ok(pluginName),
                     Either.ok(groupName),
+                    Either.ok(new File(flutterSDKPath)),
                     null))
 
     @Shared
-    def createFlutterPlugin = "flutter create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
+    def createFlutterPlugin = flutterSDKPath + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
 
     @Shared
-    def flutterPubGet = "flutter pub get"
+    def flutterPubGet = flutterSDKPath + " pub get"
 
     @Shared
-    def klutterProducerInit = "flutter pub run klutter:producer init"
+    def klutterProducerInit = flutterSDKPath + " pub run klutter:producer init"
 
     @Shared
-    def klutterConsumerInit = "flutter pub run klutter:consumer init"
+    def klutterConsumerInit = flutterSDKPath + " pub run klutter:consumer init"
 
     @Shared
-    def klutterConsumerAdd = "flutter pub run klutter:consumer add=my_awesome_plugin"
+    def klutterConsumerAdd = flutterSDKPath + " pub run klutter:consumer add=my_awesome_plugin"
 
     @Shared
     def iosPodUpdate = "pod update"
@@ -213,9 +217,9 @@ class GenerateCodeTaskSpec extends Specification {
         def srcFolder = project.root.pathToLibFolder.toPath().resolve("src")
 
         and:
-        executor.putExpectation(pathToPlugin, "flutter pub get")
+        executor.putExpectation(pathToPlugin, flutterSDKPath + " pub get")
         executor.putExpectation(project.root.pathToLibFolder.absolutePath, "dart format .")
-        executor.putExpectationWithAction(pathToPlugin, "flutter pub run squint_json:generate" +
+        executor.putExpectationWithAction(pathToPlugin, flutterSDKPath + " pub run squint_json:generate" +
                                     " --type dataclass" +
                                     " --input ${myCustomTypeSrcFile.path}" +
                                     " --output ${srcFolder.toFile().path}" +
@@ -223,7 +227,7 @@ class GenerateCodeTaskSpec extends Specification {
                                     " --generateChildClasses false" +
                                     " --includeCustomTypeImports true",
                 { srcFolder.resolve("my_custom_type_dataclass.dart").toFile().createNewFile() })
-        executor.putExpectation(pathToPlugin, "flutter pub run squint_json:generate" +
+        executor.putExpectation(pathToPlugin, flutterSDKPath + " pub run squint_json:generate" +
                                         " --type serializer" +
                                         " --input ${srcFolder.resolve("my_custom_type_dataclass.dart").toFile().path}" +
                                         " --output ${srcFolder.toFile().path}" +
@@ -231,7 +235,7 @@ class GenerateCodeTaskSpec extends Specification {
 
         and:
         GenerateCodeTaskKt.toGenerateCodeTask(new GenerateCodeOptions(
-                project, pubspec, false, controllers, messages, { println("$it") })).run()
+                project, pubspec, new File(flutterSDKPath), false, controllers, messages, { println("$it") })).run()
 
         then:
         def flutterLib = project.root.pathToLibFile

@@ -35,10 +35,12 @@ import java.io.File
  * - klutterOutputFolder: Folder where to write analysis results.
  * - klutterGenerateAdapters: Boolean value indicating if codegen tasks should run during build.
  * - intelMac: Boolean value indicating if the platform is an Intel-based Mac.
+ * - flutterSDKPath: Flutter bin folder.
  */
 data class ProcessorOptions(
     val metadataFolder: File,
     val outputFolder: File,
+    val flutterPath: File,
     val generateAdapters: Boolean,
     val isIntelBasedBuildMachine: Boolean,
 )
@@ -52,6 +54,7 @@ internal enum class ProcessorOption(val value: String) {
     OUTPUT_FOLDER("klutterOutputFolder"),
     GENERATE_ADAPTERS("klutterGenerateAdapters"),
     INTEL_BASED_APPLE("intelMac"),
+    FLUTTER_SDK_PATH("flutterSDKPath"),
 }
 
 /**
@@ -63,6 +66,7 @@ internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
     outputFolder = options.outputFolder(),
     generateAdapters = options.boolean(GENERATE_ADAPTERS),
     isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
+    flutterPath = options.flutterSDKPath()
 ).also { kcLogger?.info("Determined Processor Options: $it") }
 
 /**
@@ -101,6 +105,24 @@ private fun Map<String,String>.outputFolder(): File {
                 |```
                 |""".trimMargin())
     return File(pathToOutputFolder).also { it.verifyExists() }
+}
+
+/**
+ * Parse required ksp option which contains path to the flutter bin folder.
+ */
+// TODO change to SDK version major.minor.version.platform.arch and retrieve it using flutterExecutable method
+private fun Map<String,String>.flutterSDKPath(): File {
+    val option = FLUTTER_SDK_PATH.value
+    val pathToFlutterSDK = this[option]
+        ?: throw KlutterException("""Option $option not set!
+                |Add this option to the ksp DSL, example:
+                |```
+                |ksp {
+                |    arg("$option", <path-to-flutter-bin>)
+                |}
+                |```
+                |""".trimMargin())
+    return File(pathToFlutterSDK).also { it.verifyExists() }
 }
 
 /**

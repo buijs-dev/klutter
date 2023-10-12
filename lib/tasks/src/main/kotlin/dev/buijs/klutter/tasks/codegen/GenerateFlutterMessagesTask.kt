@@ -32,6 +32,7 @@ fun GenerateCodeOptions.toGenerateFlutterMessagesTask() =
     GenerateFlutterMessagesTask(
         root = project.root,
         srcFolder = flutterSrcFolder,
+        flutterPath = flutterPath,
         messages = messages,
         log = log)
 
@@ -41,9 +42,12 @@ fun GenerateCodeOptions.toGenerateFlutterMessagesTask() =
 class GenerateFlutterMessagesTask(
     private val root: Root,
     private val srcFolder: File,
+    flutterPath: File,
     private val messages: List<SquintMessageSource>,
     private val log: (String) -> Unit = {  },
 ) : KlutterTask, GenerateCodeAction {
+
+    private val flutter = flutterPath.absolutePath
 
     override fun run() {
         messages.forEach { message ->
@@ -55,7 +59,7 @@ class GenerateFlutterMessagesTask(
     }
 
     private fun squintJsonGenerate(sourceFile: File) {
-        val command = "flutter pub run squint_json:generate" +
+        val command = "$flutter pub run squint_json:generate" +
                 " --type dataclass" +
                 " --input ${sourceFile.absolutePath}" +
                 " --output ${srcFolder.absolutePath}" +
@@ -66,7 +70,7 @@ class GenerateFlutterMessagesTask(
     }
 
     private fun squintJsonGenerateSerializers(type: AbstractType) {
-        val command = "flutter pub run squint_json:generate" +
+        val command = "$flutter pub run squint_json:generate" +
                 " --type serializer" +
                 " --input ${srcFolder.resolve("${type.className.toSnakeCase()}_dataclass.dart")}" +
                 " --output ${srcFolder.absolutePath}" +

@@ -36,6 +36,7 @@ class ProjectBuilderActionsSpec extends Specification {
                         Either.ok(new File("")),
                         Either.ok(""),
                         Either.ok(""),
+                        Either.ok(new File("")),
                         null))
 
         then:

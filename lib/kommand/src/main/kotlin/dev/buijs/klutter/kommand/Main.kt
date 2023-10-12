@@ -21,6 +21,9 @@
  */
 package dev.buijs.klutter.kommand
 
+import dev.buijs.klutter.kommand.flutterw.downloadFlutterOrThrow
+import dev.buijs.klutter.kommand.project.getOptionsByUserInput
+import dev.buijs.klutter.kommand.project.projectBuilderOptionsByCommand
 import dev.buijs.klutter.kore.project.klutterBomVersion
 import dev.buijs.klutter.tasks.project.ProjectBuilderTask
 
@@ -30,6 +33,11 @@ fun main(args: Array<String>) {
      KLUTTER (v$klutterBomVersion)
   ════════════════════════════════════════════
   """)
+
+    if(args.firstOrNull() == "flutter-download") {
+        args.toMutableList().also { it.removeFirst() }.downloadFlutterOrThrow()
+        return
+    }
 
     val options = if(args.isEmpty()) {
         getOptionsByUserInput()

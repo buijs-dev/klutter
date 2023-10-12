@@ -25,4 +25,4 @@ package dev.buijs.klutter.kore
 /**
  * Exception class indicating a terminal problem in the Klutter Framework.
  */
-class KlutterException(msg: String): Exception(msg)
+class KlutterException(msg: String, throwable: Throwable? = null): Exception(msg, throwable)

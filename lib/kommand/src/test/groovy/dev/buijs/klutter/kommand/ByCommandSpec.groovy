@@ -21,6 +21,8 @@
  */
 package dev.buijs.klutter.kommand
 
+import dev.buijs.klutter.kommand.flutterw.DownloaderKt
+import dev.buijs.klutter.kommand.project.ByCommandKt
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -32,12 +34,17 @@ class ByCommandSpec extends Specification {
     File rootFolder = Files.createTempDirectory("").toFile()
 
     @Shared
+    File flutterSDK = rootFolder.toPath().resolve("flutter").toFile()
+
+    @Shared
     File configYaml = rootFolder.toPath().resolve("klutter.yaml").toFile()
 
     @Shared
     String overrideBomVersion = "9999.1.1.zeta"
 
     def setupSpec() {
+        DownloaderKt.dryRun = true
+        flutterSDK.mkdir()
         configYaml.createNewFile()
         configYaml.write("""
 bom-version: $overrideBomVersion
@@ -49,7 +56,8 @@ bom-version: $overrideBomVersion
         def command = [
                 "--root", rootFolder.path,
                 "--group", "com.example",
-                "--name", "my_awesome_plugin"
+                "--name", "my_awesome_plugin",
+                "--flutter", "3.0.5.X64",
         ]
 
         when:
@@ -68,6 +76,7 @@ bom-version: $overrideBomVersion
                 "--root", rootFolder.path, "" +
                 "--group", "com.example",
                 "--name", "my_awesome_plugin",
+                "--flutter", "3.0.5.X64",
                 "--config", configYaml.absolutePath
         ]
 

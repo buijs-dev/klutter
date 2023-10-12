@@ -41,6 +41,9 @@ class ActionInitKlutterSpec extends Specification {
     EitherOk validPluginName
 
     @Shared
+    EitherOk validFlutterPath
+
+    @Shared
     Config config
 
     @Shared
@@ -67,9 +70,13 @@ class ActionInitKlutterSpec extends Specification {
     @Shared
     def pathToExample = example.absolutePath
 
+    @Shared
+    def pathToFlutterSDK = root.absolutePath
+
     def setupSpec() {
         validRootFolder = Either.ok(root)
         validPluginName = Either.ok(pluginName)
+        validFlutterPath = Either.ok(new File(pathToFlutterSDK))
         config = new Config(new Dependencies(), "2023.x.y")
         klutterYaml = root.toPath().resolve("my_plugin/klutter.yaml").toFile()
         plugin.mkdirs()
@@ -86,7 +93,7 @@ class ActionInitKlutterSpec extends Specification {
             klutterYaml.delete()
 
         and:
-        def sut = new InitKlutter(validRootFolder, validPluginName, config)
+        def sut = new InitKlutter(validRootFolder, validPluginName, validFlutterPath, config)
 
         when: "task will fail because of invalid pubspec.yamls but does not matter"
         try {
@@ -106,7 +113,7 @@ class ActionInitKlutterSpec extends Specification {
             klutterYaml.delete()
 
         and:
-        def sut = new InitKlutter(validRootFolder, validPluginName)
+        def sut = new InitKlutter(validRootFolder, validPluginName, validFlutterPath)
 
         when: "task will fail because of invalid pubspec.yamls but does not matter"
         try {

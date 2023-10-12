@@ -40,6 +40,11 @@ data class ProjectBuilderOptions(
     val groupName: GroupName,
 
     /**
+     * Path to installed Flutter distribution.
+     */
+    val flutterPath: FlutterPath,
+
+    /**
      * Custom configuration for tweaking project generation.
      */
     val config: Config? = null,

@@ -26,12 +26,13 @@ import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
-    InitKlutter(rootFolder, pluginName, config)
+    InitKlutter(rootFolder, pluginName, flutterPath, config)
 
 internal class InitKlutter
 @JvmOverloads constructor(
     rootFolder: RootFolder,
     pluginName: PluginName,
+    flutterPath: FlutterPath,
     configOrNull: Config? = null
 ): ProjectBuilderAction {
 
@@ -39,6 +40,7 @@ internal class InitKlutter
     private val root = rootFolder.validRootFolderOrThrow().resolve(name)
     private val conf = configOrNull
     private val confContainsBom = conf?.bomVersion != null
+    private val flutter = flutterPath.validFlutterPathOrThrow()
 
     private val rootPubspecFile =
         root.resolve("pubspec.yaml")
@@ -70,11 +72,11 @@ internal class InitKlutter
         root.clearLibFolder()
         root.overwriteReadmeFile()
         root.copyLocalProperties()
-        "flutter pub get" execute root
-        "flutter pub get" execute exampleFolder
-        "flutter pub run klutter:producer init" execute root
-        "flutter pub run klutter:consumer init" execute exampleFolder
-        "flutter pub run klutter:consumer add=$name" execute exampleFolder
+        "$flutter pub get" execute root
+        "$flutter pub get" execute exampleFolder
+        "$flutter pub run klutter:producer init" execute root
+        "$flutter pub run klutter:consumer init" execute exampleFolder
+        "$flutter pub run klutter:consumer add=$name" execute exampleFolder
         exampleFolder.deleteIosPodfileLock()
         exampleFolder.deleteIosPods()
         exampleFolder.deleteRunnerXCWorkspace()

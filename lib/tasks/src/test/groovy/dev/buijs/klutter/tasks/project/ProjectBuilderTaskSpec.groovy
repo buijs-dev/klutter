@@ -63,27 +63,31 @@ class ProjectBuilderTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
+    def pathToFlutterSDK = pathToRoot
+
+    @Shared
     def sut = new ProjectBuilderTask(
             new ProjectBuilderOptions(
                     Either.ok(new File(pathToRoot)),
                     Either.ok(pluginName),
                     Either.ok(groupName),
+                    Either.ok(new File(pathToFlutterSDK)),
                     null))
 
     @Shared
-    def createFlutterPlugin = "flutter create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
+    def createFlutterPlugin = pathToFlutterSDK + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
 
     @Shared
-    def flutterPubGet = "flutter pub get"
+    def flutterPubGet = pathToFlutterSDK + " pub get"
 
     @Shared
-    def klutterProducerInit = "flutter pub run klutter:producer init"
+    def klutterProducerInit = pathToFlutterSDK + " pub run klutter:producer init"
 
     @Shared
-    def klutterConsumerInit = "flutter pub run klutter:consumer init"
+    def klutterConsumerInit = pathToFlutterSDK + " pub run klutter:consumer init"
 
     @Shared
-    def klutterConsumerAdd = "flutter pub run klutter:consumer add=my_awesome_plugin"
+    def klutterConsumerAdd = pathToFlutterSDK + " pub run klutter:consumer add=my_awesome_plugin"
 
     @Shared
     def iosPodUpdate = "pod update"

@@ -39,13 +39,17 @@ class ProcessorProviderSpec extends Specification {
     @Shared
     File outputFolder = Files.createTempDirectory("").toFile()
 
+    @Shared
+    File flutterSDKFolder = Files.createTempDirectory("flutterbin").toFile()
+
     def "Verify that ProcessorProvider parses options from KSP properly" () {
         given:
         def options = [
                 "klutterScanFolder": scanFolder.path,
                 "klutterOutputFolder": outputFolder.path,
                 "klutterGenerateAdapters": "false",
-                "intelMac": "false"
+                "intelMac": "false",
+                "flutterSDKPath": flutterSDKFolder.path
         ]
 
         and:
@@ -67,7 +71,8 @@ class ProcessorProviderSpec extends Specification {
                 "klutterScanFolder": null,
                 "klutterOutputFolder": outputFolder.path,
                 "klutterGenerateAdapters": "false",
-                "intelMac": "false"
+                "intelMac": "false",
+                "flutterSDKPath": flutterSDKFolder.path
         ]
 
         and:
@@ -90,7 +95,8 @@ class ProcessorProviderSpec extends Specification {
                 "klutterScanFolder": scanFolder.path,
                 "klutterOutputFolder": null,
                 "klutterGenerateAdapters": "false",
-                "intelMac": "false"
+                "intelMac": "false",
+                "flutterSDKPath": flutterSDKFolder.path
         ]
 
         and:
@@ -107,4 +113,26 @@ class ProcessorProviderSpec extends Specification {
         e.message.contains("Option klutterOutputFolder not set!")
     }
 
+    def "A KlutterException is thrown if flutterSDKPath is NOT set" () {
+        given:
+        def options = [
+                "klutterScanFolder": scanFolder.path,
+                "klutterOutputFolder": outputFolder.path,
+                "klutterGenerateAdapters": "false",
+                "intelMac": "false"
+        ]
+
+        and:
+        def env = new SymbolProcessorEnvironment(options, new KotlinVersion(1,8,20), Stub(CodeGenerator), Stub(KSPLogger))
+
+        and:
+        def provider = new ProcessorProvider()
+
+        when:
+        provider.create(env)
+
+        then:
+        KlutterException e = thrown()
+        e.message.contains("Option flutterSDKPath not set!")
+    }
 }

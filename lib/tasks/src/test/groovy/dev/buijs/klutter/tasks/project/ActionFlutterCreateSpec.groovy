@@ -50,6 +50,12 @@ class ActionFlutterCreateSpec extends Specification {
     @Shared
     EitherNok invalidGroupName
 
+    @Shared
+    EitherOk validFlutterPath
+
+    @Shared
+    EitherNok invalidFlutterPath
+
     def setupSpec() {
         def root = Files.createTempDirectory("").toFile()
         validRootFolder = Either.ok(root)
@@ -58,6 +64,8 @@ class ActionFlutterCreateSpec extends Specification {
         invalidPluginName = Either.nok("Not a valid plugin name")
         validGroupName = Either.ok("com.example")
         invalidGroupName = Either.nok("Not a valid group name")
+        validFlutterPath = Either.ok(new File(root.absolutePath))
+        invalidFlutterPath = Either.nok("Folder does not exist")
     }
 
     def "When RootFolder is invalid then a KlutterException is thrown"() {
@@ -65,7 +73,8 @@ class ActionFlutterCreateSpec extends Specification {
         def sut = new RunFlutterCreate(
                 validPluginName,
                 validGroupName,
-                invalidRootFolder)
+                invalidRootFolder,
+                validFlutterPath)
 
         when:
         sut.doAction()
@@ -80,7 +89,8 @@ class ActionFlutterCreateSpec extends Specification {
         def sut = new RunFlutterCreate(
                 invalidPluginName,
                 validGroupName,
-                validRootFolder)
+                validRootFolder,
+                validFlutterPath)
 
         when:
         sut.doAction()
@@ -95,7 +105,8 @@ class ActionFlutterCreateSpec extends Specification {
         def sut = new RunFlutterCreate(
                 validPluginName,
                 invalidGroupName,
-                validRootFolder)
+                validRootFolder,
+                validFlutterPath)
 
         when:
         sut.doAction()
@@ -105,4 +116,19 @@ class ActionFlutterCreateSpec extends Specification {
         e.message == "Not a valid group name"
     }
 
+    def "When FlutterPath is invalid then a KlutterException is thrown"() {
+        given:
+        def sut = new RunFlutterCreate(
+                validPluginName,
+                validGroupName,
+                validRootFolder,
+                invalidFlutterPath)
+
+        when:
+        sut.doAction()
+
+        then:
+        KlutterException e = thrown()
+        e.message == "Folder does not exist"
+    }
 }

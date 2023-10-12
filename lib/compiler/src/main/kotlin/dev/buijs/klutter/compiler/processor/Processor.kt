@@ -67,6 +67,7 @@ class Processor(
     private lateinit var output: File
     private lateinit var project: Project
     private lateinit var pubspec: Pubspec
+    private lateinit var flutter: File
 
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
@@ -74,6 +75,7 @@ class Processor(
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         kcLogger = KCLogger(log, options.outputFolder)
+        flutter = options.flutterPath
         output  = options.outputFolder
         project = output.plugin()
         pubspec = project.root.toPubspec()
@@ -125,6 +127,7 @@ class Processor(
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
             controllers = controllers!!,
             messages = messages!!,
+            flutterPath = flutter,
             log = { str -> kcLogger?.info("Running dart command:\n$str") })
 
         findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()

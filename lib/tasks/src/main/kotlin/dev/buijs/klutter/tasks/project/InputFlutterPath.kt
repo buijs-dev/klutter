@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2022 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,17 +19,18 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand
+package dev.buijs.klutter.tasks.project
 
-import dev.buijs.klutter.kore.project.Config
-import dev.buijs.klutter.tasks.project.*
+import dev.buijs.klutter.kore.common.Either
+import java.io.File
 
-internal sealed interface Input {
-    val rootFolder: RootFolder
+typealias FlutterPath = Either<String, File>
 
-    val groupName: GroupName
+fun toFlutterPath(value: String) = value.toInput()
 
-    val pluginName: PluginName
-
-    val configOrNull: Config?
+private fun String.toInput(): RootFolder {
+    val file = File(this)
+    return if(!file.exists())
+        FlutterPath.nok("Flutter distribution does not exist: '$this'")
+    else FlutterPath.ok(file)
 }

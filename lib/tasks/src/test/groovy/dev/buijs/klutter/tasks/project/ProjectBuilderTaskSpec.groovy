@@ -177,7 +177,7 @@ class ProjectBuilderTaskSpec extends Specification {
         homepage:
         
         environment:
-          sdk: ">=2.18.0 <4.0.0"
+          sdk: ">=2.17.6 <4.0.0"
           flutter: ">=2.5.0"
         
         dependencies:
@@ -198,7 +198,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 version: 0.0.1
                 
                 environment:
-                  sdk: '>=2.18.0 <4.0.0'
+                  sdk: '>=2.17.6 <4.0.0'
                   flutter: ">=2.5.0"
                 
                 dependencies:
@@ -226,7 +226,7 @@ class ProjectBuilderTaskSpec extends Specification {
         publish_to: 'none' # Remove this line if you wish to publish to pub.dev
         
         environment:
-          sdk: '>=2.18.0 <4.0.0'
+          sdk: '>=2.17.6 <4.0.0'
         
         dependencies:
           flutter:
@@ -253,7 +253,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
                 
                 environment:
-                  sdk: '>=2.18.0 <4.0.0'
+                  sdk: '>=2.17.6 <4.0.0'
                 
                 dependencies:
                     flutter:

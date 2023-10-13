@@ -80,7 +80,7 @@ internal class InitKlutter
         exampleFolder.deleteIntegrationTestFolder()
 
         // Do not bother setting up iOS on windows
-        if(dev.buijs.klutter.kore.common.isWindows) return
+        if(isWindows) return
         exampleFolder.deleteIosPodfileLock()
         exampleFolder.deleteIosPods()
         exampleFolder.deleteRunnerXCWorkspace()

@@ -47,7 +47,7 @@ class GenerateFlutterLibTask(
                     .toList()
                     .filter { it.isFile }
                     .map { it.relativeTo(srcFolder) }
-                    .map { it.path.prefixIfNot("src/") }))
+                    .map { it.path.prefixIfNot("src/").replace("""\""", "/") }))
     }
 
 }

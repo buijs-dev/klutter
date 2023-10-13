@@ -22,7 +22,7 @@
 package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import dev.buijs.klutter.kore.common.isWindows
+import dev.buijs.klutter.kore.project.isWindows
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit

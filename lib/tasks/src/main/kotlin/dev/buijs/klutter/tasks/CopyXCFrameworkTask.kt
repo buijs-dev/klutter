@@ -23,6 +23,7 @@ package dev.buijs.klutter.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.project.isWindows
 import java.io.File
 
 /**
@@ -38,6 +39,9 @@ class CopyXCFrameworkTask(
     private val pathToSource: String = "platform"
 
     override fun run() {
+        // XCFramework can not be build on Windows.
+        if(isWindows) return
+
         val target = pathToRoot
             .resolve(pathToTarget)
             .resolve("ios/Klutter")

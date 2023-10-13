@@ -61,11 +61,6 @@ private val compatibleFlutterVersions = buildMap {
         put(
             Architecture.X64, mapOf(
                 Version(
-                    2,
-                    10,
-                    5
-                ) to "https://storage.googleapis.com/flutter_infra_release/releases/stable/windows/flutter_windows_2.10.5-stable.zip",
-                Version(
                     3,
                     0,
                     5
@@ -92,11 +87,6 @@ private val compatibleFlutterVersions = buildMap {
     put(OperatingSystem.MACOS, buildMap {
         put(
             Architecture.X64, mapOf(
-                Version(
-                    2,
-                    10,
-                    5
-                ) to "https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_2.10.5-stable.zip",
                 Version(
                     3,
                     0,

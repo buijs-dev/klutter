@@ -64,12 +64,3 @@ fun GroupName.validGroupNameOrThrow()= inputOrThrow(
         it.data
     }
 )
-
-fun FlutterPath.validFlutterPathOrThrow()= inputOrThrow(
-    ok = {
-        it.data
-    },
-    nok = {
-        it.data
-    }
-)

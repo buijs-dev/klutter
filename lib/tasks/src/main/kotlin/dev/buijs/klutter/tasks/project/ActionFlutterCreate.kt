@@ -21,20 +21,21 @@
  */
 package dev.buijs.klutter.tasks.project
 
+import dev.buijs.klutter.kore.project.flutterExecutable
 import dev.buijs.klutter.tasks.execute
 
 internal fun ProjectBuilderOptions.toRunFlutterAction() =
-    RunFlutterCreate(pluginName, groupName, rootFolder, flutterPath)
+    RunFlutterCreate(pluginName, groupName, rootFolder, flutterVersion)
 
 internal class RunFlutterCreate(
     private val pluginName: PluginName,
     private val groupName: GroupName,
     private val rootFolder: RootFolder,
-    private val flutterPath: FlutterPath,
+    private val flutterVersion: String,
 ): ProjectBuilderAction {
 
     override fun doAction() {
-        val flutter = flutterPath.validFlutterPathOrThrow()
+        val flutter = flutterExecutable(flutterVersion).absolutePath
 
         val validRootFolder = rootFolder.validRootFolderOrThrow()
 

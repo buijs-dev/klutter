@@ -79,7 +79,13 @@ class GenerateCodeTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
-    def flutterSDKPath = root.absolutePath
+    def flutterVersion = "3.0.5.macos.arm64"
+
+    @Shared
+    def flutterExe = ProjectKt.flutterExecutable(flutterVersion).absolutePath
+
+    @Shared
+    def dartExe = ProjectKt.dartExecutable(flutterVersion).absolutePath
 
     @Shared
     def sut = new ProjectBuilderTask(
@@ -87,23 +93,23 @@ class GenerateCodeTaskSpec extends Specification {
                     Either.ok(new File(pathToRoot)),
                     Either.ok(pluginName),
                     Either.ok(groupName),
-                    Either.ok(new File(flutterSDKPath)),
+                    flutterVersion,
                     null))
 
     @Shared
-    def createFlutterPlugin = flutterSDKPath + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
+    def createFlutterPlugin = flutterExe + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
 
     @Shared
-    def flutterPubGet = flutterSDKPath + " pub get"
+    def flutterPubGet = flutterExe + " pub get"
 
     @Shared
-    def klutterProducerInit = flutterSDKPath + " pub run klutter:producer init"
+    def klutterProducerInit = flutterExe + " pub run klutter:producer init"
 
     @Shared
-    def klutterConsumerInit = flutterSDKPath + " pub run klutter:consumer init"
+    def klutterConsumerInit = flutterExe + " pub run klutter:consumer init"
 
     @Shared
-    def klutterConsumerAdd = flutterSDKPath + " pub run klutter:consumer add=my_awesome_plugin"
+    def klutterConsumerAdd = flutterExe + " pub run klutter:consumer add=my_awesome_plugin"
 
     @Shared
     def iosPodUpdate = "pod update"
@@ -217,9 +223,9 @@ class GenerateCodeTaskSpec extends Specification {
         def srcFolder = project.root.pathToLibFolder.toPath().resolve("src")
 
         and:
-        executor.putExpectation(pathToPlugin, flutterSDKPath + " pub get")
-        executor.putExpectation(project.root.pathToLibFolder.absolutePath, "dart format .")
-        executor.putExpectationWithAction(pathToPlugin, flutterSDKPath + " pub run squint_json:generate" +
+        executor.putExpectation(pathToPlugin, flutterExe + " pub get")
+        executor.putExpectation(project.root.pathToLibFolder.absolutePath, dartExe + " format .")
+        executor.putExpectationWithAction(pathToPlugin, flutterExe + " pub run squint_json:generate" +
                                     " --type dataclass" +
                                     " --input ${myCustomTypeSrcFile.path}" +
                                     " --output ${srcFolder.toFile().path}" +
@@ -227,7 +233,7 @@ class GenerateCodeTaskSpec extends Specification {
                                     " --generateChildClasses false" +
                                     " --includeCustomTypeImports true",
                 { srcFolder.resolve("my_custom_type_dataclass.dart").toFile().createNewFile() })
-        executor.putExpectation(pathToPlugin, flutterSDKPath + " pub run squint_json:generate" +
+        executor.putExpectation(pathToPlugin, flutterExe + " pub run squint_json:generate" +
                                         " --type serializer" +
                                         " --input ${srcFolder.resolve("my_custom_type_dataclass.dart").toFile().path}" +
                                         " --output ${srcFolder.toFile().path}" +
@@ -235,7 +241,7 @@ class GenerateCodeTaskSpec extends Specification {
 
         and:
         GenerateCodeTaskKt.toGenerateCodeTask(new GenerateCodeOptions(
-                project, pubspec, new File(flutterSDKPath), false, controllers, messages, { println("$it") })).run()
+                project, pubspec, "3.0.5.macos.arm64", false, controllers, messages, { println("$it") })).run()
 
         then:
         def flutterLib = project.root.pathToLibFile

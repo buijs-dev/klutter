@@ -22,6 +22,7 @@
 package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.common.Either
+import dev.buijs.klutter.kore.project.ProjectKt
 import dev.buijs.klutter.kore.test.TestUtil
 import dev.buijs.klutter.tasks.Executor
 import dev.buijs.klutter.tasks.ExecutorKt
@@ -63,7 +64,10 @@ class ProjectBuilderTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
-    def pathToFlutterSDK = pathToRoot
+    def flutterVersion = "3.0.5.macos.arm64"
+
+    @Shared
+    def flutterExe = ProjectKt.flutterExecutable(flutterVersion).absolutePath
 
     @Shared
     def sut = new ProjectBuilderTask(
@@ -71,23 +75,23 @@ class ProjectBuilderTaskSpec extends Specification {
                     Either.ok(new File(pathToRoot)),
                     Either.ok(pluginName),
                     Either.ok(groupName),
-                    Either.ok(new File(pathToFlutterSDK)),
+                    flutterVersion,
                     null))
 
     @Shared
-    def createFlutterPlugin = pathToFlutterSDK + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
+    def createFlutterPlugin = flutterExe + " create my_awesome_plugin --org com.example.awesomeness --template=plugin --platforms=android,ios -a kotlin -i swift"
 
     @Shared
-    def flutterPubGet = pathToFlutterSDK + " pub get"
+    def flutterPubGet = flutterExe + " pub get"
 
     @Shared
-    def klutterProducerInit = pathToFlutterSDK + " pub run klutter:producer init"
+    def klutterProducerInit = flutterExe + " pub run klutter:producer init"
 
     @Shared
-    def klutterConsumerInit = pathToFlutterSDK + " pub run klutter:consumer init"
+    def klutterConsumerInit = flutterExe + " pub run klutter:consumer init"
 
     @Shared
-    def klutterConsumerAdd = pathToFlutterSDK + " pub run klutter:consumer add=my_awesome_plugin"
+    def klutterConsumerAdd = flutterExe + " pub run klutter:consumer add=my_awesome_plugin"
 
     @Shared
     def iosPodUpdate = "pod update"
@@ -173,7 +177,7 @@ class ProjectBuilderTaskSpec extends Specification {
         homepage:
         
         environment:
-          sdk: ">=2.17.5 <3.0.0"
+          sdk: ">=2.18.0 <4.0.0"
           flutter: ">=2.5.0"
         
         dependencies:
@@ -194,7 +198,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 version: 0.0.1
                 
                 environment:
-                  sdk: '>=2.16.1 <3.0.0'
+                  sdk: '>=2.18.0 <4.0.0'
                   flutter: ">=2.5.0"
                 
                 dependencies:
@@ -222,7 +226,7 @@ class ProjectBuilderTaskSpec extends Specification {
         publish_to: 'none' # Remove this line if you wish to publish to pub.dev
         
         environment:
-          sdk: '>=2.17.5 <3.0.0'
+          sdk: '>=2.18.0 <4.0.0'
         
         dependencies:
           flutter:
@@ -249,7 +253,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
                 
                 environment:
-                  sdk: '>=2.16.1 <3.0.0'
+                  sdk: '>=2.18.0 <4.0.0'
                 
                 dependencies:
                     flutter:

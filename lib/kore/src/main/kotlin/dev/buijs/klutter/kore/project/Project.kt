@@ -45,10 +45,25 @@ data class Project(
     val platform: Platform,
 )
 
+/**
+ * Path to Klutter projects home folder which is <user.home>/KlutterProjects.
+ */
 val projectsHome: File
     get() = File(System.getProperty("user.home"))
         .verifyExists()
         .resolve("KlutterProjects")
+
+/**
+ * Path to executable Flutter which is <user.home>/KlutterProjects/.cache/<flutter-version>/flutter/bin/flutter.
+ */
+val Flutter.executable: File
+    get()= flutterExecutable(folderName)
+
+/**
+ * Path to SDK folder Flutter which is <user.home>/KlutterProjects/.cache/<flutter-version>.
+ */
+val Flutter.sdk: File
+    get()= flutterSDK(folderName)
 
 fun flutterExecutable(name: String): File =
     flutterSDK(name)
@@ -56,6 +71,15 @@ fun flutterExecutable(name: String): File =
         .resolve("bin")
         .resolve("flutter")
 
+fun dartExecutable(name: String): File =
+    flutterSDK(name)
+        .resolve("flutter")
+        .resolve("bin")
+        .resolve("dart")
+
+/**
+ * Path to Klutter cache folder which is <user.home>/KlutterProjects/.cache.
+ */
 fun flutterSDK(name: String): File =
     projectsHome.resolve(".cache").resolve(name)
 

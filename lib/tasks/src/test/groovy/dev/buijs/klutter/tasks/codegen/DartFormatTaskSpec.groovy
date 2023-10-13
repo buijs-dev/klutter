@@ -21,6 +21,8 @@
  */
 package dev.buijs.klutter.tasks.codegen
 
+import dev.buijs.klutter.tasks.DummyExec
+import dev.buijs.klutter.tasks.ExecutorKt
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -29,10 +31,13 @@ class DartFormatTaskSpec extends Specification {
 
     def "Verify constructor"(){
         given:
+        ExecutorKt.executor = new DummyExec()
+
+        and:
         def file = Files.createTempDirectory("").toFile()
 
         expect:
-        new DartFormatTask(file).run()
+        new DartFormatTask(file, "3.0.5.macos.arm64").run()
     }
 
 }

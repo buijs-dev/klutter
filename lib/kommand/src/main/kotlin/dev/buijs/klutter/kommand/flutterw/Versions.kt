@@ -1,41 +1,17 @@
 package dev.buijs.klutter.kommand.flutterw
 
 import dev.buijs.klutter.kore.KlutterException
-
-enum class OperatingSystem(val value: String) {
-    WINDOWS("windows"),
-    MACOS("macos")
-}
-
-enum class Architecture {
-    X64,
-    ARM64,
-}
-
-data class Version(
-    val major: Int,
-    val minor: Int,
-    val patch: Int,
-)
-
-data class FlutterVersion(
-    val id: Version,
-    val os: OperatingSystem,
-    val arch: Architecture
-)
-
-internal val FlutterVersion.folderName: String
-    get() = "${id.prettyPrint}.${os.value.lowercase()}.${arch.name.lowercase()}"
-
-internal val Version.prettyPrint: String
-    get() = "${major}.${minor}.${patch}"
+import dev.buijs.klutter.kore.project.Architecture
+import dev.buijs.klutter.kore.project.Flutter
+import dev.buijs.klutter.kore.project.OperatingSystem
+import dev.buijs.klutter.kore.project.Version
 
 internal fun compatibleFlutterVersionSet() = buildSet {
     for(entry in compatibleFlutterVersions) {
         val os = entry.key
         entry.value.forEach { (arch, versions) ->
             for(version in versions.keys) {
-                add(FlutterVersion(version, os, arch))
+                add(Flutter(version, os, arch))
             }
         }
     }

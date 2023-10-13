@@ -19,7 +19,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com.example.my_plugin.project",
-                flutterPath = flutterSDK.absolutePathString()
+                flutterVersion = flutterSDK.absolutePathString()
             ).validate().isValid shouldBe  true
         }
 
@@ -29,7 +29,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             var config = NewProjectConfig(
                 appName = "_invalid_project.name!!!",
                 groupName = "com.example.my_plugin.project",
-                flutterPath = flutterSDK.absolutePathString()
+                flutterVersion = flutterSDK.absolutePathString()
             )
 
             // expect validation to fail
@@ -39,7 +39,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com_._!example.my_plugin.project",
-                flutterPath = flutterSDK.absolutePathString()
+                flutterVersion = flutterSDK.absolutePathString()
             )
 
             // expect validation to fail
@@ -49,7 +49,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "_invalid_project!!!",
                 groupName = "com_._!example.my_plugin.project",
-                flutterPath = flutterSDK.absolutePathString()
+                flutterVersion = flutterSDK.absolutePathString()
             )
 
             // expect validation to fail

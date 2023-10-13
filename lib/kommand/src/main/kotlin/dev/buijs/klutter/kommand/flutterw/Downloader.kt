@@ -1,8 +1,7 @@
 package dev.buijs.klutter.kommand.flutterw
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.flutterSDK
-import dev.buijs.klutter.kore.project.initKlutterProjectsFolder
+import dev.buijs.klutter.kore.project.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -27,10 +26,10 @@ private const val bufferSize = 4096
 /**
  * Files which should be executable.
  */
-private val executableFiles = setOf("flutter", "dart")
+private val executableFiles = setOf("flutter", "dart", "impellerc")
 
-internal fun downloadFlutter(version: FlutterVersion) =
-    downloadFlutter(version.id, version.os, version.arch)
+internal fun downloadFlutter(flutter: Flutter) =
+    downloadFlutter(flutter.version, flutter.os, flutter.arch)
 
 internal fun downloadFlutter(
     version: Version,
@@ -53,7 +52,7 @@ internal fun downloadFlutter(
 
     // Run init to make sure KlutterProjects/.cache exists in the user home.
     initKlutterProjectsFolder()
-    zip.unzipTo(flutterSDK(FlutterVersion(version, os, arch).folderName).absolutePath)
+    zip.unzipTo(flutterSDK(Flutter(version, os, arch).folderName).absolutePath)
     zip.deleteRecursively()
 }
 

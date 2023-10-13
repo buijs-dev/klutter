@@ -36,10 +36,7 @@ import dev.buijs.klutter.compiler.wrapper.KCLogger
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import dev.buijs.klutter.kore.project.Project
-import dev.buijs.klutter.kore.project.Pubspec
-import dev.buijs.klutter.kore.project.plugin
-import dev.buijs.klutter.kore.project.toPubspec
+import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.codegen.GenerateCodeOptions
 import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
 import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
@@ -67,7 +64,7 @@ class Processor(
     private lateinit var output: File
     private lateinit var project: Project
     private lateinit var pubspec: Pubspec
-    private lateinit var flutter: File
+    private lateinit var flutter: String
 
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
@@ -75,7 +72,7 @@ class Processor(
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         kcLogger = KCLogger(log, options.outputFolder)
-        flutter = options.flutterPath
+        flutter = options.flutterVersion
         output  = options.outputFolder
         project = output.plugin()
         pubspec = project.root.toPubspec()
@@ -127,7 +124,7 @@ class Processor(
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
             controllers = controllers!!,
             messages = messages!!,
-            flutterPath = flutter,
+            flutterVersion = flutter,
             log = { str -> kcLogger?.info("Running dart command:\n$str") })
 
         findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()

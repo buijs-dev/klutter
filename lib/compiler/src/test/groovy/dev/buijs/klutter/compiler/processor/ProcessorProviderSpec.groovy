@@ -42,6 +42,10 @@ class ProcessorProviderSpec extends Specification {
     @Shared
     File flutterSDKFolder = Files.createTempDirectory("flutterbin").toFile()
 
+    def setupSpec() {
+        ProcessorOptionsKt.dryRun = true
+    }
+
     def "Verify that ProcessorProvider parses options from KSP properly" () {
         given:
         def options = [
@@ -49,7 +53,7 @@ class ProcessorProviderSpec extends Specification {
                 "klutterOutputFolder": outputFolder.path,
                 "klutterGenerateAdapters": "false",
                 "intelMac": "false",
-                "flutterSDKPath": flutterSDKFolder.path
+                "flutterVersion": "3.0.5.windows.x64"
         ]
 
         and:
@@ -133,6 +137,6 @@ class ProcessorProviderSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.message.contains("Option flutterSDKPath not set!")
+        e.message.contains("arg(\"flutterVersion\", <Flutter Version in format major.minor.patch.platform.arch, example: 3.0.5.windows.x64>)")
     }
 }

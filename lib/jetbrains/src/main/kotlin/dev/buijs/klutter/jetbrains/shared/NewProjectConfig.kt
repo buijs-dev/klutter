@@ -48,9 +48,9 @@ class NewProjectConfig(
     var groupName: String? = null,
 
     /**
-     * Path to the local Flutter distribution.
+     * Flutter SDK version.
      */
-    var flutterPath: String? = null,
+    var flutterVersion: String? = null,
 
     /**
      * Get pub dependencies from Git or Pub.
@@ -88,10 +88,10 @@ fun NewProjectConfig.validate(): ValidationResult {
     else if(toGroupName(groupName!!) is EitherNok)
         messages.add(INVALID_GROUP_NAME)
 
-    if(flutterPath == null)
+    if(flutterVersion == null)
         messages.add(MISSING_FLUTTER_PATH)
 
-    else if(toFlutterPath(flutterPath!!) is EitherNok)
+    else if(toFlutterPath(flutterVersion!!) is EitherNok)
         messages.add(INVALID_FLUTTER_PATH)
 
     return ValidationResult(messages)

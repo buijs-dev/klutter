@@ -21,7 +21,8 @@
  */
 package dev.buijs.klutter.kommand.flutterw
 
-import java.io.File
+import dev.buijs.klutter.kore.project.Architecture
+import dev.buijs.klutter.kore.project.OperatingSystem
 
 internal sealed interface Input {
     val majorVersion: Int

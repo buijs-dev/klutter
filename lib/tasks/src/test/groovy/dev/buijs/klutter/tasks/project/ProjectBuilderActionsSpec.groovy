@@ -36,7 +36,7 @@ class ProjectBuilderActionsSpec extends Specification {
                         Either.ok(new File("")),
                         Either.ok(""),
                         Either.ok(""),
-                        Either.ok(new File("")),
+                        "3.0.5.macos.arm64",
                         null))
 
         then:

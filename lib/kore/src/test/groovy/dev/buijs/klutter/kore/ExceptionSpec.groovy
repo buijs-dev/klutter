@@ -6,7 +6,7 @@ class ExceptionSpec extends Specification {
 
     def "Verify exception message"() {
         given:
-        def exception = new KlutterException("BOOM!")
+        def exception = new KlutterException("BOOM!", null)
 
         expect:
         exception.message == "BOOM!"

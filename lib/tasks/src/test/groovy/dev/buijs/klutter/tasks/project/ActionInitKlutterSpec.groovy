@@ -70,14 +70,12 @@ class ActionInitKlutterSpec extends Specification {
     @Shared
     def pathToExample = example.absolutePath
 
-    @Shared
-    def pathToFlutterSDK = root.absolutePath
+    String flutterVersion = "3.0.5.macos.arm64"
 
     def setupSpec() {
         validRootFolder = Either.ok(root)
         validPluginName = Either.ok(pluginName)
-        validFlutterPath = Either.ok(new File(pathToFlutterSDK))
-        config = new Config(new Dependencies(), "2023.x.y")
+        config = new Config(new Dependencies(), "2023.x.y", null)
         klutterYaml = root.toPath().resolve("my_plugin/klutter.yaml").toFile()
         plugin.mkdirs()
         example.mkdirs()
@@ -93,7 +91,7 @@ class ActionInitKlutterSpec extends Specification {
             klutterYaml.delete()
 
         and:
-        def sut = new InitKlutter(validRootFolder, validPluginName, validFlutterPath, config)
+        def sut = new InitKlutter(validRootFolder, validPluginName, flutterVersion, config)
 
         when: "task will fail because of invalid pubspec.yamls but does not matter"
         try {
@@ -105,25 +103,6 @@ class ActionInitKlutterSpec extends Specification {
         then:
         klutterYaml.exists()
         klutterYaml.text.contains("bom-version: '2023.x.y'")
-    }
-
-    def "When Config is null then root/klutter.yaml is NOT created"() {
-        given:
-        if(klutterYaml.exists())
-            klutterYaml.delete()
-
-        and:
-        def sut = new InitKlutter(validRootFolder, validPluginName, validFlutterPath)
-
-        when: "task will fail because of invalid pubspec.yamls but does not matter"
-        try {
-            sut.doAction()
-        } catch (Exception ignored) {
-            //ignore
-        }
-
-        then:
-        !klutterYaml.exists()
     }
 
     @Shared

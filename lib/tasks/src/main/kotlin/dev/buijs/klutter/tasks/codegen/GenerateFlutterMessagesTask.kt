@@ -32,7 +32,7 @@ fun GenerateCodeOptions.toGenerateFlutterMessagesTask() =
     GenerateFlutterMessagesTask(
         root = project.root,
         srcFolder = flutterSrcFolder,
-        flutterPath = flutterPath,
+        flutterVersion = flutterVersion,
         messages = messages,
         log = log)
 
@@ -42,12 +42,12 @@ fun GenerateCodeOptions.toGenerateFlutterMessagesTask() =
 class GenerateFlutterMessagesTask(
     private val root: Root,
     private val srcFolder: File,
-    flutterPath: File,
+    flutterVersion: String,
     private val messages: List<SquintMessageSource>,
     private val log: (String) -> Unit = {  },
 ) : KlutterTask, GenerateCodeAction {
 
-    private val flutter = flutterPath.absolutePath
+    private val flutter = flutterExecutable(flutterVersion).absolutePath
 
     override fun run() {
         messages.forEach { message ->

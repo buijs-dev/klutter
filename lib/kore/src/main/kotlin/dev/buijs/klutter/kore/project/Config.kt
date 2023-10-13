@@ -31,6 +31,7 @@ private val log = KotlinLogging.logger { }
 
 @JsonPropertyOrder(
     "bom-version",
+    "flutter-version",
     "dependencies")
 data class Config(
     @JsonProperty("dependencies")
@@ -38,6 +39,9 @@ data class Config(
 
     @JsonProperty("bom-version")
     val bomVersion: String = klutterBomVersion,
+
+    @JsonProperty("flutter-version")
+    val flutterVersion: String? = null,
 )
 
 @JsonPropertyOrder(
@@ -55,7 +59,6 @@ data class Dependencies(
     @JsonProperty("squint_json")
     val squint: String = squintPubVersion,
 
-    // TODO check for duplicate classes by removing versions (substring after last :) and then only keep the latest version...
     @JsonProperty("embedded")
     val embedded: Set<String> = emptySet()
 )

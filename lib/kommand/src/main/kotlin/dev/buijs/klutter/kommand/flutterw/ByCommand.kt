@@ -22,7 +22,10 @@
 package dev.buijs.klutter.kommand.flutterw
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.common.isWindows
+import dev.buijs.klutter.kore.project.Architecture
+import dev.buijs.klutter.kore.project.OperatingSystem
+import dev.buijs.klutter.kore.project.Version
+import dev.buijs.klutter.kore.project.isWindows
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.required

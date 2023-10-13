@@ -27,6 +27,8 @@ import dev.buijs.klutter.compiler.processor.ProcessorOption.*
 import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
+internal var dryRun = false
+
 /**
  * Parsed ksp options used by [Processor].
  * </br>
@@ -40,7 +42,7 @@ import java.io.File
 data class ProcessorOptions(
     val metadataFolder: File,
     val outputFolder: File,
-    val flutterPath: File,
+    val flutterVersion: String,
     val generateAdapters: Boolean,
     val isIntelBasedBuildMachine: Boolean,
 )
@@ -54,7 +56,7 @@ internal enum class ProcessorOption(val value: String) {
     OUTPUT_FOLDER("klutterOutputFolder"),
     GENERATE_ADAPTERS("klutterGenerateAdapters"),
     INTEL_BASED_APPLE("intelMac"),
-    FLUTTER_SDK_PATH("flutterSDKPath"),
+    FLUTTER_SDK_VERSION("flutterVersion"),
 }
 
 /**
@@ -66,7 +68,7 @@ internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
     outputFolder = options.outputFolder(),
     generateAdapters = options.boolean(GENERATE_ADAPTERS),
     isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
-    flutterPath = options.flutterSDKPath()
+    flutterVersion = options.flutterFolder()
 ).also { kcLogger?.info("Determined Processor Options: $it") }
 
 /**
@@ -110,19 +112,17 @@ private fun Map<String,String>.outputFolder(): File {
 /**
  * Parse required ksp option which contains path to the flutter bin folder.
  */
-// TODO change to SDK version major.minor.version.platform.arch and retrieve it using flutterExecutable method
-private fun Map<String,String>.flutterSDKPath(): File {
-    val option = FLUTTER_SDK_PATH.value
-    val pathToFlutterSDK = this[option]
+private fun Map<String,String>.flutterFolder(): String {
+    val option = FLUTTER_SDK_VERSION.value
+    return this[option]
         ?: throw KlutterException("""Option $option not set!
                 |Add this option to the ksp DSL, example:
                 |```
                 |ksp {
-                |    arg("$option", <path-to-flutter-bin>)
+                |    arg("$option", <Flutter Version in format major.minor.patch.platform.arch, example: 3.0.5.windows.x64>)
                 |}
                 |```
                 |""".trimMargin())
-    return File(pathToFlutterSDK).also { it.verifyExists() }
 }
 
 /**

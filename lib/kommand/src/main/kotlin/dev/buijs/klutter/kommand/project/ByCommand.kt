@@ -21,13 +21,9 @@
  */
 package dev.buijs.klutter.kommand.project
 
-import dev.buijs.klutter.kommand.flutterw.*
 import dev.buijs.klutter.kommand.flutterw.downloadFlutter
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.common.isWindows
-import dev.buijs.klutter.kore.project.Config
-import dev.buijs.klutter.kore.project.flutterSDK
-import dev.buijs.klutter.kore.project.toConfigOrNull
+import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.project.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
@@ -55,7 +51,7 @@ private fun ByCommand.toProjectBuilderOptions(): ProjectBuilderOptions =
         rootFolder = rootFolder,
         groupName = groupName,
         pluginName = pluginName,
-        flutterPath = flutterPath,
+        flutterVersion = flutterVersion,
         config = configOrNull)
 
 private class ByCommand(parser: ArgParser, args: Array<String>): Input {
@@ -83,7 +79,7 @@ private class ByCommand(parser: ArgParser, args: Array<String>): Input {
     override val pluginName: PluginName
         get() = toPluginName(name)
 
-    override val flutterPath: FlutterPath
+    override val flutterVersion: String
         get() {
             val splitted = flutter.trim().uppercase().split(".")
             val major = splitted.getOrNull(0)?.toIntOrNull()
@@ -96,14 +92,14 @@ private class ByCommand(parser: ArgParser, args: Array<String>): Input {
             val arch = splitted.getOrNull(3)?.let { Architecture.valueOf(it) }
             if(arch == null && os == OperatingSystem.MACOS)
                 throw KlutterException("Architecture (X64 or ARM64) is missing")
-            val version = FlutterVersion(
-                id = Version(major, minor, patch),
+            val version = Flutter(
+                version = Version(major, minor, patch),
                 os = os,
                 arch = arch ?: Architecture.X64)
             val sdkLocation = flutterSDK(version.folderName)
             if(!sdkLocation.exists())
                 downloadFlutter(version)
-            return toFlutterPath(sdkLocation.absolutePath)
+            return version.folderName
         }
 
     override val configOrNull: Config?

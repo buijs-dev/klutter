@@ -26,21 +26,19 @@ import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
-    InitKlutter(rootFolder, pluginName, flutterPath, config)
+    InitKlutter(rootFolder, pluginName, flutterVersion, config)
 
 internal class InitKlutter
 @JvmOverloads constructor(
     rootFolder: RootFolder,
     pluginName: PluginName,
-    flutterPath: FlutterPath,
-    configOrNull: Config? = null
+    private val flutterVersion: String,
+    private val configOrNull: Config? = null
 ): ProjectBuilderAction {
 
     private val name = pluginName.validPluginNameOrThrow()
     private val root = rootFolder.validRootFolderOrThrow().resolve(name)
-    private val conf = configOrNull
-    private val confContainsBom = conf?.bomVersion != null
-    private val flutter = flutterPath.validFlutterPathOrThrow()
+    private val flutter = flutterExecutable(flutterVersion).absolutePath
 
     private val rootPubspecFile =
         root.resolve("pubspec.yaml")
@@ -55,20 +53,22 @@ internal class InitKlutter
         exampleFolder.resolve("pubspec.yaml")
 
     override fun doAction() {
-        if(confContainsBom)
-            root.writeKlutterYaml(conf!!.bomVersion)
+        root.writeKlutterYaml(
+            flutterVersion = flutterVersion,
+            bomVersion = configOrNull?.bomVersion)
 
         rootPubspecInit(
             pubspec = rootPubspec,
             pubspecFile = rootPubspecFile,
-            config = conf)
+            config = configOrNull)
 
         examplePubspecInit(
             rootPubspec = rootPubspec,
             examplePubspecFile = examplePubspecFile,
-            config = conf)
+            config = configOrNull)
 
         root.deleteTestFolder()
+        root.deleteIntegrationTestFolder()
         root.clearLibFolder()
         root.overwriteReadmeFile()
         root.copyLocalProperties()
@@ -77,6 +77,10 @@ internal class InitKlutter
         "$flutter pub run klutter:producer init" execute root
         "$flutter pub run klutter:consumer init" execute exampleFolder
         "$flutter pub run klutter:consumer add=$name" execute exampleFolder
+        exampleFolder.deleteIntegrationTestFolder()
+
+        // Do not bother setting up iOS on windows
+        if(dev.buijs.klutter.kore.common.isWindows) return
         exampleFolder.deleteIosPodfileLock()
         exampleFolder.deleteIosPods()
         exampleFolder.deleteRunnerXCWorkspace()
@@ -92,6 +96,16 @@ internal class InitKlutter
      */
     private fun File.deleteTestFolder() {
         resolve("test").deleteRecursively()
+    }
+
+    /**
+     * Delete integration_test folder and all it's content.
+     *
+     * You should test, but we're going to do that with Spock/JUnit in the platform module,
+     * not with Dart in the root/test folder.
+     */
+    private fun File.deleteIntegrationTestFolder() {
+        resolve("integration_test").deleteRecursively()
     }
 
     /**
@@ -152,10 +166,12 @@ internal class InitKlutter
             resolve("android/local.properties").copyTo(properties)
     }
 
-    private fun File.writeKlutterYaml(bomVersion: String) {
+    private fun File.writeKlutterYaml(flutterVersion: String, bomVersion: String? = null) {
         val rootConfigFile = resolve("klutter.yaml")
         rootConfigFile.createNewFile()
-        rootConfigFile.writeText("bom-version: '$bomVersion'")
+        if(bomVersion != null)
+            rootConfigFile.appendText("bom-version: '$bomVersion'\n")
+        rootConfigFile.appendText("flutter-version: '$flutterVersion'")
     }
 }
 

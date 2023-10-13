@@ -51,10 +51,9 @@ class ActionFlutterCreateSpec extends Specification {
     EitherNok invalidGroupName
 
     @Shared
-    EitherOk validFlutterPath
-
-    @Shared
     EitherNok invalidFlutterPath
+
+    String flutterVersion = "3.0.5.macos.arm64"
 
     def setupSpec() {
         def root = Files.createTempDirectory("").toFile()
@@ -64,7 +63,6 @@ class ActionFlutterCreateSpec extends Specification {
         invalidPluginName = Either.nok("Not a valid plugin name")
         validGroupName = Either.ok("com.example")
         invalidGroupName = Either.nok("Not a valid group name")
-        validFlutterPath = Either.ok(new File(root.absolutePath))
         invalidFlutterPath = Either.nok("Folder does not exist")
     }
 
@@ -74,7 +72,7 @@ class ActionFlutterCreateSpec extends Specification {
                 validPluginName,
                 validGroupName,
                 invalidRootFolder,
-                validFlutterPath)
+                flutterVersion)
 
         when:
         sut.doAction()
@@ -90,7 +88,7 @@ class ActionFlutterCreateSpec extends Specification {
                 invalidPluginName,
                 validGroupName,
                 validRootFolder,
-                validFlutterPath)
+                flutterVersion)
 
         when:
         sut.doAction()
@@ -106,7 +104,7 @@ class ActionFlutterCreateSpec extends Specification {
                 validPluginName,
                 invalidGroupName,
                 validRootFolder,
-                validFlutterPath)
+                flutterVersion)
 
         when:
         sut.doAction()
@@ -116,19 +114,4 @@ class ActionFlutterCreateSpec extends Specification {
         e.message == "Not a valid group name"
     }
 
-    def "When FlutterPath is invalid then a KlutterException is thrown"() {
-        given:
-        def sut = new RunFlutterCreate(
-                validPluginName,
-                validGroupName,
-                validRootFolder,
-                invalidFlutterPath)
-
-        when:
-        sut.doAction()
-
-        then:
-        KlutterException e = thrown()
-        e.message == "Folder does not exist"
-    }
 }

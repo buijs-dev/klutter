@@ -24,17 +24,15 @@ package dev.buijs.klutter.kommand.project
 import com.github.kinquirer.KInquirer
 import com.github.kinquirer.components.*
 import dev.buijs.klutter.kommand.Open4Test
-import dev.buijs.klutter.kommand.flutterw.*
 import dev.buijs.klutter.kommand.flutterw.compatibleFlutterVersionSet
 import dev.buijs.klutter.kommand.flutterw.downloadFlutter
-import dev.buijs.klutter.kommand.flutterw.prettyPrint
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import dev.buijs.klutter.kore.common.isWindows
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.project.*
 import java.io.File
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
 
@@ -91,15 +89,16 @@ internal class ByWizard(
         askForConfig(),
 
 ) : Input {
-    override val flutterPath: FlutterPath
+    override val flutterVersion: String
         get() {
-            val version = flutterSDK.flutterVersion
+            val version = flutterFromString(flutterSDK)
             val sdkLocation = flutterSDK(version.folderName)
             if(!sdkLocation.exists()) {
                 println("Downloading Flutter $flutterSDK... Just a moment!")
                 downloadFlutter(version)
+                println("Flutter $flutterSDK download complete.")
             }
-            return toFlutterPath(flutterExecutable(version.folderName).absolutePath)
+            return version.folderName
         }
 }
 
@@ -108,7 +107,7 @@ private fun ByWizard.toProjectBuilderOptions(): ProjectBuilderOptions =
         rootFolder = rootFolder,
         groupName = groupName,
         pluginName = pluginName,
-        flutterPath = flutterPath,
+        flutterVersion = flutterVersion,
         config = configOrNull)
 
 private fun askForGroupName(): String =
@@ -137,8 +136,8 @@ private fun askForRootFolder(): String {
         message = createProjectInCurrentFolderMessage,
         default = createProjectInCurrentFolderDefault)
 
-    // TODO this does NOT work
-    if(useCurrentFolder) return ""
+    if(useCurrentFolder)
+        return Path.of("").absolutePathString()
 
     return mrWizard.promptInput(
         message = projectFolderPathMessage,
@@ -178,7 +177,7 @@ private fun askForConfig(): Config? {
 }
 
 private fun askForFlutterVersion(): String {
-    val filterByOS: (Set<FlutterVersion>) -> List<FlutterVersion> = { versions ->
+    val filterByOS: (Set<Flutter>) -> List<Flutter> = { versions ->
             if(isWindows) versions.filter { version -> version.os == OperatingSystem.WINDOWS }
             else versions.filter { version -> version.os == OperatingSystem.MACOS }
     }
@@ -190,26 +189,6 @@ private fun askForFlutterVersion(): String {
             .let(filterByOS)
             .map { it.prettyPrint })
 }
-
-private val FlutterVersion.prettyPrint: String
-    get() = "${id.prettyPrint} ($os $arch)"
-
-private val String.flutterVersion: FlutterVersion
-    get() {
-        val osAndArchString = this
-            .substringAfter("(")
-            .substringBefore(")")
-            .split(" ")
-        val os = OperatingSystem.valueOf(osAndArchString[0].uppercase())
-        val arch = Architecture.valueOf(osAndArchString[1])
-        val versionString = substringBefore(" ")
-        val versionSplitted = versionString.split(".")
-        val version = Version(
-            major = versionSplitted[0].toInt(),
-            minor = versionSplitted[1].toInt(),
-            patch = versionSplitted[2].toInt())
-        return FlutterVersion(version, os, arch)
-    }
 
 private fun askForSource(name: String, stableVersion: String, gitUrl: String): String {
     val git = "Git@Develop"

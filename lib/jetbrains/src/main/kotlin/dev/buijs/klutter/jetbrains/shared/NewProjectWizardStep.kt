@@ -151,8 +151,8 @@ private val NewProjectConfig.useGitForPubDependenciesObservable
 
 private val NewProjectConfig.flutterPathObservable
     get() = observable(
-        get = { this.flutterPath ?: "" },
-        set = { this.flutterPath = it  })
+        get = { this.flutterVersion ?: "" },
+        set = { this.flutterVersion = it  })
 
 private fun <T> observable(
     get: () -> T,

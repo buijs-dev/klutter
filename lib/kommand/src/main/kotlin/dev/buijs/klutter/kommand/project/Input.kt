@@ -31,7 +31,7 @@ internal sealed interface Input {
 
     val pluginName: PluginName
 
-    val flutterPath: FlutterPath
+    val flutterVersion: String
 
     val configOrNull: Config?
 }

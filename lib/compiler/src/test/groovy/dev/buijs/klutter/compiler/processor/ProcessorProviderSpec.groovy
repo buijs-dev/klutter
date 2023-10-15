@@ -137,6 +137,6 @@ class ProcessorProviderSpec extends Specification {
 
         then:
         KlutterException e = thrown()
-        e.message.contains("arg(\"flutterVersion\", <Flutter Version in format major.minor.patch.platform.arch, example: 3.0.5.windows.x64>)")
+        e.message.contains(" arg(\"flutterVersion\", <Flutter Version in format major.minor.patch, example: 3.0.5)")
     }
 }

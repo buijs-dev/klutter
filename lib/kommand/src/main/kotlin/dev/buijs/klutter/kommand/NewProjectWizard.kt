@@ -19,13 +19,10 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand.project
+package dev.buijs.klutter.kommand
 
 import com.github.kinquirer.KInquirer
 import com.github.kinquirer.components.*
-import dev.buijs.klutter.kommand.Open4Test
-import dev.buijs.klutter.kommand.flutterw.compatibleFlutterVersionSet
-import dev.buijs.klutter.kommand.flutterw.downloadFlutter
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
@@ -82,24 +79,15 @@ internal class ByWizard(
     override val pluginName: PluginName =
         toPluginName(askForPluginName()),
 
-    private val flutterSDK: String =
+    private val prettyPrintedFlutterDistribution: String =
         askForFlutterVersion(),
 
     override val configOrNull: Config? =
         askForConfig(),
 
-) : Input {
-    override val flutterVersion: String
-        get() {
-            val version = flutterFromString(flutterSDK)
-            val sdkLocation = flutterSDK(version.folderName)
-            if(!sdkLocation.exists()) {
-                println("Downloading Flutter $flutterSDK... Just a moment!")
-                downloadFlutter(version)
-                println("Flutter $flutterSDK download complete.")
-            }
-            return version.folderName
-        }
+    ) : NewProjectInput {
+    override val flutterDistributionFolderName: FlutterDistributionFolderName
+        get() = PrettyPrintedFlutterDistribution(prettyPrintedFlutterDistribution).flutterDistribution.folderNameString
 }
 
 private fun ByWizard.toProjectBuilderOptions(): ProjectBuilderOptions =
@@ -107,7 +95,7 @@ private fun ByWizard.toProjectBuilderOptions(): ProjectBuilderOptions =
         rootFolder = rootFolder,
         groupName = groupName,
         pluginName = pluginName,
-        flutterVersion = flutterVersion,
+        flutterDistributionString = flutterDistributionFolderName,
         config = configOrNull)
 
 private fun askForGroupName(): String =
@@ -134,7 +122,8 @@ private class RootFolderQuestion {
 private fun askForRootFolder(): String {
     val useCurrentFolder = mrWizard.promptConfirm(
         message = createProjectInCurrentFolderMessage,
-        default = createProjectInCurrentFolderDefault)
+        default = createProjectInCurrentFolderDefault
+    )
 
     if(useCurrentFolder)
         return Path.of("").absolutePathString()
@@ -176,19 +165,11 @@ private fun askForConfig(): Config? {
             squint = squint))
 }
 
-private fun askForFlutterVersion(): String {
-    val filterByOS: (Set<Flutter>) -> List<Flutter> = { versions ->
-            if(isWindows) versions.filter { version -> version.os == OperatingSystem.WINDOWS }
-            else versions.filter { version -> version.os == OperatingSystem.MACOS }
-    }
-
-    return mrWizard.promptList(
+private fun askForFlutterVersion(): String =
+    mrWizard.promptList(
         hint = "press Enter to pick",
         message = "Select Flutter SDK version:",
-        choices = compatibleFlutterVersionSet()
-            .let(filterByOS)
-            .map { it.prettyPrint })
-}
+        choices = flutterVersionsDescending(currentOperatingSystem).map { "${it.prettyPrintedString}" })
 
 private fun askForSource(name: String, stableVersion: String, gitUrl: String): String {
     val git = "Git@Develop"

@@ -19,19 +19,20 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand.project
+package dev.buijs.klutter.kommand
 
 import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
 import dev.buijs.klutter.tasks.project.*
 
-internal sealed interface Input {
+internal sealed interface NewProjectInput {
     val rootFolder: RootFolder
 
     val groupName: GroupName
 
     val pluginName: PluginName
 
-    val flutterVersion: String
+    val flutterDistributionFolderName: FlutterDistributionFolderName
 
     val configOrNull: Config?
 }

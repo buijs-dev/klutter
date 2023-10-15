@@ -49,11 +49,11 @@
         </action>
         <!--The icon isn't being used here, but it is set by the action -->
         <!--suppress PluginXmlValidity -->
-        <action id="klutter.NewProject.welcome" class="dev.buijs.klutter.jetbrains.shared.NewProjectAction"
-                icon="NotUsed"
-                text="Create New Klutter Project"
-                description="Create a new Klutter project">
-            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
-        </action>
+<!--        <action id="klutter.NewProject.welcome" class="dev.buijs.klutter.jetbrains.shared.NewProjectAction"-->
+<!--                icon="NotUsed"-->
+<!--                text="Create New Klutter Project"-->
+<!--                description="Create a new Klutter project">-->
+<!--            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>-->
+<!--        </action>-->
     </actions>
 </idea-plugin>

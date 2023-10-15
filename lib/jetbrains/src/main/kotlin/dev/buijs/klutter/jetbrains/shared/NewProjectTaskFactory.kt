@@ -25,11 +25,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.project.Config
-import dev.buijs.klutter.kore.project.Dependencies
-import dev.buijs.klutter.kore.project.gitDependencies
-import dev.buijs.klutter.kore.project.klutterBomVersion
+import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.executor
 import dev.buijs.klutter.tasks.project.*
 import mu.KotlinLogging
@@ -49,7 +45,7 @@ object NewProjectTaskFactory {
             rootFolder = toRootFolder(pathToRoot),
             pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
             groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup),
-            flutterVersion = config.flutterVersion ?: throw KlutterException("Flutter Version is missing!"),
+            flutterDistributionString = config.prettyPrintedFlutterDistribution.folderName,
             config = Config(
                 bomVersion = config.bomVersion ?: klutterBomVersion,
                 dependencies = if(config.useGitForPubDependencies == true) gitDependencies else Dependencies())))

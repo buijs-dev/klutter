@@ -22,6 +22,8 @@
 package dev.buijs.klutter.tasks.project
 
 import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
+import dev.buijs.klutter.kore.project.flutterDistribution
 
 data class ProjectBuilderOptions(
     /**
@@ -42,10 +44,12 @@ data class ProjectBuilderOptions(
     /**
      * Flutter SDK version.
      */
-    val flutterVersion: String,
+    val flutterDistributionString: FlutterDistributionFolderName,
 
     /**
      * Custom configuration for tweaking project generation.
      */
     val config: Config? = null,
-)
+) {
+    val flutterFolder = flutterDistributionString.flutterDistribution
+}

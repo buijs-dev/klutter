@@ -19,15 +19,19 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand.flutterw
+package dev.buijs.klutter.tasks.project
 
-import dev.buijs.klutter.kore.project.Architecture
-import dev.buijs.klutter.kore.project.OperatingSystem
+import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.project.FlutterDistribution
 
-internal sealed interface Input {
-    val majorVersion: Int
-    val minorVersion: Int?
-    val patchVersion: Int?
-    val architecture: Architecture
-    val os: OperatingSystem
+/**
+ * Task to download a compatible Flutter distribution.
+ */
+class DownloadFlutterTask(
+    private val flutter: FlutterDistribution,
+    private val overwrite: Boolean = false
+) : KlutterTask {
+    override fun run() {
+        DownloadFlutter(flutter, overwrite).doAction()
+    }
 }

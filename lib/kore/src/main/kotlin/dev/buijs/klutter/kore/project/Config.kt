@@ -51,13 +51,13 @@ data class Config(
     "embedded")
 data class Dependencies(
     @JsonProperty("klutter")
-    val klutter: String = klutterPubVersion,
+    val klutter: String? = null,
 
     @JsonProperty("klutter_ui")
-    val klutterUI: String = klutterUIPubVersion,
+    val klutterUI: String? = null,
 
     @JsonProperty("squint_json")
-    val squint: String = squintPubVersion,
+    val squint: String? = null,
 
     @JsonProperty("embedded")
     val embedded: Set<String> = emptySet()

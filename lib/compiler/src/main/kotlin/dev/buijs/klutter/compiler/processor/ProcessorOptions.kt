@@ -68,7 +68,7 @@ internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
     outputFolder = options.outputFolder(),
     generateAdapters = options.boolean(GENERATE_ADAPTERS),
     isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
-    flutterVersion = options.flutterFolder()
+    flutterVersion = options.flutterVersion()
 ).also { kcLogger?.info("Determined Processor Options: $it") }
 
 /**
@@ -112,14 +112,14 @@ private fun Map<String,String>.outputFolder(): File {
 /**
  * Parse required ksp option which contains path to the flutter bin folder.
  */
-private fun Map<String,String>.flutterFolder(): String {
+private fun Map<String,String>.flutterVersion(): String {
     val option = FLUTTER_SDK_VERSION.value
     return this[option]
         ?: throw KlutterException("""Option $option not set!
                 |Add this option to the ksp DSL, example:
                 |```
                 |ksp {
-                |    arg("$option", <Flutter Version in format major.minor.patch.platform.arch, example: 3.0.5.windows.x64>)
+                |    arg("$option", <Flutter Version in format major.minor.patch, example: 3.0.5)
                 |}
                 |```
                 |""".trimMargin())

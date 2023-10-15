@@ -21,9 +21,6 @@
  */
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kommand.flutterw.downloadFlutterOrThrow
-import dev.buijs.klutter.kommand.project.getOptionsByUserInput
-import dev.buijs.klutter.kommand.project.projectBuilderOptionsByCommand
 import dev.buijs.klutter.kore.project.klutterBomVersion
 import dev.buijs.klutter.tasks.project.ProjectBuilderTask
 
@@ -34,16 +31,25 @@ fun main(args: Array<String>) {
   ════════════════════════════════════════════
   """)
 
-    if(args.firstOrNull() == "flutter-download") {
-        args.toMutableList().also { it.removeFirst() }.downloadFlutterOrThrow()
-        return
+    when {
+        // TODO start start by asking what the user wants to do
+        // and execute the tasks accordingly.
+        args.isEmpty() -> {
+            val options = getOptionsByUserInput()
+            ProjectBuilderTask(options).run()
+        }
+
+        args.firstOrNull() == "get" ->
+            args.toMutableList().also { it.removeFirst() }.getDependency()
+
+        args.firstOrNull() == "clean" ->
+            args.toMutableList().also { it.removeFirst() }.getDependency()
+
+        args.firstOrNull() == "create" ->
+            args.toMutableList().also { it.removeFirst() }.projectBuilderOptionsNewProjectCommand()
+
+        else ->
+            println("I don't know what to do. Please try again!")
     }
 
-    val options = if(args.isEmpty()) {
-        getOptionsByUserInput()
-    } else {
-        args.projectBuilderOptionsByCommand()
-    }
-
-    ProjectBuilderTask(options).run()
 }

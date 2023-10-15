@@ -33,6 +33,9 @@ internal inline fun <reified T: ProjectBuilderAction> findProjectBuilderAction(
         InitKlutter::class.java ->
             options.toInitKlutterAction()
 
+        DownloadFlutter::class.java ->
+            options.toDowloadFlutterTask()
+
         else -> throw KlutterException("Unknown ProjectBuilderAction: ${T::class.java}")
     }
 }

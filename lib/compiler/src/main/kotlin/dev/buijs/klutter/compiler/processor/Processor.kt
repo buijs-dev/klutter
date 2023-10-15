@@ -36,10 +36,12 @@ import dev.buijs.klutter.compiler.wrapper.KCLogger
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
+import dev.buijs.klutter.kore.common.verifyExists
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.codegen.GenerateCodeOptions
 import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
 import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
+import dev.buijs.klutter.tasks.project.DownloadFlutterTask
 import java.io.File
 
 internal var kcLogger: KCLogger? = null
@@ -64,15 +66,37 @@ class Processor(
     private lateinit var output: File
     private lateinit var project: Project
     private lateinit var pubspec: Pubspec
-    private lateinit var flutter: String
 
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
 
+    private val flutterFolder: FlutterDistributionFolderName
+        get() {
+            val os = currentOperatingSystem
+            val arch = when {
+                os != OperatingSystem.MACOS -> Architecture.X64
+                options.isIntelBasedBuildMachine -> Architecture.X64
+                else -> Architecture.ARM64
+            }
+            val version = options.flutterVersion
+            val folder = FlutterDistributionFolderName("$version.$os.$arch".lowercase())
+            val exe = flutterExecutable(folder)
+            if(!exe.exists()) {
+                DownloadFlutterTask(FlutterDistribution(
+                    os = currentOperatingSystem,
+                    arch = arch,
+                    version = version
+                        .split(".")
+                        .let { Version(it[0].toInt(), it[1].toInt(), it[2].toInt()) }
+                )).run()
+            }
+            exe.verifyExists()
+            return folder
+        }
+
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         kcLogger = KCLogger(log, options.outputFolder)
-        flutter = options.flutterVersion
         output  = options.outputFolder
         project = output.plugin()
         pubspec = project.root.toPubspec()
@@ -124,11 +148,12 @@ class Processor(
             excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
             controllers = controllers!!,
             messages = messages!!,
-            flutterVersion = flutter,
+            flutterFolder = flutterFolder,
             log = { str -> kcLogger?.info("Running dart command:\n$str") })
 
         findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()
     }
+
 }
 
 @ExcludeFromJacocoGeneratedReport

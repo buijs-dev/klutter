@@ -22,7 +22,8 @@
 package dev.buijs.klutter.jetbrains.shared
 
 import dev.buijs.klutter.kore.common.EitherNok
-import dev.buijs.klutter.tasks.project.toFlutterPath
+import dev.buijs.klutter.kore.project.PrettyPrintedFlutterDistribution
+import dev.buijs.klutter.kore.project.latestVersionPlaceholder
 import dev.buijs.klutter.tasks.project.toGroupName
 import dev.buijs.klutter.tasks.project.toPluginName
 
@@ -50,7 +51,8 @@ class NewProjectConfig(
     /**
      * Flutter SDK version.
      */
-    var flutterVersion: String? = null,
+    var prettyPrintedFlutterDistribution: PrettyPrintedFlutterDistribution =
+        PrettyPrintedFlutterDistribution("$latestVersionPlaceholder"),
 
     /**
      * Get pub dependencies from Git or Pub.
@@ -67,8 +69,6 @@ internal const val INVALID_APP_NAME = "Invalid app name"
 internal const val MISSING_APP_NAME = "Missing app name"
 internal const val INVALID_GROUP_NAME = "Invalid group name"
 internal const val MISSING_GROUP_NAME = "Missing group name"
-internal const val MISSING_FLUTTER_PATH = "Missing flutter path"
-internal const val INVALID_FLUTTER_PATH = "Invalid flutter path"
 
 /**
  * Validate a [NewProjectConfig] instance.
@@ -87,12 +87,6 @@ fun NewProjectConfig.validate(): ValidationResult {
 
     else if(toGroupName(groupName!!) is EitherNok)
         messages.add(INVALID_GROUP_NAME)
-
-    if(flutterVersion == null)
-        messages.add(MISSING_FLUTTER_PATH)
-
-    else if(toFlutterPath(flutterVersion!!) is EitherNok)
-        messages.add(INVALID_FLUTTER_PATH)
 
     return ValidationResult(messages)
 }

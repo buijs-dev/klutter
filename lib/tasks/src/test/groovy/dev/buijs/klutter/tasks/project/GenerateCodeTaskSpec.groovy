@@ -35,6 +35,8 @@ import dev.buijs.klutter.kore.ast.StringType
 import dev.buijs.klutter.kore.ast.TypeMember
 import dev.buijs.klutter.kore.ast.UnitType
 import dev.buijs.klutter.kore.common.Either
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
+import dev.buijs.klutter.kore.project.FlutterDistributionKt
 import dev.buijs.klutter.kore.project.ProjectKt
 import dev.buijs.klutter.kore.project.PubspecBuilder
 import dev.buijs.klutter.tasks.ExecutorKt
@@ -79,13 +81,13 @@ class GenerateCodeTaskSpec extends Specification {
     def pathToExample = example.absolutePath
 
     @Shared
-    def flutterVersion = "3.0.5.macos.arm64"
+    def flutterDistribution = "3.0.5.macos.arm64"
 
     @Shared
-    def flutterExe = ProjectKt.flutterExecutable(flutterVersion).absolutePath
+    def flutterExe = ProjectKt.flutterExecutable(flutterDistribution).absolutePath
 
     @Shared
-    def dartExe = ProjectKt.dartExecutable(flutterVersion).absolutePath
+    def dartExe = ProjectKt.dartExecutable(flutterDistribution).absolutePath
 
     @Shared
     def sut = new ProjectBuilderTask(
@@ -93,7 +95,7 @@ class GenerateCodeTaskSpec extends Specification {
                     Either.ok(new File(pathToRoot)),
                     Either.ok(pluginName),
                     Either.ok(groupName),
-                    flutterVersion,
+                    flutterDistribution,
                     null))
 
     @Shared
@@ -156,6 +158,7 @@ class GenerateCodeTaskSpec extends Specification {
     @Shared
     List<SquintMessageSource> messages
     def setupSpec() {
+        ActionDownloadFlutterKt.dryRun = true
         plugin.mkdirs()
         example.mkdirs()
         ExecutorKt.executor = executor

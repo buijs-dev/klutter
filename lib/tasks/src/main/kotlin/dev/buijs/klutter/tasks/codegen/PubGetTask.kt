@@ -22,23 +22,24 @@
 package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
 import dev.buijs.klutter.kore.project.flutterExecutable
 import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 fun GenerateCodeOptions.toPubGetTask() =
-    PubGetTask(project.root.folder, flutterVersion,log)
+    PubGetTask(project.root.folder, flutterFolder,log)
 
 /**
  * Run command 'flutter pub get'  in a folder.
  */
 class PubGetTask(
     private val folder: File,
-    flutterVersion: String,
+    flutterFolder: FlutterDistributionFolderName,
     private val log: (String) -> Unit = {  },
 ) : KlutterTask, GenerateCodeAction {
 
-    private val flutter = flutterExecutable(flutterVersion).absolutePath
+    private val flutter = flutterExecutable(flutterFolder).absolutePath
 
     override fun run() {
         "$flutter pub get".execute(folder).also { log(it) }

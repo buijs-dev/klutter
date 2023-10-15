@@ -28,6 +28,7 @@ import dev.buijs.klutter.kore.KlutterTask
  */
 class ProjectBuilderTask(private val options: ProjectBuilderOptions) : KlutterTask {
     override fun run() {
+        findProjectBuilderAction<DownloadFlutter>(options).doAction()
         findProjectBuilderAction<RunFlutterCreate>(options).doAction()
         findProjectBuilderAction<InitKlutter>(options).doAction()
     }

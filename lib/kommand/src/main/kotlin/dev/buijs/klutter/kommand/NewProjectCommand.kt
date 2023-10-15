@@ -19,15 +19,11 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kommand.project
+package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kommand.flutterw.downloadFlutter
-import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.tasks.project.*
 import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.required
 import java.io.File
 
 private const val rootDescription = "Path to root folder"
@@ -38,23 +34,23 @@ private const val nameDescription = "Name of app (plugin)"
 
 private const val configDescription = "Path to klutter.yaml"
 
-private const val flutterDescription = "Flutter SDK version (format: major.minor.patch and if macos then add the architecture, example: 3.0.4.ARM64)"
+private const val flutterDescription = "Flutter SDK version (format: major.minor.patch.platform.architecture, example: 3.10.6.macos.arm64)"
 
-internal fun List<String>.projectBuilderOptionsByCommand(): ProjectBuilderOptions =
-    toTypedArray().projectBuilderOptionsByCommand()
+internal fun List<String>.projectBuilderOptionsNewProjectCommand(): ProjectBuilderOptions =
+    toTypedArray().projectBuilderOptionsNewProjectCommand()
 
-internal fun Array<String>.projectBuilderOptionsByCommand(): ProjectBuilderOptions =
-    ByCommand(parser = ArgParser("klutter"), args = this).toProjectBuilderOptions()
+internal fun Array<String>.projectBuilderOptionsNewProjectCommand(): ProjectBuilderOptions =
+    NewProjectCommand(parser = ArgParser("klutter"), args = this).toProjectBuilderOptions()
 
-private fun ByCommand.toProjectBuilderOptions(): ProjectBuilderOptions =
+private fun NewProjectCommand.toProjectBuilderOptions(): ProjectBuilderOptions =
     ProjectBuilderOptions(
         rootFolder = rootFolder,
         groupName = groupName,
         pluginName = pluginName,
-        flutterVersion = flutterVersion,
+        flutterDistributionString = flutterDistributionFolderName,
         config = configOrNull)
 
-private class ByCommand(parser: ArgParser, args: Array<String>): Input {
+private class NewProjectCommand(parser: ArgParser, args: Array<String>): NewProjectInput {
 
     private val root by parser required rootDescription
 
@@ -79,35 +75,9 @@ private class ByCommand(parser: ArgParser, args: Array<String>): Input {
     override val pluginName: PluginName
         get() = toPluginName(name)
 
-    override val flutterVersion: String
-        get() {
-            val splitted = flutter.trim().uppercase().split(".")
-            val major = splitted.getOrNull(0)?.toIntOrNull()
-                ?: throw KlutterException("Flutter version is invalid: $flutter")
-            val minor = splitted.getOrNull(1)?.toIntOrNull()
-                ?: throw KlutterException("Flutter version is invalid: $flutter")
-            val patch = splitted.getOrNull(2)?.toIntOrNull()
-                ?: throw KlutterException("Flutter version is invalid: $flutter")
-            val os = if(isWindows) OperatingSystem.WINDOWS else OperatingSystem.MACOS
-            val arch = splitted.getOrNull(3)?.let { Architecture.valueOf(it) }
-            if(arch == null && os == OperatingSystem.MACOS)
-                throw KlutterException("Architecture (X64 or ARM64) is missing")
-            val version = Flutter(
-                version = Version(major, minor, patch),
-                os = os,
-                arch = arch ?: Architecture.X64)
-            val sdkLocation = flutterSDK(version.folderName)
-            if(!sdkLocation.exists())
-                downloadFlutter(version)
-            return version.folderName
-        }
+    override val flutterDistributionFolderName: FlutterDistributionFolderName
+        get() = FlutterDistributionFolderName(flutter)
 
     override val configOrNull: Config?
         get() = config?.let { File(it).toConfigOrNull() }
 }
-
-private infix fun ArgParser.required(description: String) =
-    option(ArgType.String, description = description).required()
-
-private infix fun ArgParser.optional(description: String) =
-    option(ArgType.String, description = description)

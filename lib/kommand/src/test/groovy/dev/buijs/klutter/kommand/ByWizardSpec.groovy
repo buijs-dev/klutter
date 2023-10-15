@@ -22,10 +22,6 @@
 //file:noinspection GroovyAssignabilityCheck
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kommand.flutterw.DownloaderKt
-import dev.buijs.klutter.kommand.project.ByWizard
-import dev.buijs.klutter.kommand.project.ByWizardKt
-import dev.buijs.klutter.kommand.project.MrWizard
 import dev.buijs.klutter.kore.project.PubspecBuilder
 import spock.lang.Shared
 import spock.lang.Specification
@@ -34,19 +30,15 @@ import spock.lang.Stepwise
 import java.nio.file.Files
 
 @Stepwise
-class ByWizzardSpec extends Specification {
+class ByWizardSpec extends Specification {
 
     @Shared
     File folder = Files.createTempDirectory("").toFile()
 
-    def setupSpec() {
-        DownloaderKt.dryRun = true
-    }
-
     def "Verify wizard asks for all required fields"() {
         given:
         def mrWizard = Mock(MrWizard)
-        ByWizardKt.mrWizard = mrWizard
+        NewProjectWizardKt.mrWizard = mrWizard
 
         and: "ask for rootFolder"
         mrWizard.promptConfirm("Create project in current folder?", _) >> false
@@ -69,7 +61,7 @@ class ByWizzardSpec extends Specification {
         mrWizard.promptConfirm("Configure dependencies?", _) >> false
 
         when:
-        def options = ByWizardKt.toProjectBuilderOptions(new ByWizard())
+        def options = NewProjectWizardKt.toProjectBuilderOptions(new ByWizard())
 
         then:
         options != null
@@ -104,13 +96,13 @@ class ByWizzardSpec extends Specification {
         mrWizard.promptConfirm("Configure dependencies?", _) >> false
 
         and:
-        ByWizardKt.mrWizard = mrWizard
+        NewProjectWizardKt.mrWizard = mrWizard
 
         and: "ask for rootFolder"
         mrWizard.promptConfirm("Create project in current folder?", _) >> false
 
         when:
-        def options = ByWizardKt.toProjectBuilderOptions(new ByWizard())
+        def options = NewProjectWizardKt.toProjectBuilderOptions(new ByWizard())
 
         then:
         options != null
@@ -119,7 +111,7 @@ class ByWizzardSpec extends Specification {
     def "Verify wizard asks for all dependencies"() {
         given:
         def mrWizard = Mock(MrWizard)
-        ByWizardKt.mrWizard = mrWizard
+        NewProjectWizardKt.mrWizard = mrWizard
 
         and: "ask for rootFolder"
         mrWizard.promptConfirm("Create project in current folder?", _) >> false
@@ -169,7 +161,7 @@ class ByWizzardSpec extends Specification {
         mrWizard.promptInput("Enter bill-of-materials version:", _) >> "9999.x.y.z"
 
         when:
-        def options = ByWizardKt.toProjectBuilderOptions(new ByWizard())
+        def options = NewProjectWizardKt.toProjectBuilderOptions(new ByWizard())
 
         then:
         options != null

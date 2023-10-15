@@ -31,7 +31,7 @@ import java.io.File
 data class GenerateCodeOptions(
     val project: Project,
     val pubspec: Pubspec,
-    val flutterVersion: String,
+    val flutterFolder: FlutterDistributionFolderName,
     val excludeArmArcFromPodspec: Boolean,
     val controllers: List<Controller>,
     val messages: List<SquintMessageSource>,

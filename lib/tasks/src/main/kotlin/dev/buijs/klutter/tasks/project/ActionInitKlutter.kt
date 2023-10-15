@@ -26,19 +26,18 @@ import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 internal fun ProjectBuilderOptions.toInitKlutterAction() =
-    InitKlutter(rootFolder, pluginName, flutterVersion, config)
+    InitKlutter(rootFolder, pluginName, flutterDistributionString, config)
 
-internal class InitKlutter
-@JvmOverloads constructor(
+internal class InitKlutter(
     rootFolder: RootFolder,
     pluginName: PluginName,
-    private val flutterVersion: String,
+    private val flutterFolder: FlutterDistributionFolderName,
     private val configOrNull: Config? = null
 ): ProjectBuilderAction {
 
     private val name = pluginName.validPluginNameOrThrow()
     private val root = rootFolder.validRootFolderOrThrow().resolve(name)
-    private val flutter = flutterExecutable(flutterVersion).absolutePath
+    private val flutter = flutterExecutable(flutterFolder).absolutePath
 
     private val rootPubspecFile =
         root.resolve("pubspec.yaml")
@@ -53,8 +52,8 @@ internal class InitKlutter
         exampleFolder.resolve("pubspec.yaml")
 
     override fun doAction() {
-        root.writeKlutterYaml(
-            flutterVersion = flutterVersion,
+        root.createKlutterYaml(
+            flutterVersion = flutterFolder.flutterDistribution.version.prettyPrint,
             bomVersion = configOrNull?.bomVersion)
 
         rootPubspecInit(
@@ -166,12 +165,18 @@ internal class InitKlutter
             resolve("android/local.properties").copyTo(properties)
     }
 
-    private fun File.writeKlutterYaml(flutterVersion: String, bomVersion: String? = null) {
-        val rootConfigFile = resolve("klutter.yaml")
-        rootConfigFile.createNewFile()
+    private fun File.createKlutterYaml(flutterVersion: String, bomVersion: String? = null) {
+        resolve("klutter.yaml").writeKlutterYamlContent(flutterVersion, bomVersion)
+    }
+
+    private fun File.writeKlutterYamlContent(flutterVersion: String, bomVersion: String? = null) {
+        if(exists()) delete()
+
+        createNewFile()
+
         if(bomVersion != null)
-            rootConfigFile.appendText("bom-version: '$bomVersion'\n")
-        rootConfigFile.appendText("flutter-version: '$flutterVersion'")
+            appendText("bom-version: '$bomVersion'\n")
+
+        appendText("flutter-version: '$flutterVersion'")
     }
 }
-

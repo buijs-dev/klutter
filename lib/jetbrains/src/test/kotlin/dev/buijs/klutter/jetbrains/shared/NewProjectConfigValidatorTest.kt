@@ -1,15 +1,14 @@
 package dev.buijs.klutter.jetbrains.shared
 
+import dev.buijs.klutter.kore.project.PrettyPrintedFlutterDistribution
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
-import java.nio.file.Files
-import kotlin.io.path.absolutePathString
 
 internal class NewProjectConfigValidatorTest: WordSpec({
 
     "Verify validate" should {
 
-        val flutterSDK = Files.createTempDirectory("flutterbin")
+        val dist = PrettyPrintedFlutterDistribution("3.0.5.macos.arm64")
 
         "Return !isValid if group and name are not set" {
             NewProjectConfig().validate().isValid shouldBe  false
@@ -19,7 +18,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com.example.my_plugin.project",
-                flutterVersion = flutterSDK.absolutePathString()
+                prettyPrintedFlutterDistribution = dist
             ).validate().isValid shouldBe  true
         }
 
@@ -29,7 +28,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             var config = NewProjectConfig(
                 appName = "_invalid_project.name!!!",
                 groupName = "com.example.my_plugin.project",
-                flutterVersion = flutterSDK.absolutePathString()
+                prettyPrintedFlutterDistribution = dist
             )
 
             // expect validation to fail
@@ -39,7 +38,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com_._!example.my_plugin.project",
-                flutterVersion = flutterSDK.absolutePathString()
+                prettyPrintedFlutterDistribution = dist
             )
 
             // expect validation to fail
@@ -49,7 +48,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "_invalid_project!!!",
                 groupName = "com_._!example.my_plugin.project",
-                flutterVersion = flutterSDK.absolutePathString()
+                prettyPrintedFlutterDistribution = dist
             )
 
             // expect validation to fail

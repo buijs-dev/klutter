@@ -10,7 +10,7 @@ import com.intellij.ui.dsl.builder.bindText
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.ui.dsl.gridLayout.VerticalAlign
-import dev.buijs.klutter.kore.project.klutterBomVersion
+import dev.buijs.klutter.kore.project.*
 import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JPanel
@@ -109,8 +109,14 @@ private fun newProjectPanel(data: NewProjectConfig) = panel {
 
         group("Dependencies") {
             // Version: [ 2023.2.1.beta ]
-            row("BOM Version: ") { textField()
-                .bindText(data.gradleVersionObservable)
+            row("BOM Version: ") {
+                textField().bindText(data.gradleVersionObservable).horizontalAlign(HorizontalAlign.LEFT)
+            }
+            row("Flutter Version: ") {
+                dropDownLink(
+                    item = FlutterVersionObservable.versionSelectedByUser,
+                    items = FlutterVersionObservable.versionsToDisplayInUI,
+                    onSelected = FlutterVersionObservable.versionSelection)
                 .horizontalAlign(HorizontalAlign.LEFT)
             }
             row { checkBox("Get flutter dependencies from git.")
@@ -120,6 +126,26 @@ private fun newProjectPanel(data: NewProjectConfig) = panel {
 
             row {}.comment("If enabled then all flutter dependencies are pulled from git and not pub.")
         }
+    }
+}
+
+object FlutterVersionObservable {
+    /**
+     * All versions that are compatible with the current Platform.
+     */
+    private val versions = flutterVersionsDescending(currentOperatingSystem)
+
+    /**
+     * The versions selected by the user.
+     *
+     * Default value is the latest Flutter Version.
+     */
+    private var version = versions.last()
+    val versionsToDisplayInUI = versions.map { it.prettyPrintedString }
+    var versionSelectedByUser = version.prettyPrintedString
+    val versionSelection: (PrettyPrintedFlutterDistribution) -> Unit = {
+        versionSelectedByUser = it
+        version = it.flutterDistribution
     }
 }
 
@@ -148,11 +174,6 @@ private val NewProjectConfig.useGitForPubDependenciesObservable
     get() = observable(
         get = { this.useGitForPubDependencies ?: false },
         set = { this.useGitForPubDependencies = it  })
-
-private val NewProjectConfig.flutterPathObservable
-    get() = observable(
-        get = { this.flutterVersion ?: "" },
-        set = { this.flutterVersion = it  })
 
 private fun <T> observable(
     get: () -> T,

@@ -25,6 +25,10 @@ import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.common.Either
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
+import dev.buijs.klutter.kore.project.Architecture
+import dev.buijs.klutter.kore.project.FlutterDistribution
+import dev.buijs.klutter.kore.project.OperatingSystem
+import dev.buijs.klutter.kore.project.Version
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -53,7 +57,8 @@ class ActionFlutterCreateSpec extends Specification {
     @Shared
     EitherNok invalidFlutterPath
 
-    String flutterVersion = "3.0.5.macos.arm64"
+    @Shared
+    FlutterDistribution flutterDistribution
 
     def setupSpec() {
         def root = Files.createTempDirectory("").toFile()
@@ -64,6 +69,7 @@ class ActionFlutterCreateSpec extends Specification {
         validGroupName = Either.ok("com.example")
         invalidGroupName = Either.nok("Not a valid group name")
         invalidFlutterPath = Either.nok("Folder does not exist")
+        flutterDistribution = new FlutterDistribution(new Version(3,0,5), OperatingSystem.MACOS, Architecture.ARM64)
     }
 
     def "When RootFolder is invalid then a KlutterException is thrown"() {
@@ -72,7 +78,7 @@ class ActionFlutterCreateSpec extends Specification {
                 validPluginName,
                 validGroupName,
                 invalidRootFolder,
-                flutterVersion)
+                flutterDistribution)
 
         when:
         sut.doAction()
@@ -88,7 +94,7 @@ class ActionFlutterCreateSpec extends Specification {
                 invalidPluginName,
                 validGroupName,
                 validRootFolder,
-                flutterVersion)
+                flutterDistribution)
 
         when:
         sut.doAction()
@@ -104,7 +110,7 @@ class ActionFlutterCreateSpec extends Specification {
                 validPluginName,
                 invalidGroupName,
                 validRootFolder,
-                flutterVersion)
+                flutterDistribution)
 
         when:
         sut.doAction()

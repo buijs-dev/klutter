@@ -21,4 +21,17 @@
  */
 package dev.buijs.klutter.kommand
 
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.required
+
 internal annotation class Open4Test
+
+internal infix fun ArgParser.required(description: String) =
+    option(ArgType.String, description = description).required()
+
+internal infix fun ArgParser.optional(description: String) =
+    option(ArgType.String, description = description)
+
+internal infix fun ArgParser.optionalBoolean(description: String) =
+    option(ArgType.Boolean, description = description)

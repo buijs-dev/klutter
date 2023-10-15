@@ -37,7 +37,7 @@ class DartFormatTaskSpec extends Specification {
         def file = Files.createTempDirectory("").toFile()
 
         expect:
-        new DartFormatTask(file, "3.0.5.macos.arm64").run()
+        new DartFormatTask(file, "3.0.5.macos.arm64", {}).run()
     }
 
 }

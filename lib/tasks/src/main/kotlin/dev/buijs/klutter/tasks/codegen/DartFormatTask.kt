@@ -23,23 +23,24 @@ package dev.buijs.klutter.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.common.*
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
 import dev.buijs.klutter.kore.project.dartExecutable
 import dev.buijs.klutter.tasks.execute
 import java.io.File
 
 fun GenerateCodeOptions.toDartFormatTask() =
-    DartFormatTask(flutterLibFolder, flutterVersion, log)
+    DartFormatTask(flutterLibFolder, flutterFolder, log)
 
 /**
  * Run command 'dart format .'  in a folder.
  */
-class DartFormatTask @JvmOverloads constructor(
+class DartFormatTask(
     private val folder: File,
-    flutterVersion: String,
+    flutterFolder: FlutterDistributionFolderName,
     private val log: (String) -> Unit = {  },
 ) : KlutterTask, GenerateCodeAction {
 
-    private val dart = dartExecutable(flutterVersion).absolutePath
+    private val dart = dartExecutable(flutterFolder).absolutePath
 
     override fun run() {
         "$dart format .".execute(folder.verifyExists()).also { log(it) }

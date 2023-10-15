@@ -86,6 +86,7 @@ class NewProjectBuilder(
         val config = config
             ?: throw KlutterException("Project configuration is missing")
 
+        // TODO check if flutterVersion is correct/set
         ApplicationManager.getApplication().invokeLater {
             ProgressManager.getInstance().run(
                 NewProjectTaskFactory.build(

@@ -21,8 +21,6 @@
  */
 package dev.buijs.klutter.kommand
 
-import dev.buijs.klutter.kommand.flutterw.DownloaderKt
-import dev.buijs.klutter.kommand.project.ByCommandKt
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -43,7 +41,6 @@ class ByCommandSpec extends Specification {
     String overrideBomVersion = "9999.1.1.zeta"
 
     def setupSpec() {
-        DownloaderKt.dryRun = true
         flutterSDK.mkdir()
         configYaml.createNewFile()
         configYaml.write("""
@@ -57,11 +54,11 @@ bom-version: $overrideBomVersion
                 "--root", rootFolder.path,
                 "--group", "com.example",
                 "--name", "my_awesome_plugin",
-                "--flutter", "3.0.5.X64",
+                "--flutter", "3.0.5.windows.X64",
         ]
 
         when:
-        def options = ByCommandKt.projectBuilderOptionsByCommand(command)
+        def options = NewProjectCommandKt.projectBuilderOptionsNewProjectCommand(command)
 
         then:
         options.pluginName.data == "my_awesome_plugin"
@@ -76,12 +73,12 @@ bom-version: $overrideBomVersion
                 "--root", rootFolder.path, "" +
                 "--group", "com.example",
                 "--name", "my_awesome_plugin",
-                "--flutter", "3.0.5.X64",
+                "--flutter", "3.0.5.windows.X64",
                 "--config", configYaml.absolutePath
         ]
 
         when:
-        def options = ByCommandKt.projectBuilderOptionsByCommand(command)
+        def options = NewProjectCommandKt.projectBuilderOptionsNewProjectCommand(command)
 
         then:
         options.pluginName.data == "my_awesome_plugin"

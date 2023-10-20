@@ -19,7 +19,7 @@ class ConfigSpec extends Specification {
         then:
         config != null
         config.bomVersion == "2023.1.2-SNAPSHOT"
-        config.dependencies.klutter == "1.0.0"
+        config.dependencies.klutter == "2.0.0"
         config.dependencies.klutterUI == "1.0.0"
         config.dependencies.squint == "0.1.2"
         config.dependencies.embedded.size() == 1
@@ -28,7 +28,7 @@ class ConfigSpec extends Specification {
         where:
         content = '''bom-version: "2023.1.2-SNAPSHOT"
 dependencies:
-  klutter: "1.0.0"
+  klutter: "2.0.0"
   klutter_ui: "1.0.0"
   squint_json: "0.1.2"
   embedded:

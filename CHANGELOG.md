@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v2023.3.1.beta
+- Refactored task module to package in kore.
+- Removed task module from BOM e.a.
+- Renamed kommand to kradle.
+
 ## v2023.2.2.beta
 - Remove example/integration_test folder on project init from example app.
 - Skip iOS setup during project init on Windows platform.

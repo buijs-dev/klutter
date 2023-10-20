@@ -21,8 +21,8 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.tasks.CopyAarFileTask
-import dev.buijs.klutter.tasks.CopyXCFrameworkTask
+import dev.buijs.klutter.kore.tasks.CopyAarFileTask
+import dev.buijs.klutter.kore.tasks.CopyXCFrameworkTask
 
 /**
  * Execute task [CopyAndroidAarFileGradleTask] from Gradle.

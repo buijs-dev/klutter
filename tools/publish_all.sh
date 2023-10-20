@@ -19,4 +19,3 @@ echo " ____________
 ./gradlew publishToMavenLocal -p "lib/gradle"
 ./gradlew publishToMavenLocal -p "lib/kompose"
 ./gradlew publishToMavenLocal -p "lib/kore"
-./gradlew publishToMavenLocal -p "lib/tasks"

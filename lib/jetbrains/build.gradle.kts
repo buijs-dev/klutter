@@ -115,7 +115,6 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // Project
-    implementation(project(":lib:tasks"))
     implementation(project(":lib:kore"))
 
     // Kotlin Test

@@ -25,6 +25,7 @@ import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import dev.buijs.klutter.gradle.dsl.KlutterExtension
 import dev.buijs.klutter.gradle.tasks.CopyAndroidAarFileGradleTask
 import dev.buijs.klutter.gradle.tasks.CopyIosFrameworkGradleTask
+import dev.buijs.klutter.gradle.tasks.GetKradleTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginContainer
@@ -56,4 +57,5 @@ private fun PluginContainer.applyKspPlugin() {
 private fun TaskContainer.registerTasks() {
     register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
     register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
+    register("klutterGetKradle", GetKradleTask::class.java)
 }

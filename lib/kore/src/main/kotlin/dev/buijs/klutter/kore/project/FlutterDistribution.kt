@@ -35,7 +35,9 @@ data class FlutterDistribution(
  * Example: 3.0.5 MACOS (ARM64).
  */
 @JvmInline
-value class PrettyPrintedFlutterDistribution(internal val s: String)
+value class PrettyPrintedFlutterDistribution(internal val source: String) {
+    override fun toString() = source
+}
 
 /**
  * The full Flutter distribution version in format major.minor.patch.platform.architecture.
@@ -43,10 +45,9 @@ value class PrettyPrintedFlutterDistribution(internal val s: String)
  * Example: 3.0.5.windows.x64.
  */
 @JvmInline
-value class FlutterDistributionFolderName(internal val s: String)
-
-internal val String.asFlutterDistributionFolderName
-    get() = FlutterDistributionFolderName(this)
+value class FlutterDistributionFolderName(internal val source: String) {
+    override fun toString() = source
+}
 
 /**
  * Generate a unique display name for this Flutter configuration.
@@ -58,7 +59,7 @@ val FlutterDistribution.prettyPrintedString: PrettyPrintedFlutterDistribution
 
 val PrettyPrintedFlutterDistribution.flutterDistribution: FlutterDistribution
     get() {
-        val prettyPrinted = this.s
+        val prettyPrinted = this.source
         if("$this" == "$latestVersionPlaceholder")
             return latestFlutterVersion(currentOperatingSystem)
 
@@ -84,7 +85,7 @@ val FlutterDistribution.folderNameString: FlutterDistributionFolderName
 
 val FlutterDistributionFolderName.flutterDistribution: FlutterDistribution
     get() {
-        val parts = this.s.uppercase().split(".")
+        val parts = source.uppercase().split(".")
         val os = OperatingSystem.valueOf(parts[3])
         val arch = Architecture.valueOf(parts[4])
         val version = Version(
@@ -113,6 +114,7 @@ fun flutterVersionsDescending(os: OperatingSystem) =
     compatibleFlutterVersions.keys
         .filter { version -> version.os == os }
         .sortedWith(compareBy({it.version.major}, {it.version.minor}, {it.version.patch}))
+        .reversed()
         .toSet()
 
 fun flutterDownloadPathOrThrow(os: OperatingSystem, arch: Architecture, version: Version): String =

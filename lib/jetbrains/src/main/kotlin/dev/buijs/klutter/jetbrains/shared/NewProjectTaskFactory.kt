@@ -26,8 +26,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.tasks.executor
-import dev.buijs.klutter.tasks.project.*
+import dev.buijs.klutter.kore.tasks.executor
+import dev.buijs.klutter.kore.tasks.project.*
 import mu.KotlinLogging
 import org.jetbrains.plugins.gradle.autolink.GradleUnlinkedProjectAware
 import java.io.File
@@ -45,7 +45,7 @@ object NewProjectTaskFactory {
             rootFolder = toRootFolder(pathToRoot),
             pluginName = toPluginName(config.appName ?: klutterPluginDefaultName),
             groupName = toGroupName(config.groupName ?: klutterPluginDefaultGroup),
-            flutterDistributionString = config.prettyPrintedFlutterDistribution.folderName,
+            flutterDistributionString = config.flutterDistribution!!.folderNameString,
             config = Config(
                 bomVersion = config.bomVersion ?: klutterBomVersion,
                 dependencies = if(config.useGitForPubDependencies == true) gitDependencies else Dependencies())))
@@ -66,7 +66,8 @@ private fun createKlutterPluginTask(
         task = {
             executor = JetbrainsExecutor()
             task.run()
-            rootFolder.moveUpFolder(options.pluginName.validPluginNameOrThrow()) })
+            rootFolder.moveUpFolder(options.pluginName.validPluginNameOrThrow())
+        })
 }
 
 /**
@@ -113,17 +114,16 @@ private fun createKlutterTask(
 ) = object: Task.Modal(null,"Initializing project", false) {
     override fun run(indicator: ProgressIndicator) {
         val progressIndicator =  ProgressManager.getInstance().progressIndicator
-        progressIndicator.isIndeterminate = false
+        progressIndicator.isIndeterminate = true
         progressIndicator.text = "Loading..."
-        progressIndicator.fraction = 0.1
-        progressIndicator.fraction = 0.2
-        progressIndicator.fraction = 0.3
         task.invoke()
-        progressIndicator.fraction = 0.8
-        project?.let {
+    }
+
+    override fun onSuccess() {
+        super.onSuccess()
+        project?.let { projectNotNull ->
             GradleUnlinkedProjectAware()
-                .linkAndLoadProject(it, pathToRoot.absolutePath)
+                .linkAndLoadProject(projectNotNull, pathToRoot.absolutePath)
         }
-        progressIndicator.fraction = 1.0
     }
 }

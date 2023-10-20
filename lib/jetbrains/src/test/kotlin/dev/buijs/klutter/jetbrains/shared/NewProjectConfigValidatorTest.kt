@@ -1,6 +1,7 @@
 package dev.buijs.klutter.jetbrains.shared
 
-import dev.buijs.klutter.kore.project.PrettyPrintedFlutterDistribution
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
+import dev.buijs.klutter.kore.project.flutterDistribution
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 
@@ -8,7 +9,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
 
     "Verify validate" should {
 
-        val dist = PrettyPrintedFlutterDistribution("3.0.5.macos.arm64")
+        val dist = FlutterDistributionFolderName("3.0.5.macos.arm64").flutterDistribution
 
         "Return !isValid if group and name are not set" {
             NewProjectConfig().validate().isValid shouldBe  false
@@ -18,7 +19,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com.example.my_plugin.project",
-                prettyPrintedFlutterDistribution = dist
+                flutterDistribution = dist
             ).validate().isValid shouldBe  true
         }
 
@@ -28,7 +29,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             var config = NewProjectConfig(
                 appName = "_invalid_project.name!!!",
                 groupName = "com.example.my_plugin.project",
-                prettyPrintedFlutterDistribution = dist
+                flutterDistribution = dist
             )
 
             // expect validation to fail
@@ -38,7 +39,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "my_plugin_project",
                 groupName = "com_._!example.my_plugin.project",
-                prettyPrintedFlutterDistribution = dist
+                flutterDistribution = dist
             )
 
             // expect validation to fail
@@ -48,7 +49,7 @@ internal class NewProjectConfigValidatorTest: WordSpec({
             config = NewProjectConfig(
                 appName = "_invalid_project!!!",
                 groupName = "com_._!example.my_plugin.project",
-                prettyPrintedFlutterDistribution = dist
+                flutterDistribution = dist
             )
 
             // expect validation to fail

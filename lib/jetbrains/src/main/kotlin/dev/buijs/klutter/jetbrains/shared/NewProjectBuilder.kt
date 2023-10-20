@@ -30,10 +30,15 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.ui.ComponentValidator
+import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.util.ui.components.JBComponent
 import dev.buijs.klutter.kore.KlutterException
 import mu.KotlinLogging
+import javax.swing.JComponent
 
 private val log = KotlinLogging.logger { }
 
@@ -51,11 +56,8 @@ class NewProjectBuilder(
     /**
      * Load the [NewProjectWizardStep] where the user can enter the Klutter project configuration.
      */
-    override fun getCustomOptionsStep(
-        context: WizardContext?,
-        parentDisposable: Disposable?,
-    ) = tryLoadWizard()
-        ?: throw KlutterException("Unsupported Intellij Platform version")
+    override fun getCustomOptionsStep(context: WizardContext?, parentDisposable: Disposable) =
+        tryLoadWizard(parentDisposable) ?: throw KlutterException("Unsupported Intellij Platform version")
 
     /**
      * Configure Java SDK.
@@ -78,7 +80,8 @@ class NewProjectBuilder(
     /**
      * Generate the actual project.
      */
-    override fun moduleCreated(module: Module) {
+    override fun createProject(name: String?, path: String?): Project? {
+        val project = super.createProject(name, path)
 
         val pathToRoot = super.getContentEntryPath()
             ?: throw KlutterException("Unable to determine pathToRoot")
@@ -86,15 +89,13 @@ class NewProjectBuilder(
         val config = config
             ?: throw KlutterException("Project configuration is missing")
 
-        // TODO check if flutterVersion is correct/set
         ApplicationManager.getApplication().invokeLater {
             ProgressManager.getInstance().run(
                 NewProjectTaskFactory.build(
-                    project = module.project,
-                    pathToRoot = pathToRoot,
-                    config = config))
+                    project = project, pathToRoot = pathToRoot, config = config))
         }
 
+        return project
     }
 
     override fun getModuleType(): ModuleType<*> = KlutterModuleType()
@@ -109,14 +110,18 @@ class NewProjectBuilder(
 
     override fun getGroupName() = KlutterBundle.groupName
 
+    override fun moduleCreated(module: Module) {
+        // Nothing
+    }
+
 }
 
 /**
  * Try to create an instance of [NewProjectWizardStep].
  */
-private fun NewProjectBuilder.tryLoadWizard() = try {
+private fun NewProjectBuilder.tryLoadWizard(parentDisposable: Disposable) = try {
     log.info("Try loading the NewKlutterProjectWizard")
-    NewProjectWizardStep(this)
+    NewProjectWizardStep(this, parentDisposable)
 } catch (e: Throwable) {
     log.info("Failed to load: NewKlutterProjectWizard", e); null
 }

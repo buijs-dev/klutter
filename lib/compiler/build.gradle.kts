@@ -34,7 +34,6 @@ sourceSets {
 dependencies {
 
     compileOnly(project(":lib:kore"))
-    compileOnly(project(":lib:tasks"))
 
     // KSP for annotation scanning
     implementation(kotlin("stdlib"))
@@ -53,7 +52,6 @@ dependencies {
 
     // T-t-t-t-testing !
     testImplementation(project(":lib:kore"))
-    testImplementation(project(":lib:tasks"))
     testImplementation(project(":lib-test"))
 }
 
@@ -138,8 +136,6 @@ fun Dependency.getLocalOrProjectGroup() = when {
 fun Dependency.getLocalOrProjectVersion() = when(name) {
     "kore" ->
         dev.buijs.klutter.ProjectVersions.kore
-    "tasks" ->
-        dev.buijs.klutter.ProjectVersions.tasks
     "kotlin-stdlib" ->
         "1.7.10"
     else -> version

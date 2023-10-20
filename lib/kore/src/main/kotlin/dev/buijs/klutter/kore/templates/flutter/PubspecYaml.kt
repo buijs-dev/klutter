@@ -28,7 +28,7 @@ import dev.buijs.klutter.kore.templates.appendTemplate
 /**
  * Pattern used to get a pubspec dependency from Git.
  *
- * This pattern should be used in the klutter.yaml file.
+ * This pattern should be used in the kradle.yaml file.
  *
  * Example notation: 'https://github.com/your-repo.git@develop'.
  */
@@ -37,7 +37,7 @@ private val gitDependencyRegex = """^(https:..github.com.+?git)@(.+${'$'})""".to
 /**
  * Pattern used to get a pubspec dependency from local path.
  *
- * This pattern should be used in the klutter.yaml file.
+ * This pattern should be used in the kradle.yaml file.
  *
  * Example notation: 'local@foo/bar/dependency-name'.
  */

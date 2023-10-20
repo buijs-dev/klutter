@@ -23,8 +23,8 @@ package dev.buijs.klutter.jetbrains.shared
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import dev.buijs.klutter.tasks.Executor
-import dev.buijs.klutter.tasks.finish
+import dev.buijs.klutter.kore.tasks.Executor
+import dev.buijs.klutter.kore.tasks.finish
 import java.io.File
 
 @ExcludeFromJacocoGeneratedReport

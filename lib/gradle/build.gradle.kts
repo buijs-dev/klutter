@@ -103,7 +103,7 @@ gradlePlugin {
 dependencies {
     // Project
     implementation(project(":lib:kore"))
-    implementation(project(":lib:tasks"))
+    compileOnly(project(":lib:kradle")) // to make sure the copied distribution is always latest
 
     // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
@@ -133,3 +133,4 @@ tasks.register("copyKlutterProperties", Copy::class) {
     from(project.rootProject.rootDir.resolve("lib-build/src/main/resources/publish.properties"))
     into(project.projectDir.resolve("src/main/resources"))
 }
+

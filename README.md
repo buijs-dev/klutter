@@ -19,7 +19,6 @@ This plugin will create a new Flutter plugin and setup Klutter automatically.
 ### Framework
 - [Annotations](lib/annotations/module.md)
 - [Kore](lib/kore/module.md)
-- [Tasks](lib/tasks/module.md)
 - [Plugin: Gradle](lib/gradle/module.md)
 - [Plugin: Flutter](https://github.com/buijs-dev/klutter-dart)
 - [Plugin: Jetbrains (Intellij, Android Studio)](lib/jetbrains/module.md)

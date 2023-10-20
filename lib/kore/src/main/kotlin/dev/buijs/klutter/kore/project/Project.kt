@@ -45,21 +45,15 @@ data class Project(
 )
 
 /**
- * Path to Klutter projects home folder which is <user.home>/KlutterProjects.
+ * Path to Klutter projects cache folder which is <user.home>/.kradle.
  */
-val projectsHome: File
+val kradleCache: File
     get() = File(System.getProperty("user.home"))
         .verifyExists()
-        .resolve("KlutterProjects")
+        .resolve(".kradle")
 
 /**
- * Path to executable Flutter which is <user.home>/KlutterProjects/.cache/<flutter-version>/flutter/bin/flutter.
- */
-val FlutterDistribution.executable: File
-    get()= flutterExecutable(folderNameString)
-
-/**
- * Path to SDK folder Flutter which is <user.home>/KlutterProjects/.cache/<flutter-version>.
+ * Path to SDK folder Flutter which is <user.home>/.kradle/cache/<flutter-version>.
  */
 val FlutterDistribution.sdk: File
     get()= flutterSDK(folderNameString)
@@ -83,19 +77,17 @@ fun dartExecutable(name: FlutterDistributionFolderName): File =
         .resolve("dart")
 
 /**
- * Path to Klutter cache folder which is <user.home>/KlutterProjects/.cache.
+ * Path to Klutter cache folder which is <user.home>/.kradle/cache.
  */
 fun flutterSDK(name: FlutterDistributionFolderName): File =
-    projectsHome.resolve(".cache").resolve("$name")
+    kradleCache.resolve("cache").resolve("$name")
 
-fun initKlutterProjectsFolder() {
-    projectsHome
-        .maybeCreateFolder(clearIfExists = false)
-        .verifyExists()
-        .resolve(".cache")
-        .maybeCreateFolder(clearIfExists = false)
-        .verifyExists()
-}
+fun initKradleCache() = kradleCache
+    .maybeCreateFolder(clearIfExists = false)
+    .verifyExists()
+    .resolve("cache")
+    .maybeCreateFolder(clearIfExists = false)
+    .verifyExists()
 
 fun String.plugin(pluginName: String) =
     File(this).plugin(pluginName)

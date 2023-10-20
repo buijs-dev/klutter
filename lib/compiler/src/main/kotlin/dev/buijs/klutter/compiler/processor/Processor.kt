@@ -38,10 +38,10 @@ import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import dev.buijs.klutter.kore.common.verifyExists
 import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.tasks.codegen.GenerateCodeOptions
-import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
-import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
-import dev.buijs.klutter.tasks.project.DownloadFlutterTask
+import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeOptions
+import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeTask
+import dev.buijs.klutter.kore.tasks.codegen.findGenerateCodeAction
+import dev.buijs.klutter.kore.tasks.project.DownloadFlutterTask
 import java.io.File
 
 internal var kcLogger: KCLogger? = null

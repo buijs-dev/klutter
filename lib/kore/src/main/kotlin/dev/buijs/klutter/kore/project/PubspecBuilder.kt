@@ -43,12 +43,12 @@ const val klutterBomVersion = "2023.3.1.beta"
 /**
  * The version of the klutter Pub Plugin.
  */
-const val klutterPubVersion = "1.0.0"
+const val klutterPubVersion = "2.0.0"
 
 /**
  * The version of the klutter-ui Pub Plugin.
  */
-const val klutterUIPubVersion = "1.0.0"
+const val klutterUIPubVersion = "1.0.1"
 
 /**
  * The version of the squint_json Pub Plugin.

@@ -34,7 +34,7 @@ jobs:
       - name: 'copy jar to kradle folder'
         run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle/lib
       - name: 'create zip file'
-      - uses: vimtor/action-zip@v1.1
+        uses: vimtor/action-zip@v1.1
         with:
           files: kradle
           recursive: true

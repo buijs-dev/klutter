@@ -33,13 +33,13 @@ jobs:
           arguments: clean build -p "lib/kradle"
       - name: 'create kradle folder'
         run: mkdir kradle
-        with:
-          name: kradle
-          path: kradle
       - name: 'create kradle folder'
         run: mkdir kradle/lib
       - name: 'copy jar to kradle folder'
         run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle
+        with:
+          name: kradle
+          path: kradle
       - name: 'copy kradlew to kradle folder'
         run: cp ./lib/kradle/res/kradlew kradle/lib
       - name: 'copy kradlew.bat to kradle folder'

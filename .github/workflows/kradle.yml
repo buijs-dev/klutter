@@ -1,4 +1,4 @@
-name: Publish kommand executable.
+name: Publish kradle executable.
 on:
   push:
 env:
@@ -30,13 +30,27 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
         with:
           gradle-version: 7.4.2
-          arguments: clean distZip -p "lib/kommand"
-      - name: 'create downloads folder'
-        run: mkdir kommander
-      - name: 'copy zip to downloads folder'
-        run: cp ./lib/kommand/build/distributions/kommand.zip kommander
-      - name: 'upload downloads folder'
+          arguments: clean build -p "lib/kradle"
+      - name: 'create kradle folder'
+        run: mkdir kradle
+        with:
+          name: kradle
+          path: kradle
+      - name: 'create kradle folder'
+        run: mkdir kradle/lib
+      - name: 'copy jar to kradle folder'
+        run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle
+      - name: 'copy kradlew to kradle folder'
+        run: cp ./lib/kradle/res/kradlew kradle/lib
+      - name: 'copy kradlew.bat to kradle folder'
+        run: cp ./lib/kradle/res/kradlew.bat kradle/lib
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: kradle
+          recursive: true
+          dest: kradlew.zip
+      - name: 'upload kradle folder'
         uses: actions/upload-artifact@v2
         with:
-          name: kommander
-          path: kommander
+          name: kradlew
+          path: ${{ github.workspace }}/kradlew.zip

@@ -81,11 +81,8 @@ tasks.register("copyKradleWrapperJar", Copy::class) {
     from(project.projectDir.resolve("build/libs/kradle-wrapper.jar"))
     into(project.rootProject.rootDir.resolve("lib/gradle/src/main/resources"))
 
-    from(project.projectDir.resolve("src/main/resources/kradlew"))
-    into(project.rootProject.rootDir.resolve("lib/gradle/src/main/resources/"))
-
     from(project.projectDir.resolve("build/libs/kradle-wrapper.jar"))
-    into(project.rootProject.rootDir.resolve("kradle/"))
+    into(project.rootProject.rootDir.resolve("kradle/lib"))
 }
 
 tasks.named("build") {

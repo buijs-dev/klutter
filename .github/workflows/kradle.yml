@@ -12,7 +12,7 @@ jobs:
   archive-build-artifacts:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest]  # don't need windows anymore...? windows-latest
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
@@ -31,16 +31,9 @@ jobs:
         with:
           gradle-version: 7.4.2
           arguments: clean build -p "lib/kradle"
-      - name: 'create kradle folder'
-        run: mkdir kradle
-      - name: 'create kradle folder'
-        run: mkdir kradle/lib
       - name: 'copy jar to kradle folder'
-        run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle
-      - name: 'copy kradlew to kradle folder'
-        run: cp ./lib/kradle/res/kradlew kradle/lib
-      - name: 'copy kradlew.bat to kradle folder'
-        run: cp ./lib/kradle/res/kradlew.bat kradle/lib
+        run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle/lib
+      - name: 'create zip file'
       - uses: vimtor/action-zip@v1.1
         with:
           files: kradle

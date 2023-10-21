@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\kradle-standalone.jar
+set CLASSPATH=%APP_HOME%\lib\kradle-wrapper.jar
 
 @rem Execute kradlew
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %KRADLEW_OPTS%  -classpath "%CLASSPATH%" dev.buijs.klutter.kradle.MainKt %*

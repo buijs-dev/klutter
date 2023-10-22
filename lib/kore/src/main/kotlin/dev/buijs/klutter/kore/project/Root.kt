@@ -25,6 +25,8 @@ import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.common.toCamelCase
 import java.io.File
 
+const val kspArgumentKlutterProjectFolder = "klutterProjectFolder"
+
 /**
  * @property folder path to the top level of the project.
  */

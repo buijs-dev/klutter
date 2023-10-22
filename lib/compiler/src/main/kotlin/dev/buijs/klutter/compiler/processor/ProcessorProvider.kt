@@ -38,10 +38,6 @@ import dev.buijs.klutter.kore.KlutterException
  * See [ProcessorOptions] for all available configuration options.
  */
 class ProcessorProvider : SymbolProcessorProvider {
-    override fun create(
-        environment: SymbolProcessorEnvironment
-    ) = Processor(
-        options = environment.processorOptions(),
-        log = environment.logger,
-    )
+    override fun create(environment: SymbolProcessorEnvironment) =
+        Processor(env = environment, log = environment.logger)
 }

@@ -32,19 +32,12 @@ internal var dryRun = false
 /**
  * Parsed ksp options used by [Processor].
  * </br>
- * Available options are:
- * - klutterScanFolder: Folder to scan for klutter annotations.
- * - klutterOutputFolder: Folder where to write analysis results.
- * - klutterGenerateAdapters: Boolean value indicating if codegen tasks should run during build.
- * - intelMac: Boolean value indicating if the platform is an Intel-based Mac.
- * - flutterSDKPath: Flutter bin folder.
  */
 data class ProcessorOptions(
-    val metadataFolder: File,
+    val projectFolder: File,
     val outputFolder: File,
     val flutterVersion: String,
     val generateAdapters: Boolean,
-    val isIntelBasedBuildMachine: Boolean,
 )
 
 /**
@@ -52,10 +45,9 @@ data class ProcessorOptions(
  * Klutter code scanning/generation.
  */
 internal enum class ProcessorOption(val value: String) {
-    METADATA_FOLDER("klutterScanFolder"),
+    PROJECT_FOLDER("klutterProjectFolder"),
     OUTPUT_FOLDER("klutterOutputFolder"),
     GENERATE_ADAPTERS("klutterGenerateAdapters"),
-    INTEL_BASED_APPLE("intelMac"),
     FLUTTER_SDK_VERSION("flutterVersion"),
 }
 
@@ -63,19 +55,90 @@ internal enum class ProcessorOption(val value: String) {
  * Parse options set in the ksp DSL and return a [ProcessorOptions] object
  * or throw a [KlutterException] if required options are missing/invalid.
  */
-internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
-    metadataFolder = options.metadataFolder(),
-    outputFolder = options.outputFolder(),
-    generateAdapters = options.boolean(GENERATE_ADAPTERS),
-    isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
-    flutterVersion = options.flutterVersion()
-).also { kcLogger?.info("Determined Processor Options: $it") }
+internal fun processorOptions(
+    env: SymbolProcessorEnvironment,
+    kradleEnv: File,
+    kradleYaml: File,
+): ProcessorOptions {
+    val projectPropertyPattern = """(\{\{project[.]([^}]+?)\}\})""".toRegex()
+    val systemPropertyPattern = """(\{\{system[.]([^}]+?)\}\})""".toRegex()
+    val options = env.options
+    val envTextOrNull = if(kradleEnv.exists()) {
+        var text = kradleEnv.readText()
+        val systemProperties = systemPropertyPattern.findAll(text)
+        for(result in systemProperties) {
+            val propertyName = result.groupValues[2]
+            val property = System.getProperty(propertyName)
+            text = text.replace("{{system.$propertyName}}", property)
+        }
+
+        val projectProperties = projectPropertyPattern.findAll(text)
+        for(result in projectProperties) {
+            val propertyName = result.groupValues[2]
+            val property = when(propertyName) {
+                "build" ->  kradleEnv.parentFile.resolve("platform").resolve("build").absolutePath
+                "root" -> kradleEnv.parentFile.absolutePath
+                else -> throw KlutterException("Unknown project property defined in kradle.env: $propertyName")
+            }
+            text = text.replace("{{project.$propertyName}}", property)
+        }
+        text
+    } else {
+        null
+    }
+
+    val yamlTextOrNull = if(kradleYaml.exists()) kradleYaml.readText() else null
+
+    val flutterOrNull = yamlTextOrNull.findPropertyInYamlOrNull("flutter-version")
+
+    val outputFolder = envTextOrNull.findPropertyInEnvOrNull("output.path")
+        ?.let { path -> File(path) }
+
+    val skipCodegen = envTextOrNull.findPropertyInEnvOrNull("skip.codegen")?.uppercase()?.let { skip ->
+        when(skip) {
+            "TRUE" -> true
+            "FALSE" -> false
+            else -> null
+        }
+    }
+
+    return ProcessorOptions(
+        projectFolder = options.projectFolder(),
+        outputFolder = outputFolder ?: options.outputFolder(),
+        generateAdapters = skipCodegen?.let { !it } ?: options.boolean(GENERATE_ADAPTERS),
+        flutterVersion = flutterOrNull ?: options.flutterVersion()
+    ).also { kcLogger?.info("Determined Processor Options: $it") }
+}
+
+private fun String?.findPropertyInYamlOrNull(key: String) = when {
+    this == null -> null
+    else -> {
+        val match = """$key:\s*('|")\s*([^'"]+?)\s*('|")""".toRegex().find(this)
+        if(match == null) {
+            null
+        } else {
+            match.groupValues[2]
+        }
+    }
+}
+
+private fun String?.findPropertyInEnvOrNull(key: String) = when {
+    this == null -> null
+    else -> {
+        val match = """$key=([^\n\r]+)""".toRegex().find(this)
+        if(match == null) {
+            null
+        } else {
+            match.groupValues[1]
+        }
+    }
+}
 
 /**
  * Parse required ksp option which contains path to the build directory.
  */
-private fun Map<String,String>.metadataFolder(): File {
-    val option = METADATA_FOLDER.value
+internal fun Map<String,String>.projectFolder(): File {
+    val option = PROJECT_FOLDER.value
     val pathToScanFolder = this[option]
         ?: throw KlutterException("""Option $option not set! 
                 |Add this option to the ksp DSL, example: 
@@ -86,10 +149,7 @@ private fun Map<String,String>.metadataFolder(): File {
                 |```
                 |""".trimMargin())
 
-    return File(pathToScanFolder)
-        .also { it.verifyExists() }
-        .resolve("klutter")
-        .also { it.delete(); it.mkdir() }
+    return File(pathToScanFolder).also { it.verifyExists() }
 }
 
 /**

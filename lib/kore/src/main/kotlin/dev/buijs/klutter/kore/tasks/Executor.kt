@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 
 var executor: Executor = Executor()
 
-infix fun String. execute(file: File) =
+infix fun String.execute(file: File) =
     executor.execute(runFrom = file, command = this)
 
 /**

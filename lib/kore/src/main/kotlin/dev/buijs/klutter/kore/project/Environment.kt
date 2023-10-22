@@ -1,6 +1,8 @@
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.tasks.execute
+import java.nio.file.Path
 
 enum class OperatingSystem(val value: String) {
     WINDOWS("windows"),
@@ -39,4 +41,9 @@ val currentOperatingSystem: OperatingSystem
             screaming.contains("LINUX") -> OperatingSystem.LINUX
             else -> throw KlutterException("Unsupported OperatingSystem: $screaming")
         }
+    }
+
+val currentArchitecture: Architecture
+    get() = """uname -m""".execute(Path.of("").toFile().absoluteFile).let { str ->
+        if(str.uppercase().contains("ARM")) Architecture.ARM64 else Architecture.X64
     }

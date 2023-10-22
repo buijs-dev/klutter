@@ -24,6 +24,7 @@ package dev.buijs.klutter.compiler.processor
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import dev.buijs.klutter.compiler.scanner.scanForControllers
 import dev.buijs.klutter.compiler.scanner.scanForResponses
@@ -42,7 +43,6 @@ import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeOptions
 import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeTask
 import dev.buijs.klutter.kore.tasks.codegen.findGenerateCodeAction
 import dev.buijs.klutter.kore.tasks.project.DownloadFlutterTask
-import java.io.File
 
 internal var kcLogger: KCLogger? = null
 
@@ -59,25 +59,21 @@ internal var kcLogger: KCLogger? = null
     which uses a real Kotlin Multiplatform Project.
 """)
 class Processor(
-    private val options: ProcessorOptions,
     private val log: KSPLogger,
+    env: SymbolProcessorEnvironment,
 ): SymbolProcessor {
 
-    private lateinit var output: File
-    private lateinit var project: Project
-    private lateinit var pubspec: Pubspec
-
+    private val projectRoot = env.options.projectFolder()
+    private val project = projectRoot.plugin()
+    private val pubspec = project.root.toPubspec()
+    internal val options = processorOptions(env, project.root.kradleEnvFile, project.root.kradleYaml)
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
 
     private val flutterFolder: FlutterDistributionFolderName
         get() {
             val os = currentOperatingSystem
-            val arch = when {
-                os != OperatingSystem.MACOS -> Architecture.X64
-                options.isIntelBasedBuildMachine -> Architecture.X64
-                else -> Architecture.ARM64
-            }
+            val arch = currentArchitecture
             val version = options.flutterVersion
             val folder = FlutterDistributionFolderName("$version.$os.$arch".lowercase())
             val exe = flutterExecutable(folder)
@@ -97,9 +93,6 @@ class Processor(
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         kcLogger = KCLogger(log, options.outputFolder)
-        output  = options.outputFolder
-        project = output.plugin()
-        pubspec = project.root.toPubspec()
         messages = resolver.findAndValidateMessages()
         controllers = resolver.findAndValidateControllers()
         generateCodeAndInstall()
@@ -108,7 +101,7 @@ class Processor(
 
     @ExcludeFromJacocoGeneratedReport
     private fun Resolver.findAndValidateMessages() =
-        scanForResponses(resolver = this, outputFolder = options.metadataFolder)
+        scanForResponses(resolver = this, outputFolder = options.outputFolder)
             .validateResponses().let {
                 when (it) {
                     is ValidSquintMessages -> it.data
@@ -123,7 +116,7 @@ class Processor(
     private fun Resolver.findAndValidateControllers() =
         scanForControllers(
             resolver = this,
-            outputFolder = options.metadataFolder,
+            outputFolder = options.outputFolder,
             responses = messages?.map { it.type }?.toSet() ?: emptySet())
             .validateControllers(messages?.map { it.type } ?: emptyList()).let {
                 when (it) {
@@ -145,7 +138,7 @@ class Processor(
         val codegenOptions = GenerateCodeOptions(
             project = project,
             pubspec = pubspec,
-            excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
+            excludeArmArcFromPodspec = currentArchitecture == Architecture.X64,
             controllers = controllers!!,
             messages = messages!!,
             flutterFolder = flutterFolder,

@@ -21,11 +21,13 @@
  */
 package dev.buijs.klutter.gradle
 
+import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import dev.buijs.klutter.gradle.dsl.KlutterExtension
 import dev.buijs.klutter.gradle.tasks.CopyAndroidAarFileGradleTask
 import dev.buijs.klutter.gradle.tasks.CopyIosFrameworkGradleTask
 import dev.buijs.klutter.gradle.tasks.GetKradleTask
+import dev.buijs.klutter.kore.project.kspArgumentKlutterProjectFolder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginContainer
@@ -40,6 +42,11 @@ class KlutterGradlePlugin: Plugin<Project> {
             tasks.registerTasks()
             plugins.applyKspPlugin()
             extensions.add("klutter", KlutterExtension(project))
+
+            val ext = project.extensions.getByType(KspExtension::class.java)
+            project.afterEvaluate {
+                ext.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
+            }
         }
     }
 }

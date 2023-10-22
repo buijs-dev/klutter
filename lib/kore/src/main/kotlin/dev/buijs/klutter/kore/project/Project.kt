@@ -53,6 +53,22 @@ val kradleCache: File
         .resolve(".kradle")
 
 /**
+ * The root/kradle.env File.
+ *
+ * The kradle.env File is a private File to control the kradlew environment.
+ */
+val Root.kradleEnvFile: File
+    get() = folder.resolve("kradle.env")
+
+/**
+ * The root/kradle.yaml File.
+ *
+ * The kradle.yaml File contains the project configuration.
+ */
+val Root.kradleYaml: File
+    get() = folder.resolve("kradle.yaml")
+
+/**
  * Path to SDK folder Flutter which is <user.home>/.kradle/cache/<flutter-version>.
  */
 val FlutterDistribution.sdk: File
@@ -102,7 +118,7 @@ fun File.plugin() = File("${absolutePath}/pubspec.yaml")
     .verifyExists()
     .toPubspec()
     .also { if(it.name == null) throw KlutterException("Missing 'name' in pubspec.yaml.") }
-    .let  { Root(it.name!!,this) }
+    .let { Root(it.name!!,this) }
     .plugin()
 
 fun Root.plugin() =

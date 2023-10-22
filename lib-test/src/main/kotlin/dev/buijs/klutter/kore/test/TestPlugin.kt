@@ -34,7 +34,7 @@ data class TestPlugin (
     val libFolder: File = root.createFolder("lib"),
     val libFile: File = libFolder.createFile("${pluginName}.dart"),
 
-    val platform: File = root.createFolder("platform"),
+    val platform: File = root.resolve("platform"),
     val platformCommonMain: File = platform.createFolder("src/commonMain"),
     val platformSourceFile: File = platformCommonMain.createFile("FakeClass.kt"),
     val platformPodSpec: File = platform.createFile("${pluginName}.podspec"),

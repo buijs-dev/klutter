@@ -156,6 +156,7 @@ internal fun askForFlutterVersion(): String =
 private fun askForSource(name: String, stableVersion: String, gitUrl: String): String {
     val git = "Git@Develop"
     val pub = "Pub@^$stableVersion"
+    // TODO store local paths chosen in ./kradle/cache/wizard and read it/add them as options here
     val chosen = mrWizard.promptList(
         hint = "press Enter to pick",
         message = "Get $name source from:",

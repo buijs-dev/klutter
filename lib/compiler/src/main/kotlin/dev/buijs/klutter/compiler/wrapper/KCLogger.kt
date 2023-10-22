@@ -1,6 +1,7 @@
 package dev.buijs.klutter.compiler.wrapper
 
 import com.google.devtools.ksp.processing.KSPLogger
+import dev.buijs.klutter.kore.common.maybeCreateFolder
 import dev.buijs.klutter.kore.project.klutterBomVersion
 import java.io.File
 
@@ -10,6 +11,7 @@ class KCLogger(
 ) {
 
     private val logFile = outputFolder
+        .maybeCreateFolder(clearIfExists = true)
         .resolve("compiler.log")
         .also { if(it.exists()) it.delete() }
         .also { it.createNewFile() }

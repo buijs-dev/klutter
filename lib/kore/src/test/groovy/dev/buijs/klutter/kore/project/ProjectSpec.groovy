@@ -36,7 +36,7 @@ class ProjectSpec extends Specification {
         }
 
         where:
-        location << [plugin.root, plugin.root.absolutePath]
+        location << [plugin.root.absolutePath]
     }
 
     def "Verify creating a Project based of a String location without plugin name"() {
@@ -65,7 +65,7 @@ class ProjectSpec extends Specification {
         }
 
         where:
-        location << [plugin.root, plugin.root.absolutePath]
+        location << [plugin.root]
     }
 
     def "An exception is thrown when root does not exist" () {

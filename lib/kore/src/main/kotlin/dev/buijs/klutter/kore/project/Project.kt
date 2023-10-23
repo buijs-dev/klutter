@@ -47,7 +47,7 @@ data class Project(
 /**
  * Path to Klutter projects cache folder which is <user.home>/.kradle.
  */
-val kradleCache: File
+val kradleHome: File
     get() = File(System.getProperty("user.home"))
         .verifyExists()
         .resolve(".kradle")
@@ -96,9 +96,9 @@ fun dartExecutable(name: FlutterDistributionFolderName): File =
  * Path to Klutter cache folder which is <user.home>/.kradle/cache.
  */
 fun flutterSDK(name: FlutterDistributionFolderName): File =
-    kradleCache.resolve("cache").resolve("$name")
+    kradleHome.resolve("cache").resolve("$name")
 
-fun initKradleCache() = kradleCache
+fun initKradleCache() = kradleHome
     .maybeCreateFolder(clearIfExists = false)
     .verifyExists()
     .resolve("cache")

@@ -58,7 +58,7 @@ bom-version: $overrideBomVersion
         ]
 
         when:
-        def options = NewProjectCommandKt.createProject(command)
+        def options = NewProjectCommandKt.getNewProjectOptions(command)
 
         then:
         options.pluginName.data == "my_awesome_plugin"
@@ -78,7 +78,7 @@ bom-version: $overrideBomVersion
         ]
 
         when:
-        def options = NewProjectCommandKt.createProject(command)
+        def options = NewProjectCommandKt.getNewProjectOptions(command)
 
         then:
         options.pluginName.data == "my_awesome_plugin"

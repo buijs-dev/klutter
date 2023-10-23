@@ -2,6 +2,7 @@ package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.tasks.execute
+import java.io.File
 import java.nio.file.Path
 
 enum class OperatingSystem(val value: String) {
@@ -47,3 +48,4 @@ val currentArchitecture: Architecture
     get() = """uname -m""".execute(Path.of("").toFile().absoluteFile).let { str ->
         if(str.uppercase().contains("ARM")) Architecture.ARM64 else Architecture.X64
     }
+

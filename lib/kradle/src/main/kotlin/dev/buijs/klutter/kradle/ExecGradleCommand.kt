@@ -21,30 +21,26 @@
  */
 package dev.buijs.klutter.kradle
 
-import dev.buijs.klutter.kore.tasks.CleanCacheTask
+import dev.buijs.klutter.kore.project.isWindows
+import dev.buijs.klutter.kore.tasks.finish
+import java.io.File
 
-internal enum class WizardAction(val prettyPrinted: String, val action: () -> Unit) {
-    NEW_PROJECT(
-        prettyPrinted = "New Project",
-        action = { getNewProjectOptionsByUserInput().createNewProject() }),
-    GET_FLUTTER_SDK(
-        prettyPrinted = "Download Flutter SDK",
-        action = { getFlutterWizard() }),
-    CLEAR_CACHE(
-        prettyPrinted = "Clear Klutter Cache",
-        action = { CleanCacheTask().run() }),
-    EXIT(
-        prettyPrinted = "Exit",
-        action = {
-            println("Farewell!")
+internal fun List<String>.execGradleCommand(currentFolder: File): String =
+    toTypedArray().execGradleCommand(currentFolder)
+
+internal fun Array<String>.execGradleCommand(currentFolder: File): String = this.let { args ->
+    ProcessBuilder()
+        .command(buildList {
+            if(isWindows) {
+                add("cmd.exe")
+                add("/c")
+            }
+
+            add(currentFolder.resolve("gradlew").absolutePath)
+            addAll(args)
         })
-}
-
-internal fun startWizard() {
-    val chosen = mrWizard.promptList(
-        hint = "press Enter to pick",
-        message = "What do you want to do?",
-        choices = WizardAction.values().map { it.prettyPrinted })
-
-    WizardAction.values().first { it.prettyPrinted == chosen }.action()
+        .directory(currentFolder)
+        .inheritIO()
+        .start()
+        .finish(30L)
 }

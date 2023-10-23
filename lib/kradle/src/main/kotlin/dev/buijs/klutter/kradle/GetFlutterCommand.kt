@@ -36,7 +36,16 @@ internal fun Array<String>.downloadFlutterByCommand() =
     GetFlutterCommand(parser = ArgParser("klutter"), args = this).downloadOrFail()
 
 private fun GetFlutterCommand.downloadOrFail() {
+    val version = flutterDistribution
+    val overwrite = overwriteExistingDistribution
+    println("Will download Flutter ${version.prettyPrintedString}")
+    if(overwrite) {
+        println("Will delete existing Flutter ${version.prettyPrintedString} if present")
+    } else {
+        println("Will abort if Flutter ${version.prettyPrintedString} is present")
+    }
     DownloadFlutterTask(flutterDistribution, overwriteExistingDistribution).run()
+    println("Finished get command")
 }
 
 private class GetFlutterCommand(parser: ArgParser, args: Array<String>) {

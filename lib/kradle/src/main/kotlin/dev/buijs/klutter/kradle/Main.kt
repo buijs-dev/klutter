@@ -22,6 +22,7 @@
 package dev.buijs.klutter.kradle
 
 import dev.buijs.klutter.kore.project.klutterBomVersion
+import java.nio.file.Paths
 
 fun main(args: Array<String>) {
     println("""
@@ -30,6 +31,8 @@ fun main(args: Array<String>) {
   ════════════════════════════════════════════
   """)
 
+    val currentFolder = Paths.get("").toAbsolutePath().toFile()
+
     val first: (Array<String>) -> MutableList<String> = {
         args.toMutableList().also { it.removeFirst() }
     }
@@ -37,11 +40,20 @@ fun main(args: Array<String>) {
     when {
         args.isEmpty() -> startWizard()
 
+        args.firstOrNull() == "-g" ->
+            first(args).execGradleCommand(currentFolder)
+
+        args.firstOrNull() == "-f" ->
+            first(args).execFlutterCommand(currentFolder)
+
+        args.firstOrNull() == "build" ->
+            build(currentFolder)
+
         args.firstOrNull() == "clean" ->
             first(args).clean()
 
         args.firstOrNull() == "create" ->
-            first(args).createProject()
+            first(args).getNewProjectOptions().createNewProject()
 
         args.firstOrNull() == "get" ->
             first(args).getDependency()

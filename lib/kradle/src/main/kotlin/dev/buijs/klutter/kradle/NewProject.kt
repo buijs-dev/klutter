@@ -23,12 +23,16 @@ package dev.buijs.klutter.kradle
 
 import dev.buijs.klutter.kore.project.Config
 import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
+import dev.buijs.klutter.kore.tasks.CleanCacheTask
 import dev.buijs.klutter.kore.tasks.project.ProjectBuilderOptions
 import dev.buijs.klutter.kore.tasks.project.ProjectBuilderTask
 import dev.buijs.klutter.kore.tasks.project.*
 
-internal fun ProjectBuilderOptions.createProject() =
+internal fun ProjectBuilderOptions.createNewProject() {
+    println("Creating a new Klutter project...")
     ProjectBuilderTask(this).run()
+    println("Finished Klutter project creation.")
+}
 
 internal sealed interface NewProjectInput {
     val rootFolder: RootFolder

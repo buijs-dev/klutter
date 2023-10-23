@@ -25,6 +25,7 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.compiler.processor.ProcessorOption.*
 import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.project.*
 import java.io.File
 
 internal var dryRun = false
@@ -60,78 +61,31 @@ internal fun processorOptions(
     kradleEnv: File,
     kradleYaml: File,
 ): ProcessorOptions {
-    val projectPropertyPattern = """(\{\{project[.]([^}]+?)\}\})""".toRegex()
-    val systemPropertyPattern = """(\{\{system[.]([^}]+?)\}\})""".toRegex()
-    val options = env.options
-    val envTextOrNull = if(kradleEnv.exists()) {
-        var text = kradleEnv.readText()
-        val systemProperties = systemPropertyPattern.findAll(text)
-        for(result in systemProperties) {
-            val propertyName = result.groupValues[2]
-            val property = System.getProperty(propertyName)
-            text = text.replace("{{system.$propertyName}}", property)
-        }
 
-        val projectProperties = projectPropertyPattern.findAll(text)
-        for(result in projectProperties) {
-            val propertyName = result.groupValues[2]
-            val property = when(propertyName) {
-                "build" ->  kradleEnv.parentFile.resolve("platform").resolve("build").absolutePath
-                "root" -> kradleEnv.parentFile.absolutePath
-                else -> throw KlutterException("Unknown project property defined in kradle.env: $propertyName")
-            }
-            text = text.replace("{{project.$propertyName}}", property)
-        }
-        text
+    val options = env.options
+
+    val kradleEnvContent = if(kradleEnv.exists()) {
+        kradleEnv.resolveProjectPropertiesOrThrow().resolveSystemPropertiesOrThrow().readText()
     } else {
         null
     }
 
-    val yamlTextOrNull = if(kradleYaml.exists()) kradleYaml.readText() else null
-
-    val flutterOrNull = yamlTextOrNull.findPropertyInYamlOrNull("flutter-version")
-
-    val outputFolder = envTextOrNull.findPropertyInEnvOrNull("output.path")
-        ?.let { path -> File(path) }
-
-    val skipCodegen = envTextOrNull.findPropertyInEnvOrNull("skip.codegen")?.uppercase()?.let { skip ->
-        when(skip) {
-            "TRUE" -> true
-            "FALSE" -> false
-            else -> null
-        }
+    val kradleYamlContent = if(kradleYaml.exists()) {
+        kradleYaml.resolveProjectPropertiesOrThrow().resolveSystemPropertiesOrThrow().readText()
+    } else {
+        null
     }
+
+    val outputFolder = findOutputPathInKradleEnvOrNull(kradleEnvContent)
+    val skipCodeGen = findSkipCodeGenInKradleEnvOrNull(kradleEnvContent)
+    val flutterOrNull = findFlutterVersionInKradleYamlOrNull(kradleYamlContent)
 
     return ProcessorOptions(
         projectFolder = options.projectFolder(),
-        outputFolder = outputFolder ?: options.outputFolder(),
-        generateAdapters = skipCodegen?.let { !it } ?: options.boolean(GENERATE_ADAPTERS),
+        outputFolder = outputFolder?.let { File(it) } ?: options.outputFolder(),
+        generateAdapters = skipCodeGen?.let { !it } ?: options.boolean(GENERATE_ADAPTERS),
         flutterVersion = flutterOrNull ?: options.flutterVersion()
     ).also { kcLogger?.info("Determined Processor Options: $it") }
-}
-
-private fun String?.findPropertyInYamlOrNull(key: String) = when {
-    this == null -> null
-    else -> {
-        val match = """$key:\s*('|")\s*([^'"]+?)\s*('|")""".toRegex().find(this)
-        if(match == null) {
-            null
-        } else {
-            match.groupValues[2]
-        }
-    }
-}
-
-private fun String?.findPropertyInEnvOrNull(key: String) = when {
-    this == null -> null
-    else -> {
-        val match = """$key=([^\n\r]+)""".toRegex().find(this)
-        if(match == null) {
-            null
-        } else {
-            match.groupValues[1]
-        }
-    }
 }
 
 /**

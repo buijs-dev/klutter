@@ -11,9 +11,8 @@ It can be used to create Flutter plugins.
 
 
 ### Getting started
-- Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin. 
-This plugin will create a new Flutter plugin and setup Klutter automatically.
-- For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+- Start a new project with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin or....
+// TODO link to kradle dist url.
 - For recipes see the [cookbook](https://github.com/buijs-dev/klutter-cookbook)
 
 ### Framework

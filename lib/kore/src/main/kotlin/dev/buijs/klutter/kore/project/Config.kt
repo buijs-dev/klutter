@@ -21,14 +21,17 @@
  */
 package dev.buijs.klutter.kore.project
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import dev.buijs.klutter.kore.common.verifyExists
 import mu.KotlinLogging
 import java.io.File
 
 private val log = KotlinLogging.logger { }
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
     "bom-version",
     "flutter-version",
@@ -44,6 +47,7 @@ data class Config(
     val flutterVersion: String? = null,
 )
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
     "klutter",
     "klutter_ui",

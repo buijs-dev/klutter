@@ -36,10 +36,10 @@ private const val configDescription = "Path to kradle.yaml"
 
 private const val flutterDescription = "Flutter SDK version (format: major.minor.patch.platform.architecture, example: 3.10.6.macos.arm64)"
 
-internal fun List<String>.createProject(): ProjectBuilderOptions =
-    toTypedArray().createProject()
+internal fun List<String>.getNewProjectOptions(): ProjectBuilderOptions =
+    toTypedArray().getNewProjectOptions()
 
-internal fun Array<String>.createProject(): ProjectBuilderOptions =
+internal fun Array<String>.getNewProjectOptions(): ProjectBuilderOptions =
     NewProjectCommand(parser = ArgParser("klutter"), args = this).toProjectBuilderOptions()
 
 private fun NewProjectCommand.toProjectBuilderOptions(): ProjectBuilderOptions =

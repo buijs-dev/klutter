@@ -23,13 +23,13 @@ package dev.buijs.klutter.kore.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.common.maybeCreateFolder
-import dev.buijs.klutter.kore.project.kradleCache
+import dev.buijs.klutter.kore.project.kradleHome
 
 /**
  * Task to clean the Klutter Cache Folder.
  */
 class CleanCacheTask: KlutterTask {
     override fun run() {
-        kradleCache.resolve(".cache").maybeCreateFolder(clearIfExists = true)
+        kradleHome.resolve(".cache").maybeCreateFolder(clearIfExists = true)
     }
 }

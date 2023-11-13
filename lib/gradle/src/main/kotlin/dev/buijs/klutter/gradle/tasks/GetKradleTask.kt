@@ -24,6 +24,8 @@ package dev.buijs.klutter.gradle.tasks
 import dev.buijs.klutter.gradle.KlutterGradlePlugin
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.common.verifyExists
+import java.io.File
 import java.io.InputStream
 
 internal val kradleWrapperJar: InputStream
@@ -39,62 +41,60 @@ internal val kradlewBat: InputStream
  * Download Kommand CLI Tool.
  */
 internal open class GetKradleTask: AbstractTask() {
-    override fun klutterTask() = object: KlutterTask {
-        val root = project.rootProject.projectDir
-        val rootKradlew = root.resolve("kradlew")
-        val rootKradlewBat = root.resolve("kradlew.bat")
-        val dotKradle = root.resolve(".kradle")
-        val dotKradleJar = dotKradle.resolve("kradle-wrapper.jar")
+    override fun klutterTask() =
+        project.rootProject.projectDir.toGetKradleTask()
+}
 
-        override fun run() {
+fun File.toGetKradleTask() = object: KlutterTask {
+    val dotKradle = resolve(".kradle")
+    val dotKradleJar = dotKradle.resolve("kradle-wrapper.jar")
 
-            // Create .kradle folder
-            dotKradle.mkdir()
+    override fun run() {
+        dotKradle.mkdir()
+        if(dotKradleJar.exists())
+            dotKradleJar.delete()
 
-            // Copy jar to .kradle folder
-            if(dotKradleJar.exists()) dotKradleJar.delete()
-            kradleWrapperJar.use { input ->
-                dotKradleJar.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
+        kradleWrapperJar.copyToFolder(
+            sourceFileName = "kradle-wrapper.jar",
+            targetFolder = dotKradle
+        )
 
-            // Copy kradlew to root and setExecutable
-            if(rootKradlew.exists())
-                rootKradlew.delete()
+        kradlew.copyToFolder(
+            sourceFileName =  "kradlew",
+            targetFolder =  this@toGetKradleTask
+        ) {
+            it.setExecutable(true)
+        }
 
-            kradlew.use { input ->
-                rootKradlew.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-
-            if(rootKradlew.exists()) {
-                rootKradlew.setExecutable(true)
-            } else {
-                throw KlutterException("Failed to copy kradlew File to $root")
-            }
-
-            // Copy kradlew.bat to root and setExecutable
-            if(rootKradlewBat.exists())
-                rootKradlewBat.delete()
-
-            kradlewBat.use { input ->
-                rootKradlew.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-
-            if(rootKradlewBat.exists()) {
-                rootKradlewBat.setExecutable(true)
-            } else {
-                throw KlutterException("Failed to copy kradlew.bat File to $root")
-            }
-
+        kradlewBat.copyToFolder(
+            sourceFileName = "kradlew.bat",
+            targetFolder = this@toGetKradleTask
+        ) {
+            it.setExecutable(true)
         }
     }
+
 }
 
 private fun resourceFileOrThrow(name: String): InputStream =
     KlutterGradlePlugin::class.java.getResourceAsStream("/$name")
         ?: throw KlutterException("Unable to find $name")
+
+private fun InputStream.copyToFolder(
+    sourceFileName: String,
+    targetFolder: File,
+    postProcesFile: (File) -> Unit = {}
+) {
+    val target = targetFolder.resolve(sourceFileName)
+
+    if(target.exists())
+        target.delete()
+
+    use { input ->
+        target.outputStream().use { output ->
+            input.copyTo(output)
+        }
+    }
+
+    target.verifyExists().let(postProcesFile)
+}

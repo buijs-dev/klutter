@@ -19,29 +19,20 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.shared
 
-import dev.buijs.klutter.kore.project.Config
-import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
 import dev.buijs.klutter.kore.tasks.CleanCacheTask
-import dev.buijs.klutter.kore.tasks.project.ProjectBuilderOptions
-import dev.buijs.klutter.kore.tasks.project.ProjectBuilderTask
-import dev.buijs.klutter.kore.tasks.project.*
 
-internal fun ProjectBuilderOptions.createNewProject() {
-    println("Creating a new Klutter project...")
-    ProjectBuilderTask(this).run()
-    println("Finished Klutter project creation.")
-}
-
-internal sealed interface NewProjectInput {
-    val rootFolder: RootFolder
-
-    val groupName: GroupName
-
-    val pluginName: PluginName
-
-    val flutterDistributionFolderName: FlutterDistributionFolderName
-
-    val configOrNull: Config?
+fun MutableList<String>.clean() {
+    val first = removeFirstOrNull()
+    when {
+        first == "cache" -> {
+            println("The .kradle/cache folder will be cleaned...")
+            CleanCacheTask().run()
+            println("Finished .kradle/cache cleaning.")
+        }
+        else -> {
+            println("I don't know what to clean: $this")
+        }
+    }
 }

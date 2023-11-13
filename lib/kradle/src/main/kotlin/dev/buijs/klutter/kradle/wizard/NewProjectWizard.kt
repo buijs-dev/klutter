@@ -19,13 +19,14 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.wizard
 
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.common.EitherOk
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.tasks.project.*
+import dev.buijs.klutter.kradle.shared.NewProjectInput
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -50,6 +51,21 @@ private const val projectFolderPathDefault = ""
 @ExcludeFromJacocoGeneratedReport
 internal fun getNewProjectOptionsByUserInput(): ProjectBuilderOptions =
     NewProjectWizard().toProjectBuilderOptions()
+
+internal fun ProjectBuilderOptions.confirmNewProjectOptions(): ProjectBuilderOptions? {
+    println("  Confirm project details")
+    println("  - Plugin Name: ${pluginName.validPluginNameOrThrow()}")
+    println("  - Group Name: ${groupName.validPluginNameOrThrow()}")
+    println("  - Flutter: $flutterDistributionString")
+    println("  - Dependencies:")
+    println("       - klutter: ${config?.dependencies?.klutter ?: klutterPubVersion}")
+    println("       - klutter_ui: ${config?.dependencies?.klutterUI ?: klutterUIPubVersion}")
+    println("       - squint_json: ${config?.dependencies?.squint ?: squintPubVersion}")
+    println("       - bom: ${config?.bomVersion ?: klutterBomVersion}")
+    println("")
+    val confirmed = mrWizard.promptConfirm(message = "Create project?", default = true)
+    return if(confirmed) this else null
+}
 
 internal class NewProjectWizard(
     override val rootFolder: RootFolder =
@@ -156,7 +172,6 @@ internal fun askForFlutterVersion(): String =
 private fun askForSource(name: String, stableVersion: String, gitUrl: String): String {
     val git = "Git@Develop"
     val pub = "Pub@^$stableVersion"
-    // TODO store local paths chosen in ./kradle/cache/wizard and read it/add them as options here
     val chosen = mrWizard.promptList(
         hint = "press Enter to pick",
         message = "Get $name source from:",

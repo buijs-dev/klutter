@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.command
 
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.tasks.project.DownloadFlutterTask

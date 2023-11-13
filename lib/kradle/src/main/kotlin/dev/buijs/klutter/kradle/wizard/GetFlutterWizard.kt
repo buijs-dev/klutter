@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.wizard
 
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
 import dev.buijs.klutter.kore.project.*
@@ -39,7 +39,7 @@ internal fun getFlutterWizard() {
     val overwrite = mrWizard.promptConfirm(
         message = "Delete the existing SDK distribution if it exists?",
         default = false)
-
+    println("Downloading Flutter SDK...")
     DownloadFlutterTask(distribution, overwrite, target).run()
     println("Finished!")
 }

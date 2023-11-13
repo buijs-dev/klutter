@@ -11,8 +11,10 @@ It can be used to create Flutter plugins.
 
 
 ### Getting started
-- Start a new project with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin or....
-// TODO link to kradle dist url.
+- Start a new project with the
+  - [Intellij](https://buijs.dev/klutter-3/) plugin
+  - [Android Studio](https://buijs.dev/klutter-4/) plugin
+  - [Kradle](https://buijs.dev/kradle-1/) cli tool
 - For recipes see the [cookbook](https://github.com/buijs-dev/klutter-cookbook)
 
 ### Framework

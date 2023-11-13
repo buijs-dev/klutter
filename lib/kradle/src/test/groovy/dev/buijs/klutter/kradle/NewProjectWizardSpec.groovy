@@ -23,6 +23,11 @@
 package dev.buijs.klutter.kradle
 
 import dev.buijs.klutter.kore.project.PubspecBuilder
+import dev.buijs.klutter.kradle.wizard.MrWizard
+import dev.buijs.klutter.kradle.wizard.MrWizardKt
+import dev.buijs.klutter.kradle.wizard.NewProjectWizard
+import dev.buijs.klutter.kradle.wizard.NewProjectWizardKt
+import dev.buijs.klutter.kradle.wizard.Wizard
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Stepwise
@@ -37,7 +42,7 @@ class NewProjectWizardSpec extends Specification {
 
     def "Verify wizard asks for all required fields"() {
         given:
-        def mrWizard = Mock(MrWizard)
+        def mrWizard = Stub(Wizard)
         MrWizardKt.mrWizard = mrWizard
 
         and: "ask for rootFolder"
@@ -59,6 +64,9 @@ class NewProjectWizardSpec extends Specification {
 
         and: "ask for configOrNull"
         mrWizard.promptConfirm("Configure dependencies?", _) >> false
+
+        and: "ask for confirmation"
+        mrWizard.promptConfirm("Create project?", _) >> true
 
         when:
         def options = NewProjectWizardKt.toProjectBuilderOptions(new NewProjectWizard())

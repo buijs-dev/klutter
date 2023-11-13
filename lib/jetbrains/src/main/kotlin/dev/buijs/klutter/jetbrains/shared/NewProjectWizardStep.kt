@@ -44,11 +44,10 @@ import java.awt.Dimension
 import java.awt.Graphics
 import javax.swing.JPanel
 
-private val knownKlutterBOMVersions = listOf(
+private val knownKlutterBOMVersions = setOf(
     "2023.3.1.beta",
     "2023.2.2.beta",
     "2023.2.1.beta",
-    "2023.3.1.beta",
     "2023.1.1.beta")
 
 /**

@@ -25,7 +25,6 @@ class ProjectSpec extends Specification {
 
         with(project.android) {android ->
             android.folder.exists()
-            android.manifest.exists()
         }
 
         with(project.ios) {ios ->
@@ -54,7 +53,6 @@ class ProjectSpec extends Specification {
 
         with(project.android) {android ->
             android.folder.exists()
-            android.manifest.exists()
         }
 
         with(project.ios) {ios ->
@@ -151,68 +149,6 @@ class ProjectSpec extends Specification {
 
         then:
         project.platform.source().absolutePath == plugin.platformCommonMain.absolutePath
-    }
-
-    def "An exception is thrown when android does not exist" () {
-        given:
-        def plugin = new TestPlugin()
-
-        and:
-        plugin.android.deleteDir()
-
-        when:
-        ProjectKt.plugin(plugin.root, "")
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage().startsWith("Path does not exist: ")
-        e.getMessage().endsWith("/android")
-    }
-
-    def "An exception is thrown when android does not contain a src/main folder" () {
-        given:
-        def plugin = new TestPlugin()
-
-        and:
-        plugin.androidSrcMain.deleteDir()
-
-        when:
-        def project = ProjectKt.plugin(plugin.root, "")
-
-        and:
-        project.android.manifest
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage().startsWith("Path does not exist: ")
-        e.getMessage().endsWith("/src/main")
-    }
-
-    def "An exception is thrown when android/src/main does not contain an AndroidManifest.xml" () {
-        given:
-        def plugin = new TestPlugin()
-
-        and:
-        plugin.manifest.delete()
-
-        when:
-        def project = ProjectKt.plugin(plugin.root, "")
-
-        and:
-        project.android.manifest
-
-        then:
-        KlutterException e = thrown()
-        e.getMessage().startsWith("Path does not exist: ")
-        e.getMessage().endsWith("/AndroidManifest.xml")
-    }
-
-    def "Verify android/src/main/AndroidManifest.xml is returned" () {
-        when:
-        def project = ProjectKt.plugin(plugin.root, "")
-
-        then:
-        project.android.manifest.absolutePath == plugin.manifest.absolutePath
     }
 
     def "An exception is thrown when ios does not exist" () {

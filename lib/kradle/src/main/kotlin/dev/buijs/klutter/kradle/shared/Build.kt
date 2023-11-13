@@ -19,18 +19,12 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kore.tasks
+package dev.buijs.klutter.kradle.shared
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.project.kradleHome
+import java.io.File
 
-/**
- * Task to clean the Klutter Cache Folder.
- */
-class CleanCacheTask: KlutterTask {
-    override fun run() {
-        kradleHome.resolve(".cache")
-            .also { it.deleteRecursively() }
-            .mkdir()
-    }
+fun build(currentFolder: File) {
+    println("Let's build something great!")
+    listOf("clean",  "build", "-p", "platform").execGradleCommand(currentFolder)
+    println("Finished project build.")
 }

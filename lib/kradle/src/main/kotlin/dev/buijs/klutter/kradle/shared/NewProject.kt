@@ -19,32 +19,31 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.shared
 
-import dev.buijs.klutter.kore.tasks.CleanCacheTask
+import dev.buijs.klutter.kore.project.Config
+import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
+import dev.buijs.klutter.kore.tasks.project.ProjectBuilderOptions
+import dev.buijs.klutter.kore.tasks.project.ProjectBuilderTask
+import dev.buijs.klutter.kore.tasks.project.*
 
-internal enum class WizardAction(val prettyPrinted: String, val action: () -> Unit) {
-    NEW_PROJECT(
-        prettyPrinted = "New Project",
-        action = { getNewProjectOptionsByUserInput().createNewProject() }),
-    GET_FLUTTER_SDK(
-        prettyPrinted = "Download Flutter SDK",
-        action = { getFlutterWizard() }),
-    CLEAR_CACHE(
-        prettyPrinted = "Clear Klutter Cache",
-        action = { CleanCacheTask().run() }),
-    EXIT(
-        prettyPrinted = "Exit",
-        action = {
-            println("Farewell!")
-        })
+internal fun ProjectBuilderOptions.createNewProject() {
+    println("Creating a new Klutter project...")
+    ProjectBuilderTask(this).run()
+    val name = pluginName.validPluginNameOrThrow()
+    val root = rootFolder.validRootFolderOrThrow().resolve(name)
+    listOf("klutterGetKradle").execGradleCommand(root)
+    println("Finished Klutter project creation.")
 }
 
-internal fun startWizard() {
-    val chosen = mrWizard.promptList(
-        hint = "press Enter to pick",
-        message = "What do you want to do?",
-        choices = WizardAction.values().map { it.prettyPrinted })
+internal interface NewProjectInput {
+    val rootFolder: RootFolder
 
-    WizardAction.values().first { it.prettyPrinted == chosen }.action()
+    val groupName: GroupName
+
+    val pluginName: PluginName
+
+    val flutterDistributionFolderName: FlutterDistributionFolderName
+
+    val configOrNull: Config?
 }

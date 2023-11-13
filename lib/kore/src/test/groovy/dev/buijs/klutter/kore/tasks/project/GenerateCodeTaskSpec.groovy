@@ -189,8 +189,6 @@ class GenerateCodeTaskSpec extends Specification {
 
         def androidMain = plugin.toPath().resolve("android/src/main")
         androidMain.toFile().mkdirs()
-        def androidManifest = androidMain.resolve("AndroidManifest.xml")
-        androidManifest.toFile().createNewFile()
         def androidSource = androidMain.resolve("kotlin")
         androidSource.toFile().mkdir()
 

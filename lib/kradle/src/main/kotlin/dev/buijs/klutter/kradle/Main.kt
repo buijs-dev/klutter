@@ -22,6 +22,12 @@
 package dev.buijs.klutter.kradle
 
 import dev.buijs.klutter.kore.project.klutterBomVersion
+import dev.buijs.klutter.kradle.command.getNewProjectOptions
+import dev.buijs.klutter.kradle.shared.*
+import dev.buijs.klutter.kradle.shared.createNewProject
+import dev.buijs.klutter.kradle.shared.execFlutterCommand
+import dev.buijs.klutter.kradle.shared.execGradleCommand
+import dev.buijs.klutter.kradle.wizard.mrWizard
 import java.nio.file.Paths
 
 fun main(args: Array<String>) {
@@ -38,7 +44,7 @@ fun main(args: Array<String>) {
     }
 
     when {
-        args.isEmpty() -> startWizard()
+        args.isEmpty() -> mrWizard.runWizard(currentFolder)
 
         args.firstOrNull() == "-g" ->
             first(args).execGradleCommand(currentFolder)

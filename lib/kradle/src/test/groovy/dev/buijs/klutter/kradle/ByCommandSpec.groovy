@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.kradle
 
+import dev.buijs.klutter.kradle.command.NewProjectCommandKt
 import spock.lang.Shared
 import spock.lang.Specification
 

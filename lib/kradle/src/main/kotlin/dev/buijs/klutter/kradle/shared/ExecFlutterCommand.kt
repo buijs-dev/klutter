@@ -19,18 +19,12 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.shared
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.common.verifyExists
 import dev.buijs.klutter.kore.project.*
-import dev.buijs.klutter.kore.tasks.execute
-import dev.buijs.klutter.kore.tasks.executor
 import dev.buijs.klutter.kore.tasks.finish
-import dev.buijs.klutter.kore.tasks.project.DownloadFlutterTask
-import kotlinx.cli.ArgParser
 import java.io.File
-import java.nio.file.Path
 
 internal fun List<String>.execFlutterCommand(currentFolder: File): String =
     toTypedArray().execFlutterCommand(currentFolder)

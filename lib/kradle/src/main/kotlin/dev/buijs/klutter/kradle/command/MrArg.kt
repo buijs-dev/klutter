@@ -19,28 +19,19 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.command
 
-import dev.buijs.klutter.kore.project.isWindows
-import dev.buijs.klutter.kore.tasks.finish
-import java.io.File
+import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
+import kotlinx.cli.required
 
-internal fun List<String>.execGradleCommand(currentFolder: File): String =
-    toTypedArray().execGradleCommand(currentFolder)
+internal annotation class Open4Test
 
-internal fun Array<String>.execGradleCommand(currentFolder: File): String = this.let { args ->
-    ProcessBuilder()
-        .command(buildList {
-            if(isWindows) {
-                add("cmd.exe")
-                add("/c")
-            }
+internal infix fun ArgParser.required(description: String) =
+    option(ArgType.String, description = description).required()
 
-            add(currentFolder.resolve("gradlew").absolutePath)
-            addAll(args)
-        })
-        .directory(currentFolder)
-        .inheritIO()
-        .start()
-        .finish(30L)
-}
+internal infix fun ArgParser.optional(description: String) =
+    option(ArgType.String, description = description)
+
+internal infix fun ArgParser.optionalBoolean(description: String) =
+    option(ArgType.Boolean, description = description)

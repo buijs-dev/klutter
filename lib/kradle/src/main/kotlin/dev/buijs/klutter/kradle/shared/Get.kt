@@ -19,19 +19,18 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.shared
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.required
+import dev.buijs.klutter.kradle.command.downloadFlutterByCommand
 
-internal annotation class Open4Test
-
-internal infix fun ArgParser.required(description: String) =
-    option(ArgType.String, description = description).required()
-
-internal infix fun ArgParser.optional(description: String) =
-    option(ArgType.String, description = description)
-
-internal infix fun ArgParser.optionalBoolean(description: String) =
-    option(ArgType.Boolean, description = description)
+fun List<String>.getDependency() {
+    val mutable = toMutableList()
+    val first = mutable.removeFirstOrNull()
+    when {
+        first == "flutter" ->
+            mutable.downloadFlutterByCommand()
+        else -> {
+            println("I don't know what to get: $this")
+        }
+    }
+}

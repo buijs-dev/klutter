@@ -77,10 +77,7 @@ tasks.register("kradleWrapperJar", Jar::class) {
     with(tasks.jar.get() as CopySpec)
 }
 
-tasks.register("copyKradleWrapperJar", Copy::class) {
-    from(project.projectDir.resolve("build/libs/kradle-wrapper.jar"))
-    into(project.rootProject.rootDir.resolve("lib/gradle/src/main/resources"))
-
+tasks.register("copyKradleWrapperJarToRoot", Copy::class) {
     from(project.projectDir.resolve("build/libs/kradle-wrapper.jar"))
     into(project.rootProject.rootDir.resolve("kradle/lib"))
 }
@@ -90,5 +87,5 @@ tasks.named("build") {
 }
 
 tasks.named("kradleWrapperJar") {
-    setFinalizedBy(setOf("copyKradleWrapperJar"))
+    setFinalizedBy(setOf("copyKradleWrapperJarToRoot"))
 }

@@ -19,10 +19,11 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kradle
+package dev.buijs.klutter.kradle.command
 
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.tasks.project.*
+import dev.buijs.klutter.kradle.shared.NewProjectInput
 import kotlinx.cli.ArgParser
 import java.io.File
 

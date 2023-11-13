@@ -48,7 +48,6 @@ data class TestPlugin (
 
     val android: File = root.createFolder("android"),
     val androidSrcMain: File = android.createFolder("src/main"),
-    val manifest: File = androidSrcMain.createFile("AndroidManifest.xml"),
     val pathToPluginSource: File = androidSrcMain.createFolder("kotlin/foo/bar/$pluginName/"),
     val pathToPlugin: File = pathToPluginSource.createFile("$pluginClassName.kt"),
 

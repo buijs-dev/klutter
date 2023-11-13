@@ -22,7 +22,6 @@
 package dev.buijs.klutter.kore.tasks.project
 
 import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.common.verifyExists
 import dev.buijs.klutter.kore.project.*
 import dev.buijs.klutter.kore.tasks.Zippie
 import java.io.*
@@ -53,7 +52,6 @@ internal class DownloadFlutter(
         val path = flutterDownloadPathOrThrow(os, arch, version)
         val target = target
             ?.resolve(FlutterDistribution(version, os, arch).folderNameString.toString())
-            ?.verifyExists()
             ?:flutterSDK(FlutterDistribution(version, os, arch).folderNameString)
         if(target.exists() && !overwrite) return
         val zip = tempZipFile

@@ -38,7 +38,7 @@ internal val kradlewBat: InputStream
     get() = resourceFileOrThrow("kradlew.bat")
 
 /**
- * Download Kommand CLI Tool.
+ * Download Kradle CLI Tool.
  */
 internal open class GetKradleTask: AbstractTask() {
     override fun klutterTask() =
@@ -83,7 +83,7 @@ private fun resourceFileOrThrow(name: String): InputStream =
 private fun InputStream.copyToFolder(
     sourceFileName: String,
     targetFolder: File,
-    postProcesFile: (File) -> Unit = {}
+    postProcessFile: (File) -> Unit = {}
 ) {
     val target = targetFolder.resolve(sourceFileName)
 
@@ -96,5 +96,5 @@ private fun InputStream.copyToFolder(
         }
     }
 
-    target.verifyExists().let(postProcesFile)
+    target.verifyExists().let(postProcessFile)
 }

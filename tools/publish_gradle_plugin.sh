@@ -18,8 +18,6 @@ echo "------------------"
 ./gradlew clean -p "lib/gradle"
 ./gradlew build -p "lib/gradle"
 
-./gradlew copyKlutterProperties -p "lib/gradle"
-
 echo "\0/ Klutter: step: publish gradle modules"
 echo "------------------"
 #./gradlew publish -p "lib/gradle"

@@ -103,7 +103,6 @@ class ControllerScannerSpec extends Specification {
         }
     }
 
-    @Ignore
     def "When a controller has invalid events, scanning returns an error" () {
         given:
         def classes = [buildKotlinClassWrapper([eventErrors: ["Invalid Event!"]])]

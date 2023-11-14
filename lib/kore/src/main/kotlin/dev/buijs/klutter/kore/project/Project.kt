@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2022 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,10 +19,10 @@
  * SOFTWARE.
  *
  */
-
 package dev.buijs.klutter.kore.project
 
 import dev.buijs.klutter.kore.KlutterException
+import dev.buijs.klutter.kore.common.maybeCreateFolder
 import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
@@ -44,6 +44,67 @@ data class Project(
     val platform: Platform,
 )
 
+/**
+ * Path to Klutter projects cache folder which is <user.home>/.kradle.
+ */
+val kradleHome: File
+    get() = File(System.getProperty("user.home"))
+        .verifyExists()
+        .resolve(".kradle")
+
+/**
+ * The root/kradle.env File.
+ *
+ * The kradle.env File is a private File to control the kradlew environment.
+ */
+val Root.kradleEnvFile: File
+    get() = folder.resolve("kradle.env")
+
+/**
+ * The root/kradle.yaml File.
+ *
+ * The kradle.yaml File contains the project configuration.
+ */
+val Root.kradleYaml: File
+    get() = folder.resolve("kradle.yaml")
+
+/**
+ * Path to SDK folder Flutter which is <user.home>/.kradle/cache/<flutter-version>.
+ */
+val FlutterDistribution.sdk: File
+    get()= flutterSDK(folderNameString)
+
+fun flutterExecutable(name: String): File =
+    flutterExecutable(FlutterDistributionFolderName(name))
+
+fun flutterExecutable(name: FlutterDistributionFolderName): File =
+    flutterSDK(name)
+        .resolve("flutter")
+        .resolve("bin")
+        .resolve("flutter")
+
+fun dartExecutable(name: String): File =
+    dartExecutable(FlutterDistributionFolderName(name))
+
+fun dartExecutable(name: FlutterDistributionFolderName): File =
+    flutterSDK(name)
+        .resolve("flutter")
+        .resolve("bin")
+        .resolve("dart")
+
+/**
+ * Path to Klutter cache folder which is <user.home>/.kradle/cache.
+ */
+fun flutterSDK(name: FlutterDistributionFolderName): File =
+    kradleHome.resolve("cache").resolve("$name")
+
+fun initKradleCache() = kradleHome
+    .maybeCreateFolder(clearIfExists = false)
+    .verifyExists()
+    .resolve("cache")
+    .maybeCreateFolder(clearIfExists = false)
+    .verifyExists()
+
 fun String.plugin(pluginName: String) =
     File(this).plugin(pluginName)
 
@@ -57,7 +118,7 @@ fun File.plugin() = File("${absolutePath}/pubspec.yaml")
     .verifyExists()
     .toPubspec()
     .also { if(it.name == null) throw KlutterException("Missing 'name' in pubspec.yaml.") }
-    .let  { Root(it.name!!,this) }
+    .let { Root(it.name!!,this) }
     .plugin()
 
 fun Root.plugin() =

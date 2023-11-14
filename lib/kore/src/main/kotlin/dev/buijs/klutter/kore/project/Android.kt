@@ -22,7 +22,6 @@
 
 package dev.buijs.klutter.kore.project
 
-import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.kore.common.verifyExists
 import java.io.File
 
@@ -36,18 +35,6 @@ class Android(
     val pluginPackageName: String,
     val pluginClassName: String,
 ) {
-
-    /**
-     * Return path to android/src/main/AndroidManifest.xml.
-     *
-     * @throws KlutterException if path/file does not exist.
-     * @return [File] AndroidManifest.xml.
-     */
-    val manifest = folder.verifyExists()
-        .resolve("src/main")
-        .verifyExists()
-        .resolve("AndroidManifest.xml")
-        .verifyExists()
 
     val pathToPluginPackage: File = folder
         .resolve("src/main/kotlin/${pluginPackageName.toPath()}")

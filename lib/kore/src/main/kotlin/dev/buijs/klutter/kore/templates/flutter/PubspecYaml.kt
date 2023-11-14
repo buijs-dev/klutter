@@ -28,7 +28,7 @@ import dev.buijs.klutter.kore.templates.appendTemplate
 /**
  * Pattern used to get a pubspec dependency from Git.
  *
- * This pattern should be used in the klutter.yaml file.
+ * This pattern should be used in the kradle.yaml file.
  *
  * Example notation: 'https://github.com/your-repo.git@develop'.
  */
@@ -37,7 +37,7 @@ private val gitDependencyRegex = """^(https:..github.com.+?git)@(.+${'$'})""".to
 /**
  * Pattern used to get a pubspec dependency from local path.
  *
- * This pattern should be used in the klutter.yaml file.
+ * This pattern should be used in the kradle.yaml file.
  *
  * Example notation: 'local@foo/bar/dependency-name'.
  */
@@ -58,7 +58,7 @@ fun createRootPubspecYamlWriter(
             appendLine("version: 0.0.1")
             appendLine("")
             appendLine("environment:")
-            appendLine("""  sdk: '>=2.16.1 <3.0.0'""")
+            appendLine("""  sdk: '>=2.17.6 <4.0.0'""")
             appendLine("""  flutter: ">=2.5.0"""")
             appendLine("")
             appendLine("dependencies:")
@@ -100,7 +100,7 @@ fun createExamplePubspecYamlWriter(
             appendLine("publish_to: 'none' # Remove this line if you wish to publish to pub.dev")
             appendLine("")
             appendLine("environment:")
-            appendLine("""  sdk: '>=2.16.1 <3.0.0'""")
+            appendLine("""  sdk: '>=2.17.6 <4.0.0'""")
             appendLine("")
             appendLine("dependencies:")
             appendLine("    flutter:")

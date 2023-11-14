@@ -9,6 +9,7 @@ buildscript {
         gradlePluginPortal()
         mavenCentral()
         mavenLocal()
+        maven { url = uri("https://jitpack.io") } // KInquirer
     }
 
     dependencies {
@@ -22,5 +23,6 @@ allprojects {
         google()
         gradlePluginPortal()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") } // KInquirer
     }
 }

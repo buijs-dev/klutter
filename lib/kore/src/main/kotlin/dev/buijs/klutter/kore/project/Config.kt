@@ -21,6 +21,7 @@
  */
 package dev.buijs.klutter.kore.project
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import dev.buijs.klutter.kore.common.verifyExists
@@ -29,8 +30,10 @@ import java.io.File
 
 private val log = KotlinLogging.logger { }
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
     "bom-version",
+    "flutter-version",
     "dependencies")
 data class Config(
     @JsonProperty("dependencies")
@@ -38,8 +41,12 @@ data class Config(
 
     @JsonProperty("bom-version")
     val bomVersion: String = klutterBomVersion,
+
+    @JsonProperty("flutter-version")
+    val flutterVersion: String? = null,
 )
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder(
     "klutter",
     "klutter_ui",
@@ -47,15 +54,14 @@ data class Config(
     "embedded")
 data class Dependencies(
     @JsonProperty("klutter")
-    val klutter: String = klutterPubVersion,
+    val klutter: String? = null,
 
     @JsonProperty("klutter_ui")
-    val klutterUI: String = klutterUIPubVersion,
+    val klutterUI: String? = null,
 
     @JsonProperty("squint_json")
-    val squint: String = squintPubVersion,
+    val squint: String? = null,
 
-    // TODO check for duplicate classes by removing versions (substring after last :) and then only keep the latest version...
     @JsonProperty("embedded")
     val embedded: Set<String> = emptySet()
 )

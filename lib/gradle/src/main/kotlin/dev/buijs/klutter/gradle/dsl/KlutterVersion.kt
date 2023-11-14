@@ -42,9 +42,6 @@ internal object KlutterVersion {
     val gradle: String = getOrThrow("plugin.gradle.version")
 
     @JvmStatic
-    val tasks: String = getOrThrow("tasks.version")
-
-    @JvmStatic
     val kompose: String = getOrThrow("kompose.version")
 
     @JvmStatic
@@ -56,7 +53,6 @@ internal object KlutterVersion {
         "kompose" -> kompose
         "kore" -> kore
         "gradle" -> gradle
-        "tasks" -> tasks
         "compiler" -> compiler
         "flutter-engine-android" -> flutterEngine
         "flutter-engine-kmp-android" -> flutterEngine

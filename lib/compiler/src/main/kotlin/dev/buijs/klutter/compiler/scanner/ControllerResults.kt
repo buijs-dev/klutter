@@ -42,7 +42,7 @@ internal fun KCController.controllerHasTooManyConstructors() = Either.nok<String
     "Controller $packageName.$className has multiple constructors but only 1 is allowed.")
 
 internal fun KCController.controllerHasInvalidEvents(events: List<String>) =
-    InvalidController("Controller $packageName.$className has invalid events!: ${events.joinToString { it }}")
+    InvalidController("Controller $packageName.$className has invalid events: ${events.joinToString { it }}")
 
 /**
  * A Publisher Controller is invalid because it's TypeParameter has an invalid name.

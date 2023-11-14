@@ -1,4 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
 plugins {
     kotlin("plugin.serialization") version "1.7.10"
     kotlin("multiplatform")

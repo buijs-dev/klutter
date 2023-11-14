@@ -1,3 +1,3 @@
-./gradlew clean distZip -p "./../lib/kommand"
-unzip ./../lib/kommand/build/distributions/kommand.zip -d ./build
-./build/kommand/bin/klutter
+./gradlew clean distZip -p "./../lib/kradle"
+unzip ./../lib/kradle/build/distributions/kradle.zip -d ./build
+./build/kradle/bin/kradlew

@@ -360,7 +360,7 @@ class PubspecSpec extends Specification {
             homepage:
             
             environment:
-              sdk: ">=2.17.5 <3.0.0"
+              sdk: ">=2.17.6 <4.0.0"
               flutter: ">=2.5.0"
             
             dependencies:

@@ -25,22 +25,20 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import dev.buijs.klutter.kore.KlutterException
 import dev.buijs.klutter.compiler.processor.ProcessorOption.*
 import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.project.*
 import java.io.File
+
+internal var dryRun = false
 
 /**
  * Parsed ksp options used by [Processor].
  * </br>
- * Available options are:
- * - klutterScanFolder: Folder to scan for klutter annotations.
- * - klutterOutputFolder: Folder where to write analysis results.
- * - klutterGenerateAdapters: Boolean value indicating if codegen tasks should run during build.
- * - intelMac: Boolean value indicating if the platform is an Intel-based Mac.
  */
 data class ProcessorOptions(
-    val metadataFolder: File,
+    val projectFolder: File,
     val outputFolder: File,
+    val flutterVersion: String,
     val generateAdapters: Boolean,
-    val isIntelBasedBuildMachine: Boolean,
 )
 
 /**
@@ -48,28 +46,53 @@ data class ProcessorOptions(
  * Klutter code scanning/generation.
  */
 internal enum class ProcessorOption(val value: String) {
-    METADATA_FOLDER("klutterScanFolder"),
+    PROJECT_FOLDER("klutterProjectFolder"),
     OUTPUT_FOLDER("klutterOutputFolder"),
     GENERATE_ADAPTERS("klutterGenerateAdapters"),
-    INTEL_BASED_APPLE("intelMac"),
+    FLUTTER_SDK_VERSION("flutterVersion"),
 }
 
 /**
  * Parse options set in the ksp DSL and return a [ProcessorOptions] object
  * or throw a [KlutterException] if required options are missing/invalid.
  */
-internal fun SymbolProcessorEnvironment.processorOptions() = ProcessorOptions(
-    metadataFolder = options.metadataFolder(),
-    outputFolder = options.outputFolder(),
-    generateAdapters = options.boolean(GENERATE_ADAPTERS),
-    isIntelBasedBuildMachine = options.boolean(INTEL_BASED_APPLE),
-).also { kcLogger?.info("Determined Processor Options: $it") }
+internal fun processorOptions(
+    env: SymbolProcessorEnvironment,
+    kradleEnv: File,
+    kradleYaml: File,
+): ProcessorOptions {
+
+    val options = env.options
+
+    val kradleEnvContent = if(kradleEnv.exists()) {
+        kradleEnv.resolveProjectPropertiesOrThrow().resolveSystemPropertiesOrThrow().readText()
+    } else {
+        null
+    }
+
+    val kradleYamlContent = if(kradleYaml.exists()) {
+        kradleYaml.resolveProjectPropertiesOrThrow().resolveSystemPropertiesOrThrow().readText()
+    } else {
+        null
+    }
+
+    val outputFolder = findOutputPathInKradleEnvOrNull(kradleEnvContent)
+    val skipCodeGen = findSkipCodeGenInKradleEnvOrNull(kradleEnvContent)
+    val flutterOrNull = findFlutterVersionInKradleYamlOrNull(kradleYamlContent)
+
+    return ProcessorOptions(
+        projectFolder = options.projectFolder(),
+        outputFolder = outputFolder?.let { File(it) } ?: options.outputFolder(),
+        generateAdapters = skipCodeGen?.let { !it } ?: options.boolean(GENERATE_ADAPTERS),
+        flutterVersion = flutterOrNull ?: options.flutterVersion()
+    ).also { kcLogger?.info("Determined Processor Options: $it") }
+}
 
 /**
  * Parse required ksp option which contains path to the build directory.
  */
-private fun Map<String,String>.metadataFolder(): File {
-    val option = METADATA_FOLDER.value
+internal fun Map<String,String>.projectFolder(): File {
+    val option = PROJECT_FOLDER.value
     val pathToScanFolder = this[option]
         ?: throw KlutterException("""Option $option not set! 
                 |Add this option to the ksp DSL, example: 
@@ -80,10 +103,7 @@ private fun Map<String,String>.metadataFolder(): File {
                 |```
                 |""".trimMargin())
 
-    return File(pathToScanFolder)
-        .also { it.verifyExists() }
-        .resolve("klutter")
-        .also { it.delete(); it.mkdir() }
+    return File(pathToScanFolder).also { it.verifyExists() }
 }
 
 /**
@@ -101,6 +121,22 @@ private fun Map<String,String>.outputFolder(): File {
                 |```
                 |""".trimMargin())
     return File(pathToOutputFolder).also { it.verifyExists() }
+}
+
+/**
+ * Parse required ksp option which contains path to the flutter bin folder.
+ */
+private fun Map<String,String>.flutterVersion(): String {
+    val option = FLUTTER_SDK_VERSION.value
+    return this[option]
+        ?: throw KlutterException("""Option $option not set!
+                |Add this option to the ksp DSL, example:
+                |```
+                |ksp {
+                |    arg("$option", <Flutter Version in format major.minor.patch, example: 3.0.5)
+                |}
+                |```
+                |""".trimMargin())
 }
 
 /**

@@ -32,7 +32,6 @@ class KlutterVersionSpec extends Specification {
         KlutterVersion.compiler != null
         KlutterVersion.kore != null
         KlutterVersion.gradle != null
-        KlutterVersion.tasks != null
         KlutterVersion.kompose != null
         KlutterVersion.flutterEngine != null
     }
@@ -43,7 +42,6 @@ class KlutterVersionSpec extends Specification {
         KlutterVersion.INSTANCE.byName$gradle("compiler") == KlutterVersion.compiler
         KlutterVersion.INSTANCE.byName$gradle("kore") == KlutterVersion.kore
         KlutterVersion.INSTANCE.byName$gradle("gradle") == KlutterVersion.gradle
-        KlutterVersion.INSTANCE.byName$gradle("tasks") == KlutterVersion.tasks
         KlutterVersion.INSTANCE.byName$gradle("kompose") == KlutterVersion.kompose
         KlutterVersion.INSTANCE.byName$gradle("flutter-engine-android") == KlutterVersion.flutterEngine
     }

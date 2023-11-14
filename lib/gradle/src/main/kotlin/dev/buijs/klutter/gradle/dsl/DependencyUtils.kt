@@ -45,7 +45,7 @@ fun KotlinDependencyHandler.embedded(dependencyNotation: String) {
     if(extension == null)
         log.info { "KlutterExtension Not Found." }
 
-    val configFile = extension?.root?.resolve("klutter.yaml") ?: return
+    val configFile = extension?.root?.resolve("kradle.yaml") ?: return
 
     val config = configFile.maybeCreate().toConfigOrNull() ?: return
 

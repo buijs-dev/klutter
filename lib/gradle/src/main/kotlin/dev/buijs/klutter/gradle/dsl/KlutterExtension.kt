@@ -61,11 +61,10 @@ open class KlutterExtension(project: Project) {
                 handler.addKlutterImplementation("annotations", version)
                 handler.addKlutterImplementation("kompose", version)
                 handler.addKlutterImplementation("kore", version)
-                handler.addKlutterImplementation("tasks", version)
                 handler.includeCompilerPlugin(version = version)
             }
             simpleModuleName == "embedded" -> {
-                val configFile = (root ?: defaultRoot).resolve("klutter.yaml")
+                val configFile = (root ?: defaultRoot).resolve("kradle.yaml")
                 configFile.embeddedDependenciesFromConfigFile().forEach {
                     handler.addImplementation(it)
                 }
@@ -83,12 +82,10 @@ open class KlutterExtension(project: Project) {
     @ExcludeFromJacocoGeneratedReport
     fun compiler(
         version: String? = null,
-        dependsOnTasks: String? = null,
         dependsOnKore: String? = null
     ) {
         handler.includeCompilerPlugin(
             version = version,
-            versionTasks = dependsOnTasks,
             versionKore = dependsOnKore)
     }
 
@@ -120,7 +117,6 @@ class KlutterDependencyHandler(private val project: Project) {
     @ExcludeFromJacocoGeneratedReport
     fun includeCompilerPlugin(
         version: String? = null,
-        versionTasks: String? = null,
         versionKore: String? = null
     ) {
         project.dependencies.add(
@@ -129,9 +125,6 @@ class KlutterDependencyHandler(private val project: Project) {
         project.dependencies.add(
             "kspCommonMainMetadata",
             "dev.buijs.klutter:kore:${versionKore ?: KlutterVersion.byName("kore")}")
-        project.dependencies.add(
-            "kspCommonMainMetadata",
-            "dev.buijs.klutter:tasks:${versionTasks ?: KlutterVersion.byName("tasks")}")
     }
 
     @ExcludeFromJacocoGeneratedReport

@@ -24,6 +24,7 @@ package dev.buijs.klutter.compiler.processor
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import dev.buijs.klutter.compiler.scanner.scanForControllers
 import dev.buijs.klutter.compiler.scanner.scanForResponses
@@ -36,14 +37,12 @@ import dev.buijs.klutter.compiler.wrapper.KCLogger
 import dev.buijs.klutter.kore.ast.Controller
 import dev.buijs.klutter.kore.ast.SquintMessageSource
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport
-import dev.buijs.klutter.kore.project.Project
-import dev.buijs.klutter.kore.project.Pubspec
-import dev.buijs.klutter.kore.project.plugin
-import dev.buijs.klutter.kore.project.toPubspec
-import dev.buijs.klutter.tasks.codegen.GenerateCodeOptions
-import dev.buijs.klutter.tasks.codegen.GenerateCodeTask
-import dev.buijs.klutter.tasks.codegen.findGenerateCodeAction
-import java.io.File
+import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.project.*
+import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeOptions
+import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeTask
+import dev.buijs.klutter.kore.tasks.codegen.findGenerateCodeAction
+import dev.buijs.klutter.kore.tasks.project.DownloadFlutterTask
 
 internal var kcLogger: KCLogger? = null
 
@@ -60,23 +59,40 @@ internal var kcLogger: KCLogger? = null
     which uses a real Kotlin Multiplatform Project.
 """)
 class Processor(
-    private val options: ProcessorOptions,
     private val log: KSPLogger,
+    env: SymbolProcessorEnvironment,
 ): SymbolProcessor {
 
-    private lateinit var output: File
-    private lateinit var project: Project
-    private lateinit var pubspec: Pubspec
-
+    private val projectRoot = env.options.projectFolder()
+    private val project = projectRoot.plugin()
+    private val pubspec = project.root.toPubspec()
+    internal val options = processorOptions(env, project.root.kradleEnvFile, project.root.kradleYaml)
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
+
+    private val flutterFolder: FlutterDistributionFolderName
+        get() {
+            val os = currentOperatingSystem
+            val arch = currentArchitecture
+            val version = options.flutterVersion
+            val folder = FlutterDistributionFolderName("$version.$os.$arch".lowercase())
+            val exe = flutterExecutable(folder)
+            if(!exe.exists()) {
+                DownloadFlutterTask(FlutterDistribution(
+                    os = currentOperatingSystem,
+                    arch = arch,
+                    version = version
+                        .split(".")
+                        .let { Version(it[0].toInt(), it[1].toInt(), it[2].toInt()) }
+                )).run()
+            }
+            exe.verifyExists()
+            return folder
+        }
 
     @ExcludeFromJacocoGeneratedReport
     override fun process(resolver: Resolver): List<KSAnnotated> {
         kcLogger = KCLogger(log, options.outputFolder)
-        output  = options.outputFolder
-        project = output.plugin()
-        pubspec = project.root.toPubspec()
         messages = resolver.findAndValidateMessages()
         controllers = resolver.findAndValidateControllers()
         generateCodeAndInstall()
@@ -85,7 +101,7 @@ class Processor(
 
     @ExcludeFromJacocoGeneratedReport
     private fun Resolver.findAndValidateMessages() =
-        scanForResponses(resolver = this, outputFolder = options.metadataFolder)
+        scanForResponses(resolver = this, outputFolder = options.outputFolder)
             .validateResponses().let {
                 when (it) {
                     is ValidSquintMessages -> it.data
@@ -100,7 +116,7 @@ class Processor(
     private fun Resolver.findAndValidateControllers() =
         scanForControllers(
             resolver = this,
-            outputFolder = options.metadataFolder,
+            outputFolder = options.outputFolder,
             responses = messages?.map { it.type }?.toSet() ?: emptySet())
             .validateControllers(messages?.map { it.type } ?: emptyList()).let {
                 when (it) {
@@ -122,13 +138,15 @@ class Processor(
         val codegenOptions = GenerateCodeOptions(
             project = project,
             pubspec = pubspec,
-            excludeArmArcFromPodspec = options.isIntelBasedBuildMachine,
+            excludeArmArcFromPodspec = currentArchitecture == Architecture.X64,
             controllers = controllers!!,
             messages = messages!!,
+            flutterFolder = flutterFolder,
             log = { str -> kcLogger?.info("Running dart command:\n$str") })
 
         findGenerateCodeAction<GenerateCodeTask>(codegenOptions).run()
     }
+
 }
 
 @ExcludeFromJacocoGeneratedReport

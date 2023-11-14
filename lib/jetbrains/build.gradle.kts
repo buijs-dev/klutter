@@ -115,8 +115,8 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
 
     // Project
-    implementation(project(":lib:tasks"))
     implementation(project(":lib:kore"))
+    implementation(project(":lib:gradle"))
 
     // Kotlin Test
     @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions

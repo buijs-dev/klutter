@@ -11,15 +11,15 @@ It can be used to create Flutter plugins.
 
 
 ### Getting started
-- Easiest way to start a new project is with the [Intellij](https://buijs.dev/klutter-3/) or [Android Studio](https://buijs.dev/klutter-4/) plugin. 
-This plugin will create a new Flutter plugin and setup Klutter automatically.
-- For a step-by-step guide (doing everything manually), see the battery app with Klutter [tutorial](https://buijs.dev/klutter-2/).
+- Start a new project with the
+  - [Intellij](https://buijs.dev/klutter-3/) plugin
+  - [Android Studio](https://buijs.dev/klutter-4/) plugin
+  - [Kradle](https://buijs.dev/kradle-1/) cli tool
 - For recipes see the [cookbook](https://github.com/buijs-dev/klutter-cookbook)
 
 ### Framework
 - [Annotations](lib/annotations/module.md)
 - [Kore](lib/kore/module.md)
-- [Tasks](lib/tasks/module.md)
 - [Plugin: Gradle](lib/gradle/module.md)
 - [Plugin: Flutter](https://github.com/buijs-dev/klutter-dart)
 - [Plugin: Jetbrains (Intellij, Android Studio)](lib/jetbrains/module.md)

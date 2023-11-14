@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains.shared
+package dev.buijs.klutter.jetbrains
 
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager

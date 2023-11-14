@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains.shared
+package dev.buijs.klutter.jetbrains
 
 import com.intellij.icons.AllIcons
 import com.intellij.ide.impl.NewProjectUtil

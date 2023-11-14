@@ -67,7 +67,7 @@ gradlePlugin {
 dependencies {
     // Project
     implementation(project(":lib:kore"))
-    implementation(project(":lib:kradle")) // to make sure the copied distribution is always latest
+    implementation(project(":lib:kradle"))
 
     // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
@@ -98,12 +98,3 @@ tasks.register("copyKlutterProperties", Copy::class) {
     from(project.rootProject.rootDir.resolve("lib-build/src/main/resources/publish.properties"))
     into(project.projectDir.resolve("src/main/resources"))
 }
-
-//tasks.register("copyKradleWrapperJarGradleModule", Copy::class) {
-//    from(project.rootProject.rootDir.resolve("kradle/lib/kradle-wrapper.jar"))
-//    into(project.rootProject.rootDir.resolve("lib/gradle/src/main/resources"))
-//}
-//
-//tasks.named("build") {
-//    dependsOn(setOf("copyKradleWrapperJarGradleModule"))
-//}

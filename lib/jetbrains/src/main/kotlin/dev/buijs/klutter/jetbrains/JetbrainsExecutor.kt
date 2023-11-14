@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains.shared
+package dev.buijs.klutter.jetbrains
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import dev.buijs.klutter.kore.common.ExcludeFromJacocoGeneratedReport

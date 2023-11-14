@@ -28,32 +28,30 @@
     <depends>org.jetbrains.android</depends>
     <!-- This adds a klutter menu option to the standard new project wizard (Intellij IDEA + Android Studio) -->
     <extensions defaultExtensionNs="com.intellij">
-        <moduleType id="KLUTTER_MODULE_TYPE" implementationClass="dev.buijs.klutter.jetbrains.shared.KlutterModuleType"/>
-        <moduleBuilder builderClass="dev.buijs.klutter.jetbrains.shared.NewProjectBuilder"
+        <moduleType id="KLUTTER_MODULE_TYPE"
+                    implementationClass="dev.buijs.klutter.jetbrains.KlutterModuleType"/>
+        <moduleBuilder builderClass="dev.buijs.klutter.jetbrains.NewProjectBuilder"
                        id="KLUTTER_MODULE_STEP"
                        order="first"/>
     </extensions>
-    <!-- This adds a template option in the Android Studio new project wizard.
-         Unfortunately it is not possible to customize the fields shown in this wizard,
-         it is not possible to do custom validation, and it is not possible to set different
-         default values (like project name)... -->
-    <!--    <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">-->
-    <!--        <wizardTemplateProvider implementation="dev.buijs.klutter.jetbrains.studio.NewProjectWizardTemplateProvider"/>-->
-    <!--    </extensions>-->
     <actions>
         <!-- Define the 'New Klutter Project' menu item-->`
-        <action id="klutter.NewProject" class="dev.buijs.klutter.jetbrains.shared.NewProjectAction"
+        <action id="klutter.NewProject" class="dev.buijs.klutter.jetbrains.NewProjectAction"
                 text="New Klutter Project..."
                 description="Create a new Klutter project">
             <add-to-group group-id="JavaNewProjectOrModuleGroup" anchor="after" relative-to-action="NewProject"/>
         </action>
-        <!--The icon isn't being used here, but it is set by the action -->
-        <!--suppress PluginXmlValidity -->
-<!--        <action id="klutter.NewProject.welcome" class="dev.buijs.klutter.jetbrains.shared.NewProjectAction"-->
-<!--                icon="NotUsed"-->
-<!--                text="Create New Klutter Project"-->
-<!--                description="Create a new Klutter project">-->
-<!--            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>-->
+<!--        <group id="dev.buijs.klutter.jetbrains.GroupedAction"-->
+<!--               text="Klutter"-->
+<!--               popup="true"-->
+<!--               icon="dev.buijs.klutter.jetbrains.KlutterIcons.logo16x16">-->
+<!--            <add-to-group group-id="ToolsMenu" anchor="first"/>-->
+<!--        </group>-->
+<!--        <action id="dev.buijs.klutter.jetbrains.GetKradleAction"-->
+<!--                class="dev.buijs.klutter.jetbrains.GetKradleAction"-->
+<!--                text="Import Kradle"-->
+<!--                description="Klutter menu">-->
+<!--            <add-to-group group-id="dev.buijs.klutter.jetbrains.GroupedAction" anchor="first"/>-->
 <!--        </action>-->
     </actions>
 </idea-plugin>

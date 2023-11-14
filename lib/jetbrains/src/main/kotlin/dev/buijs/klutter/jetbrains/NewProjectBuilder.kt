@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains.shared
+package dev.buijs.klutter.jetbrains
 
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleBuilderListener
@@ -33,12 +33,8 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.ui.ComponentValidator
-import com.intellij.openapi.ui.ValidationInfo
-import com.intellij.util.ui.components.JBComponent
 import dev.buijs.klutter.kore.KlutterException
 import mu.KotlinLogging
-import javax.swing.JComponent
 
 private val log = KotlinLogging.logger { }
 
@@ -92,7 +88,9 @@ class NewProjectBuilder(
         ApplicationManager.getApplication().invokeLater {
             ProgressManager.getInstance().run(
                 NewProjectTaskFactory.build(
-                    project = project, pathToRoot = pathToRoot, config = config))
+                    project = project, pathToRoot = pathToRoot, config = config
+                )
+            )
         }
 
         return project

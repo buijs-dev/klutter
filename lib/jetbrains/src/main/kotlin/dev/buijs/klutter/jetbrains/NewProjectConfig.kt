@@ -19,7 +19,7 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.jetbrains.shared
+package dev.buijs.klutter.jetbrains
 
 import dev.buijs.klutter.kore.common.EitherNok
 import dev.buijs.klutter.kore.project.FlutterDistribution

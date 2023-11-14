@@ -1,5 +1,7 @@
 package dev.buijs.klutter.jetbrains.shared
 
+import dev.buijs.klutter.jetbrains.NewProjectConfig
+import dev.buijs.klutter.jetbrains.validate
 import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
 import dev.buijs.klutter.kore.project.flutterDistribution
 import io.kotlintest.shouldBe

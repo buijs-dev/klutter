@@ -1,5 +1,4 @@
 [![](https://img.shields.io/badge/Buijs-Software-blue)](https://pub.dev/publishers/buijs.dev/packages)
-[![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/dev.buijs.klutter?color=darkgreen&label=Gradle%20Plugin&logo=gradle)](https://plugins.gradle.org/plugin/dev.buijs.klutter)
 [![Jetbrains Marketplace](https://img.shields.io/jetbrains/plugin/v/19846-klutter?label=Jetbrains%20Plugin)](https://plugins.jetbrains.com/plugin/19846-klutter)
 [![CodeScene Code Health](https://codescene.io/projects/27235/status-badges/code-health)](https://codescene.io/projects/27235)
 [![codecov](https://codecov.io/gh/buijs-dev/klutter/branch/main/graph/badge.svg)](https://codecov.io/gh/buijs-dev/klutter)

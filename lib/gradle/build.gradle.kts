@@ -4,7 +4,7 @@ plugins {
     id("java-gradle-plugin")
     id("java-library")
     id("maven-publish")
-    id("groovy")
+   // id("groovy")
     id("klutter")
 }
 
@@ -39,6 +39,42 @@ publishing {
             credentials {
                 username =  dev.buijs.klutter.Repository.username
                 password =  dev.buijs.klutter.Repository.password
+            }
+        }
+    }
+
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "dev.buijs.klutter"
+            artifactId = "gradle"
+            version = dev.buijs.klutter.ProjectVersions.gradle
+            artifact("$projectDir/build/libs/gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
+
+            pom {
+                name.set("Klutter: Gradle Plugin")
+                description.set("Gradle plugin for the Klutter Framework")
+                url.set("https://buijs.dev/klutter/")
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://github.com/buijs-dev/klutter/blob/main/LICENSE")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("buijs-dev")
+                        name.set("Gillian Buijs")
+                        email.set("info@buijs.dev")
+                    }
+                }
+
+                scm {
+                    connection.set("git@github.com:buijs-dev/klutter.git")
+                    developerConnection.set("git@github.com:buijs-dev/klutter.git")
+                    url.set("https://github.com/buijs-dev/klutter")
+                }
             }
         }
     }

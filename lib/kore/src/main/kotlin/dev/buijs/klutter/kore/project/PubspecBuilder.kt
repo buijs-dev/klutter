@@ -25,6 +25,8 @@ package dev.buijs.klutter.kore.project
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.cfg.CoercionAction
+import com.fasterxml.jackson.databind.cfg.CoercionInputShape
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -66,6 +68,8 @@ val mapper = YAMLFactory.builder()
             .also {
                 it.registerKotlinModule()
                 it.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true)
+                it.configure(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, true)
+                it.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
                 it.setVisibility(it.serializationConfig.defaultVisibilityChecker
                         .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
                         .withGetterVisibility(JsonAutoDetect.Visibility.ANY)
@@ -110,7 +114,7 @@ fun Pubspec.iosClassName(orElse: String): String {
         ios == null -> {
             orElse
         }
-        ios!!.pluginClass == null -> {
+        ios!!.pluginClass.isNullOrBlank() -> {
             orElse
         }
         else -> {
@@ -124,7 +128,7 @@ fun Pubspec.androidClassName(orElse: String): String {
         android == null -> {
             orElse
         }
-        android!!.pluginClass == null -> {
+        android!!.pluginClass.isNullOrBlank() -> {
             orElse
         }
         else -> {

@@ -39,11 +39,11 @@ data class ProcessorOptions(
     val outputFolder: File,
     val flutterVersion: String,
     val generateAdapters: Boolean,
+    val isProtobufEnabled: Boolean,
 )
 
 /**
- * Possible options that can be set in the ksp DSL to configure
- * Klutter code scanning/generation.
+ * Possible options that can be set in the ksp DSL to configure Klutter code scanning/generation.
  */
 internal enum class ProcessorOption(val value: String) {
     PROJECT_FOLDER("klutterProjectFolder"),
@@ -79,12 +79,14 @@ internal fun processorOptions(
     val outputFolder = findOutputPathInKradleEnvOrNull(kradleEnvContent)
     val skipCodeGen = findSkipCodeGenInKradleEnvOrNull(kradleEnvContent)
     val flutterOrNull = findFlutterVersionInKradleYamlOrNull(kradleYamlContent)
+    val isProtobufEnabled = findProtobufFeatureInYaml(kradleYamlContent)
 
     return ProcessorOptions(
         projectFolder = options.projectFolder(),
         outputFolder = outputFolder?.let { File(it) } ?: options.outputFolder(),
         generateAdapters = skipCodeGen?.let { !it } ?: options.boolean(GENERATE_ADAPTERS),
-        flutterVersion = flutterOrNull ?: options.flutterVersion()
+        flutterVersion = flutterOrNull ?: options.flutterVersion(),
+        isProtobufEnabled = isProtobufEnabled ?: false,
     ).also { kcLogger?.info("Determined Processor Options: $it") }
 }
 

@@ -1,9 +1,8 @@
 package dev.buijs.klutter.gradle
 
-import com.google.devtools.ksp.gradle.KspGradleSubplugin
+
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import spock.lang.Specification
 
 class KlutterGradlePluginSpec extends Specification {

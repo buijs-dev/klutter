@@ -21,29 +21,13 @@
  */
 package dev.buijs.klutter.kore.tasks.project
 
-import dev.buijs.klutter.kore.ast.Controller
-import dev.buijs.klutter.kore.ast.CustomType
-import dev.buijs.klutter.kore.ast.Method
-import dev.buijs.klutter.kore.ast.RequestScopedBroadcastController
-import dev.buijs.klutter.kore.ast.RequestScopedSimpleController
-import dev.buijs.klutter.kore.ast.SingletonBroadcastController
-import dev.buijs.klutter.kore.ast.SingletonSimpleController
-import dev.buijs.klutter.kore.ast.SquintCustomType
-import dev.buijs.klutter.kore.ast.SquintCustomTypeMember
-import dev.buijs.klutter.kore.ast.SquintMessageSource
-import dev.buijs.klutter.kore.ast.StringType
-import dev.buijs.klutter.kore.ast.TypeMember
-import dev.buijs.klutter.kore.ast.UnitType
+import dev.buijs.klutter.kore.ast.*
 import dev.buijs.klutter.kore.common.Either
-import dev.buijs.klutter.kore.project.FlutterDistributionFolderName
-import dev.buijs.klutter.kore.project.FlutterDistributionKt
 import dev.buijs.klutter.kore.project.ProjectKt
 import dev.buijs.klutter.kore.project.PubspecBuilder
 import dev.buijs.klutter.kore.tasks.ExecutorKt
 import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeOptions
 import dev.buijs.klutter.kore.tasks.codegen.GenerateCodeTaskKt
-import dev.buijs.klutter.kore.tasks.project.ActionDownloadFlutterKt
-import dev.buijs.klutter.kore.tasks.project.ProjectBuilderTask
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -224,6 +208,7 @@ class GenerateCodeTaskSpec extends Specification {
         def project = ProjectKt.plugin(pathToPlugin)
         def pubspec = PubspecBuilder.toPubspec(rootPubspecYamlFile)
         def srcFolder = project.root.pathToLibFolder.toPath().resolve("src")
+        Path.of(pathToPlugin).resolve("platform/src/commonMain").toFile().mkdirs()
 
         and:
         executor.putExpectation(pathToPlugin, flutterExe + " pub get")
@@ -244,7 +229,7 @@ class GenerateCodeTaskSpec extends Specification {
 
         and:
         GenerateCodeTaskKt.toGenerateCodeTask(new GenerateCodeOptions(
-                project, pubspec, "3.0.5.macos.arm64", false, controllers, messages, { println("$it") })).run()
+                project, pubspec, "3.0.5.macos.arm64", false, controllers, messages, [],{ println("$it") })).run()
 
         then:
         def flutterLib = project.root.pathToLibFile

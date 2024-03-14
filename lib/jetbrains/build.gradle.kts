@@ -22,6 +22,17 @@ val robotVersion = "0.11.16"
 group = "dev.buijs.klutter"
 version = dev.buijs.klutter.ProjectVersions.jetbrains
 
+//java {
+//    sourceCompatibility = JavaVersion.VERSION_17
+//    targetCompatibility = JavaVersion.VERSION_17
+//}
+
+//kotlin {
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(13))
+//    }
+//}
+
 intellij {
     version.set("2022.3.2")
     type.set("IC") // Intellij Community Edition
@@ -51,14 +62,14 @@ changelog {
 
 tasks {
 
-    withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
-
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
-    }
+//    withType<JavaCompile> {
+//        sourceCompatibility = "13"
+//        targetCompatibility = "13"
+//    }
+//
+//    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+//        kotlinOptions.jvmTarget = "13"
+//    }
 
     withType<Test> {
         useJUnitPlatform()
@@ -122,8 +133,8 @@ dependencies {
     @Suppress("GradleDependency") // 30-07-2022 newest 3.4.2 throws exceptions
     testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.0")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
 
     // Plugin UI Test
     testImplementation("com.intellij.remoterobot:remote-robot:$robotVersion")

@@ -83,6 +83,18 @@ fun findFlutterVersionInKradleYamlOrNull(content: String?) =
 fun findOutputPathInKradleEnvOrNull(content: String?) =
     content.findPropertyOrNull("output.path")
 
+fun findProtobufFeatureInYaml(content: String?): Boolean? {
+    val value = content.findPropertyInYamlOrNull("feature-protobuf-enabled")
+        ?: content.findBooleanPropertyInYamlOrNull("feature-protobuf-enabled")
+        ?: return null
+
+    return when(value.uppercase()) {
+        "TRUE" -> true
+        "FALSE" -> false
+        else -> null
+    }
+}
+
 fun findSkipCodeGenInKradleEnvOrNull(content: String?) =
     content.findPropertyOrNull("skip.codegen")?.uppercase()?.let { skip ->
         when(skip) {
@@ -92,10 +104,20 @@ fun findSkipCodeGenInKradleEnvOrNull(content: String?) =
         }
     }
 
+fun findProtocDownloadURLInKradleEnvOrNull(content: String?) =
+    content.findPropertyOrNull("protoc.url")
+
 private fun String?.findPropertyInYamlOrNull(key: String) =
     this?.let { str ->
         """$key:\s*('|")\s*([^'"]+?)\s*('|")""".toRegex().find(str)?.let { match ->
             match.groupValues[2]
+        }
+    }
+
+private fun String?.findBooleanPropertyInYamlOrNull(key: String) =
+    this?.let { str ->
+        """$key:\s*([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])\s*""".toRegex().find(str)?.let { match ->
+            match.groupValues[1]
         }
     }
 

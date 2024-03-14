@@ -71,11 +71,11 @@ internal class InitKlutter(
         root.clearLibFolder()
         root.overwriteReadmeFile()
         root.copyLocalProperties()
-        "$flutter pub get" execute root
-        "$flutter pub get" execute exampleFolder
-        "$flutter pub run klutter:producer init bom=$bomVersion flutter=$flutterSDK" execute root
-        "$flutter pub run klutter:consumer init" execute exampleFolder
-        "$flutter pub run klutter:consumer add lib=$name" execute exampleFolder
+        println("$flutter pub get" execute root)
+        println("$flutter pub get" execute exampleFolder)
+        println("$flutter pub run klutter:producer init bom=$bomVersion flutter=$flutterSDK" execute root)
+        println("$flutter pub run klutter:consumer init" execute exampleFolder)
+        println("$flutter pub run klutter:consumer add lib=$name" execute exampleFolder)
         exampleFolder.deleteIntegrationTestFolder()
 
         // Do not bother setting up iOS on windows

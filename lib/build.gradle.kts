@@ -11,6 +11,12 @@ subprojects {
     plugins.apply("org.jetbrains.dokka")
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 kover {
 
     // KOVER destroys running with coverage from IDE

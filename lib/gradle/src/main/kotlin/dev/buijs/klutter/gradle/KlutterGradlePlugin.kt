@@ -24,9 +24,12 @@ package dev.buijs.klutter.gradle
 import com.google.devtools.ksp.gradle.KspExtension
 import com.google.devtools.ksp.gradle.KspGradleSubplugin
 import dev.buijs.klutter.gradle.dsl.KlutterExtension
+import dev.buijs.klutter.gradle.tasks.*
 import dev.buijs.klutter.gradle.tasks.CopyAndroidAarFileGradleTask
 import dev.buijs.klutter.gradle.tasks.CopyIosFrameworkGradleTask
+import dev.buijs.klutter.gradle.tasks.GetDartProtocExeGradleTask
 import dev.buijs.klutter.gradle.tasks.GetKradleTask
+import dev.buijs.klutter.gradle.tasks.GetProtocGradleTask
 import dev.buijs.klutter.kore.project.kspArgumentKlutterProjectFolder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,7 +45,6 @@ class KlutterGradlePlugin: Plugin<Project> {
             tasks.registerTasks()
             plugins.applyKspPlugin()
             extensions.add("klutter", KlutterExtension(project))
-
             val ext = project.extensions.getByType(KspExtension::class.java)
             project.afterEvaluate {
                 ext.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
@@ -65,4 +67,8 @@ private fun TaskContainer.registerTasks() {
     register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
     register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
     register("klutterGetKradle", GetKradleTask::class.java)
+    register("klutterGetDartProtoc", GetDartProtocExeGradleTask::class.java)
+    register("klutterGetProtoc", GetProtocGradleTask::class.java)
+    register("klutterCompileProtoSchema", CompileProtoSchemaGradleTask::class.java)
+    register("klutterCleanGeneratedProtoExt", CleanProtoExtensionsGradleTask::class.java)
 }

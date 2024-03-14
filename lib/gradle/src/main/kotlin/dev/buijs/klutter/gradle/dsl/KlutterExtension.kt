@@ -43,11 +43,29 @@ open class KlutterExtension(project: Project) {
     @Internal
     internal var plugin: Dto? = null
 
+    internal val features = mutableSetOf<KlutterFeature>()
+
+    internal val isProtobufEnabled: Boolean
+        get() = features.contains(KlutterFeature.PROTOBUF)
+
     /**
      * Configure the Gradle Plugin for a klutter plugin (consumer or producer).
      */
     fun plugin(lambda: KlutterPluginBuilder.() -> Unit) {
         plugin = KlutterPluginBuilder().apply(lambda).build()
+    }
+
+    /**
+     * Enable or disable specific klutter features.
+     *
+     * See for feature list: [KlutterFeature].
+     */
+    fun feature(name: KlutterFeature, enable: Boolean = true) {
+        if(enable) {
+            features.add(name)
+        } else {
+            features.remove(name)
+        }
     }
 
     /**

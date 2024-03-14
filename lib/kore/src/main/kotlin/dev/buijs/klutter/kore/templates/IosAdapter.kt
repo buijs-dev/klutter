@@ -29,6 +29,7 @@ import dev.buijs.klutter.kore.common.toSnakeCase
 
 class IosAdapter(
     private val pluginClassName: String,
+    private val isProtobufEnabled: Boolean,
     methodChannels: Set<String>,
     eventChannels: Set<String>,
     controllers: Set<Controller>,
@@ -213,22 +214,27 @@ class IosAdapter(
     }
 
     private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoder: String): List<String> {
-        val requestDecoder = when(requestDataType) {
-            is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
-            is IntType -> "TypeHandlerKt.intOrNull(data: data)"
-            is DoubleType -> "TypeHandlerKt.intOrNull(data: data)"
-            is BooleanType -> "TypeHandlerKt.booleanOrNull(data: data)"
-            is LongType -> "TypeHandlerKt.intOrNull(data: data)"
-            is ByteArrayType -> "TypeHandlerKt.byteArrayOrNull(data: data)"
-            is IntArrayType -> "TypeHandlerKt.intArrayOrNull(data: data)"
-            is LongArrayType -> "TypeHandlerKt.longArrayOrNull(data: data)"
-            is FloatArrayType -> "TypeHandlerKt.floatArrayOrNull(data: data)"
-            is DoubleArrayType -> "TypeHandlerKt.doubleArrayOrNull(data: data)"
-            is ListType -> "TypeHandlerKt.listOrNull(data: data)"
-            is MapType -> "TypeHandlerKt.mapOrNull(data: data)"
-            is CustomType -> "TypeHandlerKt.deserialize(data)"
-            is EnumType -> "TypeHandlerKt.deserialize(data)"
-            else -> throw KlutterException("Found unsupported request Type: $requestDataType")
+
+        val requestDecoder = if(isProtobufEnabled) {
+            "\$protogen${this.requestDataType?.className}Kt.decodeByteArrayTo${this.requestDataType?.className}(byteArray: value)"
+        } else {
+            when(requestDataType) {
+                is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
+                is IntType -> "TypeHandlerKt.intOrNull(data: data)"
+                is DoubleType -> "TypeHandlerKt.intOrNull(data: data)"
+                is BooleanType -> "TypeHandlerKt.booleanOrNull(data: data)"
+                is LongType -> "TypeHandlerKt.intOrNull(data: data)"
+                is ByteArrayType -> "TypeHandlerKt.byteArrayOrNull(data: data)"
+                is IntArrayType -> "TypeHandlerKt.intArrayOrNull(data: data)"
+                is LongArrayType -> "TypeHandlerKt.longArrayOrNull(data: data)"
+                is FloatArrayType -> "TypeHandlerKt.floatArrayOrNull(data: data)"
+                is DoubleArrayType -> "TypeHandlerKt.doubleArrayOrNull(data: data)"
+                is ListType -> "TypeHandlerKt.listOrNull(data: data)"
+                is MapType -> "TypeHandlerKt.mapOrNull(data: data)"
+                is CustomType -> "TypeHandlerKt.deserialize(data)"
+                is EnumType -> "TypeHandlerKt.deserialize(data)"
+                else -> throw KlutterException("Found unsupported request Type: $requestDataType")
+            }
         }
 
         val swiftRequestDataType = when(requestDataType) {
@@ -328,9 +334,13 @@ class IosAdapter(
     }
 
     private fun AbstractType.responseDecoder(): String {
-        return when (this) {
-            is StandardType -> "value"
-            else -> "TypeHandlerKt.encode(value)"
+        return if(isProtobufEnabled) {
+            "\$protogen${className}Kt.encodeToByteArray(value)"
+        } else {
+            when (this) {
+                is StandardType -> "value"
+                else -> "TypeHandlerKt.encode(value)"
+            }
         }
     }
 

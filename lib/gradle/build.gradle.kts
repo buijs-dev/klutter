@@ -1,9 +1,12 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm")
-    id("com.gradle.plugin-publish") version "0.16.0"
+    id("com.gradle.plugin-publish") version "1.2.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("java-gradle-plugin")
-    id("java-library")
-    id("maven-publish")
+    //id("java-library")
+    //id("maven-publish")
    // id("groovy")
     id("klutter")
 }
@@ -11,13 +14,18 @@ plugins {
 group = "dev.buijs.klutter"
 version = dev.buijs.klutter.ProjectVersions.gradle
 
-java {
-    withJavadocJar()
-    withSourcesJar()
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-}
+//java {
+//    withJavadocJar()
+//    withSourcesJar()
+//    sourceCompatibility = JavaVersion.VERSION_17
+//    targetCompatibility = JavaVersion.VERSION_17
+//}
 
+//kotlin {
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(13))
+//    }
+//}
 sourceSets {
     main {
         java {
@@ -27,67 +35,64 @@ sourceSets {
 
     test {
         java {
-            srcDirs("${projectDir.absolutePath}/src/test/kotlin")
+            srcDirs(
+                "${projectDir.absolutePath}/src/test/kotlin",
+                "${projectDir.absolutePath}/src/test/groovy")
         }
     }
 }
 
 publishing {
     repositories {
+        mavenLocal()
         maven {
             url = dev.buijs.klutter.Repository.endpoint
             credentials {
-                username =  dev.buijs.klutter.Repository.username
-                password =  dev.buijs.klutter.Repository.password
-            }
-        }
-    }
-
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "dev.buijs.klutter"
-            artifactId = "gradle"
-            version = dev.buijs.klutter.ProjectVersions.gradle
-            artifact("$projectDir/build/libs/gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
-
-            pom {
-                name.set("Klutter: Gradle Plugin")
-                description.set("Gradle plugin for the Klutter Framework")
-                url.set("https://buijs.dev/klutter/")
-
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://github.com/buijs-dev/klutter/blob/main/LICENSE")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("buijs-dev")
-                        name.set("Gillian Buijs")
-                        email.set("info@buijs.dev")
-                    }
-                }
-
-                scm {
-                    connection.set("git@github.com:buijs-dev/klutter.git")
-                    developerConnection.set("git@github.com:buijs-dev/klutter.git")
-                    url.set("https://github.com/buijs-dev/klutter")
-                }
+                username = dev.buijs.klutter.Repository.username
+                password = dev.buijs.klutter.Repository.password
             }
         }
     }
 }
+//    publications {
+//        create<MavenPublication>("maven") {
+//            groupId = "dev.buijs.klutter"
+//            artifactId = "gradle"
+//            version = dev.buijs.klutter.ProjectVersions.gradle
+            //artifact("$projectDir/build/libs/gradle-${dev.buijs.klutter.ProjectVersions.gradle}.jar")
 
-pluginBundle {
-    website = "https://buijs.dev/klutter/"
-    vcsUrl = "https://github.com/buijs-dev/klutter"
-    tags = listOf("klutter", "flutter", "kotlin", "multiplatform")
-}
+//            pom {
+//                name.set("Klutter: Gradle Plugin")
+//                description.set("Gradle plugin for the Klutter Framework")
+//                url.set("https://buijs.dev/klutter/")
+//
+//                licenses {
+//                    license {
+//                        name.set("MIT License")
+//                        url.set("https://github.com/buijs-dev/klutter/blob/main/LICENSE")
+//                    }
+//                }
+//
+//                developers {
+//                    developer {
+//                        id.set("buijs-dev")
+//                        name.set("Gillian Buijs")
+//                        email.set("info@buijs.dev")
+//                    }
+//                }
+//
+//                scm {
+//                    connection.set("git@github.com:buijs-dev/klutter.git")
+//                    developerConnection.set("git@github.com:buijs-dev/klutter.git")
+//                    url.set("https://github.com/buijs-dev/klutter")
+//                }
+//            }
+//        }
+//    }
+//}
 
 gradlePlugin {
-    isAutomatedPublishing = false
+    isAutomatedPublishing = true
     plugins {
         create("klutterGradlePlugin") {
             id = "dev.buijs.klutter"
@@ -100,16 +105,22 @@ gradlePlugin {
     }
 }
 
+//pluginBundle {
+//    website = "https://buijs.dev/klutter/"
+//    vcsUrl = "https://github.com/buijs-dev/klutter"
+//    tags = listOf("klutter", "flutter", "kotlin", "multiplatform")
+//}
+
 dependencies {
     // Project
     implementation(project(":lib:kore"))
     implementation(project(":lib:kradle"))
 
     // Kotlin: Required to check if Kotlin Multiplatform plugin is applied
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0")
 
     // KSP Compiler plugin
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.8.20-1.0.11")
+    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.10-1.0.13")
 
     // Jackson XML/YAML parsing
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
@@ -126,7 +137,12 @@ dependencies {
 
 }
 
-tasks.named<Test>("test") {
+tasks.withType<ShadowJar> {
+    archiveClassifier.set("")
+    archiveVersion.set("")
+}
+
+tasks.withType<Test> {
     useJUnitPlatform()
 }
 

@@ -68,7 +68,8 @@ class GenerateProtoSchemaTask(
     override fun run() {
         val pathToSource = pathToBuild
             .resolve("klutter/response")
-            .verifyExists()
+
+        if(!pathToSource.exists()) return
 
         val pathToOutput = pathToBuild
             .resolve("klutter/protoschema")

@@ -41,9 +41,9 @@ class CompileProtoSchemaTask(
 
         val pathToBuild = rootFolder.resolve("platform/build")
 
-        val sourceFolder = pathToBuild
-            .resolve("klutter/protoschema")
-            .verifyExists()
+        val sourceFolder = pathToBuild.resolve("klutter/protoschema")
+
+        if(!sourceFolder.exists()) return
 
         val protoc = kradleHome
             .resolve(".cache")

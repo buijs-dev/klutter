@@ -7,6 +7,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.WordSpec
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
@@ -58,8 +59,12 @@ internal class KlutterGradlePluginTest: WordSpec({
         val subTemp = temp.resolve("foo")
         subTemp.mkdir()
 
+        val layout: ProjectLayout = mock {
+            whenever(it.buildDirectory).thenAnswer { temp }
+        }
+
         val project: org.gradle.api.Project = mock {
-            whenever(it.buildDir).thenAnswer {  temp }
+            whenever(it.layout).thenAnswer {  layout }
             whenever(it.projectDir).thenAnswer {  subTemp }
         }
 

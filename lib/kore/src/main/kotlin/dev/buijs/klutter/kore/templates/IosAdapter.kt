@@ -69,7 +69,7 @@ class IosAdapter(
             """     case "${it.className.toSnakeCase()}":""",
             "           ${it.instanceOrConstructor()}.receiveBroadcastIOS().collect(",
             "                  onEach: { value in",
-            "                            eventSink(${it.response.responseDecoder()})",
+            "                            eventSink(${it.response.responseEncoder()})",
             "                        },",
             "                  onCompletion: { error in",
             """                             eventSink("ERROR: \("error")")""",
@@ -157,11 +157,11 @@ class IosAdapter(
     private fun Method.methodHandlerString(instanceOrConstuctor: String): List<String> {
         val method = method.replace("(context)", """(context: "")""")
 
-        val responseDecoder =
-            responseDataType.responseDecoder()
+        val responseEncoder =
+            responseDataType.responseEncoder()
 
         if(this.requestDataType != null) {
-            return methodHandlerWithArgument(instanceOrConstuctor, responseDecoder)
+            return methodHandlerWithArgument(instanceOrConstuctor, responseEncoder)
         }
 
         if(this.responseDataType is UnitType) {
@@ -172,7 +172,9 @@ class IosAdapter(
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
                    |        $instanceOrConstuctor.${method.removeSuffix("()")} { maybeData, error in
-                   |            if let value = maybeData { result($responseDecoder) }
+                   |            if let value = maybeData { 
+                   |                $responseEncoder 
+                   |            }
                    |
                    |            if let failure = error { result(failure) }
                    |        }
@@ -183,7 +185,7 @@ class IosAdapter(
             listOf(
                 """|    func ${command}(data: Any?, result: @escaping FlutterResult) {
                     |       let value = $instanceOrConstuctor.$method()
-                   |        result($responseDecoder)
+                   |        $responseEncoder
                    |    }
                    |    
                 """.trimMargin())
@@ -213,10 +215,26 @@ class IosAdapter(
         }
     }
 
-    private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseDecoder: String): List<String> {
+    private fun Method.methodHandlerWithArgument(instanceOrConstuctor: String, responseEncoder: String): List<String> {
+
+        var requiresBytesDecoding = false
 
         val requestDecoder = if(isProtobufEnabled) {
-            "\$protogen${this.requestDataType?.className}Kt.decodeByteArrayTo${this.requestDataType?.className}(byteArray: value)"
+            when(requestDataType) {
+                is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
+                is IntType -> "TypeHandlerKt.intOrNull(data: data)"
+                is DoubleType -> "TypeHandlerKt.intOrNull(data: data)"
+                is BooleanType -> "TypeHandlerKt.booleanOrNull(data: data)"
+                is LongType -> "TypeHandlerKt.intOrNull(data: data)"
+                is IntArrayType -> "TypeHandlerKt.intArrayOrNull(data: data)"
+                is LongArrayType -> "TypeHandlerKt.longArrayOrNull(data: data)"
+                is FloatArrayType -> "TypeHandlerKt.floatArrayOrNull(data: data)"
+                is DoubleArrayType -> "TypeHandlerKt.doubleArrayOrNull(data: data)"
+                else -> {
+                    requiresBytesDecoding = true
+                    "TypeHandlerKt.byteArrayOrNull(data: data)"
+                }
+            }
         } else {
             when(requestDataType) {
                 is StringType -> "TypeHandlerKt.stringOrNull(data: data)"
@@ -300,7 +318,14 @@ class IosAdapter(
         lines.add("        } else {")
 
 
-        val dataOrNull = "(dataOrNull $swiftRequestDataType)"
+        if(requiresBytesDecoding)
+            lines.add("let data = ProtocolBufferGenerated${requestDataType.className}Kt.decodeByteArrayTo${requestDataType.className}(byteArray: dataOrNull!)")
+
+        val dataOrNull = if(requiresBytesDecoding) {
+            "(data $swiftRequestDataType)"
+        } else {
+            "(dataOrNull $swiftRequestDataType)"
+        }
 
         if(async) {
             if(responseDataType is UnitType) {
@@ -310,7 +335,7 @@ class IosAdapter(
                 lines.add("            }")
             } else {
                 lines.add("           $instanceOrConstuctor.$method($requestParameterName: $dataOrNull) { maybeData, error in")
-                lines.add("                if let value = maybeData { result($responseDecoder) }")
+                lines.add("                if let value = maybeData { $responseEncoder }")
                 lines.add("                if let failure = error { result(failure) }")
                 lines.add("            }")
             }
@@ -333,14 +358,19 @@ class IosAdapter(
         else -> "${className}()"
     }
 
-    private fun AbstractType.responseDecoder(): String {
-        return if(isProtobufEnabled) {
-            "\$protogen${className}Kt.encodeToByteArray(value)"
-        } else {
-            when (this) {
-                is StandardType -> "value"
-                else -> "TypeHandlerKt.encode(value)"
-            }
+    private fun AbstractType.responseEncoder(): String {
+        return when {
+            this is StandardType -> "result(value)"
+            isProtobufEnabled ->
+                """|let bytes = value.encode${className}ToByteArray()
+                    |       var array = [UInt8]()
+                    |       var iterator = bytes.iterator()
+                    |       while iterator.hasNext() {
+                    |           array.append(UInt8(iterator.nextByte()))
+                    |       }
+                    |       result(FlutterStandardTypedData(bytes: Data(array)))
+                """.trimMargin()
+            else -> "result(TypeHandlerKt.encode(value))"
         }
     }
 

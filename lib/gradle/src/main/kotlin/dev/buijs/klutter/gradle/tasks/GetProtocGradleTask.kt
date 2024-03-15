@@ -23,15 +23,16 @@ package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.kradleHome
-import dev.buijs.klutter.kore.project.kradleYaml
 import dev.buijs.klutter.kore.tasks.DownloadProtocTask
-import dev.buijs.klutter.kore.tasks.GetDartProtocExeTask
-import java.io.File
 
 /**
  * Execute task [DownloadProtocTask] from Gradle.
  */
 internal open class GetProtocGradleTask: AbstractTask() {
+    companion object {
+        val gradleTaskName = "klutterGetProtoc"
+    }
+
     override fun klutterTask(): KlutterTask {
         val project = super.project()
         return DownloadProtocTask(

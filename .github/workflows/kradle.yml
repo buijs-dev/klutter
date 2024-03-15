@@ -24,13 +24,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
-          java-version: 11
+          java-version: 17
           cache: gradle
       - name: 'build distribution'
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          gradle-version: 7.4.2
-          arguments: clean build -p "lib/kradle"
+          gradle-version: 8.3b/kradle"
       - name: 'copy jar to kradle folder'
         run: cp ./lib/kradle/build/libs/kradle-wrapper.jar kradle/lib
       - name: 'create zip file'

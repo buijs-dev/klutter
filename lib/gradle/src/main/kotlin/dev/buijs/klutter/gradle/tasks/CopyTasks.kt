@@ -28,6 +28,10 @@ import dev.buijs.klutter.kore.tasks.CopyXCFrameworkTask
  * Execute task [CopyAndroidAarFileGradleTask] from Gradle.
  */
 internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
+    companion object {
+        val gradleTaskName = "klutterCopyAarFile"
+    }
+
     override fun klutterTask() = CopyAarFileTask(
         pathToRoot = project.rootDir,
         pluginName = project.klutterExtension().plugin?.name,
@@ -38,6 +42,9 @@ internal open class CopyAndroidAarFileGradleTask: AbstractTask() {
  * Execute task [CopyXCFrameworkTask] from Gradle.
  */
 internal open class CopyIosFrameworkGradleTask: AbstractTask() {
+    companion object {
+        val gradleTaskName = "klutterCopyFramework"
+    }
     override fun klutterTask() = CopyXCFrameworkTask(
         pathToRoot = project.rootDir,
     )

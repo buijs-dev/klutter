@@ -26,6 +26,15 @@ import dev.buijs.klutter.kore.tasks.codegen.CompileProtoSchemaTask
 
 internal open class CompileProtoSchemaGradleTask: AbstractTask() {
 
+    companion object {
+        val gradleTaskName = "klutterCompileProtoSchemas"
+    }
+
+    init {
+        super.dependsOn(GetDartProtocExeGradleTask.gradleTaskName, GetProtocGradleTask.gradleTaskName)
+        super.finalizedBy(GenerateFlutterLibGradleTask.gradleTaskName)
+    }
+
     override fun klutterTask(): KlutterTask =
         CompileProtoSchemaTask(super.project().root.folder)
 

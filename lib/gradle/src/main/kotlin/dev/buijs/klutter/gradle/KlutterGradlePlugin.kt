@@ -35,6 +35,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * Gradle plugin for Klutter Framework.
@@ -45,9 +46,25 @@ class KlutterGradlePlugin: Plugin<Project> {
             tasks.registerTasks()
             plugins.applyKspPlugin()
             extensions.add("klutter", KlutterExtension(project))
-            val ext = project.extensions.getByType(KspExtension::class.java)
+            val ksp = project.extensions.getByType(KspExtension::class.java)
             project.afterEvaluate {
-                ext.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
+                // KMP
+                val kmp = try {
+                    project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+                } catch (_: Exception) {
+                    null
+                }
+
+                if (kmp != null) {
+                    kmp.sourceSets
+                        .getByName("commonMain")
+                        .kotlin
+                        .srcDir(layout.buildDirectory.file("generated/ksp/metadata/commonMain/kotlin"))
+                    tasks.bindPostBuildTasks()
+                }
+
+                // KSP
+                ksp.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
             }
         }
     }
@@ -64,11 +81,26 @@ private fun PluginContainer.applyKspPlugin() {
  * Register the custom Klutter tasks.
  */
 private fun TaskContainer.registerTasks() {
-    register("klutterCopyAarFile", CopyAndroidAarFileGradleTask::class.java)
-    register("klutterCopyFramework", CopyIosFrameworkGradleTask::class.java)
-    register("klutterGetKradle", GetKradleTask::class.java)
-    register("klutterGetDartProtoc", GetDartProtocExeGradleTask::class.java)
-    register("klutterGetProtoc", GetProtocGradleTask::class.java)
-    register("klutterCompileProtoSchema", CompileProtoSchemaGradleTask::class.java)
-    register("klutterCleanGeneratedProtoExt", CleanProtoExtensionsGradleTask::class.java)
+    register(CopyAndroidAarFileGradleTask.gradleTaskName, CopyAndroidAarFileGradleTask::class.java)
+    register(CopyIosFrameworkGradleTask.gradleTaskName, CopyIosFrameworkGradleTask::class.java)
+    register(GetKradleTask.gradleTaskName, GetKradleTask::class.java)
+    register(GetDartProtocExeGradleTask.gradleTaskName, GetDartProtocExeGradleTask::class.java)
+    register(GetProtocGradleTask.gradleTaskName, GetProtocGradleTask::class.java)
+    register(CompileProtoSchemaGradleTask.gradleTaskName, CompileProtoSchemaGradleTask::class.java)
+    register(GenerateFlutterLibGradleTask.gradleTaskName, GenerateFlutterLibGradleTask::class.java)
+}
+
+private fun TaskContainer.bindPostBuildTasks() {
+    getByName("build").setFinalizedBy(
+       listOf(CopyAndroidAarFileGradleTask.gradleTaskName,
+           CompileProtoSchemaGradleTask.gradleTaskName,
+           "assemblePlatformReleaseXCFramework",
+           "klutterGenerateProtoSchemas"
+       ))
+
+    getByName("assemblePlatformReleaseXCFramework")
+        .setFinalizedBy(listOf(getByName(CopyIosFrameworkGradleTask.gradleTaskName)))
+
+    getByName("klutterGenerateProtoSchemas")
+        .setFinalizedBy(listOf("klutterCompileProtoSchemas"))
 }

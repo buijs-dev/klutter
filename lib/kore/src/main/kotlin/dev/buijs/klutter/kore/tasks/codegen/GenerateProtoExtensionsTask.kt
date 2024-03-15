@@ -23,13 +23,22 @@ package dev.buijs.klutter.kore.tasks.codegen
 
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.common.maybeCreate
-import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.common.maybeCreateFolder
 import dev.buijs.klutter.kore.common.write
 import dev.buijs.klutter.kore.templates.ProtobufExtensions
 import java.io.File
 
+const val protoGenMarker = "ProtocolBufferGenerated"
+
 fun GenerateCodeOptions.toGenerateProtoExtensionsTask() =
-    GenerateProtoExtensionsTask(project.platform.source(), responseClassNames)
+    GenerateProtoExtensionsTask(project.platform.folder
+        .resolve("build")
+        .resolve("generated")
+        .resolve("ksp")
+        .resolve("metadata")
+        .resolve("commonMain")
+        .resolve("kotlin")
+        , responseClassNames)
 
 class GenerateProtoExtensionsTask(
     private val sourceFolder: File,
@@ -46,10 +55,9 @@ class GenerateProtoExtensionsTask(
             val className = fqdn.substringAfterLast(".")
 
             sourceFolder
-                .resolve("kotlin")
                 .resolve(pathToPackage)
-                .verifyExists()
-                .resolve("\$protogen$className.kt")
+                .maybeCreateFolder()
+                .resolve("$protoGenMarker$className.kt")
                 .maybeCreate()
                 .write(ProtobufExtensions(packageName, className))
         }

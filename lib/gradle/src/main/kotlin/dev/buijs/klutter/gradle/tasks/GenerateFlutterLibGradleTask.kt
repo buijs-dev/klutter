@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2024 Buijs Software
+/* Copyright (c) 2021 - 2023 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,15 +19,23 @@
  * SOFTWARE.
  *
  */
-package dev.buijs.klutter.kore.tasks.codegen
+package dev.buijs.klutter.gradle.tasks
 
 import dev.buijs.klutter.kore.KlutterTask
-import java.io.File
+import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.tasks.codegen.GenerateFlutterLibTask
 
-class CleanProtoExtensionsTask(
-    private val sourceFolder: File,
-) : KlutterTask, GenerateCodeAction {
-    override fun run() {
-        sourceFolder.listFiles { _, name -> name.startsWith("\$protogen") }?.forEach { file -> file.delete() }
+internal open class GenerateFlutterLibGradleTask: AbstractTask() {
+    companion object {
+        val gradleTaskName = "klutterGenerateFlutterLib"
+    }
+    override fun klutterTask(): KlutterTask {
+        val project = project()
+
+        return GenerateFlutterLibTask(
+            pluginName = project.root.pluginName,
+            root = project.root,
+            srcFolder = project.root.pathToLibFolder.resolve("src").verifyExists()
+        )
     }
 }

@@ -19,12 +19,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-//kotlin {
-//    jvmToolchain {
-//        languageVersion.set(JavaLanguageVersion.of(13))
-//    }
-//}
-
 sourceSets {
     main {
         java {

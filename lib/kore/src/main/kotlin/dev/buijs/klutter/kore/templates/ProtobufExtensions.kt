@@ -15,7 +15,7 @@ class ProtobufExtensions(
 |import kotlinx.serialization.protobuf.ProtoBuf
 |
 |@OptIn(ExperimentalSerializationApi::class)
-|fun $className.encodeToByteArray(): ByteArray =
+|fun $className.encode${className}ToByteArray(): ByteArray =
 |    ProtoBuf.encodeToByteArray(this)
 |
 |@OptIn(ExperimentalSerializationApi::class)

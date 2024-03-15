@@ -28,5 +28,10 @@ import dev.buijs.klutter.kore.tasks.GetDartProtocExeTask
  * Execute task [GetDartProtocExeTask] from Gradle.
  */
 internal open class GetDartProtocExeGradleTask: AbstractTask() {
+
+    companion object {
+        val gradleTaskName = "klutterGetDartProtoc"
+    }
+
     override fun klutterTask(): KlutterTask = GetDartProtocExeTask()
 }

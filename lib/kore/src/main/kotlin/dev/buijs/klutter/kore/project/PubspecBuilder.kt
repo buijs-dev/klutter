@@ -25,8 +25,6 @@ package dev.buijs.klutter.kore.project
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.cfg.CoercionAction
-import com.fasterxml.jackson.databind.cfg.CoercionInputShape
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -40,17 +38,17 @@ import java.io.File
 /**
  * The version of Klutter Gradle Executable Tool.
  */
-const val klutterBomVersion = "2023.3.1.beta"
+const val klutterBomVersion = "2024.1.1.beta"
 
 /**
  * The version of the klutter Pub Plugin.
  */
-const val klutterPubVersion = "2.0.0"
+const val klutterPubVersion = "2.1.0"
 
 /**
  * The version of the klutter-ui Pub Plugin.
  */
-const val klutterUIPubVersion = "1.0.1"
+const val klutterUIPubVersion = "1.1.0"
 
 /**
  * The version of the squint_json Pub Plugin.

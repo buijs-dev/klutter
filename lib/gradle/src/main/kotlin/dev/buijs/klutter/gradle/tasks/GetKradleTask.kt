@@ -41,6 +41,11 @@ internal val kradlewBat: InputStream
  * Download Kradle CLI Tool.
  */
 internal open class GetKradleTask: AbstractTask() {
+
+    companion object {
+        val gradleTaskName = "klutterGetKradle"
+    }
+
     override fun klutterTask() =
         project.rootProject.projectDir.toGetKradleTask()
 }

@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v2024.1.1.beta
+
 ## v2023.3.1.beta
 - Refactored task module to package in kore.
 - Removed task module from BOM e.a.
@@ -14,8 +16,6 @@
 - Bugfix: Eventsink received incorrect variable on error.
 - Uses [klutter-dart](https://pub.dev/packages/klutter) version 1.0.0.
 - Uses [klutter-dart-ui](https://pub.dev/packages/klutter_ui) version 1.0.0.
-
-## v2023.3.1.beta
 
 ## v2023.1.1.beta
 - Added support for request parameters.

@@ -2,7 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.dokka") version "1.6.10"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("org.jetbrains.kotlinx.kover") version "0.5.1"
     id("klutter")
 }
@@ -57,7 +57,7 @@ tasks.withType<DokkaTask>().configureEach {
 }
 
 tasks.dokkaHtmlMultiModule.configure {
-    outputDirectory.set(layout.buildDirectory.dir("dokkaSite").map { it.asFile })
+    outputDirectory.set(layout.buildDirectory.dir("dokkaSite"))
 }
 
 tasks.koverMergedXmlReport {

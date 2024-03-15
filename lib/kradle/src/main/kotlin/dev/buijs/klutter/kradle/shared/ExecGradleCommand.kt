@@ -29,18 +29,22 @@ internal fun List<String>.execGradleCommand(currentFolder: File): String =
     toTypedArray().execGradleCommand(currentFolder)
 
 internal fun Array<String>.execGradleCommand(currentFolder: File): String = this.let { args ->
-    ProcessBuilder()
-        .command(buildList {
-            if(isWindows) {
-                add("cmd.exe")
-                add("/c")
-            }
+    try {
+        ProcessBuilder()
+            .command(buildList {
+                if(isWindows) {
+                    add("cmd.exe")
+                    add("/c")
+                }
 
-            add(currentFolder.resolve("gradlew").absolutePath)
-            addAll(args)
-        })
-        .directory(currentFolder)
-        .inheritIO()
-        .start()
-        .finish(30L)
+                add(currentFolder.resolve("gradlew").absolutePath)
+                addAll(args)
+            })
+            .directory(currentFolder)
+            .inheritIO()
+            .start()
+            .finish(30L)
+    } catch(e: Exception) {
+        "oops..."
+    }
 }

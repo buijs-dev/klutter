@@ -207,6 +207,7 @@ class ProjectBuilderTaskSpec extends Specification {
                 
                     squint_json: ^0.1.2
                     klutter_ui: ^1.1.0
+                    protobuf: ^3.1.0
                 dev_dependencies:
                     klutter: ^2.1.0
                 flutter:

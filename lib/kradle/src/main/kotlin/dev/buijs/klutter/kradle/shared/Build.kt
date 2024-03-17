@@ -24,6 +24,6 @@ package dev.buijs.klutter.kradle.shared
 import java.io.File
 
 fun build(currentFolder: File) {
-    listOf("clean",  "build", "-p", "platform").execGradleCommand(currentFolder)
+    listOf("clean",  "build", "-p", "platform").execGradleCommand(currentFolder, timeout = 300)
     println("Finished project build.")
 }

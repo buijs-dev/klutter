@@ -25,10 +25,10 @@ import dev.buijs.klutter.kore.project.isWindows
 import dev.buijs.klutter.kore.tasks.finish
 import java.io.File
 
-internal fun List<String>.execGradleCommand(currentFolder: File): String =
-    toTypedArray().execGradleCommand(currentFolder)
+internal fun List<String>.execGradleCommand(currentFolder: File, timeout: Long = 30): String =
+    toTypedArray().execGradleCommand(currentFolder, timeout)
 
-internal fun Array<String>.execGradleCommand(currentFolder: File): String = this.let { args ->
+internal fun Array<String>.execGradleCommand(currentFolder: File, timeout: Long): String = this.let { args ->
     try {
         ProcessBuilder()
             .command(buildList {
@@ -43,7 +43,7 @@ internal fun Array<String>.execGradleCommand(currentFolder: File): String = this
             .directory(currentFolder)
             .inheritIO()
             .start()
-            .finish(30L)
+            .finish(timeout)
     } catch(e: Exception) {
         "oops..."
     }

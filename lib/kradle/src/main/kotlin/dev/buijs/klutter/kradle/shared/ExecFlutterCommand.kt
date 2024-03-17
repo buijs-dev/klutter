@@ -32,20 +32,24 @@ internal fun List<String>.execFlutterCommand(currentFolder: File): String =
 internal fun Array<String>.execFlutterCommand(currentFolder: File): String {
     val flutter = findFlutterDistributionOrThrow(currentFolder)
     return this.let { args ->
-        ProcessBuilder()
-            .command(buildList {
-                if(isWindows) {
-                    add("cmd.exe")
-                    add("/c")
-                }
+        try {
+            ProcessBuilder()
+                .command(buildList {
+                    if(isWindows) {
+                        add("cmd.exe")
+                        add("/c")
+                    }
 
-                add(flutter)
-                addAll(args)
-            })
-            .directory(currentFolder)
-            .inheritIO()
-            .start()
-            .finish(30L)
+                    add(flutter)
+                    addAll(args)
+                })
+                .directory(currentFolder)
+                .inheritIO()
+                .start()
+                .finish(30L)
+        } catch(e: Exception) {
+            "oops..."
+        }
     }
 }
 

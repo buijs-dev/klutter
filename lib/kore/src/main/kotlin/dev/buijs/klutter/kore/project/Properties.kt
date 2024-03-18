@@ -83,18 +83,6 @@ fun findFlutterVersionInKradleYamlOrNull(content: String?) =
 fun findOutputPathInKradleEnvOrNull(content: String?) =
     content.findPropertyOrNull("output.path")
 
-fun findProtobufFeatureInYaml(content: String?): Boolean? {
-    val value = content.findPropertyInYamlOrNull("feature-protobuf-enabled")
-        ?: content.findBooleanPropertyInYamlOrNull("feature-protobuf-enabled")
-        ?: return null
-
-    return when(value.uppercase()) {
-        "TRUE" -> true
-        "FALSE" -> false
-        else -> null
-    }
-}
-
 fun findSkipCodeGenInKradleEnvOrNull(content: String?) =
     content.findPropertyOrNull("skip.codegen")?.uppercase()?.let { skip ->
         when(skip) {

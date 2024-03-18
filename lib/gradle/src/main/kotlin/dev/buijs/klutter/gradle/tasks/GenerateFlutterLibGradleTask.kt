@@ -21,8 +21,12 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
+import dev.buijs.klutter.gradle.dsl.KlutterVersion
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.common.verifyExists
+import dev.buijs.klutter.kore.project.kradleYaml
+import dev.buijs.klutter.kore.project.mapper
+import dev.buijs.klutter.kore.project.toConfigOrNull
 import dev.buijs.klutter.kore.tasks.codegen.GenerateFlutterLibTask
 
 internal open class GenerateFlutterLibGradleTask: AbstractTask() {
@@ -31,6 +35,13 @@ internal open class GenerateFlutterLibGradleTask: AbstractTask() {
     }
     override fun klutterTask(): KlutterTask {
         val project = project()
+
+        // Update Klutter Gradle Plugin Version
+        project.root.kradleYaml.let { kradleYamlFile ->
+            kradleYamlFile.toConfigOrNull()
+                ?.copy(bomVersion = KlutterVersion.gradle)
+                ?.let { kradleYamlFile.writeText(mapper.writeValueAsString(it)) }
+        }
 
         return GenerateFlutterLibTask(
             pluginName = project.root.pluginName,

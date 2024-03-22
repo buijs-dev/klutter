@@ -51,7 +51,7 @@ inline fun <reified T: GenerateCodeAction> findGenerateCodeAction(
         options.toGenerateFlutterMessagesTask()
     PubGetTask::class.java ->
         options.toPubGetTask()
-    GenerateProtoSchemaTask::class.java ->
+    GenerateProtoSchemasTask::class.java ->
         options.toGenerateProtoSchemaTask()
     CompileProtoSchemaTask::class.java ->
         options.toCompileProtoSchemaTask()

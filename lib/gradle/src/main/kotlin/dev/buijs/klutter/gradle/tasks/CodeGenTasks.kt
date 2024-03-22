@@ -21,26 +21,26 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterException
-import dev.buijs.klutter.kore.tasks.codegen.GenerateProtoSchemaTask
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import dev.buijs.klutter.gradle.dsl.KlutterVersion
+import dev.buijs.klutter.kore.KlutterTask
+import dev.buijs.klutter.kore.tasks.codegen.GenerateFlutterLibTask
 
-abstract class GenerateProtoSchemaGradleTask: DefaultTask() {
+/**
+ * Run the [GenerateFlutterLibTask] from Gradle.
+ */
+internal open class GenerateFlutterLibGradleTask: AbstractTask() {
 
-    @get:Optional
-    @get:Input
-    abstract var classLoader: ClassLoader?
+    override val gradleTaskName = KlutterGradleTaskName.GenerateFlutterLib
 
-    @TaskAction
-    fun execute() {
-        if(classLoader == null) {
-            throw KlutterException("GenerateProtoSchemaGradleTask is missing property value 'classLoader'")
-        } else {
-            GenerateProtoSchemaTask(project.rootDir, classLoader!!).run()
-        }
+    override fun klutterTask(): KlutterTask {
+        val project = project()
+        val root = project.root
+        return GenerateFlutterLibTask(
+            bomVersion = KlutterVersion.gradle,
+            pluginName = root.pluginName,
+            root = root,
+            srcFolder = root.pathToLibFolder.resolve("src")
+        )
     }
 
 }

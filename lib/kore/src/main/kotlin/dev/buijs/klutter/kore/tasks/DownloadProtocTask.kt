@@ -25,6 +25,10 @@ import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.tasks.project.DownloadProtoc
 import java.io.File
 
+/**
+ * Download a protoc distribution which is required to use
+ * protocol buffers in a klutter project.
+ */
 class DownloadProtocTask(
     private val rootFolder: File,
     private val overwrite: Boolean = false,

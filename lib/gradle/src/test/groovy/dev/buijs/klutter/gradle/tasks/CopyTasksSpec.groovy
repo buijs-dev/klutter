@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2024 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +21,23 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.project.kradleHome
-import dev.buijs.klutter.kore.tasks.DownloadProtocTask
 
-/**
- * Execute task [DownloadProtocTask] from Gradle.
- */
-internal open class GetProtocGradleTask: AbstractTask() {
-    companion object {
-        val gradleTaskName = "klutterGetProtoc"
+import dev.buijs.klutter.kore.tasks.CopyAarFileTask
+import dev.buijs.klutter.kore.tasks.CopyXCFrameworkTask
+import spock.lang.Specification
+
+import static dev.buijs.klutter.gradle.tasks.TaskTestUtil.verifyTask
+
+class CopyTasksSpec extends Specification {
+
+    def "Verify CopyAndroidAarFileGradleTask returns CopyAarFileTask"() {
+        expect:
+        verifyTask(CopyAndroidAarFileGradleTask, CopyAarFileTask)
     }
 
-    override fun klutterTask(): KlutterTask {
-        val project = super.project()
-        return DownloadProtocTask(
-            rootFolder = project.root.folder,
-            overwrite = false,
-            target = kradleHome
-                .resolve(".cache")
-                .resolve("protobuf")
-                .resolve("protoc")
-        )
+    def "Verify CopyIosFrameworkGradleTask returns CopyXCFrameworkTask"() {
+        expect:
+        verifyTask(CopyIosFrameworkGradleTask, CopyXCFrameworkTask)
     }
+
 }

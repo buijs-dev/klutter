@@ -1,4 +1,4 @@
-/* Copyright (c) 2021 - 2023 Buijs Software
+/* Copyright (c) 2021 - 2024 Buijs Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,19 @@
  */
 package dev.buijs.klutter.gradle.tasks
 
-import dev.buijs.klutter.kore.KlutterTask
-import dev.buijs.klutter.kore.tasks.codegen.CompileProtoSchemaTask
+import dev.buijs.klutter.gradle.KlutterGradlePluginSpec
 
-internal open class CompileProtoSchemaGradleTask: AbstractTask() {
-
-    companion object {
-        val gradleTaskName = "klutterCompileProtoSchemas"
+class TaskTestUtil {
+    static getTask(Class<?> type) {
+        def project = KlutterGradlePluginSpec.gradleProjectWithAppliedKlutterPlugin
+        //noinspection ConfigurationAvoidance
+        project.task('dummy', type: type)
     }
 
-    init {
-        super.dependsOn(GetDartProtocExeGradleTask.gradleTaskName, GetProtocGradleTask.gradleTaskName)
-        super.finalizedBy(GenerateFlutterLibGradleTask.gradleTaskName)
+    static verifyTask(Class<?> gradleTaskType, Class<?> klutterTaskType) {
+        def taskInstance = getTask(gradleTaskType)
+        assert taskInstance.class.superclass == gradleTaskType
+        assert taskInstance.klutterTask$gradle().class == klutterTaskType
+        true
     }
-
-    override fun klutterTask(): KlutterTask =
-        CompileProtoSchemaTask(super.project().root.folder)
-
 }

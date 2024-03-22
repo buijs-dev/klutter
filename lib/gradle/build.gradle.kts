@@ -7,7 +7,7 @@ plugins {
     id("java-gradle-plugin")
     //id("java-library")
     //id("maven-publish")
-   // id("groovy")
+    id("groovy")
     id("klutter")
 }
 

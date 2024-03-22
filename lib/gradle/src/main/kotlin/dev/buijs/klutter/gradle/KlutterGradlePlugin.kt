@@ -27,80 +27,166 @@ import dev.buijs.klutter.gradle.dsl.KlutterExtension
 import dev.buijs.klutter.gradle.tasks.*
 import dev.buijs.klutter.gradle.tasks.CopyAndroidAarFileGradleTask
 import dev.buijs.klutter.gradle.tasks.CopyIosFrameworkGradleTask
-import dev.buijs.klutter.gradle.tasks.GetDartProtocExeGradleTask
-import dev.buijs.klutter.gradle.tasks.GetKradleTask
+import dev.buijs.klutter.gradle.tasks.GetProtocDartGradleTask
 import dev.buijs.klutter.gradle.tasks.GetProtocGradleTask
+import dev.buijs.klutter.gradle.tasks.KlutterGradleTaskName.*
 import dev.buijs.klutter.kore.project.kspArgumentKlutterProjectFolder
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
  * Gradle plugin for Klutter Framework.
+ *
+ * The plugin has extension [KlutterExtension] which can be used to configure the klutter project.
+ * See [KlutterGradleTaskName] for all available tasks. Most tasks are run automatically when executing a Gradle build.
+ * See [bindPostBuildTasks].
+ *
+ * The klutter compiler plugin is applied which handles annotation scanning, code generation and more.
  */
-class KlutterGradlePlugin: Plugin<Project> {
+class KlutterGradlePlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
-            tasks.registerTasks()
-            plugins.applyKspPlugin()
-            extensions.add("klutter", KlutterExtension(project))
-            val ksp = project.extensions.getByType(KspExtension::class.java)
+            applyAndConfigureKspExtension()
+            registerTasks()
+            addKlutterExtension()
             project.afterEvaluate {
-                // KMP
-                val kmp = try {
-                    project.extensions.getByType(KotlinMultiplatformExtension::class.java)
-                } catch (_: Exception) {
-                    null
+                configureKotlinMultiplatformExtension {
+                    bindPostBuildTasks()
                 }
-
-                if (kmp != null) {
-                    kmp.sourceSets
-                        .getByName("commonMain")
-                        .kotlin
-                        .srcDir(layout.buildDirectory.file("generated/ksp/metadata/commonMain/kotlin"))
-                    tasks.bindPostBuildTasks()
-                }
-
-                // KSP
-                ksp.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
             }
         }
     }
 }
 
 /**
- * Apply KSP Gradle Plugin.
+ * Add the [KlutterExtension] to the Gradle [Project].
  */
-private fun PluginContainer.applyKspPlugin() {
-    apply(KspGradleSubplugin::class.java)
+private fun Project.addKlutterExtension() {
+    extensions.add("klutter", KlutterExtension(project))
 }
 
 /**
- * Register the custom Klutter tasks.
+ * Apply the [KspGradleSubplugin] and add required arguments for the compiler plugin.
+ */
+private fun Project.applyAndConfigureKspExtension() {
+    plugins.apply(KspGradleSubplugin::class.java)
+    val ksp = project.extensions.getByType(KspExtension::class.java)
+    ksp.arg(kspArgumentKlutterProjectFolder, project.rootDir.absolutePath)
+}
+
+/**
+ * Add KSP generated code to the KMP source sets.
+ */
+private fun Project.configureKotlinMultiplatformExtension(
+    /**
+     * Action to invoke if the [KotlinMultiplatformExtension] is found.
+     *
+     * The [KlutterGradlePlugin] is applied to the platform module which is a KMP module
+     * and the android module which is not a KMP module. Some configuration can only be
+     * done in a KMP module, which can be configured through this closure.
+     */
+    doIfExtensionIsPresent: () -> Unit
+) {
+    // KMP
+    val kmp = try {
+        project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+    } catch (_: Exception) {
+        null
+    }
+
+    if (kmp != null) {
+        kmp.sourceSets
+            .getByName("commonMain")
+            .kotlin
+            .srcDir(layout.buildDirectory.file("generated/ksp/metadata/commonMain/kotlin"))
+        doIfExtensionIsPresent()
+    }
+}
+
+/**
+ * Register Klutter tasks in the Gradle [Project].
+ */
+private fun Project.registerTasks() {
+    tasks.registerTasks()
+}
+
+/**
+ * Register Klutter tasks in the [TaskContainer].
  */
 private fun TaskContainer.registerTasks() {
-    register(CopyAndroidAarFileGradleTask.gradleTaskName, CopyAndroidAarFileGradleTask::class.java)
-    register(CopyIosFrameworkGradleTask.gradleTaskName, CopyIosFrameworkGradleTask::class.java)
-    register(GetKradleTask.gradleTaskName, GetKradleTask::class.java)
-    register(GetDartProtocExeGradleTask.gradleTaskName, GetDartProtocExeGradleTask::class.java)
-    register(GetProtocGradleTask.gradleTaskName, GetProtocGradleTask::class.java)
-    register(CompileProtoSchemaGradleTask.gradleTaskName, CompileProtoSchemaGradleTask::class.java)
-    register(GenerateFlutterLibGradleTask.gradleTaskName, GenerateFlutterLibGradleTask::class.java)
+    for (gradleTaskName in KlutterGradleTaskName.entries) {
+        when (gradleTaskName) {
+            GenerateProtoSchemas -> {
+                // Should be registered directly in build.gradle.kts.
+            }
+
+            CompileProtoSchemas ->
+                registerTask<CompileProtoSchemasGradleTask>(gradleTaskName)
+
+            CopyAndroidAarFile ->
+                registerTask<CopyAndroidAarFileGradleTask>(gradleTaskName)
+
+            CopyIosFramework ->
+                registerTask<CopyIosFrameworkGradleTask>(gradleTaskName)
+
+            GenerateFlutterLib ->
+                registerTask<GenerateFlutterLibGradleTask>(gradleTaskName)
+
+            GetProtocDart ->
+                registerTask<GetProtocDartGradleTask>(gradleTaskName)
+
+            GetProtoc ->
+                registerTask<GetProtocGradleTask>(gradleTaskName)
+
+            GetKradle ->
+                registerTask<CopyAndroidAarFileGradleTask>(gradleTaskName)
+        }
+    }
+}
+
+private fun Project.bindPostBuildTasks() {
+    tasks.bindPostBuildTasks()
 }
 
 private fun TaskContainer.bindPostBuildTasks() {
-    getByName("build").setFinalizedBy(
-       listOf(CopyAndroidAarFileGradleTask.gradleTaskName,
-           CompileProtoSchemaGradleTask.gradleTaskName,
-           "assemblePlatformReleaseXCFramework",
-           "klutterGenerateProtoSchemas"
-       ))
+    val assembleXCFrameworkTaskName = "assemblePlatformReleaseXCFramework"
 
-    getByName("assemblePlatformReleaseXCFramework")
-        .setFinalizedBy(listOf(getByName(CopyIosFrameworkGradleTask.gradleTaskName)))
+    finalizeTaskBy("build") {
+        +assembleXCFrameworkTaskName
+        +GenerateProtoSchemas
+        +CopyAndroidAarFile
+    }
 
-    getByName("klutterGenerateProtoSchemas")
-        .setFinalizedBy(listOf("klutterCompileProtoSchemas"))
+    finalizeTaskBy(assembleXCFrameworkTaskName) {
+        +CopyIosFramework
+    }
+
+    finalizeTaskBy(GenerateProtoSchemas.taskName) {
+        +CompileProtoSchemas
+    }
+}
+
+private fun TaskContainer.finalizeTaskBy(
+    name: String,
+    builder: StringListBuilder.() -> Unit
+) {
+    getByName(name).setFinalizedBy(StringListBuilder().also(builder).data)
+}
+
+private class StringListBuilder {
+    val data: MutableList<String> = mutableListOf()
+
+    operator fun String.unaryPlus() {
+        data.add(this)
+    }
+
+    operator fun KlutterGradleTaskName.unaryPlus() {
+        data.add(this.taskName)
+    }
+}
+
+private inline fun <reified T : AbstractTask> TaskContainer.registerTask(task: KlutterGradleTaskName) {
+    register(task.taskName, T::class.java)
 }

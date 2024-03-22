@@ -35,9 +35,13 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.functions
 
+/**
+ * Create an instance of [GenerateProtoSchemasTask] if the List
+ * [GenerateCodeOptions.responseClassNames] is not empty.
+ */
 fun GenerateCodeOptions.toGenerateProtoSchemaTask() =
     if(responseClassNames.isNotEmpty()) {
-        GenerateProtoSchemaTask(project.root.folder,
+        GenerateProtoSchemasTask(project.root.folder,
             gradleBuildInstanceClassLoader = this::class.java.classLoader)
     } else {
         object: GenerateCodeAction {
@@ -47,15 +51,15 @@ fun GenerateCodeOptions.toGenerateProtoSchemaTask() =
 
 
 /**
- * Generate protocol buffer schema.
+ * Generate the protocol buffer schemas.
  */
-class GenerateProtoSchemaTask(
+class GenerateProtoSchemasTask(
     pathToRoot: File,
     /**
-     * Instance of Build_gradle class from which the Classloader is retrieved.
+     * Classloader instance which is retried from the Build_gradle class.
      *
      * Getting the Classloader through this instance is the only way to ensure
-     * all dependencies from the SourceSet are present.  If any dependency is missing,
+     * all dependencies from the SourceSet are present. If any dependency is missing,
      * then it is not possible to get the SerializationStrategy of the Serializable
      * Response classes.
      */

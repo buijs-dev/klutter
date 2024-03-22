@@ -70,6 +70,11 @@ class Processor(
     private var messages: List<SquintMessageSource>? = null
     private var controllers: List<Controller>? = null
 
+    /**
+     * List of FQDN names for each @Response annotated class.
+     *
+     * If protobuf is NOT enabled then this list stays empty.
+     */
     private var responseClassNames: List<String>? = null
 
     private val flutterFolder: FlutterDistributionFolderName

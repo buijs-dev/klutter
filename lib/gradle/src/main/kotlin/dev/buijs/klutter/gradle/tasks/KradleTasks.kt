@@ -42,9 +42,7 @@ internal val kradlewBat: InputStream
  */
 internal open class GetKradleTask: AbstractTask() {
 
-    companion object {
-        val gradleTaskName = "klutterGetKradle"
-    }
+    override val gradleTaskName = KlutterGradleTaskName.GetKradle
 
     override fun klutterTask() =
         project.rootProject.projectDir.toGetKradleTask()

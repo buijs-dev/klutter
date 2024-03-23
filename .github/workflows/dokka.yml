@@ -26,7 +26,7 @@ jobs:
           distribution: 'adopt'
           java-version: 17
       - name: 'setup gradle'
-        uses: actions/setup-java@v4
+        uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.3
       - name: 'setup flutter'

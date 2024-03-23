@@ -3,12 +3,15 @@ package dev.buijs.klutter.gradle
 
 import com.google.devtools.ksp.gradle.KspExtension
 import dev.buijs.klutter.gradle.tasks.AbstractTask
+import dev.buijs.klutter.gradle.tasks.AbstractTaskKt
 import dev.buijs.klutter.gradle.tasks.KlutterGradleTaskName
 import dev.buijs.klutter.kore.KlutterTask
 import dev.buijs.klutter.kore.project.RootKt
 import dev.buijs.klutter.kore.test.TestPlugin
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -98,6 +101,24 @@ class KlutterGradlePluginSpec extends Specification {
         with(project.tasks.getByName(KlutterGradleTaskName.GenerateProtoSchemas.taskName) as DummyGradleTask) {
             it.finalizers.contains(KlutterGradleTaskName.CompileProtoSchemas.taskName)
         }
+    }
+
+    def "Verify ISE is thrown if wrong class is found for klutter extension"() {
+        given:
+        def container = Stub(ExtensionContainer) {
+            it.getByName("klutter") >> "Not an extension"
+        }
+
+        def project = Stub(Project) {
+            it.extensions >> container
+        }
+
+        when:
+        AbstractTaskKt.klutterExtension(project)
+
+        then:
+        IllegalStateException ise = thrown()
+        ise.message == "klutter extension is not of the correct type"
     }
 
     static getGradleProjectWithAppliedKlutterPlugin() {

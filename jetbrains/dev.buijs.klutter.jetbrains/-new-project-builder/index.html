@@ -1,0 +1,828 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>NewProjectBuilder</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            lib
+                    </a>            </div>
+            <div class="library-version">
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":lib:jetbrains:dokkaHtmlPartial/main">jvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="jetbrains::dev.buijs.klutter.jetbrains/NewProjectBuilder///PointingToDeclaration//-663579495">
+  <div class="breadcrumbs"><a href="../../index.html">jetbrains</a><span class="delimiter">/</span><a href="../index.html">dev.buijs.klutter.jetbrains</a><span class="delimiter">/</span><span class="current">NewProjectBuilder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>New</span><wbr><span>Project</span><wbr><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">NewProjectBuilder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">var </span>config<span class="token operator">: </span><a href="../-new-project-config/index.html">NewProjectConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilder///PointingToDeclaration/">ModuleBuilder</span>, <span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilderListener///PointingToDeclaration/">ModuleBuilderListener</span></div><p class="paragraph">Builder which returns a wizard to input project details with which a new klutter project is created.</p><p class="paragraph">This builder is added in the resources/META-INF/plugin.xml as an extension.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1624608811%2FConstructors%2F-663579495" anchor-label="NewProjectBuilder" id="-1624608811%2FConstructors%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-new-project-builder.html"><span>New</span><wbr><span>Project</span><wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1624608811%2FConstructors%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">config<span class="token operator">: </span><a href="../-new-project-config/index.html">NewProjectConfig</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1053763584%2FProperties%2F-663579495" anchor-label="config" id="-1053763584%2FProperties%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="config.html"><span><span>config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1053763584%2FProperties%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">var </span><a href="config.html">config</a><span class="token operator">: </span><a href="../-new-project-config/index.html">NewProjectConfig</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="2089694262%2FFunctions%2F-663579495" anchor-label="addListener" id="2089694262%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#2089694262%2FFunctions%2F-663579495"><span>add</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2089694262%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#2089694262%2FFunctions%2F-663579495"><span class="token function">addListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilderListener///PointingToDeclaration/">ModuleBuilderListener</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1756123424%2FFunctions%2F-663579495" anchor-label="addModuleConfigurationUpdater" id="1756123424%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1756123424%2FFunctions%2F-663579495"><span>add</span><wbr><span>Module</span><wbr><span>Configuration</span><wbr><span><span>Updater</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1756123424%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1756123424%2FFunctions%2F-663579495"><span class="token function">addModuleConfigurationUpdater</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilder.ModuleConfigurationUpdater///PointingToDeclaration/">ModuleBuilder.ModuleConfigurationUpdater</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1968559378%2FFunctions%2F-663579495" anchor-label="canCreateModule" id="-1968559378%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1968559378%2FFunctions%2F-663579495"><span>can</span><wbr><span>Create</span><wbr><span><span>Module</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1968559378%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1968559378%2FFunctions%2F-663579495"><span class="token function">canCreateModule</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="439205821%2FFunctions%2F-663579495" anchor-label="cleanup" id="439205821%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#439205821%2FFunctions%2F-663579495"><span><span>cleanup</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="439205821%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#439205821%2FFunctions%2F-663579495"><span class="token function">cleanup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1697254160%2FFunctions%2F-663579495" anchor-label="commit" id="1697254160%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-190327434%2FFunctions%2F-663579495"><span><span>commit</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1697254160%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-190327434%2FFunctions%2F-663579495"><span class="token function">commit</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span><span class="token punctuation">, </span></span><span class="parameter ">p1<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.module/ModifiableModuleModel///PointingToDeclaration/">ModifiableModuleModel</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">p2<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.roots.ui.configuration/ModulesProvider///PointingToDeclaration/">ModulesProvider</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span><span class="token operator">?</span></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-496207578%2FFunctions%2F-663579495"><span class="token function">commit</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1749309910%2FFunctions%2F-663579495" anchor-label="commitModule" id="-1749309910%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1749309910%2FFunctions%2F-663579495"><span>commit</span><wbr><span><span>Module</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1749309910%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1749309910%2FFunctions%2F-663579495"><span class="token function">commitModule</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span>p1<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/ModifiableModuleModel///PointingToDeclaration/">ModifiableModuleModel</span><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1652851957%2FFunctions%2F-663579495" anchor-label="createAndCommitIfNeeded" id="-1652851957%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1652851957%2FFunctions%2F-663579495"><span>create</span><wbr><span>And</span><wbr><span>Commit</span><wbr><span>If</span><wbr><span><span>Needed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1652851957%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1652851957%2FFunctions%2F-663579495"><span class="token function">createAndCommitIfNeeded</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span>p1<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/ModifiableModuleModel///PointingToDeclaration/">ModifiableModuleModel</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">p2<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1701918368%2FFunctions%2F-663579495" anchor-label="createFinishingSteps" id="1701918368%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1701918368%2FFunctions%2F-663579495"><span>create</span><wbr><span>Finishing</span><wbr><span><span>Steps</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1701918368%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1701918368%2FFunctions%2F-663579495"><span class="token function">createFinishingSteps</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/WizardContext///PointingToDeclaration/">WizardContext</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p1<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.roots.ui.configuration/ModulesProvider///PointingToDeclaration/">ModulesProvider</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1404488041%2FFunctions%2F-663579495" anchor-label="createModule" id="-1404488041%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1404488041%2FFunctions%2F-663579495"><span>create</span><wbr><span><span>Module</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1404488041%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1404488041%2FFunctions%2F-663579495"><span class="token function">createModule</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/ModifiableModuleModel///PointingToDeclaration/">ModifiableModuleModel</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-44749500%2FFunctions%2F-663579495" anchor-label="createProject" id="-44749500%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-project.html"><span>create</span><wbr><span><span>Project</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-44749500%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="create-project.html"><span class="token function">createProject</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">path<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Generate the actual project.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="151323640%2FFunctions%2F-663579495" anchor-label="createWizardSteps" id="151323640%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#151323640%2FFunctions%2F-663579495"><span>create</span><wbr><span>Wizard</span><wbr><span><span>Steps</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="151323640%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#151323640%2FFunctions%2F-663579495"><span class="token function">createWizardSteps</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/WizardContext///PointingToDeclaration/">WizardContext</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p1<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.roots.ui.configuration/ModulesProvider///PointingToDeclaration/">ModulesProvider</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-508631537%2FFunctions%2F-663579495" anchor-label="equals" id="-508631537%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-508631537%2FFunctions%2F-663579495"><span><span>equals</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-508631537%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">operator override </span><span class="token keyword">fun </span><a href="index.html#-508631537%2FFunctions%2F-663579495"><span class="token function">equals</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">other<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-230628894%2FFunctions%2F-663579495" anchor-label="getBuilderId" id="-230628894%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-builder-id.html"><span>get</span><wbr><span>Builder</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-230628894%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-builder-id.html"><span class="token function">getBuilderId</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1237669454%2FFunctions%2F-663579495" anchor-label="getContentEntryPath" id="-1237669454%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1237669454%2FFunctions%2F-663579495"><span>get</span><wbr><span>Content</span><wbr><span>Entry</span><wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1237669454%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1237669454%2FFunctions%2F-663579495"><span class="token function">getContentEntryPath</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1879077143%2FFunctions%2F-663579495" anchor-label="getCustomOptionsStep" id="1879077143%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-custom-options-step.html"><span>get</span><wbr><span>Custom</span><wbr><span>Options</span><wbr><span><span>Step</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1879077143%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-custom-options-step.html"><span class="token function">getCustomOptionsStep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/WizardContext///PointingToDeclaration/">WizardContext</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">parentDisposable<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi/Disposable///PointingToDeclaration/">Disposable</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-new-project-wizard-step/index.html">NewProjectWizardStep</a></div><div class="brief "><p class="paragraph">Load the <a href="../-new-project-wizard-step/index.html">NewProjectWizardStep</a> where the user can enter the Klutter project configuration.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1964862385%2FFunctions%2F-663579495" anchor-label="getDefaultAcceptableRole" id="1964862385%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1964862385%2FFunctions%2F-663579495"><span>get</span><wbr><span>Default</span><wbr><span>Acceptable</span><wbr><span><span>Role</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1964862385%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1964862385%2FFunctions%2F-663579495"><span class="token function">getDefaultAcceptableRole</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.frameworkSupport/FrameworkRole///PointingToDeclaration/">FrameworkRole</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-42321924%2FFunctions%2F-663579495" anchor-label="getDescription" id="-42321924%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-description.html"><span>get</span><wbr><span><span>Description</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-42321924%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-description.html"><span class="token function">getDescription</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-51265330%2FFunctions%2F-663579495" anchor-label="getGroupName" id="-51265330%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-group-name.html"><span>get</span><wbr><span>Group</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-51265330%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-group-name.html"><span class="token function">getGroupName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="420796635%2FFunctions%2F-663579495" anchor-label="getIgnoredSteps" id="420796635%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#420796635%2FFunctions%2F-663579495"><span>get</span><wbr><span>Ignored</span><wbr><span><span>Steps</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="420796635%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#420796635%2FFunctions%2F-663579495"><span class="token function">getIgnoredSteps</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html">MutableList</a><span class="token operator">&lt;</span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a><span class="token operator">&lt;</span><span class="token keyword">out </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1595983301%2FFunctions%2F-663579495" anchor-label="getModuleFileDirectory" id="1595983301%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1595983301%2FFunctions%2F-663579495"><span>get</span><wbr><span>Module</span><wbr><span>File</span><wbr><span><span>Directory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1595983301%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1595983301%2FFunctions%2F-663579495"><span class="token function">getModuleFileDirectory</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-419768765%2FFunctions%2F-663579495" anchor-label="getModuleFilePath" id="-419768765%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-419768765%2FFunctions%2F-663579495"><span>get</span><wbr><span>Module</span><wbr><span>File</span><wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-419768765%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-419768765%2FFunctions%2F-663579495"><span class="token function">getModuleFilePath</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="204965605%2FFunctions%2F-663579495" anchor-label="getModuleJdk" id="204965605%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#204965605%2FFunctions%2F-663579495"><span>get</span><wbr><span>Module</span><wbr><span><span>Jdk</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="204965605%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#204965605%2FFunctions%2F-663579495"><span class="token function">getModuleJdk</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.projectRoots/Sdk///PointingToDeclaration/">Sdk</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1857498468%2FFunctions%2F-663579495" anchor-label="getModuleType" id="-1857498468%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-module-type.html"><span>get</span><wbr><span>Module</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1857498468%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-module-type.html"><span class="token function">getModuleType</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.module/ModuleType///PointingToDeclaration/">ModuleType</span><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-55140475%2FFunctions%2F-663579495" anchor-label="getName" id="-55140475%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-55140475%2FFunctions%2F-663579495"><span>get</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-55140475%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-55140475%2FFunctions%2F-663579495"><span class="token function">getName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="338352039%2FFunctions%2F-663579495" anchor-label="getNodeIcon" id="338352039%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-node-icon.html"><span>get</span><wbr><span>Node</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="338352039%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-node-icon.html"><span class="token function">getNodeIcon</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/javax/swing/Icon.html">Icon</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2041667093%2FFunctions%2F-663579495" anchor-label="getParentGroup" id="2041667093%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#2041667093%2FFunctions%2F-663579495"><span>get</span><wbr><span>Parent</span><wbr><span><span>Group</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2041667093%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#2041667093%2FFunctions%2F-663579495"><span class="token function">getParentGroup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1780856376%2FFunctions%2F-663579495" anchor-label="getPresentableName" id="1780856376%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-presentable-name.html"><span>get</span><wbr><span>Presentable</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1780856376%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="get-presentable-name.html"><span class="token function">getPresentableName</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-611091592%2FFunctions%2F-663579495" anchor-label="getWeight" id="-611091592%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-611091592%2FFunctions%2F-663579495"><span>get</span><wbr><span><span>Weight</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-611091592%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-611091592%2FFunctions%2F-663579495"><span class="token function">getWeight</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1345418489%2FFunctions%2F-663579495" anchor-label="isAvailable" id="-1345418489%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1345418489%2FFunctions%2F-663579495"><span>is</span><wbr><span><span>Available</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1345418489%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1345418489%2FFunctions%2F-663579495"><span class="token function">isAvailable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="385430533%2FFunctions%2F-663579495" anchor-label="isOpenProjectSettingsAfter" id="385430533%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#385430533%2FFunctions%2F-663579495"><span>is</span><wbr><span>Open</span><wbr><span>Project</span><wbr><span>Settings</span><wbr><span><span>After</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="385430533%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#385430533%2FFunctions%2F-663579495"><span class="token function">isOpenProjectSettingsAfter</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1394396477%2FFunctions%2F-663579495" anchor-label="isSuitableSdkType" id="-1394396477%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1394396477%2FFunctions%2F-663579495"><span>is</span><wbr><span>Suitable</span><wbr><span>Sdk</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1394396477%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1394396477%2FFunctions%2F-663579495"><span class="token function">isSuitableSdkType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.projectRoots/SdkTypeId///PointingToDeclaration/">SdkTypeId</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1673135056%2FFunctions%2F-663579495" anchor-label="isTemplate" id="-1673135056%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1673135056%2FFunctions%2F-663579495"><span>is</span><wbr><span><span>Template</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1673135056%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1673135056%2FFunctions%2F-663579495"><span class="token function">isTemplate</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1032989961%2FFunctions%2F-663579495" anchor-label="isTemplateBased" id="-1032989961%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1032989961%2FFunctions%2F-663579495"><span>is</span><wbr><span>Template</span><wbr><span><span>Based</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1032989961%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1032989961%2FFunctions%2F-663579495"><span class="token function">isTemplateBased</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1321551590%2FFunctions%2F-663579495" anchor-label="isUpdate" id="1321551590%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1321551590%2FFunctions%2F-663579495"><span>is</span><wbr><span><span>Update</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1321551590%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1321551590%2FFunctions%2F-663579495"><span class="token function">isUpdate</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1372200022%2FFunctions%2F-663579495" anchor-label="modifyProjectTypeStep" id="-1372200022%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1372200022%2FFunctions%2F-663579495"><span>modify</span><wbr><span>Project</span><wbr><span>Type</span><wbr><span><span>Step</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1372200022%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-1372200022%2FFunctions%2F-663579495"><span class="token function">modifyProjectTypeStep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/SettingsStep///PointingToDeclaration/">SettingsStep</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1033220908%2FFunctions%2F-663579495" anchor-label="modifySettingsStep" id="-1033220908%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1033220908%2FFunctions%2F-663579495"><span>modify</span><wbr><span>Settings</span><wbr><span><span>Step</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1033220908%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span></div></div><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-1033220908%2FFunctions%2F-663579495"><span class="token function">modifySettingsStep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/SettingsStep///PointingToDeclaration/">SettingsStep</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="103783735%2FFunctions%2F-663579495" anchor-label="modifyStep" id="103783735%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#103783735%2FFunctions%2F-663579495"><span>modify</span><wbr><span><span>Step</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="103783735%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#103783735%2FFunctions%2F-663579495"><span class="token function">modifyStep</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/SettingsStep///PointingToDeclaration/">SettingsStep</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleWizardStep///PointingToDeclaration/">ModuleWizardStep</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="991747638%2FFunctions%2F-663579495" anchor-label="moduleCreated" id="991747638%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="module-created.html"><span>module</span><wbr><span><span>Created</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="991747638%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="module-created.html"><span class="token function">moduleCreated</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">module<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.module/Module///PointingToDeclaration/">Module</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-100453109%2FFunctions%2F-663579495" anchor-label="removeListener" id="-100453109%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-100453109%2FFunctions%2F-663579495"><span>remove</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-100453109%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-100453109%2FFunctions%2F-663579495"><span class="token function">removeListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilderListener///PointingToDeclaration/">ModuleBuilderListener</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2006801250%2FFunctions%2F-663579495" anchor-label="setContentEntryPath" id="-2006801250%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-2006801250%2FFunctions%2F-663579495"><span>set</span><wbr><span>Content</span><wbr><span>Entry</span><wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2006801250%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-2006801250%2FFunctions%2F-663579495"><span class="token function">setContentEntryPath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-907231571%2FFunctions%2F-663579495" anchor-label="setModuleFilePath" id="-907231571%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-907231571%2FFunctions%2F-663579495"><span>set</span><wbr><span>Module</span><wbr><span>File</span><wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-907231571%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-907231571%2FFunctions%2F-663579495"><span class="token function">setModuleFilePath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NonNls///PointingToDeclaration/"><span class="token annotation builtin">NonNls</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NonNls///PointingToDeclaration/"><span class="token annotation builtin">NonNls</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1064355525%2FFunctions%2F-663579495" anchor-label="setModuleJdk" id="1064355525%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1064355525%2FFunctions%2F-663579495"><span>set</span><wbr><span>Module</span><wbr><span><span>Jdk</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1064355525%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1064355525%2FFunctions%2F-663579495"><span class="token function">setModuleJdk</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.projectRoots/Sdk///PointingToDeclaration/">Sdk</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-903696469%2FFunctions%2F-663579495" anchor-label="setName" id="-903696469%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-903696469%2FFunctions%2F-663579495"><span>set</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-903696469%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="index.html#-903696469%2FFunctions%2F-663579495"><span class="token function">setName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1928497318%2FFunctions%2F-663579495" anchor-label="setupRootModel" id="-1928497318%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="setup-root-model.html"><span>setup</span><wbr><span>Root</span><wbr><span><span>Model</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1928497318%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="setup-root-model.html"><span class="token function">setupRootModel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">rootModel<span class="token operator">: </span><span data-unresolved-link="com.intellij.openapi.roots/ModifiableRootModel///PointingToDeclaration/">ModifiableRootModel</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Configure Java SDK.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1594127398%2FFunctions%2F-663579495" anchor-label="updateFrom" id="-1594127398%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1594127398%2FFunctions%2F-663579495"><span>update</span><wbr><span><span>From</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1594127398%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-1594127398%2FFunctions%2F-663579495"><span class="token function">updateFrom</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">p0<span class="token operator">: </span><span data-unresolved-link="com.intellij.ide.util.projectWizard/ModuleBuilder///PointingToDeclaration/">ModuleBuilder</span></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1763834311%2FFunctions%2F-663579495" anchor-label="validate" id="1763834311%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1763834311%2FFunctions%2F-663579495"><span><span>validate</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1763834311%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1763834311%2FFunctions%2F-663579495"><span class="token function">validate</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/Nullable///PointingToDeclaration/"><span class="token annotation builtin">Nullable</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p1<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><span data-unresolved-link="com.intellij.openapi.project/Project///PointingToDeclaration/">Project</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-815257121%2FFunctions%2F-663579495" anchor-label="validateModuleName" id="-815257121%2FFunctions%2F-663579495" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main"></a>
+          <div class="table-row" data-filterable-current=":lib:jetbrains:dokkaHtmlPartial/main" data-filterable-set=":lib:jetbrains:dokkaHtmlPartial/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-815257121%2FFunctions%2F-663579495"><span>validate</span><wbr><span>Module</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-815257121%2FFunctions%2F-663579495"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":lib:jetbrains:dokkaHtmlPartial/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#-815257121%2FFunctions%2F-663579495"><span class="token function">validateModuleName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span>p0<span class="token operator">: </span><span><span class="token annotation builtin">@</span><span data-unresolved-link="org.jetbrains.annotations/NotNull///PointingToDeclaration/"><span class="token annotation builtin">NotNull</span></span>&nbsp;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

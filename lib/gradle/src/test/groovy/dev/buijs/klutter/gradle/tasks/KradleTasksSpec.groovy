@@ -13,6 +13,7 @@ class KradleTasksSpec extends Specification {
         expect:
         KradleTasksKt.kradlew.available()
         KradleTasksKt.kradlewBat.available()
+        KradleTasksKt.kradleWrapperJar.available()
     }
 
     def "Verify kradlew files can be copied" () {
